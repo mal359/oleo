@@ -1,0 +1,25 @@
+Welcome to the Alpha Oleo tree..  There's a lot of stuff hapenning in here
+right now, now the least of which is a serious re-org.
+
+IF you happened to be silly enough to check this out, I strongly advise
+checking the configure switches that I've got.  --without-gtk might be
+a particularily good one to chose at this point.
+
+Apparently the sort routine is hooped, but there's other memory corruptions
+that I've decided to worry about first.  The reason I'm doing the GTK
+interface before anything else is because I want an interface that works
+well.
+
+I am not looking for patches for now.  I have new documentation to merge in
+and that's great, but I'm only checking in updates when they compile, and that
+may require changes on the several core files.  That said, it _is_ worth
+e-mailing me if you notice problems.  I'll even have the email addresses 
+working soon. =)
+
+If you are GNU friendly you can check out this repository from it's home
+at /gd/gnu/cvsroot - Otherwise, you will find periodical updates on 
+alpha.gnu.org/gnu/oleo.  Those are updated as frequently as I get to it.
+
+Tks,
+Jeff Bailey
+
