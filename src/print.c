@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.24 1999/11/27 18:57:04 danny Exp $
+ * $Id: print.c,v 1.25 1999/11/30 23:35:21 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,9 @@
 static struct PrintDriver *Drivers[] = {
 	&PostScriptPrintDriver,
 	&PCLPrintDriver,
+#if 0
 	&EpsonStylusColorPrintDriver,
+#endif
 	&TextPrintDriver,
 	NULL
 };

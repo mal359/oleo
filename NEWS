@@ -1,3 +1,29 @@
+===== Oleo 1.99.8 =====
+
+Lots of internal cleanup so the Motif version of Oleo stands a chance
+of running multiple windows simultaneously. The capability is there,
+it needs to be handled effectively from the menus.
+
+Printing is reworked to be more device independent. The original goal
+was to support my Epson printer (Stylus Color 400) and PCL in addition
+to PostScript. The Epson code may never become real but PCL looks ok.
+All this required using AFM (Adobe Font Metrics) files to get things to
+work reliably.
+
+Plotutils support is better, it can show windows with scrollbars, the
+user can resize the windows, etc.
+
+Unfortunately a lot of this needs work in the Motif code to make it
+more accessible to the user; this is for the next minor release.
+
+The raw X code has work to make it accept internationalised input
+(aka i18n support). I cloned the code I originally implemented in
+LessTif but it doesn't (yet) work here. Sigh.
+
+Documentation is now one HTML file (texi2html -monolithic) so it
+can be handled nicely by the XmHTML widget. This also makes access
+on the web page much more friendly when browsing the manual.
+
 ===== Oleo 1.99.6 =====
 
 Database access (MySQL), internal cleanup of the source code,

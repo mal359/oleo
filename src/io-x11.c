@@ -1,4 +1,5 @@
 #undef	I18N_VERBOSE
+#undef	X_I18N
 /*
  *	Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  * 	
@@ -414,6 +415,7 @@ xi18nlookup(XEvent *evp, char *buf, int nbytes, KeySym *keysym, Status *status)
 	int	i;
 	static Status	s;
 
+#ifdef	X_I18N
 	if (xic) {
 		i = XmbLookupString(xic, evp, buf, nbytes, keysym, &s);
 	} else {
@@ -432,6 +434,9 @@ xi18nlookup(XEvent *evp, char *buf, int nbytes, KeySym *keysym, Status *status)
 	fprintf(stderr, "\n");
 #endif
 
+#else
+	i = XLookupString(evp, buf, nbytes, keysym, &s);
+#endif
 	if (status)	*status = s;
 	return i;
 }

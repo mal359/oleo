@@ -1,5 +1,5 @@
 /*
- *  $Id: pcl.c,v 1.9 1999/11/04 12:51:27 danny Exp $
+ *  $Id: pcl.c,v 1.10 1999/11/30 23:35:21 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,15 +21,20 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: pcl.c,v 1.9 1999/11/04 12:51:27 danny Exp $";
+static char rcsid[] = "$Id: pcl.c,v 1.10 1999/11/30 23:35:21 danny Exp $";
 
 #include <stdio.h>
 
 #ifndef	TEST
 #include "config.h"
+#endif
+
 #include "global.h"
 #include "cell.h"
-#else
+
+#ifdef	TEST
+struct OleoGlobal	*Global;
+
 #define JST_DEF		0
 #define JST_LFT		1
 #define JST_RGT		2
@@ -259,48 +264,83 @@ struct PrintDriver PCLPrintDriver = {
 };
 
 #ifdef	TEST
+int 
+stricmp (const char * s1, const char * s2)
+{
+  register const char *scan1;
+  register const char *scan2;
+  register char chr1, chr2;
+
+  scan1 = s1;
+  scan2 = s2;
+  do
+    {
+      chr1 = isupper (*scan1) ? tolower (*scan1) : *scan1;
+      chr2 = isupper (*scan2) ? tolower (*scan2) : *scan2;
+      scan1++;
+      scan2++; 
+    }
+  while (chr1 && chr1 == chr2);
+
+  /*
+         * The following case analysis is necessary so that characters
+         * which look negative collate low against normal characters but
+         * high against the end-of-string NUL.
+         */
+  if (chr1 == '\0' && chr2 == '\0')
+    return 0;
+  else if (chr1 == '\0')
+    return -1;
+  else if (chr2 == '\0')
+    return 1;
+  else
+    return chr1 - chr2;
+}
+
 int main(int argc, char *argv[])
 {
-	struct PrintDriver *pd = &PCLPrintDriver;
+	struct PrintDriver	*pd = &PCLPrintDriver;
 	FILE			*fp = fopen("test.out", "w");
+
+	Global = (struct OleoGlobal *)malloc(sizeof(struct OleoGlobal));
 
 	fprintf(stderr, "Testing print driver for '%s'\n", pd->name);
 	pd->job_header("This is a title", 1, fp);
 	pd->font("times", "italic", 8, fp);
 	pd->page_header("Page 1", fp);
-	pd->field("Field 1", 10, 0, 1, fp);
+	pd->field("Field 1", 10, 1, 10, 1, fp);
 	pd->font("times", "bold", 8, fp);
-	pd->field("Field 2", 10, 0, 1, fp);
+	pd->field("Field 2", 10, 1, 10, 1, fp);
 	pd->font("times", "bold-italic", 8, fp);
-	pd->field("Field 3", 10, 0, 1, fp);
+	pd->field("Field 3", 10, 1, 10, 1, fp);
 
 	pd->newline(8, fp);
 	pd->font("cg times", NULL, 8, fp);
-	pd->field("Field 4 - this is in CG Times", 40, 0, 1, fp);
+	pd->field("Field 4 - this is in CG Times", 40, 1, 10, 1, fp);
 
 	pd->newline(8, fp);
 	pd->font("marigold", NULL, 8, fp);
-	pd->field("Field 5 - this is in Marigold", 40, 0, 1, fp);
+	pd->field("Field 5 - this is in Marigold", 40, 1, 10, 1, fp);
 
 	pd->newline(8, fp);
 	pd->font("clarendon", NULL, 8, fp);
-	pd->field("Field 6 - this is in Clarendon", 40, 0, 1, fp);
+	pd->field("Field 6 - this is in Clarendon", 40, 1, 10, 1, fp);
 
 	pd->newline(8, fp);
 	pd->font("letter gothic", NULL, 8, fp);
-	pd->field("Field 7 - this is in Letter Gothic", 60, 0, 1, fp);
+	pd->field("Field 7 - this is in Letter Gothic", 60, 1, 10, 1, fp);
 
 	pd->newline(8, fp);
 	pd->font("letter gothic", NULL, 8, fp);
-	pd->field("Field 8 - centered in Letter Gothic", 60, JST_CNT, 1, fp);
+	pd->field("Field 8 - centered in Letter Gothic", 60, 1, 10, 1, fp);
 
 	pd->newline(8, fp);
 	pd->font("letter gothic", NULL, 8, fp);
-	pd->field("Field 9 - right in Letter Gothic", 60, JST_RGT, 1, fp);
+	pd->field("Field 9 - right in Letter Gothic", 60, 1, 10, 1, fp);
 
 	pd->newline(8, fp);
 	pd->font("letter gothic", NULL, 8, fp);
-	pd->field("Field 10 - left in Letter Gothic", 60, JST_LFT, 1, fp);
+	pd->field("Field 10 - left in Letter Gothic", 60, 1, 10, 1, fp);
 
 	pd->page_footer("End page 1", fp);
 	pd->job_trailer(1, fp);

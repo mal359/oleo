@@ -1,5 +1,10 @@
-$Id: ChangeLog,v 1.118 1999/11/27 18:56:44 danny Exp $
+$Id: ChangeLog,v 1.119 1999/11/30 23:35:05 danny Exp $
 
+	* Update the NEWS file for upcoming release.
+	* Figure out which escape code to use exactly to get PCL
+	  printers to behave right.
+	* Turned off i18n support in src/io-x11.c for now, can't get it
+	  to work.
 
 Sat 27 Nov 19:55:41 1999, Danny
 	* Update the TODO file.
