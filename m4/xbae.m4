@@ -175,7 +175,7 @@ else
 # "none", so anything other than "" will definitely be a path.
 #
         if test "$xbae_includes" != ""; then
-                include_xbae="-I$xbae_includes"
+                XBAE_CFLAGS="-I$xbae_includes"
         fi
 #
 # Now that that's out of the way, let's deal with libraries.  Here,
@@ -186,17 +186,17 @@ else
 # a path to the library.
 #
         if test "$xbae_libraries" = ""; then
-                link_xbae="-lXbae"
+                XBAE_LIBS="-lXbae"
         else
-                link_xbae="-L$xbae_libraries -lXbae"
+                XBAE_LIBS="-L$xbae_libraries -lXbae"
         fi
 #
 # We now close the enclosing conditional.
 #
 fi
 #
-AC_SUBST(include_xbae)
-AC_SUBST(link_xbae)
+AC_SUBST(XBAE_CFLAGS)
+AC_SUBST(XBAE_LIBS)
 #
 #
 #
