@@ -175,6 +175,7 @@
 #undef HAVE_XBAE
 #undef HAVE_XLT
 #undef HAVE_XLT_FONTCHOOSER
+#undef HAVE_XPM
 
 /* GNU Plotutils */
 #undef	HAVE_LIBPLOT

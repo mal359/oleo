@@ -1,10 +1,30 @@
+$Id: ChangeLog,v 1.109 1999/10/15 23:52:15 danny Exp $
+
+Sat 16 Oct 01:08:54 1999, Danny
+********* io-x11.c i18n
+	* Printing.
+	* Call MotifSelectGlobal() with an initialized parameter.
+	* Make the documentation available on
+	  http://www.gnu.org/software/oleo/doc/oleo.html .
+	* Get all the documentation generated into one file by
+	  using the -monolithic flag to texi2html.
+	* Integrate most of the SCANDI patch by Dag Nygren.
+	* Fix silly bug that resulted in coredump when we
+	  actually have CUPS printers.
+	* Edit doc/*.texi according to comments by Olaf Bachmann,
+	  the current maintainer of texi2html. @ifhtml, @findex,
+	  @item, and similar constructs should be at the beginning
+	  of a line, or they won't work.
+	  We had a lot of those...
+
 1999-10-11  Jeff Bailey  <jbailey@cr499794-a.crdva1.bc.wave.home.com>
 
-	* src/Makefile.am: add YFLAGS -d to general parse.h.  Remove parse.h
-	reference in includes.
+        * src/Makefile.am: add YFLAGS -d to general parse.h.  Remove parse.h
+        reference in includes.
 
-	* mkinstalldirs, INSTALL, COPYING, missing: Delete.  Automake
-	provides these and they should not be in the repository.
+        * mkinstalldirs, INSTALL, COPYING, missing: Delete.  Automake
+        provides these and they should not be in the repository.
+
 
 Tue Oct  5 23:31:50 1999, Danny
 	* Release 1.99.6 .

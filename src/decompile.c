@@ -201,7 +201,7 @@ next_byte:
 	goto do_fn2;
 
     case C_STR:
-      tmp_str = backslash_a_string ((char *) expr + jumpto, 1);
+      tmp_str = backslash_a_string ((char *) expr + jumpto, 2);
       new = n_alloc (strlen (tmp_str) + 1,
 		     1000,
 		     "%s", tmp_str);
@@ -653,6 +653,8 @@ decomp_free (void)
  * Iff add_quote is true, it'll add "s at the beginning and end.
  * Note that this returns a pointer to a static area that is overwritten with
  * each call. . .
+ *
+ * If add_quote is 1, escape normal quotes, if it is 2, also escape %.
  */
 char *
 backslash_a_string (char *string, int add_quote)
@@ -684,7 +686,9 @@ backslash_a_string (char *string, int add_quote)
 	}
 	for (; *pf; pf++) {
 		ch = *pf;
-		if (isprint(ch) && ch != '\\' && (ch != '"' || !add_quote)) {
+		if (isprint(ch) && ch != '\\'
+				&& (ch != '%' || !(add_quote == 2))
+				&& (ch != '"' || !add_quote)) {
 			if (pt)
 				*pt++ = ch;
 			continue;
@@ -699,6 +703,9 @@ backslash_a_string (char *string, int add_quote)
 		} else if (ch == '"') {
 			*pt++ = '\\';
 			*pt++ = ch;
+		} else if (ch == '%') {
+			*pt++ = '%';
+			*pt++ = '%';
 		} else {
 			*pt++ = '\\';
 			*pt++ = ((ch >> 6) & 0x3) + '0';

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.17 1999/09/21 23:33:35 danny Exp $
+ * $Id: print.c,v 1.18 1999/10/15 23:52:34 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -274,7 +274,7 @@ print_region_cmd (struct rng *print, FILE *fp)
 	int spaces;
 	CELLREF c_lo, c_hi;
 	int	print_width, print_height, totht, totwid,
-		ht, npages, next;
+		ht, npages, next, current_size;
 	char	pg[32];
 	char	*title = NULL;
 
@@ -319,6 +319,9 @@ print_region_cmd (struct rng *print, FILE *fp)
 
 	    /* Figure out which columns we can print */
 	    cc = c_lo;
+			/* FIX ME
+			 * The 2/3 below is a hunch at best
+			 */
 	    for (w = get_width (cc); w <= print_width && cc <= print->hc;
 			w += get_width(++cc) * default_font_size * 2 / 3)
 		;
@@ -328,6 +331,9 @@ print_region_cmd (struct rng *print, FILE *fp)
 
 	    totht = 0;		/* Start counting height taken up on a page */
 	    for (rr = print->lr; rr <= print->hr; rr++) {
+		/*
+		 * Print a line
+		 */
 		if (totht == 0) {
 			sprintf(pg, "page %d", npages);
 			Global->CurrentPrintDriver->page_header(pg, fp);
@@ -345,21 +351,22 @@ print_region_cmd (struct rng *print, FILE *fp)
 
 		    /* Font */
 		    if (cp && cp->cell_font && cp->cell_font->names) {
-			int	size = cp->cell_font->scale * default_font_size;
+			current_size = cp->cell_font->scale * default_font_size;
 
-			if (size == 0)
-				size = default_font_size;
+			if (current_size == 0)
+				current_size = default_font_size;
 
 			Global->CurrentPrintDriver->font(
 				cp->cell_font->names->ps_name,
 				default_font_slant,			/* FIX ME */
-				size,
+				current_size,
 				fp);
 		    } else {
 			Global->CurrentPrintDriver->font(default_font_family,
 				default_font_slant,
 				default_font_size,
 				fp);
+			current_size = default_font_size;
 		    }
 
 		/*
@@ -385,7 +392,7 @@ print_region_cmd (struct rng *print, FILE *fp)
 			for (i=cc+1; i<c_hi; i++) {
 				struct cell *cp = find_cell (rr, i);
 				if (!cp || GET_FORMAT(cp) == FMT_HID || GET_TYP(cp) == 0) {
-					wtot += get_width(i);
+					wtot += get_width(i) * current_size;
 					next = i+1;
 				} else
 					break;

@@ -397,7 +397,8 @@ changing this will change the font in the entire spreadsheet.
 @cmindex set-default-point-size
 
 
-@c @item M-x define-font-name
+@c
+@item M-x define-font-name
 @c         Define New short hand names for fonts.
 @c   Later, if a user uses a shorthand name in a font
 @c specification, the name is replace by the text of the definition.  For

@@ -24,44 +24,44 @@
 same type).
 
 @table @code
- @item -@var{N1}
+@item -@var{N1}
   Arithmetic negation: 0-@var{N1}
- @item !@var{bool}
+@item !@var{bool}
   Logical negation: @code{#TRUE} if @var{bool} is @code{#FALSE},
 @code{#FALSE} if @code{#TRUE}, and an error otherwise.
- @item @var{N1} ^ @var{N2}
+@item @var{N1} ^ @var{N2}
   Exponentiation.  Note that a^b^c is defined to be a^(b^c).
- @item @var{N1} * @var{N2}
+@item @var{N1} * @var{N2}
         Multiplication
- @itemx @var{N1} / @var{N2}
+@itemx @var{N1} / @var{N2}
         Division
- @itemx @var{N1} + @var{N2}
+@itemx @var{N1} + @var{N2}
         Addition
- @itemx @var{N1} - @var{N2}
+@itemx @var{N1} - @var{N2}
         Subtraction
- @item @var{N1} % @var{N2}
+@item @var{N1} % @var{N2}
   Modulus; the remainder of @var{N1} / @var{N2}.
- @item @var{N1} >=@var{N2}
+@item @var{N1} >=@var{N2}
 @code{#TRUE} if @var{N1} is greater than or equal to @var{N2}; else @code{#FALSE}
- @item @var{N1} > @var{N2}
+@item @var{N1} > @var{N2}
 @code{#TRUE} if @var{N1} is greater than  @var{N2}; else @code{#FALSE}
- @item @var{N1} < @var{N2}
+@item @var{N1} < @var{N2}
 @code{#TRUE} if @var{N1} is less than @var{N2}; else @code{#FALSE}
- @item @var{N1} <=@var{N2}
+@item @var{N1} <=@var{N2}
 @code{#TRUE} if @var{N1} is less than or equal to @var{N2}; else @code{#FALSE}
- @item @var{val1} = @var{val2}
+@item @var{val1} = @var{val2}
   Comparison: @code{#TRUE} if @var{val1} and @var{val2} can be
 considered equal, @code{#FALSE} if not.  @var{val1} and @var{val2} can
 be numbers, strings, or boolean values.
- @item @var{val1} != @var{val2}
+@item @var{val1} != @var{val2}
   Equivalent to @code{!(@var{val1} = @var{val2})}.
- @item @var{str1} & @var{str2}
+@item @var{str1} & @var{str2}
   Text concatenation of strings.
- @item @var{bool} ? @var{val1} : @var{val2}
+@item @var{bool} ? @var{val1} : @var{val2}
   Like the C operator: if @var{bool} is @code{#TRUE}, @var{val1} is
 evaluated; if @var{bool} is @code{#FALSE}, @var{val2} is evaluated;
 otherwise an error is returned.
- @item (@var{expr})
+@item (@var{expr})
   Overrides default precedence of expression @var{expr}.  Note that
 since Oleo stores expressions in a byte-compiled form, unneeded
 parentheses will mysteriously vanish.
@@ -125,54 +125,54 @@ conditions, such as invalid parameters to functions, badly formatted
 expressions, etc.
 
 @table @code
- @item #TRUE
- @itemx #FALSE
+@item #TRUE
+@itemx #FALSE
   The boolean true and false values.  Not really errors, but classified
 as such to distinguish them from numbers and strings.
- @item #ERROR
+@item #ERROR
   An unclassified error.
- @item #BAD_INPUT
+@item #BAD_INPUT
   Indicates an inappropriate parameter to a formula function.
- @item #NON_NUMBER
+@item #NON_NUMBER
   A numerical value was expected.
- @item #NON_STRING
+@item #NON_STRING
   A string value was expected.
- @item #NON_BOOL
+@item #NON_BOOL
   A boolean value was expected.
- @item #NON_RANGE
+@item #NON_RANGE
   A range value was expected.
- @item #OUT_OF_RANGE
+@item #OUT_OF_RANGE
   An out-of-range value was given, such as a cell coordinate outside a
 given cell range.
- @item #NO_VALUES
+@item #NO_VALUES
   An error value.
- @item #DIV_BY_ZERO
+@item #DIV_BY_ZERO
   A division by zero was attempted.
- @item #BAD_NAME
+@item #BAD_NAME
   An error value that indicates an invalid variable name.  It may be the
 symptom of an incorrectly written address, or a string literal given
 without double quotes.
- @item #NOT_AVAIL
+@item #NOT_AVAIL
   An error value.
- @item #PARSE_ERROR
+@item #PARSE_ERROR
   A generic error value that indicates the parser failed to parse an
 expression.
- @item #NEED_OPEN
+@item #NEED_OPEN
   An open parenthesis is missing.
- @item #NEED_CLOSE
+@item #NEED_CLOSE
   A close parenthesis is missing.
- @item #NEED_QUOTE
+@item #NEED_QUOTE
   A quote was expected; e.g., the terminating quote of a string literal.
- @item #UNK_CHAR
+@item #UNK_CHAR
   An unknown character was encountered.
- @item #UNK_FUNC
+@item #UNK_FUNC
   An unknown function was called.
- @item #INF
- @itemx #INFINITY
- @itemx #NINF
- @itemx #MINUS_INFINITY
- @itemx #NAN
- @itemx #NOT_A_NUMBER
+@item #INF
+@itemx #INFINITY
+@itemx #NINF
+@itemx #MINUS_INFINITY
+@itemx #NAN
+@itemx #NOT_A_NUMBER
   Various floating-point exceptions.  On some machines these may be all
 the same value, or indistinguishable from other values.
 @end table

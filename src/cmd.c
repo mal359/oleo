@@ -447,7 +447,7 @@ block_until_excitment (int timeout_seconds)
 int 
 real_get_chr (void)
 {
-  int ch = EOF;			/* The char that will be returned. */
+  unsigned int ch = EOF;		/* The char that will be returned. */
 
   /* Characters with the meta bit set are returned as
    * two characters: ESC and a non-meta character.
@@ -458,7 +458,7 @@ real_get_chr (void)
   static int saved_char;
 
   /* A buffer of characters read in one burst from the kbd. */
-  static char ibuf[256];
+  static unsigned char ibuf[256];
   static int i_in;		/* chars buffered */
   static int i_cnt;		/* buffer position */
 
@@ -538,11 +538,25 @@ real_get_chr (void)
 
 fini:
 
-  if (ch & 0x80)
-    {
+  if (ch & 0x80) {
+#if 0
       saved_char = 1 + (ch & 0x7f);
       ch = CTRL ('[');
-    }
+#else	/* SCANDI */
+	switch (ch) {
+		case 229:                             /* e */
+		case 228:                             /* d */
+		case 246:                             /* v */
+		case 197:                             /* E */
+		case 196:                             /* D */
+		case 214:                             /* V */
+			break;
+		default:
+			saved_char = 1 + (ch & 0x7f);
+			ch = CTRL ('[');
+	}
+#endif
+  }
 
   if (making_macro)
     {
@@ -1546,19 +1560,21 @@ command_loop (int prefix, int iscmd)
  * 
  * --FB, 1997.12.27
  */
+
+#define mark_is_set (mkrow != NON_ROW)
+#define interactive_mode (!rmac || iscmd)
+
                 case '@':
 		case 'r':
 		case 'R':
 		  {
-		    if (*prompt != '@' && mkrow != NON_ROW)
-                      {
+		    if (*prompt != '@' && !mark_is_set) {
+			/* Default to current cell */
                         mkrow = curow;
                         mkcol = cucol;
-                      }
-                    if ((*prompt != 'R'
-                        && (!rmac || iscmd)
-                        && mkrow != NON_ROW) || *prompt =='@')
-		      {
+                    }
+                    if ((*prompt != 'R' && interactive_mode
+				&& mark_is_set) || *prompt =='@') {
 			the_cmd_arg.val.range.lr = MIN(mkrow, curow);
 			the_cmd_arg.val.range.hr = MAX(mkrow, curow);
 			the_cmd_arg.val.range.lc = MIN(mkcol, cucol);
@@ -1566,8 +1582,7 @@ command_loop (int prefix, int iscmd)
                           mkrow = NON_ROW;
                           mkcol = NON_COL;
                           io_update_status ();
-                        if (*prompt == '@' && (!rmac || iscmd))
-                          {
+                        if (*prompt == '@' && interactive_mode) {
                             ++prompt;
                             if (get_argument (prompt, &range_style))
                               {
@@ -1575,20 +1590,16 @@ command_loop (int prefix, int iscmd)
                                   range_name (&the_cmd_arg.val.range));
                               }
                             goto new_cycle;
-                          }
-                        else
-                          {
+                        } else {	/* (Noninteractive mode and @) or r */
                             ++prompt;
                             the_cmd_arg.is_set = 1;
                             the_cmd_arg.do_prompt = 1;
                             the_cmd_arg.style = &range_style;
                             init_arg_text (&the_cmd_arg,
                                range_name (&the_cmd_arg.val.range));
-                          }
+                        }
 			goto next_arg;
-		        }
-		      else
-		        {
+		      } else {		/* R */
 			++prompt;
 			if (get_argument (prompt, &range_style))
 			  goto new_cycle;

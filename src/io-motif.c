@@ -1,6 +1,6 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.50 1999/09/02 22:53:44 danny Exp $
+ *  $Id: io-motif.c,v 1.51 1999/10/15 23:52:32 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -22,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.50 1999/09/02 22:53:44 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.51 1999/10/15 23:52:32 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -729,7 +729,7 @@ Widget CreateConfigureGraph(Widget parent)
 	Widget	toprc, frame, w, rc, cap;
 	struct ConfigureWidgets	*cw;
 
-	MotifSelectGlobal(w);
+	MotifSelectGlobal(parent);
 
 	cw = (struct ConfigureWidgets *)XtMalloc(
 		sizeof(struct ConfigureWidgets));
@@ -1050,7 +1050,7 @@ void ConfigureGraphReset(Widget f)
  */
 void ConfigureGraph(Widget w, XtPointer client, XtPointer call)
 {
-	Widget		ok, cancel, help, p, fr, inside;
+	Widget		ok, cancel, help, p, fr;
 	int		ac;
 	Arg		al[5];
 
@@ -1069,8 +1069,8 @@ void ConfigureGraph(Widget w, XtPointer client, XtPointer call)
 		XtManageChild(ConfigureGraphNotebook);
 
 		/* The data */
-		inside = CreateConfigureGraph(ConfigureGraphNotebook);
-		XtManageChild(inside);
+		ConfigureGraphInside = CreateConfigureGraph(ConfigureGraphNotebook);
+		XtManageChild(ConfigureGraphInside);
 
 		p = XtVaCreateManagedWidget("datatab", xmPushButtonWidgetClass,
 			ConfigureGraphNotebook,
@@ -1116,13 +1116,13 @@ void ConfigureGraph(Widget w, XtPointer client, XtPointer call)
 			configureGraph,
 			NULL);
 
-		XtAddCallback(ok, XmNactivateCallback, ConfigureGraphOk, inside);
+		XtAddCallback(ok, XmNactivateCallback, ConfigureGraphOk, ConfigureGraphInside);
 		XtAddCallback(cancel, XmNactivateCallback, CancelTemplate, configureGraph);
 
 		/* FIX ME need something to call the help system */
 	}
 
-	ConfigureGraphReset(inside);
+	ConfigureGraphReset(ConfigureGraphInside);
 	XtManageChild(configureGraph);
 }
 
@@ -1401,7 +1401,7 @@ Widget ConfigureXYChart(Widget parent)
 	Arg	al[10];
 	int	ac;
 
-	MotifSelectGlobal(w);
+	MotifSelectGlobal(parent);
 
 	ac = 0;
 	frame = XmCreateFrame(parent, "puselectfile", al, ac);
@@ -1909,7 +1909,7 @@ Widget MotifCreatePrintDialog(Widget s)
 	printers = NULL;
 	nprinters = cupsGetPrinters(&printers);
 
-	for (i=0; nprinters; i++) {
+	for (i=0; i < nprinters; i++) {
 		Widget	b;
 		b = XtVaCreateManagedWidget(printers[i],
 			xmPushButtonGadgetClass, cupsmenu, NULL);
@@ -5520,6 +5520,7 @@ void gplCB(Widget w, XtPointer client, XtPointer call)
 	ac = 0;
 	p = XmCreatePushButtonGadget(x, "ok", al, ac);
 	XtManageChild(p);
+	XtAddCallback(p, XmNactivateCallback, DestroyTemplate, x);
 
 	XtManageChild(x);
 }
@@ -5530,7 +5531,7 @@ void versionCB(Widget w, XtPointer client, XtPointer call)
 	XmString	xms, xms1, xms2;
 	Arg		al[2];
 	int		ac;
-	char		xbae[20];
+	char		xbae[64];
 
 	MotifSelectGlobal(w);
 
@@ -5589,6 +5590,15 @@ void versionCB(Widget w, XtPointer client, XtPointer call)
 
 #ifdef	HAVE_LIBCUPS
 	sprintf(xbae, "\n  CUPS %f", CUPS_VERSION);
+	xms1 = xms;
+	xms2 = XmStringCreateLtoR(xbae, XmFONTLIST_DEFAULT_TAG);
+	xms = XmStringConcat(xms1, xms2);
+	XmStringFree(xms1);
+	XmStringFree(xms2);
+#endif
+
+#ifdef	HAVE_LIBPLOT
+	sprintf(xbae, "\n  GNU PlotUtils (libplot version %s)", LIBPLOT_VERSION);
 	xms1 = xms;
 	xms2 = XmStringCreateLtoR(xbae, XmFONTLIST_DEFAULT_TAG);
 	xms = XmStringConcat(xms1, xms2);

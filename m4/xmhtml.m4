@@ -190,9 +190,9 @@ else
 # and Xext libraries should be added.
 #
         if test "$xmhtml_libraries" = ""; then
-                link_xmhtml="-lXmHTML -lXext -ljpeg"
+                link_xmhtml="-lXmHTML -lXext -ljpeg -lpng -lz"
         else
-                link_xmhtml="-L$xmhtml_libraries -lXmHTML -lXext -ljpeg"
+                link_xmhtml="-L$xmhtml_libraries -lXmHTML -lXext -ljpeg -lpng -lz"
         fi
 #
 # We now close the enclosing conditional.

@@ -1,5 +1,5 @@
 /*
- *  $Id: postscript.c,v 1.9 1999/09/19 09:26:31 danny Exp $
+ *  $Id: postscript.c,v 1.10 1999/10/15 23:52:35 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -28,7 +28,7 @@
  * There shouldn't be much spreadsheet functionality here...
  */
 
-static char rcsid[] = "$Id: postscript.c,v 1.9 1999/09/19 09:26:31 danny Exp $";
+static char rcsid[] = "$Id: postscript.c,v 1.10 1999/10/15 23:52:35 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -48,6 +48,8 @@ static char rcsid[] = "$Id: postscript.c,v 1.9 1999/09/19 09:26:31 danny Exp $";
  * FIX ME these should be static
  */
 extern float default_pswid, default_pshgt;
+
+static int CurrentFontSize = 0;
 
 void 
 put_ps_string (char *str, FILE *fp)
@@ -137,12 +139,17 @@ static float	x, y;
 
 #define	INITIAL_X	10.0
 #define	INITIAL_Y	760.0
+
+/*
+ * MULTIPLY_WIDTH should provide the mapping between string length (in chars)
+ *	and visible length in points.
+ */
 /*
  * 8 : too wide
  * 6 : no margin between columns
  * 7 : ??
  */
-#define	MULTIPLY_WIDTH	7
+#define	MULTIPLY_WIDTH	12
 
 void PostScriptPageHeader(char *str, FILE *fp)
 {
@@ -161,10 +168,18 @@ void PostScriptPageFooter(char *str, FILE *fp)
  */
 void PostScriptField(char *str, int wid, int justify, int rightborder, FILE *fp)
 {
-	float	w = MULTIPLY_WIDTH * wid;
+	float	w = wid * MULTIPLY_WIDTH;	/* FIX ME no way */
 
 	if (strlen(str)) {
-		float	tw = strlen(str) * MULTIPLY_WIDTH;	/* Font size ?? */
+		float	tw = strlen(str) * CurrentFontSize;
+
+#if 0
+		fprintf(stderr, "PostScriptField(%s,%d,%s)\n",
+			str, wid,
+			(justify == JST_CNT) ? "JST_CNT" :
+			(justify == JST_RGT) ? "JST_RGT" :
+			(justify == JST_DEF) ? "JST_DEF" : "JST_LFT");
+#endif
 
 		if (justify == JST_CNT) {
 			fprintf(fp, "%3.1f %3.1f moveto ", x + (w - tw) / 2, y);
@@ -200,6 +215,7 @@ void PostScriptFont(char *family, char *slant, int size, FILE *fp)
 #if 0
 	fprintf(fp, "FontName findfont FirstSize scalefont setfont\n");
 #endif
+	CurrentFontSize = size;
 }
 
 void PostScriptNewLine(int ht, FILE *fp)

@@ -3,7 +3,7 @@
 #
 # Process this file with automake to produce Makefile.in
 #
-# $Header: /home/matt/cvs/oleo/oleo/Makefile.am,v 1.30 1999/09/19 09:26:21 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/Makefile.am,v 1.31 1999/10/15 23:52:17 danny Exp $
 #
 AUTOMAKE_OPTIONS = gnu 1.4 readme-alpha
 ACLOCAL_AMFLAGS = -I m4
@@ -38,7 +38,7 @@ release.alpha:	oleo-$(VERSION).tar.gz
 web:
 	rcp doc/oleo_web.html gnudist.gnu.org:/home/www/html/software/oleo/oleo.html
 	rcp ChangeLog gnudist.gnu.org:/home/www/html/software/oleo/ChangeLog
-	rcp doc/oleo.html gnudist.gnu.org:/home/www/html/software/oleo/oleo_man.html
+	rcp doc/oleo.html gnudist.gnu.org:/home/www/html/software/oleo/doc/oleo.html
 
 docdir=        $(prefix)/Oleo
 doc_DATA=	AUTHORS FAQ

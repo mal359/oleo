@@ -826,12 +826,11 @@ char_to_string (int ch)
   if (ch == '\\')
     return "\\\\";
 
-  if (ch >= ' ' && ch <= '~')
-    {
+  if (isprint(ch)) {
       buf[3] = ch;
       buf[4] = 0;
       return &buf[3];
-    }
+  }
 
   if (ch & 0x80)
     {

@@ -21,23 +21,24 @@ A value can be a literal (an immediate value, like @code{"foo"},
 There are 5 types of values:
 
 @itemize @bullet
- @item Integers.
- @item Floats, expressed in the usual format:
+@item Integers.
+@item Floats, expressed in the usual format:
 [@code{-}]@var{nnn}[@code{.}@var{nnn}][@code{e}[@code{-}]@var{nnn}],
 e.g., -103.14e-7 or .00000012 or 103.14.
-  @cindex String values
-  @item Strings, which are surrounded by double quotes.  To include
+@cindex String values
+@item Strings, which are surrounded by double quotes.  To include
 unusual characters, you can either quote them with a backslash (e.g.,
 @w{@code{"This is \"quoted\"."}}) or use an octal escape code: 
 @samp{\@var{nnn}}
 where @var{nnn} is the octal code for the ASCII value of the character.
 @c an expression isn't really another type; it's a group of values:
-@c @item Expressions, such as @code{@@sum(A1.B3)}, or @code{A1 + B2}.
- @item Errors, which have alphabetic names and start with a @samp{#}
+@c
+@item Expressions, such as @code{@@sum(A1.B3)}, or @code{A1 + B2}.
+@item Errors, which have alphabetic names and start with a @samp{#}
 sign.
- @item Booleans, which are "error" values of either @code{#TRUE} or
+@item Booleans, which are "error" values of either @code{#TRUE} or
 @code{#FALSE}.
-  @cindex Boolean values
+@cindex Boolean values
 @end itemize
 
 

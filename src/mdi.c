@@ -1,5 +1,5 @@
 /*
- *  $Id: mdi.c,v 1.3 1999/09/19 09:26:32 danny Exp $
+ *  $Id: mdi.c,v 1.4 1999/10/15 23:52:35 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: mdi.c,v 1.3 1999/09/19 09:26:32 danny Exp $";
+static char rcsid[] = "$Id: mdi.c,v 1.4 1999/10/15 23:52:35 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -138,9 +138,18 @@ MdiSelectGlobal(int offset1, int offset2, void *ptr)
 			q = (char **) (*p + offset2);
 			if (*q == ptr) {
 				Global = &globals[i];
+#if 0
+				fprintf(stderr, "MdiSelectGlobal: match for %d,%d,%p -> %p\n",
+					offset1, offset2, ptr, Global);
+#endif
 				return;
 			}
 		}
+#if 0
+	fprintf(stderr,
+		"MdiSelectGlobal: no match for offset %d,%d ptr %p\n",
+		offset1, offset2, ptr);
+#endif
 	MessageAppend(True,
 		"MdiSelectGlobal: no match for offset %d,%d ptr %p\n",
 		offset1, offset2, ptr);

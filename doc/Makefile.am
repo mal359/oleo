@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/doc/Makefile.am,v 1.10 1999/07/22 22:13:33 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/doc/Makefile.am,v 1.11 1999/10/15 23:52:23 danny Exp $
 #
 # Process this file with automake to produce Makefile.in
 #
@@ -22,6 +22,6 @@ htmldir=	$(prefix)/share/oleo
 html_DATA=	oleo.html
 
 oleo.html:	$(srcdir)/oleo.texi ${TEXIS}
-		texi2html $(srcdir)/oleo.texi
+		texi2html -monolithic $(srcdir)/oleo.texi
 
 endif

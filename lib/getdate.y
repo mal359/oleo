@@ -279,6 +279,11 @@ date	: tUNUMBER '/' tUNUMBER {
 	    yyMonth = $1;
 	    yyDay = $3;
 	}
+      | tUNUMBER '.' tUNUMBER '.' tUNUMBER {
+            yyDay = $1;
+            yyMonth = $3;
+            yyYear = $5;
+        }  
 	| tUNUMBER '/' tUNUMBER '/' tUNUMBER {
 	  /* Interpret as YYYY/MM/DD if $1 >= 1000, otherwise as MM/DD/YY.
 	     The goal in recognizing YYYY/MM/DD is solely to support legacy

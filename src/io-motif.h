@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.h,v 1.8 1999/09/02 22:53:46 danny Exp $
+ *  $Id: io-motif.h,v 1.9 1999/10/15 23:52:34 danny Exp $
  *
  *  This file is part of GnuSheet, a free spreadsheet.
  *
@@ -44,6 +44,7 @@ struct MotifGlobalType {
 		XYyMinText_w, XYyMaxText_w, lineToOffscreen_w;
 	Widget	UserPref_w, ActiveRangeSelectionWidget_w, pufsd_w;
 	Widget	configureGraph_w, copyDialog_w, optionsDialog_w, executeCommandDialog_w;
+	Widget	configureGraphInside_w;
 	struct rng	selection_range;
 	int	PuPlotter;
 	PuFunction ThisPuFunction;
@@ -110,6 +111,7 @@ struct MotifGlobalType {
 #define	configureGraph		Global->MotifGlobal->configureGraph_w
 #define	copyDialog		Global->MotifGlobal->copyDialog_w
 #define	optionsDialog		Global->MotifGlobal->optionsDialog_w
+#define	ConfigureGraphInside	Global->MotifGlobal->configureGraphInside_w
 
 #define	ExecuteCommandDialog		Global->MotifGlobal->executeCommandDialog_w
 
