@@ -1,7 +1,7 @@
 /*
- * $Id: forminfo.c,v 1.8 2000/07/25 12:56:32 danny Exp $
+ * $Id: forminfo.c,v 1.9 2000/08/10 21:02:50 danny Exp $
  *
- * Copyright (C) 1993, 2000 Free Software Foundation, Inc.
+ * Copyright © 1993, 2000 Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1107,6 +1107,8 @@ char * formula_info[] =
 "[plotutils-illustrator]	--  Write a file in Adobe Illustrator format.",
 "[plotutils-metaplot]	--  Write a file GNU MetaPlot format.",
 "[plotutils-fig]	--  Write a file in the format of the FIG program.",
+"[plotutils-gif]	--  Write a file in GIF format.",
+"[plotutils-png]	--  Write a file in PNG format.",
 0,
 #else
 #endif
@@ -1392,7 +1394,7 @@ char * formula_info[] =
 0,
 "_NON_WARRANTY_",
 "",
-" Copyright (C) 1990, 1991, 1992, 1997 Free Software Foundation,Inc.",
+" Copyright © 1990, 1991, 1992, 1997 Free Software Foundation,Inc.",
 "There is ABSOLUTELY NO WARRANTY for Oleo; see the file COPYING",
 "for details.  Oleo is free software and you are welcome to distribute",
 "copies of it under certain conditions; see the file COPYING to see the",

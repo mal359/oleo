@@ -1,5 +1,5 @@
 /*
- * $Id: plotter.c,v 1.6 2000/07/25 12:56:32 danny Exp $
+ * $Id: plotter.c,v 1.7 2000/08/10 21:02:51 danny Exp $
  *
  * This file contains the heart of libsciplot - the scientific plotting
  * library layered on top of GNU plotutils.
@@ -2656,7 +2656,7 @@ sp_plot_point_simple(Multigrapher *mg, int connected, double x, double y)
 	p->xmin = p->xmax = 0.0;
 	p->ymin = p->ymax = 0.0;
 
-	p->symbol = 1;
+	p->symbol = mg->symbol;
 	p->symbol_size = 0.02;
 	p->symbol_font_name = NULL;
 	p->line_width = 0.001;
@@ -2666,6 +2666,11 @@ sp_plot_point_simple(Multigrapher *mg, int connected, double x, double y)
 	p->label = NULL;
 
 	sp_plot_point(mg, p);
+}
+
+void sp_plot_symbol(Multigrapher *mg, int symbol)
+{
+	mg->symbol = symbol;
 }
 
 /*
@@ -2692,6 +2697,7 @@ sp_create_plot(plPlotter *plotter, const SpPlotType plot_type)
 
 	multigrapher->x_axis.tick_type = SP_TICK_DEFAULT;
 	multigrapher->y_axis.tick_type = SP_TICK_DEFAULT;
+	multigrapher->symbol = 1;
 
 	pl_erase_r(plotter);
 

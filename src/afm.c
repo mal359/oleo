@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 1999 Free Software Foundation, Inc.
+ * Copyright © 1999 Free Software Foundation, Inc.
  *
- * $Id: afm.c,v 1.6 2000/02/22 23:29:33 danny Exp $
+ * $Id: afm.c,v 1.7 2000/08/10 21:02:49 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -359,7 +359,7 @@ AfmStringWidth(char *s)
 #endif
 			if (cw == 0) {
 				fprintf(stderr, "Width of char(%c) not found\n", *p);
-//				return 0;
+/*				return 0;	*/
 			}
 			r += cw;
 		}

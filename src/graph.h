@@ -2,9 +2,9 @@
 #define GRAPHH
 
 /*
- * $Id: graph.h,v 1.9 2000/07/25 12:56:32 danny Exp $
+ * $Id: graph.h,v 1.10 2000/08/10 21:02:50 danny Exp $
  *
- * Copyright (C) 1993-2000 Free Software Foundation, Inc.
+ * Copyright © 1993-2000 Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,6 @@ typedef void (*fpi_thunk) (void * rock, CELL * cp, CELLREF, CELLREF);
 
 
 extern enum graph_axis chr_to_axis (int c);
-extern enum graph_ordering chr_to_graph_ordering (int c);
-extern enum graph_pair_ordering chrs_to_graph_pair_ordering (int pair, int dir);
 extern char * graph_quoted_str (char *str);
 extern void graph_postscript (char * file, int kind, int spectrum, char * font, int pt_size);
 extern void graph_set_axis_title (int axis_c, char * title);
@@ -45,13 +43,11 @@ extern void graph_set_logness (int axis_c, int explicit, int newval);
 extern void graph_check_range (char * val);
 extern void graph_set_axis_lo (int axis_c, char * val);
 extern void graph_set_axis_hi (int axis_c, char * val);
-extern void graph_set_axis_symbolic (int axis_c, struct rng * rng, int ordering_c) ;
-extern void graph_set_axis_labels (int axis_c, struct rng * rng, int pair, int dir);
 extern void graph_default_axis_labels (int axis_c);
 extern int graph_check_style (char * name);
 extern void graph_set_style (int data_set, char * style);
 extern void graph_set_data_title (int data_set, char * title);
-extern void graph_set_data (int data_set, struct rng * rng, int pair, int dir);
+extern void graph_set_data(int data_set, struct rng * rng);
 extern void graph_presets (void);
 extern void graph_clear_datasets (void);
 extern void init_graphing (void);
@@ -64,6 +60,10 @@ extern void plotutils_set_filename(char *file);
 extern void plotutils_tek(void);
 extern void plotutils_regis(void);
 extern void plotutils_fig(void);
+extern void plotutils_x_color(void);
+extern void plotutils_x_mono(void);
+extern void plotutils_gif(void);
+extern void plotutils_png(void);
 extern void plotutils_illustrator(void);
 extern void plotutils_metaplot(void);
 extern void plotutils_pcl(void);
@@ -98,31 +98,4 @@ char *graph_get_axis_tickformat(int axis);
 
 typedef void (*plotter) (void);
 
-typedef struct oleo_graph {
-	plotter	plot_fn;
-	struct line graph_axis_title [graph_num_axis];	/* `set label %s' for each axis.  */
-	int graph_logness [graph_num_axis];		/* set logarithmic */
-/* Arguments to `set range [%s:%s]' */
-	struct line graph_rng_lo [graph_num_axis];
-	struct line graph_rng_hi [graph_num_axis];
-/*
- * The ranges (if any) of the symbolic names for integer coordinates starting
- * at 0.
- * If none, these will have lr == NON_ROW.
- */
-	struct rng graph_axis_symbols [graph_num_axis];
-	enum graph_ordering graph_axis_ordering [graph_num_axis];
-/* Names to print along the axes */
-	struct rng graph_axis_labels [graph_num_axis];
-	enum graph_pair_ordering graph_axis_label_order [graph_num_axis];
-/* plot .... with %s */
-	struct line graph_style [NUM_DATASETS];
-	struct line graph_title [NUM_DATASETS];
-	struct rng graph_data [NUM_DATASETS];
-	enum graph_pair_ordering graph_data_order [graph_num_axis];
-
-/* Numeric values for axis ranges */
-	double	graph_axis_lo[graph_num_axis],
-		graph_axis_hi[graph_num_axis];
-} oleo_graph;
 #endif  /* GRAPHH */

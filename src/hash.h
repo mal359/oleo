@@ -1,7 +1,7 @@
 /*
- * $Id: hash.h,v 1.3 2000/07/22 06:13:15 danny Exp $
+ * $Id: hash.h,v 1.4 2000/08/10 21:02:50 danny Exp $
  *
- * Copyright (C) 1987, 1992, 1993 Free Software Foundation, Inc.
+ * Copyright © 1987, 1992, 1993 Free Software Foundation, Inc.
  * 
  * This file is part of GAS, the GNU Assembler.
  * 

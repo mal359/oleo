@@ -1,9 +1,9 @@
 /*
- *  $Id: io-motif.h,v 1.16 2000/07/22 06:13:16 danny Exp $
+ *  $Id: io-motif.h,v 1.17 2000/08/10 21:02:50 danny Exp $
  *
  *  This file is part of GNU Oleo, a free spreadsheet.
  *
- *  Copyright (C) 1998-2000 Free Software Foundation, Inc.
+ *  Copyright © 1998-2000 Free Software Foundation, Inc.
  *  Written by Danny Backx <danny@gnu.org>.
  *
  *  This program is free software; you can redistribute it and/or modify

@@ -1,7 +1,7 @@
 /*
- * $Id: plot.c,v 1.24 2000/07/25 12:56:32 danny Exp $
+ * $Id: plot.c,v 1.25 2000/08/10 21:02:51 danny Exp $
  *
- * Copyright (C) 1998-2000 Free Software Foundation, Inc.
+ * Copyright © 1998-2000 Free Software Foundation, Inc.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  */
 
 /*
- * $Id: plot.c,v 1.24 2000/07/25 12:56:32 danny Exp $
+ * $Id: plot.c,v 1.25 2000/08/10 21:02:51 danny Exp $
  *
  * This file contains the code to draw plots from the Oleo data
  * layered on top of the libsciplot functions.
@@ -66,7 +66,7 @@ struct PlotutilsDevices PlotutilsDeviceArray[] = {
   {	GRAPH_X,		"x",		"x",		"X Window"			},
   {	GRAPH_PNG,		"png",		"png",		"Portable Network Graphics"	},
   {	GRAPH_GIF,		"gif",		"gif",		"GIF"				},
-  {	GRAPH_METAFILE,		"metafile",	"metafile",	"GNU metafile"			},
+  {	GRAPH_METAFILE,		"meta",		"metafile",	"GNU metafile"			},
   {	GRAPH_ILLUSTRATOR,	"ai",		"ai",		"Adobe Illustrator"		},
   {	GRAPH_FIG,		"fig",		"fig",		"Fig"				},
   {	GRAPH_PCL,		"pcl",		"pcl",		"PCL"				},
@@ -78,6 +78,40 @@ struct PlotutilsDevices PlotutilsDeviceArray[] = {
 	/* Don't add anything after this line */
   {	-1,			NULL,		NULL,		NULL				}
 };
+
+#include <stdarg.h>
+
+static void OleoLog(char *fmt, ...)
+{
+	va_list	ap;
+	FILE	*log = fopen("/tmp/oleolog", "a");
+	if (log) {
+		va_start(ap, fmt);
+		vfprintf(log, fmt, ap);
+		va_end(ap);
+		fclose(log);
+	}
+}
+
+typedef void (*sh) (int);
+sh	oldsig;
+
+static RETSIGTYPE
+handler(int sig)
+{
+	signal(sig, handler);
+
+	io_error_msg("Plotutils: got signal %d, aborting", sig);
+}
+
+static void
+SignalInit(void)
+{
+	oleo_catch_signals(&handler);
+#if 0
+	oldsig = signal(SIGSEGV, handler);
+#endif
+}
 
 void
 PlotInit(void)
@@ -135,6 +169,8 @@ PuOpen(const char *plotter, FILE *outfile)
 {
 	int	r;
 	plPlotterParams	*plotter_params;
+
+	SignalInit();
 
 	plotter_params = pl_newplparams();
 
@@ -337,36 +373,64 @@ PuBarChart(char *plotter, FILE *outfile)
 void
 PuXYChart(char *plotter, FILE *outfile)
 {
-	int		i, r, num, nalloc;
-	double		x, y, xmin, xmax, delta, *xes, ymax, ymin, oldx, oldy;
+	int		i, r, num, nalloc, noxdata = 0;
+	double		x, y, xmin, xmax, delta, *xes = 0,
+			ymax, ymin, oldx, oldy;
 	struct rng	rngx;
 	CELL		*cp;
 	Multigrapher	*mg;
 
 	PuOpen(plotter, outfile);
 
-	/* Figure out X axis borders */
+	/*
+	 * Figure out whether dataset 0 has been specified.
+	 * If it is, this is our X axis data; otherwise take a simple
+	 * incremental counter for it. (1, 2, 3, 4, ...)
+	 */
 	rngx = graph_get_data(0);
-	make_cells_in_range(&rngx);
-	cp = next_cell_in_range();
-	xmin = xmax = float_cell(cp);
-	nalloc = 0;
-	while ((cp = next_cell_in_range())) {
-		    y = float_cell(cp);
-		    nalloc++;
-		    if (y < xmin)
-			xmin = y;
-		    else if (y > xmax)
-			xmax = y;
-	}
+	if (rngx.lr == NON_ROW) {
+		noxdata = 1;
 
-	xes = (double *)calloc(nalloc + 1, sizeof(double));
-	make_cells_in_range(&rngx);
-	i = 0;
-	while ((cp = next_cell_in_range())) {
-		if (i > nalloc)
-			abort();
-		xes[i++] = float_cell(cp);
+		/* Figure out X axis borders - use the first dataset you find */
+		for (r = 1; r < NUM_DATASETS; r++) {
+			rngx = graph_get_data(r);
+
+			if (rngx.lr != NON_ROW)
+				break;
+		}
+
+		nalloc = 0;
+		make_cells_in_range(&rngx);
+		while ((cp = next_cell_in_range()))
+		    nalloc++;
+
+		xmin = 1.0;
+		xmax = nalloc;
+		xes = NULL;
+	} else {
+		/* Figure out X axis borders */
+		rngx = graph_get_data(0);
+		make_cells_in_range(&rngx);
+		cp = next_cell_in_range();
+		xmin = xmax = float_cell(cp);
+		nalloc = 0;
+		while ((cp = next_cell_in_range())) {
+			    y = float_cell(cp);
+			    nalloc++;
+			    if (y < xmin)
+				xmin = y;
+			    else if (y > xmax)
+				xmax = y;
+		}
+
+		xes = (double *)calloc(nalloc + 1, sizeof(double));
+		make_cells_in_range(&rngx);
+		i = 0;
+		while ((cp = next_cell_in_range())) {
+			if (i > nalloc)
+				abort();
+			xes[i++] = float_cell(cp);
+		}
 	}
 
 	if (graph_get_axis_auto(0)) {
@@ -378,6 +442,7 @@ PuXYChart(char *plotter, FILE *outfile)
 		xmax = graph_get_axis_lo(1);
 	}
 
+	num = 0;
 	if (graph_get_axis_auto(1)) {
 	    for (r = 1; r < NUM_DATASETS; r++) {
 		rngx = graph_get_data(r);
@@ -385,7 +450,7 @@ PuXYChart(char *plotter, FILE *outfile)
 		if (rngx.lr == 0 && rngx.lc == 0 && rngx.hr == 0 && rngx.hc == 0)
 		    continue;
 
-		    make_cells_in_range(&rngx);
+		make_cells_in_range(&rngx);
 		while ((cp = next_cell_in_range())) {
 		    y = float_cell(cp);
 		    num++;
@@ -407,6 +472,9 @@ PuXYChart(char *plotter, FILE *outfile)
 	sp_set_axis_title(mg, Y_AXIS, graph_get_axis_title('y'));
 
 	sp_begin_plot(mg, 1.0, 0.0, 0.0);
+#if 0
+	sp_plot_symbol(mg, 5);
+#endif
 
 	sp_set_axis_range(mg, X_AXIS, xmin, xmax, 0.0, 0);
 	sp_set_axis_range(mg, Y_AXIS, ymin, ymax, 0.0, 0);
@@ -442,6 +510,7 @@ PuXYChart(char *plotter, FILE *outfile)
 	    }
 #endif
 
+	    sp_plot_symbol(mg, 4 + r);
 	    sp_legend_label(mg, r, graph_get_data_title(r));
 
 	    if (! XYyAuto) {
@@ -457,7 +526,11 @@ PuXYChart(char *plotter, FILE *outfile)
 		    if (i > nalloc) {
 			abort();
 		    }
-		    x = xes[i];
+		    if (xes)
+			x = xes[i];
+		    else
+			x = (double)i;
+
 		    y = float_cell(cp);
 
 		    if (i > 0) {
@@ -497,7 +570,8 @@ PuXYChart(char *plotter, FILE *outfile)
 	sp_destroy_plot(mg);
 
 	PuClose();
-	free((void *)xes);
+	if (xes)
+		free((void *)xes);
 }
 
 void PuPlot(enum graph_type gt, enum graph_device gd, FILE *fp)

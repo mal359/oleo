@@ -1,7 +1,7 @@
 /*
- * $Id: oleo_plot.h,v 1.9 2000/07/25 12:56:32 danny Exp $
+ * $Id: oleo_plot.h,v 1.10 2000/08/10 21:02:51 danny Exp $
  * 
- * Copyright (C) 1998-1999 Free Software Foundation, Inc.
+ * Copyright © 1998-1999 Free Software Foundation, Inc.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,14 @@ enum graph_type {
 	GRAPH_BAR,
 };
 
+enum graph_style {
+	GRAPH_STYLE_DEFAULT,
+	GRAPH_STYLE_LINES,
+	GRAPH_STYLE_MARKS,
+	GRAPH_STYLE_BOTH,
+	GRAPH_STYLE_NONE	/* to hide ?? */
+};
+
 struct PlotutilsDevices {
 	enum graph_type	t;
 	char		*pus;	/* plotutils string */
@@ -78,39 +86,39 @@ void PlotInit(void);
 void PuPlot(enum graph_type gt, enum graph_device gd, FILE *fp);
 
 struct PlotGlobalType {
-	double		XYMin[graph_num_axis], XYMax[graph_num_axis];
-	int		XYAuto[graph_num_axis];
-	int		LineToOffscreen;
-	int		img_width, img_height;
-	struct line	graph_axis_title[graph_num_axis];
-	struct line	graph_rng_lo [graph_num_axis];
-	struct line	graph_rng_hi [graph_num_axis];
-	int		graph_logness [graph_num_axis]; /* set logarithmic */
+	double			XYMin[graph_num_axis], XYMax[graph_num_axis];
+	int			XYAuto[graph_num_axis];
+	int			LineToOffscreen;
+	int			img_width, img_height;
+	struct line		graph_axis_title[graph_num_axis];
+	struct line		graph_rng_lo [graph_num_axis];
+	struct line		graph_rng_hi [graph_num_axis];
+	int			graph_logness [graph_num_axis]; /* set logarithmic */
 	/* The ranges (if any) of the symbolic names
 	 * for integer coordinates starting at 0.
 	 * If none, these will have lr == NON_ROW.
 	 */
-	struct rng graph_axis_symbols [graph_num_axis];
-	enum graph_ordering graph_axis_ordering [graph_num_axis];
+	struct rng		graph_axis_symbols [graph_num_axis];
+	enum graph_ordering	graph_axis_ordering [graph_num_axis];
 
 	/* Names to print along the axes */
-	struct rng	graph_axis_labels [graph_num_axis];
-	enum graph_pair_ordering	graph_axis_label_order [graph_num_axis];
+	struct rng		graph_axis_labels [graph_num_axis];
 
 	/* plot .... with %s */
-	struct line graph_style [NUM_DATASETS];
-	struct line graph_title [NUM_DATASETS];
-	struct rng graph_data [NUM_DATASETS];
-	enum graph_pair_ordering graph_data_order [graph_num_axis];
+	struct line		graph_style[NUM_DATASETS];
+	struct line		graph_title[NUM_DATASETS];
+	struct rng		graph_data[NUM_DATASETS];
 
 /* SciPlot */
-	int	ticktype[graph_num_axis];
-	char	*tickformat[graph_num_axis];
+	int			ticktype[graph_num_axis];
+	char			*tickformat[graph_num_axis];
 
 /* Plotutils */
 	enum graph_device	device;
 	enum graph_type		graph_type;
 	char			*output_file;
+	char			*dashdot[NUM_DATASETS];
+	enum graph_style	style[NUM_DATASETS];
 };
 
 #define	XYxMin			Global->PlotGlobal->XYMin[0]

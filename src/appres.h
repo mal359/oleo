@@ -1,7 +1,7 @@
 /*
- * $Id: appres.h,v 1.8 2000/07/25 12:56:32 danny Exp $
+ * $Id: appres.h,v 1.9 2000/08/10 21:02:49 danny Exp $
  *
- * Copyright (C) 1998 Free Software Foundation, Inc.
+ * Copyright © 1998 Free Software Foundation, Inc.
  * Written by Danny Backx <danny@gnu.org>.
  *
  * This program is free software; you can redistribute it and/or modify

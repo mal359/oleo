@@ -1,7 +1,7 @@
 /*
- * $Id: line.c,v 1.5 2000/07/22 06:13:16 danny Exp $
+ * $Id: line.c,v 1.6 2000/08/10 21:02:50 danny Exp $
  *
- * Copyright (C) 1990, 1992, 1993 Free Software Foundation, Inc.
+ * Copyright © 1990, 1992, 1993 Free Software Foundation, Inc.
  * 
  * This file is part of Oleo, the GNU Spreadsheet.
  * 

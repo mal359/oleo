@@ -1,5 +1,5 @@
 /*
- * $Id: oleofile.c,v 1.22 2000/07/25 12:56:32 danny Exp $
+ * $Id: oleofile.c,v 1.23 2000/08/10 21:02:51 danny Exp $
  *
  * Copyright © 1990-2000 Free Software Foundation, Inc.
  *
@@ -596,7 +596,7 @@ oleo_read_file (fp, ismerge)
 	      r.lr = b;
 	      r.hc = c;
 	      r.hr = d;
-	      graph_set_data(i, &r, 'h', 'r');
+	      graph_set_data(i, &r);
 	    }
 	    break;
 	  case 'm':	/* Tick marks Gmxts, x = 0 or 1, t = 0 .. 4 (the tick type),

@@ -222,7 +222,7 @@ the @kbd{d} key in the graph menu), you select a number to refer to the
 data set.  If we are already in the graph menu (having typed @kbd{M-g}),
 then the following assigns the region G5.L6 to data set 4:
 @example
-                      d  4  @key{RET} G5.L6  @key{RET} v r 
+                      d  4  @key{RET} G5.L6  @key{RET}
 @end example
 
 If the mark is set, then it is not necessary (nor possible) to enter the
@@ -230,13 +230,8 @@ range.  Thus,
 if the mark is set to G5 and the cursor is in L6, then these commands
 set the fourth data set to G5.L6:
 @example
-                      d  4  @key{RET} v r
+                      d  4  @key{RET}
 @end example
-
-You are then prompted for whether the data is given by horizontal pairs
-(@kbd{h}), vertical pairs (@kbd{v}), or implicit (@kbd{i}).
-Implicit means that the values will be plotted against their order.
-For an example, assume that the spreadsheet looks like 
 
 @example
                   | Col B | Col C | Col D | Col E | Col F |
@@ -251,7 +246,7 @@ For an example, assume that the spreadsheet looks like
 and that we are in the graph menu.
 @itemize @bullet
 @item
-If we type @kbd{d 4 RET B2.F3 RET h r}, then when we print there will be
+If we type @kbd{d 4 RET B2.F3 RET}, then when we print there will be
 three line segments:
 
 @example
@@ -259,7 +254,7 @@ three line segments:
 @end example
 
 @item
-If we type @kbd{d 4 RET B2.F3 RET v r}, then when we print there will be
+If we type @kbd{d 4 RET B2.F3 RET}, then when we print there will be
 four line segments:
 
 @example
@@ -267,7 +262,7 @@ four line segments:
 @end example
 
 @item
-If we type @kbd{d 4 RET B2.F3 RET i r}, then when we print there will be
+If we type @kbd{d 4 RET B2.F3 RET}, then when we print there will be
 nine line segments.  Notice that all the items in the first row are
 plotted, then all the ones in the second row, and so on.
 
@@ -320,23 +315,26 @@ Typing @kbd{v} in the main graph menu gives a help screen with all of
 your choices.  A typical  help screen is
 
 @example
-       Parameter                  Value
-
-       output type                x11 # b/w
-       x-axis title               ""
-       y-axis title               ""
-       logarithmic axes           -neither-
-       x-axis range               [def..def]
-       y-axis range               [def..def]
-
-       Data Set 0  entitled       "my Fermat plot"
-       data for this set:          rows of hz pairs in A1.B50
-       style for this set:         linespoints
-       
-       Data Set 1  
-       data for this set:          cols of vt pairs in A1.B50
-       style for this set:         lines
-       
+    Graph type is XY plot.
+    
+    Parameter               Value
+    
+    output type             Tektronix
+    output file             -
+    x-axis title            "Tijd"
+    y-axis title            "Appelen"
+    logarithmic axes        -neither-
+    x-axis range            [def..def]
+    y-axis range            [def..def]
+    
+    Data Set 0
+      data for this set: A1:A6
+      style for this set: lines
+    
+    
+    Data Set 1
+      data for this set: C4:C9
+      style for this set: lines
 @end example
 
 
@@ -345,22 +343,38 @@ your choices.  A typical  help screen is
 @subsection The Output Type
 
 The @kbd{o} key in the main graph menu selects the type of output.
-A graph can be drawn in three ways: black/white, color, and PostScript.
-@footnote{PostScript does not  work for me, and how about latex and fig
-output}
+A graph can be drawn in several ways - see the table below.
+
+Note however that, depending on compilation parameters, not all
+of the options documented below may be available (e.g. no X or
+x commands).
 
 @table @kbd
-@item x
-Draw the graph in an X window, in black and white.
-@item X
-Draw the graph in an X window, in color.
 @item p
 Write a file of PostScript commands that draw that graph.
+@item X
+Draw the graph in an X window, in color.
+@item t
+Write Tektronix graphics terminal commands.
+@item r
+Write ReGIS commands (VT340 type terminals, most VT emulators don't support this)
+@item P
+Write PCL printer commands.
+@item h
+Write HP-GL plotter command language.
+@item i
+Write Adobe Illustrator format.
+@item m
+Write GNU Metaplot format.
+@item f
+Write FIG output
+@item n
+Write PNG (Portable Network Graphics, an unencumbered replacement for GIF)
+@item g
+Write GIF format
+@item x
+Draw the graph in an X window, in black and white.
 @end table
-
-
-
-
 
 
 @node Style Options, Name Options, Output Type, Graphing

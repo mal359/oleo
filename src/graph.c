@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993, 1999, 2000 Free Software Foundation, Inc.
+ * Copyright © 1993, 1999, 2000 Free Software Foundation, Inc.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: graph.c,v 1.18 2000/07/25 12:56:32 danny Exp $
+ * $Id: graph.c,v 1.19 2000/08/10 21:02:50 danny Exp $
  *
  * This file contains the functions to maintain the internal graphing
  * data structures in Oleo.
@@ -50,25 +50,18 @@ char * graph_axis_name [graph_num_axis] =
   "x", "y"
 };
 
-char *
-graph_order_name [graph_num_orders] =
+static char * graph_plot_styles [] =
 {
-  "rows",
-  "columns",
+  "lines",
+  "points",
+  "linespoints",
+  "impulses",
+  "dots",
+   0
 };
 
-char *graph_pair_order_name[graph_num_pair_orders] =
-{
-  "rows of hz pairs",
-  "rows of vt pairs",
-  "enumerated rows",
-  "cols of hz pairs",
-  "cols of vt pairs",
-  "enumerated cols"
-};
-
-int graph_ornt_row_magic [graph_num_pair_orientations] = { 0, 1, 0 };
-int graph_ornt_col_magic [graph_num_pair_orientations] = { 1, 0, 0 };
+int graph_ornt_row_magic[graph_num_pair_orientations] = { 0, 1, 0 };
+int graph_ornt_col_magic[graph_num_pair_orientations] = { 1, 0, 0 };
 
 enum graph_axis
 chr_to_axis (int c)
@@ -84,53 +77,6 @@ chr_to_axis (int c)
     }
   io_error_msg ("Unkown graph-axis `%c' (try `x' or `y')", c);
   return graph_x;		/* not reached, actualy. */
-}
-
-
-enum graph_ordering
-chr_to_graph_ordering (int c)
-{
-  if (isupper (c))
-    c = tolower (c);
-  switch (c)
-    {
-    case 'r':
-      return graph_rows;
-    case 'c':
-      return graph_cols;
-    }
-  io_error_msg ("Unknown cell ordering `%c' (try `r' or `c').", c);
-  return graph_rows;		/* not reached */
-}
-
-enum graph_pair_ordering
-chrs_to_graph_pair_ordering (int pair, int dir)
-{
-  int pair_offset;
-  if (isupper (pair))
-    pair = tolower (pair);
-  if (isupper (dir))
-    dir = tolower (dir);
-
-  switch (pair)
-    {
-    case 'h':
-      pair_offset = graph_hz;
-      break;
-    case 'v':
-      pair_offset = graph_vt;
-      break;
-    case 'i':
-      pair_offset = graph_implicit;
-      break;
-    default:
-      pair_offset = graph_implicit;
-      io_error_msg
-	("graph.c: invalid pair ording `%c' (wanted h, v, or i)", pair);
-      /* no deposit... */
-    }
-
-  return PAIR_ORDER(chr_to_graph_ordering (dir), pair_offset);
 }
 
 char *
@@ -210,8 +156,8 @@ graph_set_logness (int axis_c, int explicit, int newval)
   sprint_line (&msg_buf, "%slogarithmic %s%s",
 	       ((Global->PlotGlobal->graph_logness [graph_x] || Global->PlotGlobal->graph_logness [graph_y])
 		? "" : "no"),
-	       Global->PlotGlobal->graph_logness [graph_x] ? "x" : "",
-	       Global->PlotGlobal->graph_logness [graph_y] ? "y" : "");
+	       Global->PlotGlobal->graph_logness[graph_x] ? "x" : "",
+	       Global->PlotGlobal->graph_logness[graph_y] ? "y" : "");
 #if 0
   io_info_msg ("set %s", msg_buf.buf);
 #endif
@@ -283,45 +229,11 @@ graph_set_axis_hi (int axis_c, char * val)
 }
 
 void
-graph_set_axis_symbolic (int axis_c, struct rng * rng, int ordering_c) 
-{
-  enum graph_axis axis = chr_to_axis (axis_c);
-  enum graph_ordering ordering = chr_to_graph_ordering (ordering_c);
-  int top = (rng->hr - rng->lr + 1) * (rng->hc - rng->lc + 1) - 1;
-  char buf [64];
-
-  sprintf (buf, "%d.5", top);
-  graph_set_axis_lo (axis, "-0.5");
-  graph_set_axis_hi (axis, buf);
-  Global->PlotGlobal->graph_axis_symbols [axis] = *rng;
-  Global->PlotGlobal->graph_axis_ordering [axis] = ordering;
-}
-
-void
-graph_set_axis_labels (int axis_c, struct rng * rng, int pair, int dir)
-{
-  enum graph_pair_ordering order = chrs_to_graph_pair_ordering (pair, dir);
-  enum graph_axis axis = chr_to_axis (axis_c);
-  Global->PlotGlobal->graph_axis_labels [axis] = *rng;
-  Global->PlotGlobal->graph_axis_label_order [axis] = order;
-}
-
-void
 graph_default_axis_labels (int axis_c)
 {
   enum graph_axis axis = chr_to_axis (axis_c);
   Global->PlotGlobal->graph_axis_labels [axis].lr = NON_ROW;
 }
-
-static char * graph_plot_styles [] =
-{
-  "lines",
-  "points",
-  "linespoints",
-  "impulses",
-  "dots",
-   0
-};
 
 int
 graph_check_style (char * name)
@@ -336,14 +248,16 @@ graph_check_style (char * name)
 
 
 void
-graph_set_style (int data_set, char * style)
+graph_set_style(int data_set, char * style)
 {
   int x = graph_check_style (style);
   if ((data_set < 0) || (data_set >= NUM_DATASETS))
     io_error_msg
       ("set-graph-style -- data-set out of range: %d (should be in [0..%d])",
        data_set, NUM_DATASETS);
-  set_line (&Global->PlotGlobal->graph_style [data_set], graph_plot_styles [x]);
+#if 0
+  set_line (&Global->PlotGlobal->graph_style[data_set], graph_plot_styles [x]);
+#endif
 }
 
 void
@@ -378,15 +292,13 @@ plotutils_set_data(int data_set, struct rng *rng)
 }
 
 void
-graph_set_data (int data_set, struct rng * rng, int pair, int dir)
+graph_set_data(int data_set, struct rng * rng)
 {
-  enum graph_pair_ordering order = chrs_to_graph_pair_ordering (pair, dir);
   if ((data_set < 0) || (data_set >= NUM_DATASETS))
     io_error_msg
       ("set-graph-data -- data-set out of range: %d (should be in [0..%d])",
        data_set, NUM_DATASETS);
-  Global->PlotGlobal->graph_data [data_set] = *rng;
-  Global->PlotGlobal->graph_data_order [data_set] = order;
+  Global->PlotGlobal->graph_data[data_set] = *rng;
 }
 
 struct rng
@@ -436,9 +348,9 @@ graph_clear_datasets (void)
   int x;
   for (x = 0; x < NUM_DATASETS; ++x)
     {
-      graph_set_style (x, "lines");
-      graph_set_data_title (x, "");
-      Global->PlotGlobal->graph_data [x].lr = NON_ROW;
+      graph_set_style(x, "lines");
+      graph_set_data_title(x, "");
+      Global->PlotGlobal->graph_data[x].lr = NON_ROW;
     }
 }
 
@@ -712,6 +624,30 @@ plotutils_fig(void)
 }
 
 void
+plotutils_x_mono(void)
+{
+	Global->PlotGlobal->device = GRAPH_X_MONO;
+}
+
+void
+plotutils_x_color(void)
+{
+	Global->PlotGlobal->device = GRAPH_X;
+}
+
+void
+plotutils_png(void)
+{
+	Global->PlotGlobal->device = GRAPH_PNG;
+}
+
+void
+plotutils_gif(void)
+{
+	Global->PlotGlobal->device = GRAPH_GIF;
+}
+
+void
 plotutils_pcl(void)
 {
 	Global->PlotGlobal->device = GRAPH_PCL;
@@ -845,7 +781,12 @@ plotutils_make_info(void)
 	print_info (ib,"  data for this set: %s",
 		    range_name (&Global->PlotGlobal->graph_data[x]));
 	print_info (ib,"  style for this set: %s",
-		    Global->PlotGlobal->graph_style[x].buf);
+		    (Global->PlotGlobal->style[x] == GRAPH_STYLE_DEFAULT) ? "default" :
+		    (Global->PlotGlobal->style[x] == GRAPH_STYLE_LINES) ? "lines" :
+		    (Global->PlotGlobal->style[x] == GRAPH_STYLE_MARKS) ? "marks" :
+		    (Global->PlotGlobal->style[x] == GRAPH_STYLE_BOTH) ? "both" :
+		    (Global->PlotGlobal->style[x] == GRAPH_STYLE_NONE) ? "none" : "???"
+		);
 	print_info (ib,"");
       }
 #endif

@@ -2,9 +2,9 @@
 #define BASICH
 
 /*
- * $Id: basic.h,v 1.5 2000/07/22 06:13:15 danny Exp $
+ * $Id: basic.h,v 1.6 2000/08/10 21:02:49 danny Exp $
  *
- * Copyright (C) 1993 Free Software Foundation, Inc.
+ * Copyright © 1993 Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

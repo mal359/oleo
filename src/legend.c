@@ -1,5 +1,5 @@
 /*
- * $Header: /home/matt/cvs/oleo/oleo/src/legend.c,v 1.5 2000/07/08 15:22:35 danny Exp $
+ * $Header: /home/matt/cvs/oleo/oleo/src/legend.c,v 1.6 2000/08/10 21:02:51 danny Exp $
  *
  * This file is part of libsciplot, one of the libraries in the GNU PlotUtils package.
  *
@@ -91,6 +91,9 @@ void sp_legend_draw(Multigrapher *mg)
 					POS_X_MAX_LINE * PLOT_SIZE, ly);
 			pl_fmove_r(mg->plotter, POS_X_MIN_TXT * PLOT_SIZE, y);
 			pl_alabel_r(mg->plotter, 'l', 'x', mg->legend[i]);
+			pl_fmarker_r(mg->plotter,
+				(POS_X_MIN_LINE + POS_X_MAX_LINE) * PLOT_SIZE / 2, ly,
+				4 + i, PLOT_SIZE * 0.02);
 
 		} else {
 #if 0

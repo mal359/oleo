@@ -1,7 +1,7 @@
 /*
- * $Id: io-term.c,v 1.43 2000/07/25 12:56:32 danny Exp $
+ * $Id: io-term.c,v 1.44 2000/08/10 21:02:50 danny Exp $
  *
- * Copyright (C) 1990, 1992, 1993, 1999, 2000 Free Software Foundation, Inc.
+ * Copyright © 1990, 1992, 1993, 1999, 2000 Free Software Foundation, Inc.
  * 
  * This file is part of Oleo, the GNU Spreadsheet.
  * 
@@ -20,7 +20,7 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char *rcsid = "$Id: io-term.c,v 1.43 2000/07/25 12:56:32 danny Exp $";
+static char *rcsid = "$Id: io-term.c,v 1.44 2000/08/10 21:02:50 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -891,6 +891,81 @@ void InitializeGlobals(void)
   __make_backups = 1;
 }
 
+void
+oleo_catch_signals(void (*h)(int))
+{
+  /*
+   * These probably don't all need to be ifdef, but
+   * it is harmless.
+   */
+#ifdef SIGCONT
+  signal (SIGCONT, continue_oleo);
+#endif
+#ifdef SIGPIPE
+  signal (SIGPIPE, h);
+#endif
+
+  /*
+   * It makes little sense to block all signals when using X
+   */
+  if ((! using_x) && (! using_gtk) && (! using_motif)) {
+#ifdef SIGINT
+  signal (SIGINT, h);
+#endif
+#ifdef SIGQUIT
+  signal (SIGQUIT, h);
+#endif
+#ifdef SIGILL
+  signal (SIGILL, h);
+#endif
+#ifdef SIGEMT
+  signal (SIGEMT, h);
+#endif
+#ifdef SIGBUS
+  signal (SIGBUS, h);
+#endif
+#ifdef SIGSEGV
+  signal (SIGSEGV, h);
+#endif
+#ifdef	SIGHUP
+  signal(SIGHUP, h);
+#endif
+#ifdef	SIGTRAP
+  signal(SIGTRAP, h);
+#endif
+#ifdef	SIGABRT
+  signal(SIGABRT, h);
+#endif
+#ifdef	SIGFPE
+  signal(SIGFPE, h);
+#endif
+#ifdef	SIGSYS
+  signal(SIGSYS, h);
+#endif
+#ifdef	SIGALRM
+  signal(SIGALRM, h);
+#endif
+#ifdef	SIGTERM
+  signal(SIGTERM, h);
+#endif
+#ifdef	SIGXCPU
+  signal(SIGXCPU, h);
+#endif
+#ifdef	SIGVTALRM
+  signal(SIGVTALRM, h);
+#endif
+#ifdef	SIGPROF
+  signal(SIGPROF, h);
+#endif
+#ifdef	SIGUSR1
+  signal(SIGUSR1, h);
+#endif
+#ifdef	SIGUSR2
+  signal(SIGUSR2, h);
+#endif
+  }
+}
+
 int 
 main (int argc, char **argv)
 {
@@ -938,7 +1013,7 @@ main (int argc, char **argv)
 	  case 'v':
 	  case 'V':
 	    printf(_("%s %s\n"), GNU_PACKAGE, VERSION);
-            printf(_("Copyright (C) 1992-2000 Free Software Foundation, Inc.\n"));
+            printf(_("Copyright © 1992-2000 Free Software Foundation, Inc.\n"));
             printf(_("%s comes with ABSOLUTELY NO WARRANTY.\n"), GNU_PACKAGE);
             printf(_("You may redistribute copies of %s\n"), PACKAGE);
             printf(_("under the terms of the GNU General Public License.\n"));
@@ -1097,75 +1172,7 @@ main (int argc, char **argv)
 	  run_init_cmds ();
   }
 
-  /* These probably don't all need to be ifdef, but
-   * it is harmless.
-   */
-#ifdef SIGCONT
-  signal (SIGCONT, continue_oleo);
-#endif
-#ifdef SIGPIPE
-  signal (SIGPIPE, got_sig);
-#endif
-
-  /*
-   * It makes little sense to block all signals when using X
-   */
-  if ((! using_x) && (! using_gtk) && (! using_motif)) {
-#ifdef SIGINT
-  signal (SIGINT, got_sig);
-#endif
-#ifdef SIGQUIT
-  signal (SIGQUIT, got_sig);
-#endif
-#ifdef SIGILL
-  signal (SIGILL, got_sig);
-#endif
-#ifdef SIGEMT
-  signal (SIGEMT, got_sig);
-#endif
-#ifdef SIGBUS
-  signal (SIGBUS, got_sig);
-#endif
-#ifdef SIGSEGV
-  signal (SIGSEGV, got_sig);
-#endif
-#ifdef	SIGHUP
-  signal(SIGHUP, got_sig);
-#endif
-#ifdef	SIGTRAP
-  signal(SIGTRAP, got_sig);
-#endif
-#ifdef	SIGABRT
-  signal(SIGABRT, got_sig);
-#endif
-#ifdef	SIGFPE
-  signal(SIGFPE, got_sig);
-#endif
-#ifdef	SIGSYS
-  signal(SIGSYS, got_sig);
-#endif
-#ifdef	SIGALRM
-  signal(SIGALRM, got_sig);
-#endif
-#ifdef	SIGTERM
-  signal(SIGTERM, got_sig);
-#endif
-#ifdef	SIGXCPU
-  signal(SIGXCPU, got_sig);
-#endif
-#ifdef	SIGVTALRM
-  signal(SIGVTALRM, got_sig);
-#endif
-#ifdef	SIGPROF
-  signal(SIGPROF, got_sig);
-#endif
-#ifdef	SIGUSR1
-  signal(SIGUSR1, got_sig);
-#endif
-#ifdef	SIGUSR2
-  signal(SIGUSR2, got_sig);
-#endif
-  }
+  oleo_catch_signals(&got_sig);
 
   /* Read the init file. */
   {

@@ -1,5 +1,5 @@
 /*
- * $Id: init.c,v 1.6 2000/07/25 12:56:32 danny Exp $
+ * $Id: init.c,v 1.7 2000/08/10 21:02:50 danny Exp $
  *
  * Copyright © 1993, 2000 Free Software Foundation, Inc.
  *
@@ -507,7 +507,7 @@ char *init_cmds[] =
   "{one-command-with-keymap plotutils-terminal-types}{builtin-help plotutils-output-types}",
   "bind-key plotutils-commands plotutils-select-output o",
   "set-map-prompt plotutils-terminal-types \\",
-  "Graph output type (x X P t): ",
+  "Graph output type (p t r m i f P h g n x X): ",
   "bind-key plotutils-terminal-types plotutils-postscript p",
   "bind-key plotutils-terminal-types plotutils-tek t",
   "bind-key plotutils-terminal-types plotutils-regis r",
@@ -516,6 +516,10 @@ char *init_cmds[] =
   "bind-key plotutils-terminal-types plotutils-fig f",
   "bind-key plotutils-terminal-types plotutils-pcl P",
   "bind-key plotutils-terminal-types plotutils-hpgl h",
+  "bind-key plotutils-terminal-types plotutils-gif g",
+  "bind-key plotutils-terminal-types plotutils-png n",
+  "bind-key plotutils-terminal-types plotutils-x-color X",
+  "bind-key plotutils-terminal-types plotutils-x-mono x",
   "",
   "create-keymap view-plotutils-parameters view-info",
   "name-macro-string plotutils-verify \\",

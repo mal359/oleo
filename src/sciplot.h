@@ -1,9 +1,9 @@
 /*
- * $Header: /home/matt/cvs/oleo/oleo/src/sciplot.h,v 1.4 2000/07/03 19:28:34 danny Exp $
+ * $Header: /home/matt/cvs/oleo/oleo/src/sciplot.h,v 1.5 2000/08/10 21:02:51 danny Exp $
  *
  * This file is part of GNU plotutils.
  *
- * Copyright (C) 2000 Free Software Foundation, Inc.
+ * Copyright © 2000 Free Software Foundation, Inc.
  * Written by Danny Backx <danny@gnu.org>, 2000.
  *
  * This program is free software; you can redistribute it and/or modify

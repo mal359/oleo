@@ -1,9 +1,9 @@
 #ifndef IO_TERMH
 #define IO_TERMH
 /*
- * $Id: io-term.h,v 1.8 2000/07/22 06:13:16 danny Exp $
+ * $Id: io-term.h,v 1.9 2000/08/10 21:02:50 danny Exp $
  *
- * Copyright (C) 1992, 1993 Free Software Foundation, Inc.
+ * Copyright © 1992, 1993 Free Software Foundation, Inc.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,5 +88,7 @@ extern void InitializeGlobals(void);
 #endif /* TRUE */
 
 extern int option_filter;
+
+extern void oleo_catch_signals(void (*h)(int));
 
 #endif /* IO_TERMH */

@@ -1,4 +1,17 @@
-$Id: ChangeLog,v 1.132 2000/07/25 12:56:32 danny Exp $
+$Id: ChangeLog,v 1.133 2000/08/10 21:02:49 danny Exp $
+
+	* Add a way to specify GIF, PNG output format in curses.
+	* Graph documentation update.
+	* Documentation now displays the Oleo version in the title
+	  (required changing the order of first lines in oleo.texi).
+	* Catch signals when in plotutils different from otherwise -
+	  print an appropriate message and get out of plotutils.
+	* Experimental : draw marker symbols at data points.
+	* Clean up src/graph.c and src/graph.h, removing mostly all
+	  "order" related stuff. In the process, change signature of
+	  graph_set_data().
+	* Start coding for graphs to have lines, marks, or both.
+	  Option should be user-settable.
 
 Tue 25 Jul 14:54:21 2000, Danny
 	* This is Oleo 1.99.12.

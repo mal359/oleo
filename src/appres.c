@@ -1,9 +1,9 @@
 /*
- *  $Id: appres.c,v 1.9 2000/07/25 12:56:32 danny Exp $
+ *  $Id: appres.c,v 1.10 2000/08/10 21:02:49 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
- *  Copyright (c) 1998 by the Free Software Foundation, Inc.
+ *  Copyright © 1998 by the Free Software Foundation, Inc.
  *  Written by Danny Backx <danny@gnu.org>.
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: appres.c,v 1.9 2000/07/25 12:56:32 danny Exp $";
+static char rcsid[] = "$Id: appres.c,v 1.10 2000/08/10 21:02:49 danny Exp $";
 
 #include <X11/Intrinsic.h>
 #include <X11/StringDefs.h>

@@ -1,8 +1,8 @@
 /*
- * $Id: xrdb.c,v 1.7 2000/07/22 06:13:16 danny Exp $
+ * $Id: xrdb.c,v 1.8 2000/08/10 21:02:51 danny Exp $
  *
  * Deal with the X Resource Manager.
- * Copyright (C) 1990, 1992, 1993 Free Software Foundation.
+ * Copyright © 1990, 1992, 1993 Free Software Foundation.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

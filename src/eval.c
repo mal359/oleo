@@ -1,7 +1,7 @@
 /*
- * $Header: /home/matt/cvs/oleo/oleo/src/eval.c,v 1.9 2000/07/22 06:13:15 danny Exp $
+ * $Header: /home/matt/cvs/oleo/oleo/src/eval.c,v 1.10 2000/08/10 21:02:50 danny Exp $
  *
- * Copyright (C) 1990, 1992, 1993 Free Software Foundation, Inc.
+ * Copyright © 1990, 1992, 1993 Free Software Foundation, Inc.
  *
  * This file is part of Oleo, the GNU Spreadsheet.
  *

@@ -1,14 +1,15 @@
 \input texinfo    @c -*- texinfo -*-
 @c %**start of header
+
+@set version 1.99.13
+@set update-date July 29 2000
+@set update-month July 2000
+
 @setfilename oleo.info
 @settitle Oleo @value{version}
 @c make a command index:
 @defcodeindex cm
 @c %**end of header
-
-@set version 1.99.12
-@set update-date July 8 2000
-@set update-month July 2000
 
 @clear smallbook
 

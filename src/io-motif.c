@@ -1,6 +1,6 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.63 2000/07/25 12:56:32 danny Exp $
+ *  $Id: io-motif.c,v 1.64 2000/08/10 21:02:50 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -22,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.63 2000/07/25 12:56:32 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.64 2000/08/10 21:02:50 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -972,11 +972,11 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 		if ((r = parse_cell_or_range(&p, &rngx)) == 0)
 			ConversionError(s, _("range"));
 		else if (r & RANGE) {
-			graph_set_data(0, &rngx, 'h', 'r');
+			graph_set_data(0, &rngx);
 		} else {
 			rngx.hr = rngx.lr;
 			rngx.hc = rngx.lc;
-			graph_set_data(0, &rngx, 'h', 'r');
+			graph_set_data(0, &rngx);
 		}
 #ifdef	FREE_TF_STRING
 		XtFree(s);
@@ -995,11 +995,11 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 		if ((r = parse_cell_or_range(&p, &rngx)) == 0)
 			ConversionError(s, _("range"));
 		else if (r & RANGE) {
-			graph_set_data(1, &rngx, 'h', 'r');
+			graph_set_data(1, &rngx);
 		} else {
 			rngx.hr = rngx.lr;
 			rngx.hc = rngx.lc;
-			graph_set_data(1, &rngx, 'h', 'r');
+			graph_set_data(1, &rngx);
 		}
 #ifdef	FREE_TF_STRING
 		XtFree(s);
@@ -1018,11 +1018,11 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 		if ((r = parse_cell_or_range(&p, &rngx)) == 0)
 			ConversionError(s, _("range"));
 		else if (r & RANGE) {
-			graph_set_data(2, &rngx, 'h', 'r');
+			graph_set_data(2, &rngx);
 		} else {
 			rngx.hr = rngx.lr;
 			rngx.hc = rngx.lc;
-			graph_set_data(2, &rngx, 'h', 'r');
+			graph_set_data(2, &rngx);
 		}
 #ifdef	FREE_TF_STRING
 		XtFree(s);
@@ -1040,11 +1040,11 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 		if ((r = parse_cell_or_range(&p, &rngx)) == 0)
 			ConversionError(s, _("range"));
 		else if (r & RANGE) {
-			graph_set_data(3, &rngx, 'h', 'r');
+			graph_set_data(3, &rngx);
 		} else {
 			rngx.hr = rngx.lr;
 			rngx.hc = rngx.lc;
-			graph_set_data(3, &rngx, 'h', 'r');
+			graph_set_data(3, &rngx);
 		}
 		MessageAppend(False, s);
 #ifdef	FREE_TF_STRING
@@ -1057,11 +1057,11 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 		if ((r = parse_cell_or_range(&p, &rngx)) == 0)
 			ConversionError(s, _("range"));
 		else if (r & RANGE) {
-			graph_set_data(4, &rngx, 'h', 'r');
+			graph_set_data(4, &rngx);
 		} else {
 			rngx.hr = rngx.lr;
 			rngx.hc = rngx.lc;
-			graph_set_data(4, &rngx, 'h', 'r');
+			graph_set_data(4, &rngx);
 		}
 		MessageAppend(False, s);
 #ifdef	FREE_TF_STRING

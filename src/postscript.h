@@ -1,9 +1,9 @@
 /*
- *  $Id: postscript.h,v 1.1 1999/04/27 18:25:52 danny Exp $
+ *  $Id: postscript.h,v 1.2 2000/08/10 21:02:51 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
- *  Copyright (C) 1999 by the Free Software Foundation, Inc.
+ *  Copyright © 1999 by the Free Software Foundation, Inc.
  *  Written by Danny Backx <danny@gnu.org>.
  *
  *  This program is free software; you can redistribute it and/or modify

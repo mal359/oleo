@@ -1,9 +1,9 @@
 /*
- * $Header: /home/matt/cvs/oleo/oleo/src/sciplotI.h,v 1.2 2000/04/08 12:20:05 danny Exp $
+ * $Header: /home/matt/cvs/oleo/oleo/src/sciplotI.h,v 1.3 2000/08/10 21:02:49 danny Exp $
  *
  * This file is part of GNU plotutils.
  *
- * Copyright (C) 2000 Free Software Foundation, Inc.
+ * Copyright © 2000 Free Software Foundation, Inc.
  * Written by Danny Backx <danny@gnu.org>, 2000.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@
 #ifndef __SCIPLOT_I_H__
 #define __SCIPLOT_I_H__
 
-// #include "sys-defines.h"
+/* #include "sys-defines.h"	*/
 #include "plot.h"
 
 /**************************************************************************/

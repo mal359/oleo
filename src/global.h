@@ -1,9 +1,9 @@
 #ifndef GLOBALH
 #define GLOBALH
 /*
- * $Id: global.h,v 1.13 2000/07/22 06:13:15 danny Exp $
+ * $Id: global.h,v 1.14 2000/08/10 21:02:50 danny Exp $
  *
- * Copyright (C) 1990, 1992, 1993, 1999, 2000 Free Software Foundation, Inc.
+ * Copyright © 1990, 1992, 1993, 1999, 2000 Free Software Foundation, Inc.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

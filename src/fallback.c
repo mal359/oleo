@@ -1,9 +1,9 @@
 /*
- *  $Id: fallback.c,v 1.28 2000/07/25 12:56:32 danny Exp $
+ *  $Id: fallback.c,v 1.29 2000/08/10 21:02:50 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
- *  Copyright (c) 1998-2000 Free Software Foundation, Inc.
+ *  Copyright © 1998-2000 Free Software Foundation, Inc.
  *  Written by Danny Backx <danny@gnu.org>
  *
  *  This program is free software; you can redistribute it and/or modify

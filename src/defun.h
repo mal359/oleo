@@ -1,5 +1,5 @@
 /*
- * $Id: defun.h,v 1.6 2000/07/25 12:56:32 danny Exp $
+ * $Id: defun.h,v 1.7 2000/08/10 21:02:50 danny Exp $
  *
  * Copyright © 1993, 2000 Free Software Foundation, Inc.
  *
@@ -2221,6 +2221,26 @@ DEFUN_3 ("plotutils-illustrator", FDplotutils_illustrator, plotutils_illustrator
 DEFUN_3 ("plotutils-fig", FDplotutils_fig, plotutils_fig)
 #ifdef DOC_STRINGS
 "Specify that graphing output should be in FIG format.",
+#endif
+
+DEFUN_3 ("plotutils-x-color", FDplotutils_x_color, plotutils_x_color)
+#ifdef DOC_STRINGS
+"Specify that graphing output should be in X COLOR format.",
+#endif
+
+DEFUN_3 ("plotutils-x-mono", FDplotutils_x_mono, plotutils_x_mono)
+#ifdef DOC_STRINGS
+"Specify that graphing output should be in X MONO format.",
+#endif
+
+DEFUN_3 ("plotutils-gif", FDplotutils_gif, plotutils_gif)
+#ifdef DOC_STRINGS
+"Specify that graphing output should be in GIF format.",
+#endif
+
+DEFUN_3 ("plotutils-png", FDplotutils_png, plotutils_png)
+#ifdef DOC_STRINGS
+"Specify that graphing output should be in PNG format.",
 #endif
 
 DEFUN_3 ("plotutils-pcl", FDplotutils_pcl, plotutils_pcl)
