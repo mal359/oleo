@@ -22,6 +22,13 @@ TODO's:
 
 * Make 3 / 3 work right. Now it says it's infinity, not 1.
 
+* Get i18n to work right.
+
+* Figure out why having kinput2 present kills oleo.
+
+* Get character mode oleo to work from a Motif executable.
+	Exact bug description ?
+
 
 
 
