@@ -1,6 +1,6 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.65 2000/11/22 19:33:01 danny Exp $
+ *  $Id: io-motif.c,v 1.66 2001/03/09 11:33:29 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -22,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.65 2000/11/22 19:33:01 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.66 2001/03/09 11:33:29 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -3319,13 +3319,17 @@ HelpLoadFile(char *fn, char *anchor)
 	fp = fopen(fn, "r");
 	if (fp == NULL) {
 		sprintf(n, "%s/%s/%s",
-			HTMLDIR, getenv("LANGUAGE"), fn);
+                        HTMLDIR, 
+                        getenv("LANGUAGE") != NULL ? getenv("LANGUAGE") : "",
+                        fn);
 		fp = fopen(n, "r");
 	}
 
 	if (fp == NULL) {
 		sprintf(n, "%s/%s/%s",
-			HTMLDIR, getenv("LANG"), fn);
+                        HTMLDIR,
+                        getenv("LANG") != NULL ? getenv("LANG") : "",
+                        fn);
 		fp = fopen(n, "r");
 	}
 
@@ -4643,6 +4647,7 @@ GscBuildSplash(Widget parent)
 	int		depth;
 	Widget		sh, rc, iconlabel, textlabel, form;
 	XmString	x1, x2, xms;
+
 #ifdef	HAVE_LIBXPM
 	XpmAttributes	attrib;
 	Pixmap		mask;
@@ -4666,14 +4671,70 @@ GscBuildSplash(Widget parent)
 	ac = 0;
 
 #ifdef	HAVE_LIBXPM
+        attrib.closeness = 256;
 	attrib.valuemask = 0;
+        attrib.valuemask |= XpmCloseness;
 
-	XpmCreatePixmapFromData(XtDisplay(rc),
+        ac = XpmCreatePixmapFromData(XtDisplay(rc),
+                XRootWindowOfScreen(XtScreen(rc)),
+                oleo_icon,
+                &Global->MotifGlobal->oleo_icon_pm,
+                &mask,
+                &attrib);
+
+        if ( ac < 0 ) {
+                fprintf ( stderr, "GBSplash: XpmCreatePixmapFromData failed. ");
+
+                switch ( ac ) {
+                case -1:
+                        fprintf ( stderr, "XpmOpenFailed failed\n" );
+                        XpmFreeAttributes(&attrib);
+                        goto skip_xpm_icon;
+                break;
+
+                case -2:
+                        fprintf ( stderr, "XpmFileInvalid\n" );
+                        XpmFreeAttributes(&attrib);
+                        goto skip_xpm_icon;
+                break;
+
+                case -3:
+                        fprintf ( stderr, "XpmNoMemory\n" );
+                        goto skip_xpm_icon;
+                        XpmFreeAttributes(&attrib);
+                break;
+
+                case -4:
+                        while ( attrib.closeness <= 10000 ) {
+                                attrib.closeness += 256;
+                                ac = XpmCreatePixmapFromData(XtDisplay(rc),
 		XRootWindowOfScreen(XtScreen(rc)),
 		oleo_icon,
 		&Global->MotifGlobal->oleo_icon_pm,
 		&mask,
 		&attrib);
+                                if ( ac == -4 ) continue;
+                                if ( ac >= 0 ) break;
+                                if ( ac == -1 || ac == -2 || ac == -3  ) {
+                                        fprintf ( stderr, "secondary error %d\n", ac );
+                                        XpmFreeAttributes(&attrib);
+                                        goto skip_xpm_icon;
+                                }
+                        } /* while ( attrib.closeness <= 10000 ) */
+                        if ( attrib.closeness > 10000 ) {
+                                fprintf ( stderr, "giving up, can't get close colors\n" );
+                                XpmFreeAttributes(&attrib);
+                                goto skip_xpm_icon;
+                        } else
+                                fprintf ( stderr, "\n" );
+                break;
+
+                default:
+                break;
+                } /* switch (ac) */
+        } /* if ( ac < 0 ) */
+
+        ac = 0;
 
 	XpmFreeAttributes(&attrib);
 
@@ -4689,6 +4750,8 @@ GscBuildSplash(Widget parent)
 	XtManageChild(iconlabel);
 	XtAddCallback(iconlabel, XmNactivateCallback, PopDownSplash, NULL);
 #endif
+
+        skip_xpm_icon: /* XpmCreatePixmapFromData call failed -- skip it */
 
 	ac = 0;
 	x1 = XmStringCreateLtoR(GNU_PACKAGE " " VERSION "\n",

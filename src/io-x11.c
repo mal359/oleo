@@ -1,7 +1,7 @@
-#define	I18N_VERBOSE
+#undef	I18N_VERBOSE
 #define	X_I18N
 /*
- * $Id: io-x11.c,v 1.30 2001/02/14 20:54:50 danny Exp $
+ * $Id: io-x11.c,v 1.31 2001/03/09 11:33:29 danny Exp $
  *
  *	Copyright © 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 	
@@ -155,6 +155,8 @@ static KeySym RetKeySym;
 void
 get_x11_args (int * argc_p, char ** argv)
 {
+  char	*locale;
+
   XrmInitialize ();
   
 #if 0
@@ -176,7 +178,20 @@ get_x11_args (int * argc_p, char ** argv)
   if (!Global->io_x11_display_name)
     return;
   
-  setlocale(LC_ALL, "");	/* i18n */
+  locale = setlocale(LC_ALL, "");	/* i18n */
+#ifdef	I18N_VERBOSE
+  fprintf(stderr, "Setlocale() -> locale %s\n", locale);
+#endif
+
+  if (! XSupportsLocale()) {
+	fprintf(stderr, "X doesn't support this locale\n");
+	exit(0);
+  }
+  if (XSetLocaleModifiers("@im=none") == NULL) {
+	fprintf(stderr, "XSetLocaleModifiers failed\n");
+	exit(0);
+  }
+
   theDisplay = XOpenDisplay (Global->io_x11_display_name);
   if (!theDisplay)
     panic ("Can not connect to X.  Check your DISPLAY evironment variable.");
@@ -279,10 +294,9 @@ GetXIC(Display *theDisplay)
 		"OffTheSpot",
 		"Root",
 		"Root",
-		"Root",		/* Actually rxvt based */
+		"Rxvt",
 		NULL
 	};
-	static char *preeditTypes = "OffTheSpot,OverTheSpot,Root";
 
 	static XIMStyle style_bits[] =
 	{
@@ -292,6 +306,9 @@ GetXIC(Display *theDisplay)
 	/* Not really root */	XIMPreeditNone | XIMStatusNone,
 	/* See rxvt */		XIMPreeditPosition | XIMStatusNothing,
 	};
+
+	/* FIX ME this should be user configurable such as in Motif */
+	static char *preeditTypes = "OffTheSpot,OverTheSpot,Root";
 
 	if (!XSupportsLocale()) {
 #ifdef	I18N_VERBOSE
@@ -344,38 +361,16 @@ GetXIC(Display *theDisplay)
 		}
 	}
 
-#if 0
-	fontset = XCreateFontSet(theDisplay,
-		"-adobe-helvetica-*-r-*-*-*-120-*-*-*-*-*-*,\
-		-misc-fixed-*-r-*-*-*-130-*-*-*-*-*-*",
-		&missing_charsets, &num_missing_charsets, &default_string);
-
-	if (num_missing_charsets > 0) {
-		fprintf(stderr, PACKAGE " : the %d missing charsets\n", num_missing_charsets);
-		for (i=0; i<num_missing_charsets; i++)
-			fprintf(stderr, "\t%d - %s\n", i, missing_charsets[i]);
-	}
-
-	list = XVaCreateNestedList(0,XNFontSet,fontset,NULL);
-#endif
-
 	xic = XCreateIC(xim,
 			XNInputStyle,		input_style,
 			XNClientWindow,		thePort->window,
 			XNFocusWindow,		thePort->window,
-#if 0
-			XNPreeditAttributes,	list,
-			XNStatusAttributes,	list,
-#endif
 		NULL);
-
-#if 0
-	XFree(list);
-#endif
 
 #ifdef	I18N_VERBOSE
 	if (xic)
-		fprintf(stderr, "We have an IC\n");
+		fprintf(stderr, "We have an IC - input style %x window %p\n",
+			input_style, thePort->window);
 	else
 		fprintf(stderr, "No IC\n");
 #endif
@@ -728,42 +723,38 @@ static Status compose;
 static void
 xio_scan_for_input (int blockp)
 {
-  XEvent event_return;
-  static int pendingw;
-  static int pendingh;
-  static int resize_pending = 0;
-  int events_pending;
-  int len;
-  
-  events_pending = XPending (thePort->dpy);
-  do
-    {
-      if (resize_pending && !events_pending)
-	{
-	  if (   ((pendingh / Global->height_scale) > 9.)
-	      && ((pendingw / Global->width_scale) > 9.))
-	      {
+    XEvent event_return;
+    static int pendingw;
+    static int pendingh;
+    static int resize_pending = 0;
+    int events_pending;
+    int len;
+
+    events_pending = XPending (thePort->dpy);
+    do {
+	if (resize_pending && !events_pending) {
+	  if (((pendingh / Global->height_scale) > 9.)
+			&& ((pendingw / Global->width_scale) > 9.)) {
 		io_set_scr_size (pendingh, pendingw);
 		resize_pending = 0;
-	      }
+	  }
 	}
-      
-      if (!events_pending)
-	io_redisp ();
-      
-      if (events_pending || blockp)
-	{
-	  XNextEvent (thePort->dpy, &event_return);
 
-          if (event_return.xany.send_event)
-	    {
-	      /*
-	       * Allow other XClients to send oleo commands.
-	       */
-	      static KeySym se_keysym;
+	if (!events_pending)
+		io_redisp ();
+      
+	if (events_pending || blockp) {
+	    XNextEvent (thePort->dpy, &event_return);
+	    if (XFilterEvent(&event_return, None))
+		continue;
 
-	      switch (event_return.type)
-                {
+	    if (event_return.xany.send_event) {
+		/*
+		 * Allow other XClients to send oleo commands.
+		 */
+		static KeySym se_keysym;
+
+		switch (event_return.type) {
 		case FocusIn:
 			xi18nGetFocus();
 			break;
@@ -772,134 +763,119 @@ xio_scan_for_input (int blockp)
 			xi18nLoseFocus();
 			break;
 
-	          case KeyPress:
-                    /* Put keypress send_events aside until a <Return>. */
-	            if (se_chars_buffered + MAX_KEY_TRANSLATION 
-			  >= se_buf_allocated)
-	              {
-	                se_buf_allocated =
-		          2 * (se_buf_allocated
-		            ? se_buf_allocated
-		            : MAX_KEY_TRANSLATION);
-	                se_buf =
-		          (char *) ck_remalloc (se_buf, se_buf_allocated);
-	              }
-		    len = xi18nlookup(&event_return, se_buf + se_chars_buffered,
+		case KeyPress:
+			/* Put keypress send_events aside until a <Return>. */
+			if (se_chars_buffered + MAX_KEY_TRANSLATION >= se_buf_allocated) {
+				se_buf_allocated = 2 * (se_buf_allocated ?
+					se_buf_allocated : MAX_KEY_TRANSLATION);
+				se_buf = (char *)ck_remalloc(se_buf, se_buf_allocated);
+			}
+			len = xi18nlookup(&event_return, se_buf + se_chars_buffered,
 				MAX_KEY_TRANSLATION, &se_keysym, &compose);
 
-	            if ((len == 1) && (event_return.xkey.state & Mod1Mask))
-	              se_buf[se_chars_buffered] |= META_BIT;
+			if ((len == 1) && (event_return.xkey.state & Mod1Mask))
+				se_buf[se_chars_buffered] |= META_BIT;
 
-	            if (se_keysym == RetKeySym)
-                      {
-			jmp_buf tmp_exception;
+			if (se_keysym == RetKeySym) {
+				jmp_buf tmp_exception;
 
-			bcopy(Global->error_exception, tmp_exception, sizeof(jmp_buf));
-		        se_buf[se_chars_buffered] = '\0';
+				bcopy(Global->error_exception, tmp_exception, sizeof(jmp_buf));
+				se_buf[se_chars_buffered] = '\0';
 
-			if (setjmp (Global->error_exception))
-			  {
-			    fprintf(stderr, "Error in send_event command: %s\n", se_buf);
-			    se_buf[0] = '\0';
-			    se_chars_buffered = 0;
-			    set_info (0);
-		            pop_unfinished_command ();
-			    bcopy(tmp_exception, Global->error_exception, sizeof(jmp_buf));
-			    longjmp (Global->error_exception, 1); /**/
-			  }
-			else
-			  {
-			    execute_command (se_buf);
-			    bcopy(tmp_exception, Global->error_exception, sizeof(jmp_buf));
-			  }
-		        se_buf[0] = '\0';
-		        se_chars_buffered = 0;
-                      }
-		    else
-		      se_chars_buffered += len;
-	            break;
-	        }
-              events_pending = XPending (thePort->dpy);
-	      continue;
-            }
-	  }
-      else
-	return;
-      
-      switch (event_return.type)
-	{
-		case FocusIn:
-			xi18nGetFocus();
+				if (setjmp (Global->error_exception)) {
+					fprintf(stderr, "Error in send_event command: %s\n", se_buf);
+					se_buf[0] = '\0';
+					se_chars_buffered = 0;
+					set_info (0);
+					pop_unfinished_command ();
+					bcopy(tmp_exception, Global->error_exception,
+						sizeof(jmp_buf));
+					longjmp (Global->error_exception, 1); /**/
+				} else {
+					execute_command (se_buf);
+					bcopy(tmp_exception, Global->error_exception,
+						sizeof(jmp_buf));
+				}
+				se_buf[0] = '\0';
+				se_chars_buffered = 0;
+			} else {
+				se_chars_buffered += len;
+			}
 			break;
+		}
+		events_pending = XPending (thePort->dpy);
+		continue;
+	    }
+	} else {
+		return;
+	}
 
-		case FocusOut:
-			xi18nLoseFocus();
-			break;
+	switch (event_return.type) {
+	case FocusIn:
+		xi18nGetFocus();
+		break;
+
+	case FocusOut:
+		xi18nLoseFocus();
+		break;
 
 	case ClientMessage:
-	  if (event_return.xclient.data.l[0] == thePort->wm_delete_window)
-	    {
-	      XCloseDisplay(thePort->dpy);
-	      exit(0);
-	    }
-	  break;
+		if (event_return.xclient.data.l[0] == thePort->wm_delete_window) {
+			XCloseDisplay(thePort->dpy);
+			exit(0);
+		}
+		break;
+
 	case KeyPress:
 	case ButtonPress:
 	case ButtonRelease:
-	  if (chars_buffered + MAX_KEY_TRANSLATION >= input_buf_allocated)
-	    {
-	      input_buf_allocated =
-		2 * (input_buf_allocated
-		     ? input_buf_allocated
-		     : MAX_KEY_TRANSLATION);
-	      input_buf =
-		(char *) ck_remalloc (input_buf, input_buf_allocated);
-	    }
+		if (chars_buffered + MAX_KEY_TRANSLATION >= input_buf_allocated) {
+			input_buf_allocated = 2 * (input_buf_allocated ? input_buf_allocated
+				: MAX_KEY_TRANSLATION);
+			input_buf = (char *)ck_remalloc(input_buf, input_buf_allocated);
+		}
 	}
- 
-      switch (event_return.type)
-	{
+
+	switch (event_return.type) {
 	case KeyPress:
-	  len = xi18nlookup(&event_return,input_buf + chars_buffered,
-				MAX_KEY_TRANSLATION, 0, &compose);
-	  if ((len == 1) && (event_return.xkey.state & Mod1Mask))
-	    input_buf[chars_buffered] |= META_BIT;
-	  chars_buffered += len;
-	  break;
+		len = xi18nlookup(&event_return,input_buf + chars_buffered,
+			MAX_KEY_TRANSLATION, 0, &compose);
+		if ((len == 1) && (event_return.xkey.state & Mod1Mask))
+			input_buf[chars_buffered] |= META_BIT;
+		chars_buffered += len;
+		break;
 	  
 	case ButtonPress:
 	case ButtonRelease:
-	  {
-	    int seq =
-	      enqueue_mouse_event (event_return.xbutton.y,
-				   event_return.xbutton.x,
-				   event_return.xbutton.button,
-				   event_return.type == ButtonPress);
-	    input_buf[chars_buffered++] = MOUSE_CHAR;
-	    input_buf[chars_buffered++] =
-	      event_return.xbutton.button - 1 + '0';
-	    input_buf[chars_buffered++] = (char) seq;
-	    break;
-	  }
+	{
+		int seq = enqueue_mouse_event (event_return.xbutton.y,
+				event_return.xbutton.x,
+				event_return.xbutton.button,
+				event_return.type == ButtonPress);
+		input_buf[chars_buffered++] = MOUSE_CHAR;
+		input_buf[chars_buffered++] = event_return.xbutton.button - 1 + '0';
+		input_buf[chars_buffered++] = (char) seq;
+		break;
+	}
 	  
 	case Expose:
-	  record_damage (thePort,
-			 event_return.xexpose.x, event_return.xexpose.y,
-			 event_return.xexpose.width,
-			 event_return.xexpose.height);
-	  break;
+		record_damage (thePort,
+			event_return.xexpose.x, event_return.xexpose.y,
+			event_return.xexpose.width,
+			event_return.xexpose.height);
+		break;
 	  
 	case MapNotify:
-	  break;
+		break;
 	  
 	case ReparentNotify:
-	  break;
+		break;
 	  
 	case ConfigureNotify:
-	  pendingw = event_return.xconfigure.width;
-	  pendingh = event_return.xconfigure.height;
-	  resize_pending = 1;
-	  break;
+		pendingw = event_return.xconfigure.width;
+		pendingh = event_return.xconfigure.height;
+		resize_pending = 1;
+		break;
 	  
 	case FocusIn:
 		xi18nGetFocus();
@@ -910,7 +886,7 @@ xio_scan_for_input (int blockp)
 		break;
 
 	default:
-	  break;
+		break;
 	}
       events_pending = XPending (thePort->dpy);
     }
