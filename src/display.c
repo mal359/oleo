@@ -1,5 +1,5 @@
 /*
- * $Id: display.c,v 1.7 2000/08/10 21:02:50 danny Exp $
+ * $Id: display.c,v 1.8 2001/02/05 00:13:06 pw Exp $
  *
  * Copyright © 1992, 1993 Free Software Foundation, Inc.
  * 
@@ -85,7 +85,6 @@ damage (disp, cd)
 int
 pr_display_cell (struct display *disp, CELLREF r, CELLREF c, CELL *cp)
 {
-  int cols = disp->range.hc - disp->range.lc + 1;
   struct cell_display *cd = cell_display_of (disp, r, c);
   xx_IntRectangle ir;
   struct font_memo * new_font = 0;
