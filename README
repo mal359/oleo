@@ -3,7 +3,7 @@ Welcome to GNU Oleo!
 Oleo is a spreadsheet program covered by the GNU Copyleft (see the file
 COPYING included with this distribution for more information).
 
-As of this writing (February 1999), Oleo is in active development.  Major
+As of this writing (February 1999), Oleo is in active development. Major
 changes are being made to the user interface, and lower-level changes
 affecting the Oleo file format, expression syntax and macro language will
 almost certainly follow in due course.  This is good news and bad news: On
