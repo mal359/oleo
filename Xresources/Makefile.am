@@ -4,7 +4,7 @@
 # interface, which is not easily done with the GNU Gettext facilities in
 # the po/ directory.
 #
-# $Header: /home/matt/cvs/oleo/oleo/Xresources/Makefile.am,v 1.2 2000/02/22 23:44:18 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/Xresources/Makefile.am,v 1.3 2001/02/08 00:21:23 pw Exp $
 #
 
 xdefaultsdir =	$(prefix)/share/oleo
@@ -21,3 +21,5 @@ install-data-hook:
 		$(INSTALL_DATA) $(srcdir)/Oleo.nl $(nldir)/Oleo
 		$(INSTALL_DATA) $(srcdir)/Oleo.fr $(frdir)/Oleo
 		$(INSTALL_DATA) $(srcdir)/Oleo.en $(endir)/Oleo
+
+MAINTAINERCLEANFILES = Makefile.in

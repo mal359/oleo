@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/doc/Makefile.am,v 1.13 2000/07/03 16:33:01 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/doc/Makefile.am,v 1.14 2001/02/08 00:21:23 pw Exp $
 #
 # Process this file with automake to produce Makefile.in
 #
@@ -24,3 +24,7 @@ html_DATA=	oleo.html
 oleo.html:	$(srcdir)/oleo.texi ${TEXIS} $(srcdir)/texi2html
 		@HAVE_PERL@ $(srcdir)/texi2html $(srcdir)/oleo.texi
 endif
+
+DISTCLEANFILES = $(html_DATA)
+MAINTAINERCLEANFILES = Makefile.in
+

@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/lib/Makefile.am,v 1.11 2000/02/22 23:44:18 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/lib/Makefile.am,v 1.12 2001/02/08 00:21:23 pw Exp $
 #
 # Process this file with automake to produce Makefile.in
 #
@@ -16,3 +16,7 @@ liboleo_a_LIBADD = @LIBOBJS@
 noinst_HEADERS = getopt.h get_date.h obstack.h
 
 INCLUDES = -I.. -I$(srcdir) -I../intl
+
+CLEANFILES = getdate.c
+MAINTAINERCLEANFILES = Makefile.in
+

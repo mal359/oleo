@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/intl/Attic/Makefile.am,v 1.4 2000/03/03 07:52:40 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/intl/Attic/Makefile.am,v 1.5 2001/02/08 00:21:23 pw Exp $
 #
 noinst_LIBRARIES = libintl.a
 
@@ -20,3 +20,7 @@ libintl_a_SOURCES = libgettext.h loadinfo.h \
 	explodename.c
 
 EXTRA_DIST=	po2tbl.sed.in xopen-msg.sed linux-msg.sed
+MAINTAINERCLEANFILES = Makefile.in
+
+DISTCLEAN = po2tbl.sed
+

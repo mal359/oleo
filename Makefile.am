@@ -3,7 +3,7 @@
 #
 # Process this file with automake to produce Makefile.in
 #
-# $Header: /home/matt/cvs/oleo/oleo/Makefile.am,v 1.36 2001/02/07 03:32:46 pw Exp $
+# $Header: /home/matt/cvs/oleo/oleo/Makefile.am,v 1.37 2001/02/08 00:21:23 pw Exp $
 #
 AUTOMAKE_OPTIONS = gnu 1.4 readme-alpha
 ACLOCAL_AMFLAGS = -I m4
@@ -47,4 +47,6 @@ docdir=        $(prefix)/Oleo
 doc_DATA=	AUTHORS FAQ
 
 # remove all the symlinks that come from automake
-MAINTAINERCLEANFILES = COPYING INSTALL install-sh missing mkinstalldirs
+MAINTAINERCLEANFILES = COPYING INSTALL install-sh missing mkinstalldirs \
+    Makefile.in aclocal.m4 config.h.in configure stamp-h.in
+
