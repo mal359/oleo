@@ -5,10 +5,10 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: GNU oleo 1.6.7\n"
 "POT-Creation-Date: 1998-08-27 17:18+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 1998-08-27 17:50+0200\n"
+"Last-Translator: Danny Backx <danny@gnu.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
@@ -17,7 +17,7 @@ msgstr ""
 #: src/io-term.c:872
 #, c-format
 msgid "Usage: %s [OPTION]... [FILE]...\n"
-msgstr ""
+msgstr "Gebruik: %s [OPTION]... [FILE]...\n"
 
 #: src/io-term.c:875
 msgid ""
@@ -31,47 +31,56 @@ msgid ""
 "\n"
 "Report bugs to <bug-oleo@gnu.org>.\n"
 msgstr ""
+"\n"
+"  -h, --help               toon deze helptekst en stop\n"
+"  -V, --version            toon versie-informatie en stop\n"
+"  -q, --quiet              geef geen boodschap bij opstarten\n"
+"  -f, --ignore-init-file   lees geen initialisatie-bestand\n"
+"  -t, --no-toolkit         gebruik geen X Window System\n"
+"  -x, --nw                 gebruik geen grafische modus, enkel tekst\n"
+"\n"
+"Rapporteer eventuele fouten in oleo via een mailtje aan <bug-oleo@gnu.org>.\n"
 
 #: src/io-motif.c:266
 #, c-format
 msgid "Plotting X in %d [%d.%d], A in %d [%d.%d]\n"
-msgstr ""
+msgstr "Tekenen : X in %d [%d.%d], A in %d [%d.%d]\n"
 
 #: src/io-motif.c:272
 #, c-format
 msgid "Graph X [%s] A [%s]\n"
-msgstr ""
+msgstr "Grafiek X [%s] A [%s]\n"
 
 #: src/io-motif.c:349
 #, c-format
 msgid "Conversion error: cannot convert '%s' to a %s\n"
-msgstr ""
+msgstr "Conversie-fout: kan '%s' niet converteren naar een %s\n"
 
 #: src/io-motif.c:368 src/io-motif.c:439
 msgid "Cannot find XmNuserData\n"
-msgstr ""
+msgstr "Interne fout\nIk kan XmNuserData niet vinden.\n"
 
 #: src/io-motif.c:384 src/io-motif.c:399
 msgid "range"
-msgstr ""
+msgstr "bereik"
 
 #. Set window title
 #. enough
 #: src/io-motif.c:671
 #, c-format
 msgid "[Oleo: %s]"
-msgstr ""
+msgstr "[Oleo: %s]"
 
 #: src/io-motif.c:675
 #, c-format
 msgid "Read file '%s'\n"
-msgstr ""
+msgstr "Bestand '%s' is gelezen\n"
 
 #: src/io-motif.c:737
 #, c-format
 msgid "Saved file '%s'\n"
-msgstr ""
+msgstr "Bestand '%s' is geschreven\n"
 
 #: src/io-motif.c:1748
 msgid "XmProcessTraversal failed\n"
-msgstr ""
+msgstr "Interne fout: XmProcessTraversal faalde\n"

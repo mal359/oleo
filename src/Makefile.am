@@ -1,3 +1,6 @@
+#
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.18 1998/08/27 21:15:36 danny Exp $
+#
 AUTOMAKE_OPTIONS = ../lib/ansi2knr dejagnu
 
 bin_PROGRAMS = oleo
@@ -31,12 +34,13 @@ gpl.h:	$(top_srcdir)/COPYING gpl.sed
 	sed -f gpl.sed <$(top_srcdir)/COPYING >gpl.h
 
 io-motif.o:	gpl.h fallback.h
+CFLAGS = @CFLAGS@ -DLOCALEDIR=\"$(localedir)\"
 else
 # oleo_SOURCES += io-gtk.c
 oleo_LDADD = @INTLLIBS@ @GTK_LIBS@ ../lib/liboleo.a
 
 INCLUDES = -I.. -I$(srcdir) -I$(top_srcdir)/lib -I../intl
-CFLAGS = @CFLAGS@ @GTK_CFLAGS@
+CFLAGS = @CFLAGS@ @GTK_CFLAGS@ -DLOCALEDIR=\"$(localedir)\"
 endif
 
 oleo_LDADD += ${X_LIBS} -lXt -lX11

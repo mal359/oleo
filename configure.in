@@ -1,17 +1,23 @@
 dnl
 dnl This is the configuration file for GNU oleo.
-dnl $Id: configure.in,v 1.22 1998/08/26 13:45:59 danny Exp $
+dnl $Id: configure.in,v 1.23 1998/08/27 21:15:26 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
 AC_INIT(src/init.c)
 
-AM_INIT_AUTOMAKE([oleo], [1.6.6])
+AM_INIT_AUTOMAKE([oleo], [1.6.7])
 GNU_PACKAGE="GNU $PACKAGE"
 AC_DEFINE_UNQUOTED(GNU_PACKAGE, "$GNU_PACKAGE")
 
+dnl
+dnl Use of this macro will keep unexpected things from happening if
+dnl you're not familiar with automake.
+dnl
+dnl AM_MAINTAINER_MODE
+
 dnl Define available languages
-ALL_LINGUAS=""
+ALL_LINGUAS="en nl fr"
 
 AC_ARG_PROGRAM
 AM_CONFIG_HEADER(config.h)
@@ -152,10 +158,6 @@ AC_SUBST(link_xmhtml)
 AC_SUBST(include_sciplot)
 AC_SUBST(link_sciplot)
 
-AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile m4/Makefile])
+dnl AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile m4/Makefile po/Makefile])
 
-dnl FIX ME
-dnl I don't know what the po/ directory is supposed to do/contain, but the
-dnl line below doesn't work for me.
-dnl
-dnl AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile m4/Makefile po/Makefile.in], [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])
+AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile m4/Makefile po/Makefile.in], [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])

@@ -1,4 +1,8 @@
-## Process this file with automake to produce Makefile.in
+#
+# $Header: /home/matt/cvs/oleo/oleo/doc/Makefile.am,v 1.5 1998/08/27 21:15:15 danny Exp $
+#
+# Process this file with automake to produce Makefile.in
+#
 info_TEXINFOS = oleo.texi
 
 TEXIS=		basics.texi bugs.texi cell-refs.texi entering-data.texi \
@@ -7,7 +11,7 @@ TEXIS=		basics.texi bugs.texi cell-refs.texi entering-data.texi \
 		programs.texi ranlib.texi style.texi texinfo.tex windows.texi \
 		motif.texi
 
-EXTRA_DIST=	$(TEXIS)
+EXTRA_DIST=	$(TEXIS) oleo_web.html
 noinst_DATA =	oleo_web.html $(TEXIS)
 
 oleo.info:	oleo.texi $(TEXIS)

@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.h,v 1.1 1998/08/19 07:45:07 danny Exp $
+ *  $Id: fallback.h,v 1.2 1998/08/27 21:15:37 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -36,9 +36,13 @@ char *fallback[] = {
 	"*background:			#AAAAAA",
 	"*bae.background:		#CCCCCC",
 	"*formula.columns:		40",
-	"*splash.fontList:		-b&h-lucidatypewriter-bold-r-normal-sans-64-*-*-*-*-*-iso8859-1",
+	"*splash.fontList:		-b&h-lucidatypewriter-bold-r-normal-sans-64-*-*-*-*-*-iso8859-1=large,-b&h-lucida-medium-i-normal-sans-18-*-*-*-*-*-iso8859-1=small",
+#if 0
+	"*splash.fontList:		-b&h-lucidatypewriter-bold-r-normal-sans-64-*-*-*-*-*-iso8859-1=large,-b&h-lucidatypewriter-medium-r-normal-sans-18-*-*-*-*-*-iso8859-1=small",
+#endif
 	"*splash.background:		#AAAAAA",
 	"*splash.foreground:		red",
+	"*messagesSW.height:		70",
 /* Menu System */
 /* File */
 	"*filecascade.labelString:	File",

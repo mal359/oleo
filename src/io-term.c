@@ -20,6 +20,9 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "config.h"
 #endif
 
+#include <libintl.h>
+#include <locale.h>
+
 #include <ctype.h>
 #include <stdio.h>
 
@@ -906,6 +909,12 @@ main (int argc, char **argv)
   volatile int init_fpc = 0;
   int command_line_file = 0;	/* was there one? */
 
+#if 1	/* ENABLE_NLS */
+  setlocale(LC_ALL, "");
+  bindtextdomain(PACKAGE, LOCALEDIR);
+  textdomain(PACKAGE);
+#endif
+
   __make_backups = 1;
 
   /* Set up the minimal io handler. */
@@ -1081,7 +1090,7 @@ main (int argc, char **argv)
   /*
    * It makes little sense to block all signals when using X
    */
-  if ((! using_x) && (! using_gtk)) {
+  if ((! using_x) && (! using_gtk) && (! using_motif)) {
 #ifdef SIGINT
   signal (SIGINT, got_sig);
 #endif

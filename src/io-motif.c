@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.1 1998/08/19 07:45:04 danny Exp $
+ *  $Id: io-motif.c,v 1.2 1998/08/27 21:15:39 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -20,7 +20,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.1 1998/08/19 07:45:04 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.2 1998/08/27 21:15:39 danny Exp $";
 
 #include "config.h"
 
@@ -37,6 +37,8 @@ static char rcsid[] = "$Id: io-motif.c,v 1.1 1998/08/19 07:45:04 danny Exp $";
 #include <Xm/XmAll.h>
 #include <Xbae/Matrix.h>
 #include <Xbae/Caption.h>
+
+#include <libintl.h>
 
 #if	HAVE_SciPlot_H
 #include <SciPlot/SciPlot.h>
@@ -131,6 +133,7 @@ void MessageAppend(char *s)
 	}
 
 	XmTextShowPosition(msgtext, XmTextGetLastPosition(msgtext));
+	XBell(XtDisplay(msgtext), 30);
 }
 
 void PrintDebug(Widget w, XtPointer client, XtPointer call)
@@ -259,13 +262,15 @@ void DoGraph(Widget w, XtPointer client, XtPointer call)
 		1, XtLINE_DOTTED);
 
 	t = XtMalloc(100);	/* enough */
-	sprintf(t, "Plotting X in %d [%d.%d], A in %d [%d.%d]\n",
+	sprintf(t,
+		_("Plotting X in %d [%d.%d], A in %d [%d.%d]\n"),
 		rngx.lc, rngx.lr, rngx.hr,
 		rnga.lc, rnga.lr, rnga.hr);
 	MessageAppend(t);
 
-	sprintf(t, "Graph X [%s] A [%s]\n", 
-			range_name(&rngx), range_name(&rnga));
+	sprintf(t,
+		_("Graph X [%s] A [%s]\n"),
+		range_name(&rngx), range_name(&rnga));
 	XtVaSetValues(plot, XtNplotTitle, t, NULL);
 	XtFree(t);
 
@@ -340,7 +345,8 @@ void ConversionError(char *s, char *t)
 {
 	char *r = XtMalloc(strlen(s) + strlen(t) + 100);
 
-	sprintf(r, "Conversion error: cannot convert '%s' to a %s\n",
+	sprintf(r,
+		_("Conversion error: cannot convert '%s' to a %s\n"),
 		s, t);
 	MessageAppend(r);
 	XtFree(r);
@@ -359,7 +365,7 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 	XtVaGetValues(f, XmNuserData, &cw, NULL);
 
 	if (cw == NULL) {
-		MessageAppend("Cannot find XmNuserData\n");
+		MessageAppend(_("Cannot find XmNuserData\n"));
 		return;
 	}
 
@@ -375,7 +381,7 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 			rngx.hc);
 
 	} else
-		ConversionError(s, "range");
+		ConversionError(s, _("range"));
 
 #ifdef	FREE_TF_STRING
 	XtFree(s);
@@ -390,7 +396,7 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 			rngx.hr,
 			rngx.hc);
 	} else
-		ConversionError(s, "range");
+		ConversionError(s, _("range"));
 
 #ifdef	FREE_TF_STRING
 	XtFree(s);
@@ -430,7 +436,7 @@ void ConfigureGraphReset(Widget f)
 	XtVaGetValues(f, XmNuserData, &cw, NULL);
 
 	if (cw == NULL) {
-		MessageAppend("Cannot find XmNuserData\n");
+		MessageAppend(_("Cannot find XmNuserData\n"));
 		return;
 	}
 	MessageAppend("ConfigureGraphReset\n");
@@ -652,21 +658,21 @@ void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 	/* Force calculate */
 	recalculate(1);		/* 1 is all */
 
+	/* Force redisplay */
+	XbaeMatrixRefresh(mat);
+
 	/* Set the widget as well as the spreadsheet to a default state. */
 	modified = 0;
 	curow = cucol = 1;
 	XbaeMatrixEditCell(mat, 0, 0);
 
-	/* Force redisplay */
-	XbaeMatrixRefresh(mat);
-
 	/* Set window title */
 	t = XtMalloc(strlen(s) + 32);	/* enough */
-	sprintf(t, "[Oleo: %s]", s);
+	sprintf(t, _("[Oleo: %s]"), s);
 	XtVaSetValues(toplevel, XmNtitle, t, NULL);
 	XtVaSetValues(toplevel, XmNiconName, t, NULL);
 
-	sprintf(t, "Read file '%s'\n", s);
+	sprintf(t, _("Read file '%s'\n"), s);
 	MessageAppend(t);
 
 	XtFree(s);
@@ -728,7 +734,7 @@ void ReallySaveCB(Widget w, XtPointer client, XtPointer call)
 	modified = 0;
 
 	t = XtMalloc(strlen(s) + 32);
-	sprintf(t, "Saved file '%s'\n", s);
+	sprintf(t, _("Saved file '%s'\n"), s);
 	MessageAppend(t);
 	XtFree(t);
 	XtFree(s);
@@ -749,7 +755,7 @@ void SaveAsCB(Widget w, XtPointer client, XtPointer call)
 		ac = 0;
 		XtSetArg(al[ac], XmNautoUnmanage, True); ac++;
 		xms = XmStringCreateSimple("*.oleo");
-		XtSetArg(al[ac], XmNpattern, "*.oleo"); ac++;
+		XtSetArg(al[ac], XmNpattern, xms); ac++;
 
 		fsd = XmCreateFileSelectionDialog(toplevel, "selectfile",
 			al, ac);
@@ -882,10 +888,12 @@ void helpUsingCB(Widget w, XtPointer client, XtPointer call)
 
 void helpAboutCB(Widget w, XtPointer client, XtPointer call)
 {
+	/* FIX ME */	versionCB(w, client, call);
 }
 
 void helpVersionCB(Widget w, XtPointer client, XtPointer call)
 {
+	/* FIX ME */	versionCB(w, client, call);
 }
 
 #endif
@@ -965,6 +973,31 @@ void ToggleA0(Widget w, XtPointer client, XtPointer call)
 
 /****************************************************************
  *								*
+ *		Copy/Paste stuff				*
+ *								*
+ ****************************************************************/
+void UndoCB(Widget w, XtPointer client, XtPointer call)
+{
+	MessageAppend("Not implemented\n");
+}
+
+void CopyCB(Widget w, XtPointer client, XtPointer call)
+{
+	MessageAppend("Not implemented\n");
+}
+
+void CutCB(Widget w, XtPointer client, XtPointer call)
+{
+	MessageAppend("Not implemented\n");
+}
+
+void PasteCB(Widget w, XtPointer client, XtPointer call)
+{
+	MessageAppend("Not implemented\n");
+}
+
+/****************************************************************
+ *								*
  *		Build Motif GUI					*
  *								*
  ****************************************************************/
@@ -982,7 +1015,7 @@ GscBuildSplash(Widget parent)
 	Display		*dpy = XtDisplay(parent);
 	int		depth;
 	Widget		sh, rc;
-	XmString	xms = NULL;
+	XmString	x1, x2, xms;
 
 	sh = XtVaCreatePopupShell("splashShell", xmMenuShellWidgetClass, parent,
 #if 0
@@ -1016,10 +1049,20 @@ GscBuildSplash(Widget parent)
 	XtSetArg(al[ac], XmNlabelType, XmPIXMAP); ac++;
 	XtSetValues(splash, al, ac);
 #else
-	xms = XmStringCreateSimple(GNU_PACKAGE " " VERSION);
+	x1 = XmStringCreateLtoR(GNU_PACKAGE " " VERSION "\n",
+		"large");
+	x2 = XmStringCreateLtoR(
+		_(GNU_PACKAGE
+		" is free software, you are welcome to\n"
+		"distribute copies of it. See the file COPYING for the\n"
+		"conditions. " GNU_PACKAGE " comes with no warranty"),
+		"small");
+	xms = XmStringConcat(x1, x2);
 	XtSetArg(al[ac], XmNlabelString, xms); ac++;
 	XtSetArg(al[ac], XmNlabelType, XmSTRING); ac++;
 	XtSetValues(splash, al, ac);
+	XmStringFree(x1);
+	XmStringFree(x2);
 	XmStringFree(xms);
 #endif
 	XtManageChild(splash);
@@ -1166,19 +1209,19 @@ GscBuildMainWindow(Widget parent)
 	 */
 	w = XtVaCreateManagedWidget("undo", xmPushButtonGadgetClass, editmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, versionCB, NULL);
+	XtAddCallback(w, XmNactivateCallback, UndoCB, NULL);
 
 	w = XtVaCreateManagedWidget("copy", xmPushButtonGadgetClass, editmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, versionCB, NULL);
+	XtAddCallback(w, XmNactivateCallback, CopyCB, NULL);
 
 	w = XtVaCreateManagedWidget("cut", xmPushButtonGadgetClass, editmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, versionCB, NULL);
+	XtAddCallback(w, XmNactivateCallback, CutCB, NULL);
 
 	w = XtVaCreateManagedWidget("paste", xmPushButtonGadgetClass, editmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, versionCB, NULL);
+	XtAddCallback(w, XmNactivateCallback, PasteCB, NULL);
 
 	/*
 	 *	Graph Menu.
@@ -1702,7 +1745,7 @@ void motif_build_gui(void)
 	XtRealizeWidget(toplevel);
 
 	if (! XmProcessTraversal(mat, XmTRAVERSE_CURRENT)) {
-		fprintf(stderr, "XmProcessTraversal failed\n");
+		fprintf(stderr, _("XmProcessTraversal failed\n"));
 	}
 
 }
@@ -1769,11 +1812,10 @@ void versionCB(Widget w, XtPointer client, XtPointer call)
 	int		ac;
 
 	xms = XmStringCreateLtoR(
-		GNU_PACKAGE VERSION "\n"
-		"Motif interface © 1998 by Danny Backx <danny.backx@advalvas.be>\n"
-		"\n"
-		"Oleo is licensed by the GNU Public License (GPL)\n"
-		"  see http://www.gnu.org",
+		_(GNU_PACKAGE " "VERSION
+		" is free software, you are welcome to\n"
+		"distribute copies of it. See the file COPYING for the\n"
+		"conditions. " GNU_PACKAGE " comes with no ABSOLUTELY NO WARRANTY"),
 		XmFONTLIST_DEFAULT_TAG
 		);
 
