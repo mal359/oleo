@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.15 1998/10/24 21:55:34 danny Exp $
+ *  $Id: io-motif.c,v 1.16 1998/10/28 21:01:42 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.15 1998/10/24 21:55:34 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.16 1998/10/28 21:01:42 danny Exp $";
 
 #include "config.h"
 
@@ -72,6 +72,7 @@ static char rcsid[] = "$Id: io-motif.c,v 1.15 1998/10/24 21:55:34 danny Exp $";
 #include "eval.h"
 #include "basic.h"
 #include "graph.h"
+#include "print.h"
 
 #include "io-motif.h"		/* To get warnings when inconsistent */
 
@@ -87,6 +88,7 @@ Widget	msgtext = NULL, statustf = NULL, formulatf = NULL;
 Widget	fsd = NULL;
 Widget	hd, html = NULL, gs = NULL;
 Widget	FormatD = NULL;
+Widget	PrintDialog, PrintShell = NULL;
 
 static Widget	w;
 
@@ -197,6 +199,16 @@ void PrintDebug(Widget w, XtPointer client, XtPointer call)
 		}
 		fprintf(stderr, "\n");
 	}
+}
+
+/****************************************************************
+ *								*
+ *		Range Selection Support				*
+ *								*
+ ****************************************************************/
+
+void RegisterRangeSelector(Widget w)
+{
 }
 
 /****************************************************************
@@ -720,6 +732,181 @@ void ConfigureGraph(Widget w, XtPointer client, XtPointer call)
 	XtManageChild(configureGraph);
 }
 
+/*
+ * Print the spreadsheet
+ */
+void ReallyPrintCB(Widget w, XtPointer client, XtPointer call)
+{
+	/* FIX ME
+	 * This is simplistic, we need to print to either a file,
+	 * selected by the user from a dialog, or to a printer,
+	 * also selected by the user.
+	 */
+	FILE		*fp;
+	struct rng	rng;
+	float		wid, ht;
+	char		*font;
+
+	XtPopdown(PrintShell);
+
+	fp = fopen("/tmp/oleo.ps", "w");	/* ??? */
+	font = "Helvetica";			/* ??? */
+	wid = 8.5 * 72.;			/* ??? */
+	ht = 11. * 72.;				/* ??? */
+
+	rng.lr = 0;
+	rng.hr = 10;
+	rng.lc = 0;
+	rng.hc = 10;
+
+	psprint_region(fp, &rng, wid, ht, font);
+	MessageAppend(True, "Printed a1.j10 to /tmp/oleo.ps\n");
+	fclose(fp);
+}
+
+static void MotifSetPrintPage(Widget w, XtPointer client, XtPointer call)
+{
+	int	i = (int) client;
+
+	MessageAppend(False, "Set page format to %s\n", PrintGetPageName(i));
+	PrintSetPage(PrintGetPageName(i));
+}
+
+Widget MotifCreatePrintDialog(Widget s)
+{
+	Widget		form, menu, cb, w, ok, frame, radio;
+	int		npages, i, ac;
+	Arg		al[5];
+	XmString	xms;
+
+	ac = 0;
+	form = XmCreateForm(s, "printForm", al, ac);
+
+	/* Destination */
+	frame = XtVaCreateManagedWidget("printDestinationFrame",
+			xmFrameWidgetClass, form,
+			XmNleftAttachment,	XmATTACH_FORM,
+			XmNtopAttachment,	XmATTACH_FORM,
+			XmNleftOffset,		10,
+			XmNtopOffset,		10,
+		NULL);
+
+	w = XtVaCreateManagedWidget("printDestinationFrameTitle",
+			xmLabelGadgetClass,		frame,
+			XmNchildType,			XmFRAME_TITLE_CHILD,
+			XmNchildVerticalAlignment,	XmALIGNMENT_CENTER,
+		NULL);
+
+	radio = XtVaCreateManagedWidget("printDestinationRadio",
+				xmRowColumnWidgetClass, frame,
+			XmNradioBehavior,	True,
+			XmNradioAlwaysOne,	True,
+		NULL);
+	w = XtVaCreateManagedWidget("printer", xmToggleButtonGadgetClass,
+		radio, NULL);
+	/* FIX ME - this is a hardcoded default */
+	XmToggleButtonGadgetSetState(w, True, False);
+	w = XtVaCreateManagedWidget("file", xmToggleButtonGadgetClass,
+		radio, NULL);
+	w = XtVaCreateManagedWidget("program", xmToggleButtonGadgetClass,
+		radio, NULL);
+
+	/* Paper */
+	w = frame;
+	frame = XtVaCreateManagedWidget("printPaperFrame",
+				xmFrameWidgetClass, form,
+			XmNtopAttachment,	XmATTACH_WIDGET,
+			XmNtopWidget,		w,
+			XmNtopOffset,		10,
+			XmNleftAttachment,	XmATTACH_FORM,
+			XmNleftOffset,		10,
+		NULL);
+
+	w = XtVaCreateManagedWidget("printPaperFrameTitle",
+			xmLabelGadgetClass,		frame,
+			XmNchildType,			XmFRAME_TITLE_CHILD,
+			XmNchildVerticalAlignment,	XmALIGNMENT_CENTER,
+		NULL);
+
+	menu = XmCreatePulldownMenu(frame, "optionMenu", NULL, 0);
+	ac = 0;
+	XtSetArg(al[ac], XmNsubMenuId, menu); ac++;
+	xms = XmStringCreateSimple(_("File Format"));
+	XtSetArg(al[ac], XmNlabelString, xms); ac++;
+	cb = XmCreateOptionMenu(frame, "optionCB", al, ac);
+	XtManageChild(cb);
+	XmStringFree(xms);
+
+	npages = PrintGetNumPageSizes();
+
+	for (i=0; i<npages; i++) {
+		ac = 0;
+		xms = XmStringCreateSimple(PrintGetPageName(i));
+		XtSetArg(al[ac], XmNlabelString, xms); ac++;
+		w = XmCreatePushButtonGadget(menu, PrintGetPageName(i), al, ac);
+		if (strcmp(AppRes.paper, PrintGetPageName(i)) == 0)
+			XmToggleButtonGadgetSetState(w, True, False);
+		XtAddCallback(w, XmNactivateCallback,
+			MotifSetPrintPage, (XtPointer)i);
+		XmStringFree(xms);
+		XtManageChild(w);
+	}
+
+	/* Range to print */
+	w = frame;
+	frame = XtVaCreateManagedWidget("printRangeFrame",
+				xmFrameWidgetClass, form,
+			XmNtopAttachment,	XmATTACH_WIDGET,
+			XmNtopWidget,		w,
+			XmNtopOffset,		10,
+			XmNleftAttachment,	XmATTACH_FORM,
+			XmNleftOffset,		10,
+		NULL);
+
+	w = XtVaCreateManagedWidget("printRangeFrameTitle",
+			xmLabelGadgetClass,		frame,
+			XmNchildType,			XmFRAME_TITLE_CHILD,
+			XmNchildVerticalAlignment,	XmALIGNMENT_CENTER,
+		NULL);
+
+	w = XtVaCreateManagedWidget(frame, xmTextFieldWidgetClass, frame,
+		NULL);
+	RegisterRangeSelector(w);
+
+	/* FIX ME : buttons */
+	ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass, form,
+			XmNtopAttachment,	XmATTACH_WIDGET,
+			XmNtopOffset,		10,
+			XmNtopWidget,		frame,
+			XmNleftAttachment,	XmATTACH_FORM,
+			XmNleftOffset,		10,
+			XmNrightAttachment,	XmATTACH_NONE,
+			XmNbottomAttachment,	XmATTACH_NONE,
+		NULL);
+	XtAddCallback(ok, XmNactivateCallback, ReallyPrintCB, NULL);
+
+	return form;
+}
+
+void printCB(Widget w, XtPointer client, XtPointer call)
+{
+	if (PrintShell == NULL) {
+		PrintShell = XtVaCreatePopupShell("printShell",
+				topLevelShellWidgetClass,
+				toplevel,
+			NULL);
+		PrintDialog = MotifCreatePrintDialog(PrintShell);
+	}
+
+	XtManageChild(PrintDialog);
+	XtPopup(PrintShell, XtGrabNone);
+}
+
+/****************************************************************
+ *								*
+ *		GUI stuff					*
+ *								*
+ ****************************************************************/
 /*
  * XbaeMatrix calls this whenever we leave a cell.
  * The cell may have been edited, we can veto the edit by setting the
@@ -1992,6 +2179,10 @@ GscBuildMainWindow(Widget parent)
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, none, NULL);
 
+	w = XtVaCreateManagedWidget("print", xmPushButtonGadgetClass, filemenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, printCB, NULL);
+
 	w = XtVaCreateManagedWidget("quit", xmPushButtonGadgetClass, filemenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, quitCB, NULL);
@@ -2225,7 +2416,11 @@ GscBuildMainWindow(Widget parent)
 	w = XtVaCreateManagedWidget("loadxbase", xmPushButtonGadgetClass,
 		optionsmenu,
 		NULL);
+#ifdef	HAVE_XBASE_H
 	XtAddCallback(w, XmNactivateCallback, ReadXbaseFile, NULL);
+#else
+	XtSetSensitive(w, False);
+#endif
 
 	/*
 	 *	Help Menu.

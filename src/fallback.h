@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.h,v 1.5 1998/09/12 14:34:06 danny Exp $
+ *  $Id: fallback.h,v 1.6 1998/10/28 21:01:42 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -195,6 +195,12 @@ char *fallback[] = {
 	"*insert.acceleratorText:	Ctrl-+",
 	"*gotocell.acceleratorText:	F5",
 	"*format.acceleratorText:	Ctrl-F",
+/* Print Dialog */
+	"*printDestinationFrameTitle.labelString:	Print Destination",
+	"*printPaperFrameTitle.labelString:	Paper Size",
+	"*printForm*printer.labelString:	Printer",
+	"*printForm*file.labelString:	File",
+	"*printForm*program.labelString:	Program",
 /* End */
 	NULL
 };

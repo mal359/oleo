@@ -25,11 +25,21 @@ extern void psprint_region (FILE * fp, struct rng * rng, float wid, float hgt, c
 extern void set_page_size_cmd (char * whole_str);
 extern void psprint_region_cmd (struct rng *rng, FILE *fp);
 
+extern int PrintGetNumPageSizes(void);
+extern char * PrintGetPageName(int index);
+extern void PrintSetPageSize(float wid, float ht);
+extern void PrintSetPage(char *page);
+
 #else
 extern void put_ps_string ();
 extern void psprint_region ();
 extern void set_page_size_cmd ();
 extern void psprint_region_cmd ();
+
+extern int PrintGetNumPageSizes();
+extern char * PrintGetPageName();
+extern void PrintSetPageSize();
+extern void PrintSetPage();
 
 #endif
 

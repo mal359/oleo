@@ -14,7 +14,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -28,8 +28,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "io-generic.h"
 #include "io-abstract.h"
 #include "print.h"
-
-
 
 static void 
 put_eps_header (struct display *dpy,
@@ -407,8 +405,6 @@ psprint_region (FILE * fp, struct rng * rng,
   free_display (&dpy);
 }
 
-
-
 /* Front end to PostScript printing. */
 
 struct page_size 
@@ -451,8 +447,46 @@ find_size( char * size, int len )
   return 0;
 }
 
+int
+PrintGetNumPageSizes(void)
+{
+	return sizeof(size_table) / sizeof(struct page_size);
+}
+
+char *
+PrintGetPageName(int index)
+{
+	if (index < 0 ||
+		index > (sizeof(size_table) / sizeof(struct page_size)))
+	    return NULL;
+	return size_table[index].name;
+}
+
 static float default_pswid = 8.5 * 72.;
 static float default_pshgt = 11. * 72.;
+
+void
+PrintSetPageSize(float wid, float ht)
+{
+	default_pswid = wid;
+	default_pshgt = ht;
+}
+
+void
+PrintSetPage(char *page)
+{
+	int	i;
+
+	for (i=0; i < (sizeof(size_table) / sizeof(struct page_size)); i++)
+		if (strcmp(size_table[i].name, page) == 0) {
+			default_pswid = size_table[i].wid;
+			default_pshgt = size_table[i].hgt;
+
+			return;
+		}
+	/* This should never happen */
+      io_error_msg("PrintSetPage: Bad page size %s.", page);
+}
 
 void
 set_page_size_cmd (char * whole_str)

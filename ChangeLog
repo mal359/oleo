@@ -1,3 +1,17 @@
+Wed 28 Oct 21:58:14 1998 Danny Backx (danny@gnu.org)
+	* Fixed src/Makefile.am so automake isn't upset any more.
+	  Apparently automake can't stand multiple oleo_LDADD =
+	  lines that are in separate cases of an if statement.
+	* Add print button in File menu, and a dialog (incomplete)
+	  to define what happens when printing.
+	* Add an application resource to determine the default paper size.
+	* Add a function to register widgets that want to know when the
+	  user selects a range in the matrix. I think this is what it'll
+	  do : add a focus-callback to all these widgets so you can figure
+	  out which one is active. In that callback, store the widget ID
+	  in a global variable. Then when the user selects, use that widget
+	  to store a range in.
+
 Sat 24 Oct 23:39:43 1998 Danny Backx (danny@gnu.org)
 	* Added simplistic call to insert a row.
 	* Fixed XmNenableBadHTMLWarnings (XmHTML widget shouldn't generate

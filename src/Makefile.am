@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.20 1998/10/24 21:55:34 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.21 1998/10/28 21:01:41 danny Exp $
 #
 localedir = $(prefix)/share/locale
 
@@ -24,29 +24,24 @@ oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
  posixtm.y date.c xrdb.c $(GUI)
 
 if UseMotif
-oleo_LDADD = \
-	@INTLLIBS@ \
-	../lib/liboleo.a \
-	@link_motif@ @link_xmhtml@ @link_xbae@ @link_sciplot@ \
-	${X_LIBS} -lXt -lX11
-
-INCLUDES = \
-	-I.. -I$(srcdir) -I$(top_srcdir)/lib -I../intl \
-	${X_CFLAGS} @include_motif@ \
-	@include_xbae@ @include_xmhtml@ @include_sciplot@
+MYLD = @link_motif@ @link_xmhtml@ @link_xbae@ @link_sciplot@
+MYINC = @include_motif@ @include_xbae@ @include_xmhtml@ @include_sciplot@
+MYCFL = ${X_CFLAGS}
 
 gpl.h:	$(top_srcdir)/COPYING gpl.sed
 	sed -f gpl.sed <$(top_srcdir)/COPYING >gpl.h
 
 io-motif.o:	gpl.h fallback.h $(top_srcdir)/configure
 
-CFLAGS = @CFLAGS@ -DLOCALEDIR=\"$(localedir)\"
 else
-oleo_LDADD = @INTLLIBS@ @GTK_LIBS@ ../lib/liboleo.a ${X_LIBS} -lXt -lX11
-
-INCLUDES = -I.. -I$(srcdir) -I$(top_srcdir)/lib -I../intl
-CFLAGS = @CFLAGS@ @GTK_CFLAGS@ -DLOCALEDIR=\"$(localedir)\"
+MYLD = @GTK_LIBS@
+MYINC =
+MYCFL = @GTK_CFLAGS@
 endif
+
+oleo_LDADD = ${MYLD} @INTLLIBS@ @GTK_LIBS@ ../lib/liboleo.a ${X_LIBS} -lXt -lX11
+INCLUDES = -I.. -I$(srcdir) -I$(top_srcdir)/lib -I../intl ${MYINC}
+CFLAGS = @CFLAGS@ -DLOCALEDIR=\"$(localedir)\" ${MYCFL}
 
 noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  defun.h defuns.h display.h errors.h eval.h font.h format.h forminfo.h \
