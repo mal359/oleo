@@ -26,38 +26,21 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 struct hash_control * info_buffers;
 
 
-#ifdef __STDC__
 void
 init_info (void)
-#else
-void
-init_info ()
-#endif
 {
   info_buffers = hash_new();
 }
 
-#ifdef __STDC__
 struct info_buffer *
 find_info (char * name)
-#else
-struct info_buffer *
-find_info (name)
-     char * name;
-#endif
 {
   return (struct info_buffer *)hash_find (info_buffers, name);
 }
 
 
-#ifdef __STDC__
 struct info_buffer * 
 find_or_make_info (char * name)
-#else
-struct info_buffer * 
-find_or_make_info (name)
-     char * name;
-#endif
 {
   struct info_buffer * buf =
     (struct info_buffer *)hash_find (info_buffers, name);
@@ -74,14 +57,8 @@ find_or_make_info (name)
   return buf;
 }
 
-#ifdef __STDC__
 void
 clear_info (struct info_buffer * buf)
-#else
-void
-clear_info (buf)
-     struct info_buffer * buf;
-#endif
 {
   if (buf->text)
     {
@@ -95,16 +72,8 @@ clear_info (buf)
   buf->len = 0;
 }
 
-#ifdef __STDC__
 void
 print_info (struct info_buffer * buf, char * format, ...)
-#else
-void
-print_info (buf, format, va_alist)
-     struct info_buffer * buf;
-     char * format;
-     va_dcl
-#endif
 {
   va_list ap;
   char txt[1000];
@@ -127,13 +96,8 @@ print_info (buf, format, va_alist)
 /* A generic buffer for the use informational commands like show-options */
 static struct info_buffer * the_text_buf;
 
-#ifdef __STDC__
 void
 io_text_start (void)
-#else
-void
-io_text_start ()
-#endif
 {
   the_text_buf = find_or_make_info ("_text");
   clear_info (the_text_buf);
@@ -141,15 +105,8 @@ io_text_start ()
 
 
 
-#ifdef __STDC__
 void
 io_text_line (char * format, ...)
-#else
-void
-io_text_line (format, va_alist)
-     char * format;
-     va_dcl
-#endif
 {
   va_list ap;
   char txt[1000];
@@ -168,13 +125,8 @@ io_text_line (format, va_alist)
   bcopy (txt, the_text_buf->text[the_text_buf->len - 1], len + 1);
 }
 
-#ifdef __STDC__
 void
 io_text_finish (void)
-#else
-void
-io_text_finish ()
-#endif
 {
   run_string_as_macro ("{view-info _text}");
 }

@@ -25,16 +25,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "cell.h"
 #include "io-utils.h"
 
-#if __STDC__
 struct cell_display *
 cell_display_of (struct display *disp, CELLREF r, CELLREF c)
-#else
-struct cell_display *
-cell_display_of (disp, r, c)
-     struct display *disp;
-     CELLREF r;
-     CELLREF c;
-#endif
 {
   int cols = disp->range.hc - disp->range.lc + 1;
   if (   (r < disp->range.lr)
@@ -84,17 +76,8 @@ damage (disp, cd)
     }
 }
 
-#if __STDC__
 int
 pr_display_cell (struct display *disp, CELLREF r, CELLREF c, CELL *cp)
-#else
-int
-pr_display_cell (disp, r, c, cp)
-     struct display *disp;
-     CELLREF r;
-     CELLREF c;
-     CELL *cp;
-#endif
 {
   int cols = disp->range.hc - disp->range.lc + 1;
   struct cell_display *cd =

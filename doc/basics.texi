@@ -6,19 +6,19 @@
 spread}. 
 To start Oleo, type @code{oleo}.  If @code{filename} is the name of a
 spreadsheet that you have saved from a previous @code{oleo} session, you
-can type @code{oleo filename} to start oleo with the spreadsheet
+can type @code{oleo filename} to start Oleo with the spreadsheet
 loaded. 
 
 To stop Oleo, type @code{C-x C-c}.  This will prompt you for the name of
-a file to save the current spreadsheet in.  If you do not want to save
+a file in which to save the current spreadsheet.  If you do not want to save
 it, type @key{RET}, otherwise type the name of the filename that you
 wish to save it in, and then press @key{RET}.
 
  Type @kbd{C-z} to suspend @code{oleo}.  This does not do anything if 
-you are running under X-windows. (@code{suspend-oleo})
+you are running under X-windows. 
 @cmindex suspend-oleo
 
-If you wish to abort a command, type @kbd{C-g} (@code{break}).
+If you wish to abort a command, type @kbd{C-g} 
 @cmindex break
 
 
@@ -56,7 +56,7 @@ the notation clear.
 @item M-c
         Type an escape followed by a @kbd{c}.  If you can't find the
 escape key, you can always type @kbd{C-[}.  
-@item M-C-p
+@item M-C-c
         Type an escape followed by  @kbd{C-c}.  
 @end table
 
@@ -74,7 +74,7 @@ the command name:
 
 @node The Screen, Cursor and Mark, Cell referencing, Basics
 @section The Screen
-The screen is divided into three parts: the status line, the input
+The screen is divided into three parts: the input line, the status
 line, and the work area.
 
 
@@ -88,7 +88,7 @@ line, and the work area.
 @node Minibuffer, Status Line , The Screen, The Screen
 @unnumberedsubsec The input line
 
-        The input line is also refered to as the Minibuffer.  This is
+        The input line is also referred to as the Minibuffer.  This is
 where you enter data into cells (@pxref{Entering}).  You can change the
 location of the input line.  For example, to change the input line to the
 bottom of the screen, type
@@ -97,13 +97,15 @@ bottom of the screen, type
 M-x set-option @key{RET} input -1
 @end example
 
+This can be made the default.  (@pxref{.oleorc file})
+
 @node Status Line , Work Area, Minibuffer, The Screen
 @unnumberedsubsec The status line
 
         The status line describes the current status.  This includes:
-@itemize bullet
+@itemize @bullet
 @item 
-        The cell number (e.g. @code{A1} or @code{R1C1}), or the current
+        The cell number (e.g., @code{A1} or @code{R1C1}), or the current
 range (cursor to mark) if the mark is set
 @footnote{Note that the current range is given as upper-left corner to
 lower-right corner, even if the mark is to the lower @emph{left} of the
@@ -139,9 +141,9 @@ M-x set-option @key{RET} status -1
 @unnumberedsubsec The work area and its borders
 
 The work area is surrounded by a border giving the row and column numbers.
-When there are multiple windows, there will be many borders.
+When there are multiple windows, there will be several borders.
 A cell is a box that can hold data.  The cell cursor is the highlighted
-rectange indicating the `active cell'.  A region is a rectangular block
+rectangle indicating the `active cell'.  A region is a rectangular block
 of cells.  Regions are described by giving coordinates of the upper left
 cell and lower right cell.
 
@@ -321,8 +323,10 @@ the current version, but supposedly might change in the future.}.
 @cmindex upper-left
 
 @item M->
-Go to lower right cell.  This is the rightmost lower cell that
-has a value. (@code{lower right})
+Go to lower right cell.  
+The lower right cell is the cell in the rightmost column that has a value,
+and the lowermost row that has a value.  There might not be any value in
+the lower right cell. (@code{lower-right})
 @cmindex lower right
 
 @item C-a
@@ -374,24 +378,24 @@ at the end of the command.
 
 @example
 
-                @key{M-<}       B4      A1
+                @key{M-<}       B4    @result{}    A1
 
-                @key{M->}       B4      E4
-                @key{M->}       C2      E4
+                @key{M->}       B4    @result{}    E4
+                @key{M->}       C2    @result{}    E4
                 
-                @key{C-a}       E4      E1
-                @key{C-a}       D4      E1
+                @key{C-a}       E4    @result{}    E1
+                @key{C-a}       D4    @result{}    E1
 
-                @key{C-e}       A4      B4
-                @key{C-e}       A3      E3
-                @key{C-e}       A2      E2
-                @key{C-e}       A1      A1
+                @key{C-e}       A4    @result{}    B4
+                @key{C-e}       A3    @result{}    E3
+                @key{C-e}       A2    @result{}    E2
+                @key{C-e}       A1    @result{}    A1
 
-                @key{M-C-a}     E2      E1
-                @key{M-C-e}     B1      B4
+                @key{M-C-a}     E2    @result{}    E1
+                @key{M-C-e}     B1    @result{}    B4
 
-                @key{M-f}       A4      C4
-                @key{M-f}       A2      D2
+                @key{M-f}       A4    @result{}    C4
+                @key{M-f}       A2    @result{}    D2
 @end example
         
 
@@ -459,7 +463,7 @@ mouse. (@code{mouse-mark-and-goto})
 @footnote{should these be changed - emacs uses 1 for 0, 2 for 1, and 3
 for 2}
 
-@cmindex 	mouse-mark-and-goto
+@cmindex mouse-mark-and-goto
 @end table
 
 @node Regions and Variables, Getting Help, Mouse, Basics
@@ -566,7 +570,7 @@ example, to find which keys @samp{scan-up} is bound to, type
 
 @item C-h o
 @kindex  C-h o
-        Show all the options tha have been set. (@code{show-options})
+        Show all the options that have been set. (@code{show-options})
 @cmindex show-options
 
 
@@ -584,7 +588,7 @@ example, to find which keys @samp{scan-up} is bound to, type
 @node Saving and reading, Command Line Options, Getting Help, Basics
 @section Saving and Reading Spreadsheets
 
-@code{Oleo} can save a spreadsheet, visit a saved one, or megre with a
+@code{Oleo} can save a spreadsheet, visit a saved one, or merge with a
 previously saved one.
 
 @table @kbd
@@ -594,7 +598,7 @@ file-format. (@code{save-spreadsheet})
 @cmindex save-spreadsheet
 @footnote{where is info on file formats?}
 
-@item C-x C-v		
+@item C-x C-v 
 Read in a file in the current
 file-format.  This erases the current contents of the
 spreadsheet first.  This may ask for confirmation.
@@ -660,7 +664,7 @@ do not use X-windows
 @comment  node-name,  next,  previous,  up
 
 If there is a file @file{.oleorc} located in the home directory, it is
-read when oleo starts up.  For example, if you always want to use the
+read when Oleo starts up.  For example, if you always want to use the
 @code{a0} reference system, and wish to have the status line  on the bottom
 line, rather than on the second line from the top, your @file{.oleorc}
 file could be @footnote{what else can go here? can I set the default

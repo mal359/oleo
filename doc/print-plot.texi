@@ -8,24 +8,24 @@
 
 
 @menu
-* Writing Files::               Writing  Ascii and Postscript Files
+* Writing Files::               Writing  ASCII and Postscript Files
 * Gnuplot::                     Graphing Using Gnuplot
 @end menu
 
 @node Writing Files, Gnuplot, Printing and Plotting, Printing and Plotting
-@section Writing  Ascii and Postscript Files
+@section Writing  ASCII and Postscript Files
 
-Spreadsheets, and regions of spreadsheets,  can be printed in either
-ascii or postscript format.  For postscript files, the font and page
+Spreadsheets, and regions of spreadsheets,  can be printed in 
+ASCII, LaTeX, or postscript format.  For postscript files, the font and page
 size can be specified.
 
 @table @kbd
 @item M-C-p a
 @cmindex print-region
-Write a region to a file in ascii format. 
+Write a region to a file in ASCII format. 
 If the mark is set, you are prompted for a file name.  
 The region between mark and cell cursor will be printed in a tabular
-ascii format. If the mark is not set, then you are first prompted for
+ASCII format. If the mark is not set, then you are first prompted for
 the region, and then for the file name.  (@code{print-region})
 For example, if the mark is not
 set, and you want to print the region A1.C20 to the file
@@ -40,14 +40,39 @@ cell is A1.C20, then you only need type
              @kbd{M-C-p a}  /tmp/myfile @key{RET}
 @end example
 
+@item M-C-p l
+@cmindex latex-region
+Write a region to a file in LaTeX format.  By default the LaTeX code
+prints the entries in ruled boxes in portrait mode.  There are
+directions in the output file for the simple changes to print in
+landscape mode, or to have all the entries unboxed.  If your region
+contains a percent sign, then you must escape it by hand in the LaTeX
+file to make LaTeX run correctly.
+
+If the mark is set, you are prompted for a file name.  The region
+between mark and cell cursor will be printed in LaTeX format.  If the
+mark is not set, then you are first prompted for the region, and then
+for the file name.  (@code{latex-region}) For example, if the mark is
+not set, and you want to print the region A1.C20 to the file
+@file{/tmp/myfile.tex}, then you type
+@example
+             @kbd{M-C-p l} A1.C20 @key{RET} /tmp/myfile.tex @key{RET}
+@end example
+
+If the mark had been set so that the region between mark and the current
+cell is A1.C20, then you only need type
+@example
+             @kbd{M-C-p a}  /tmp/myfile.tex @key{RET}
+@end example
+
 @item M-C-p p p
 @cmindex psprint-region
-Write a region to a file in postscript format.
+Write a region to a file in PostScript format.
 If the mark is set, you are prompted for a file name.  
 If the mark is not set, then you are first prompted for
 the region, and then for the file name.  (@code{psprint-region})
 For example, if the mark is not
-set, and you want to write the region A1.C20 in postscript to the file
+set, and you want to write the region A1.C20 in PostScript to the file
 @file{/tmp/myfile}, then you type
 @example
              @kbd{M-C-p p p} A1.C20 @key{RET} /tmp/myfile @key{RET}
@@ -62,7 +87,7 @@ cell is A1.C20, then you only need type
 @item M-C-p p f
 @cmindex set-default-ps-font
         This command sets the default font used in printing a region in
-postscript.  (@code{set-default-ps-font}) @xref{Fonts (in X11)} for
+PostScript.  (@code{set-default-ps-font}) @xref{Fonts (in X11)} for
 information about the possible fonts. 
 To set the font to 24 point courier, type
 @example
@@ -73,7 +98,7 @@ not print correctly - ghostscript gives an error}
 
 @item M-C-p p s
 @cmindex set-page-size
-        Set the page size for the postscript output
+        Set the page size for the PostScript output
 (@code{set-page-size}). You are prompted for a pagesize.  There are
 several possible ways of describing a page size:
 
@@ -126,7 +151,7 @@ Plotting in Oleo is done using Gnuplot.  Only line plots and
 scatterplots are available.  The simplest plotting sequence
 consists of
 
-@itemize bullet
+@itemize @bullet
 @item @bullet{}
 Select a range to plot 
 @item @bullet{}
@@ -211,7 +236,7 @@ For an example, assume that the spreadsheet looks like
 
 
 and that we are in the graph menu.
-@itemize bullet
+@itemize @bullet
 @item
 If we type @kbd{d 4 RET B2.F3 RET h r}, then when we print there will be
 three line segments:
@@ -307,8 +332,8 @@ your choices.  A typical  help screen is
 @subsection The Output Type
 
 The @kbd{o} key in the main graph menu selects the type of output.
-A graph can be drawn in three ways: black/white, color, and postscript.
-@footnote{postscript does not  work for me, and how about latex and fig
+A graph can be drawn in three ways: black/white, color, and PostScript.
+@footnote{PostScript does not  work for me, and how about latex and fig
 output}
 
 @table @kbd
@@ -317,7 +342,7 @@ Draw the graph in an X window, in black and white.
 @item X
 Draw the graph in an X window, in color.
 @item p
-Write a file of postscript commands that draw that graph.
+Write a file of PostScript commands that draw that graph.
 @end table
 
 

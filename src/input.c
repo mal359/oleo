@@ -57,14 +57,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
  * return the prompt, else 0.
  */
 
-#ifdef __STDC__
 static char * 
 desired_keymap_prompt (struct input_view * this_iv)
-#else
-static char * 
-desired_keymap_prompt (this_iv)
-     struct input_view * this_iv;
-#endif
 {
   int map = cur_keymap;
   if (the_cmd_frame->cmd && (the_cmd_arg.style == &keyseq_style))
@@ -80,19 +74,9 @@ desired_keymap_prompt (this_iv)
  * converts str->cols.
  */
 
-#ifdef __STDC__
 static int
 find_vis_begin (int * wid_used, int wid,
 		char * str, int pos, text_measure metric)
-#else
-static int
-find_vis_begin (wid_used, wid, str, pos, metric)
-     int * wid_used;
-     int wid;
-     char * str;
-     int pos;
-     text_measure metric;
-#endif
 {
   int used;			/* How many cols allocated? */
   if (str[pos])
@@ -124,19 +108,9 @@ find_vis_begin (wid_used, wid, str, pos, metric)
 
 /* Find the last visible character...  -1 if none are vis. */
 
-#ifdef __STDC__
 static int
 find_vis_end (int * wid_used, int wid, char * str, int start, text_measure
 	      metric) 
-#else
-static int
-find_vis_end (wid_used, wid, str, start, metric)
-     int * wid_used;
-     int wid;
-     char * str;
-     int start;
-     text_measure metric;
-#endif
 {
   int used = metric (&str[start], 1);	/* How many cols allocated? */
   int pos = start;
@@ -159,14 +133,8 @@ find_vis_end (wid_used, wid, str, start, metric)
   return pos;
 }
 
-#ifdef __STDC__
 static void
 set_vis_wid (struct input_view * this_iv)
-#else
-static void
-set_vis_wid (this_iv)
-     struct input_view * this_iv;
-#endif
 {
   Vis_wid = (Input_metric (Input_area->buf + Visibility_begin,
 			     Visibility_end - Visibility_begin)
@@ -180,14 +148,8 @@ set_vis_wid (this_iv)
  * center the cursor. 
  */
 
-#ifdef __STDC__
 static void
 iv_reset_input (struct input_view * this_iv)
-#else
-void
-static iv_reset_input (this_iv)
-     struct input_view * this_iv;
-#endif
 {
   char * km = desired_keymap_prompt (this_iv);
   if (km && (km == Keymap_prompt))
@@ -269,14 +231,8 @@ static iv_reset_input (this_iv)
  * now it also updates the info_fields of the input view.
  */
 
-#ifdef __STDC__
 void
 iv_fix_input (struct input_view * this_iv)
-#else
-void
-iv_fix_input (this_iv)
-     struct input_view * this_iv;
-#endif
 {
   char * km_prompt = desired_keymap_prompt (this_iv);
 
@@ -322,14 +278,8 @@ iv_fix_input (this_iv)
  */
 
 
-#ifdef __STDC__
 void
 iv_move_cursor (struct input_view * this_iv)
-#else
-void
-iv_move_cursor (this_iv)
-     struct input_view * this_iv;
-#endif
 {
   if (   Must_fix_input
       || (Visibility_begin > the_cmd_arg.cursor)
@@ -355,15 +305,8 @@ iv_move_cursor (this_iv)
     }
 }
 
-#ifdef __STDC__
 void
 iv_erase (struct input_view * this_iv, int len)
-#else
-void
-iv_erase (this_iv, len)
-     struct input_view * this_iv;
-     int len;
-#endif
 {
   if (Must_fix_input
       || (the_cmd_arg.cursor <= Visibility_begin))
@@ -388,15 +331,8 @@ iv_erase (this_iv, len)
 }
 
 
-#ifdef __STDC__
 void
 iv_insert (struct input_view * this_iv, int len)
-#else
-void
-iv_insert (this_iv, len)
-     struct input_view * this_iv;
-     int len;
-#endif
 {
   if (!Must_fix_input)
     {
@@ -421,15 +357,8 @@ iv_insert (this_iv, len)
     }
 }
 	   
-#ifdef __STDC__
 void
 iv_over (struct input_view * this_iv, int len)
-#else
-void
-iv_over (this_iv, len)
-     struct input_view * this_iv;
-     int len;
-#endif
 {
   iv_insert (this_iv, len);
 }

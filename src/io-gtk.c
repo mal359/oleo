@@ -395,7 +395,7 @@ void
 gio_fix_input(void)
 {
 	printf("io-gtk.c: Entering gio_fix_input\n");
-	iv_fix_input (&gtkPort->input_view);
+	/* FIXME iv_fix_input (&gtkPort->input_view); */
 }
 
 gtkTextItem status_text;

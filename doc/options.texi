@@ -34,7 +34,7 @@ This option controls which line on the screen is used for
 displaying the status of the current cell.  The number may be
 positive, (counting down from the top), negative (counting up
 from the bottom, or zero (disabling the status line).
-(@code{default=2})
+(@code{Default=2})
 
 @item input
 @vindex  input (number)	
@@ -46,7 +46,7 @@ bottom), but not zero.
 
 @item edges	
 @vindex  edges	
-In edges mode oleo displays row and column numbers at the top
+In edges mode Oleo displays row and column numbers at the top
 and left edges of the window. (@code{Default})
 
 @item noedges 
@@ -78,7 +78,7 @@ The following options affect the currently active window:
 
 @item page
 @vindex  page
-In page mode, whenever a paticular cell is
+In page mode, whenever a particular cell is
 displayed in the window, it will always be in the same
 location on the screen.  In page mode, the recenter command
 acts just like the redraw-screen command.
@@ -109,7 +109,7 @@ specified.  A window may only be linked to one other window
 at a time.  When a window is linked to another one, whenever
 the cell cursor in the first window is moved, the cursor in
 the other window moves as well.  (unless the cursor in other
-window is locked from moving in that diretion.)
+window is locked from moving in that direction.)
 
 @item nolink
 @vindex  nolink
@@ -148,7 +148,7 @@ linked.
 
 @item auto
 @vindex  auto
-In auto mode, cells whose values may have chaged are
+In auto mode, cells whose values may have changed are
 automatically recalculated.  (@code{Default})
 
 
@@ -170,7 +170,7 @@ the key is being handled).  (@code{Default})
 @vindex  nobkgrnd
 @itemx nobackground
 @vindex nobackground
-In nobackground mode, oleo
+In nobackground mode, Oleo
 performs all its recalculation before listening for
 keystrokes. 
 
@@ -211,19 +211,19 @@ initial value is the width of the screen.
 @footnote{I don't understand this}
 If -DUSE_DLD was defined, format-name may be any .o file
 that contains definitions for the appropriate functions, or
-'panic', which is the only file format that oleo will have
+'panic', which is the only file format that Oleo will have
 compiled into it.  If -DUSE_DLD was not defined, format-name
-must be one of sylk, sc, panic, or list, and oleo will have
+must be one of sylk, sc, panic, or list, and Oleo will have
 to be re-compiled before any other formats may be used.
 
 @item load (file-name) 
 @vindex  load (file-name) 
 @footnote{nor do I understand this one}This option is only avaliable if
-oleo was compiled with
+Oleo was compiled with
 -DUSE_DLD.  This option loads in a .o file of spreadsheet
 functions, keyboard commands, and/or keymaps.  Spreadsheet
 functions and keyboard commands must be loaded in before they
-can be used in expressiond or bound to keys.
+can be used in expressions or bound to keys.
 
 @end table
 

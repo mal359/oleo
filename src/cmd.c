@@ -1926,17 +1926,8 @@ pushback_keystroke (int c)
     pushed_back_char = c;
 }
 
-/* FIXME - ANSIfication Req' for good ansi2knr run */
-
-#ifdef __STDC__
 void
 io_error_msg (char *str,...)
-#else
-void
-io_error_msg (str, va_alist)
-     char *str;
-     va_dcl
-#endif
 {
   va_list foo;
   char buf[1000];
@@ -1960,16 +1951,8 @@ io_error_msg (str, va_alist)
 }
 
 
-/* FIXME - ANSIfication req'd for good ansi2knr run */
-#ifdef __STDC__
 void
 io_info_msg (char *str,...)
-#else
-void
-io_info_msg (str, va_alist)
-     char *str;
-     va_dcl
-#endif
 {
   va_list foo;
   char buf[1000];
@@ -2126,15 +2109,8 @@ view_info (char * name, int ignore)
  * is in defun.h.
  */
 
-/* FIXME - ANSIfication needed for good ansi2knr conversion */
-#ifdef __STDC__
 void
 with_keymap (char * mapname)
-#else
-void
-with_keymap (mapname)
-     char * mapname;
-#endif
 {}
 
 void

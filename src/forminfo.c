@@ -1352,14 +1352,8 @@ char * formula_info[] =
 
 /* Search for some formula documentation. */
 
-#ifdef __STDC__
 char **
 forminfo_text (char * name)
-#else
-char **
-forminfo_text (name)
-     char * name;
-#endif
 {
   char ** pos = formula_info;
   while (*pos)

@@ -59,13 +59,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
  * and correctly update the display.
  */
 
-#ifdef __STDC__
 int
 check_editting_mode (void)
-#else
-int
-check_editting_mode ()
-#endif
 {
   if (!the_cmd_frame->cmd || cur_arg >= cmd_argc || !the_do_prompt || the_is_set)
     {
@@ -84,42 +79,23 @@ check_editting_mode ()
  * (See cmd_error in cmd.c)
  *
  */
-#ifdef __STDC__
 void
 begin_edit (void)
-#else
-void
-begin_edit ()
-#endif
 {
   topclear = 0;
   the_cmd_frame->complex_to_user = 1;
   io_fix_input ();
 }
 
-#ifdef __STDC__
 void
 setn_edit_line (char * str, int len)
-#else
-void
-setn_edit_line (str, len)
-     char * str;
-     int len;
-#endif
 {
   setn_line (&the_text, str, len);
   the_cursor = len;
 }
 
-#ifdef __STDC__
 void
 toggle_overwrite (int set, int setting)
-#else
-void
-toggle_overwrite (set, setting)
-     int set;
-     int setting;
-#endif
 {
   if (!set)
     the_overwrite = !the_overwrite;
@@ -127,13 +103,8 @@ toggle_overwrite (set, setting)
     the_overwrite = (setting > 0);
 }
 
-#ifdef __STDC__
 void
 beginning_of_line (void)
-#else
-void
-beginning_of_line ()
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -142,13 +113,8 @@ beginning_of_line ()
 }
 
 
-#ifdef __STDC__
 void
 end_of_line (void)
-#else
-void
-end_of_line ()
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -156,14 +122,8 @@ end_of_line ()
   io_move_cursor ();
 }
 
-#ifdef __STDC__
 void
 backward_char (int n)
-#else
-void
-backward_char (n)
-     int n;
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -185,13 +145,8 @@ backward_char (n)
     }
 }
 
-#ifdef __STDC__
 void
 backward_word (int n)
-#else
-void
-backward_word (n)
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -216,14 +171,8 @@ backward_word (n)
 }
 
 
-#ifdef __STDC__
 void
 forward_char (int n)
-#else
-void
-forward_char (n)
-     int n;
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -247,14 +196,8 @@ forward_char (n)
 }
 
 
-#ifdef __STDC__
 void
 goto_char (int n)
-#else
-void
-goto_char (n)
-     int n;
-#endif
 {
   int len;
   if (n < 0)
@@ -266,14 +209,8 @@ goto_char (n)
   io_move_cursor ();
 }
 
-#ifdef __STDC__
 void
 forward_word (int n)
-#else
-void
-forward_word (n)
-     int n;
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -297,14 +234,8 @@ forward_word (n)
 }
 
 
-#ifdef __STDC__
 static void
 erase (int len)
-#else
-static void
-erase (len)
-     int len;
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -317,13 +248,8 @@ erase (len)
 }
 
 
-#ifdef __STDC__
 void
 backward_delete_char (int n)
-#else
-void
-backward_delete_char (n)
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -345,13 +271,8 @@ backward_delete_char (n)
 }
 
 
-#ifdef __STDC__
 void 
 backward_delete_word (int n)
-#else
-void 
-backward_delete_word (n)
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -374,13 +295,8 @@ backward_delete_word (n)
 }
 
 
-#ifdef __STDC__
 void
 delete_to_start(void)
-#else
-void
-delete_to_start()
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -393,14 +309,8 @@ delete_to_start()
 }
 
 
-#ifdef __STDC__
 void
 delete_char (int n)
-#else
-void
-delete_char (n)
-     int n;
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -421,14 +331,8 @@ delete_char (n)
     }
 }
 
-#ifdef __STDC__
 void
 delete_word (int n)
-#else
-void
-delete_word (n)
-     int n;
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -453,13 +357,8 @@ delete_word (n)
 }
 
 
-#ifdef __STDC__
 void
 kill_line(void)
-#else
-void
-kill_line()
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -470,15 +369,8 @@ kill_line()
     }
 }
 
-#ifdef __STDC__
 void
 insert_string (char * str, int len)
-#else
-void
-insert_string (str, len)
-     char * str;
-     int len;
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -487,15 +379,8 @@ insert_string (str, len)
   the_cursor += len;
 }
 
-#ifdef __STDC__
 void
 over_string (char * str, int len)
-#else
-void
-over_string (str, len)
-     char * str;
-     int len;
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -511,15 +396,8 @@ over_string (str, len)
   the_cursor += len;
 }
 
-#ifdef __STDC__
 void
 put_string (char * str, int len)
-#else
-void
-put_string (str, len)
-     char * str;
-     int len;
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -530,13 +408,8 @@ put_string (str, len)
 
 /* Higher Level editting commands. */
 
-#ifdef __STDC__
 void
 insert_cell_expression (void)
-#else
-void
-insert_cell_expression ()
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -553,13 +426,8 @@ insert_cell_expression ()
 }
 
 
-#ifdef __STDC__
 void
 insert_cell_value(void)
-#else
-void
-insert_cell_value()
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -571,13 +439,8 @@ insert_cell_value()
     }
 }
 
-#ifdef __STDC__
 void
 insert_rel_ref(void)
-#else
-void
-insert_rel_ref()
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -672,13 +535,8 @@ insert_rel_ref()
 }
 
 
-#ifdef __STDC__
 void
 insert_abs_ref(void)
-#else
-void
-insert_abs_ref()
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -712,15 +570,8 @@ insert_abs_ref()
     }
 }
 
-#ifdef __STDC__
 void
 insert_cell_attr (struct rng * rng, char * attr)
-#else
-void
-insert_cell_attr (rng, attr)
-     struct rng * rng;
-     char * attr;
-#endif
 {
   struct line line;
   init_line (&line);
@@ -770,15 +621,8 @@ insert_cell_attr (rng, attr)
   put_string (line.buf, strlen (line.buf));
 }
 
-#ifdef __STDC__
 void
 insert_usr_fmt_part (int fmt, int stat)
-#else
-void
-insert_usr_fmt_part (fmt, stat)
-     int fmt;
-     int stat;
-#endif
 {
   char * usr_stats[9];
   if ((fmt < 1) || (fmt > 16))
@@ -795,15 +639,8 @@ insert_usr_fmt_part (fmt, stat)
   put_string (usr_stats[stat], strlen (usr_stats[stat]));
 }
 
-#ifdef __STDC__
 void
 self_insert_command (int ch, int count)
-#else
-void
-self_insert_command (ch, count)
-     int ch;
-     int count;
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -826,14 +663,8 @@ self_insert_command (ch, count)
 /* Keysequences are read using the `keyseq' keymap.
  * Every key in that map should be bound to this function.
  */
-#ifdef __STDC__
 void
 self_map_command (int c)
-#else
-void
-self_map_command (c)
-     int c;
-#endif
 {
   struct keymap * map = the_maps[the_cmd_arg.val.key.cmd.code];
   char space = ' ';
@@ -859,13 +690,8 @@ self_map_command (c)
   return;
 }
 
-#ifdef __STDC__
 void
 insert_current_filename (void)
-#else
-void
-insert_current_filename ()
-#endif
 {
   if (current_filename)
     put_string (current_filename, strlen (current_filename));
@@ -875,14 +701,8 @@ insert_current_filename ()
 /* Reading a single character is done with the read-char
  * map.  Every key in that map should be bound to this function.
  */
-#ifdef __STDC__
 void
 exit_self_inserting (int c)
-#else
-void
-exit_self_inserting (c)
-     int c;
-#endif
 {
   char * str = char_to_string (c);
 
@@ -891,14 +711,8 @@ exit_self_inserting (c)
 }
 
 
-#ifdef __STDC__
 static int
 issymb (int c)
-#else
-static int
-issymb (c)
-     int c;
-#endif
 {
   return isalpha (c) || isdigit (c) || (c == '_');
 }
@@ -906,13 +720,8 @@ issymb (c)
 #undef the_text
 #undef the_cursor
 #undef the_do_prompt
-#ifdef __STDC__
 void
 insert_context_word (void)
-#else
-void
-insert_context_word ()
-#endif
 {
   struct command_frame * cf = the_cmd_frame->prev;
   if (   (cf == the_cmd_frame)

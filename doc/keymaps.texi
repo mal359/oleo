@@ -21,7 +21,7 @@ The different keymaps, and their usage are as follows:
   trolx                         Default @key{C-x} commands.
   meta                          Default @key{ESC} commands.
   digit                         The numeric prefix keymap.
-  edit                          The keymap for editting in the input area.
+  edit                          The keymap for editing in the input area.
   meta-edit                     Edit commands prefixed by @key{ESC}.
   trolx-edit                    Edit commands prefixed by @key{C-x}.
   ansi                          ANSI arrows keys.
@@ -90,7 +90,7 @@ current state.  To write a list of commands to the file
 @end example
 
 @item M-x read-commands	
-This command opens the file you specify reads in each
+This command opens the file you specify, reads in each
 line, and executes them as if you'd typed them in to
 execute-command.  If any command needs more arguments than are
 included on the line, it will prompt you (interactively) for

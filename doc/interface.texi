@@ -3,16 +3,16 @@
 @cindex Extending 
 
 @node Extending Oleo, Reporting Bugs, Functions, Top
-@chapter Extending the oleo system
+@chapter Extending the Oleo system
 
 
 
 @menu
-* New @ functions::            Adding new @@ Functions
+* New "at" functions::            Adding new "at" Functions
 @end menu
 
-@node New @@ functions,  , Extending Oleo, Extending Oleo
-@section Adding new @@ Functions
+@node New "at" functions,  , Extending Oleo, Extending Oleo
+@section Adding new "at" Functions
 
 It is easy to add new @@ functions.  Suppose that I want to add 
 a greatest common divisor function.  Here is a definition:
@@ -34,7 +34,7 @@ int gcd(i,k)
 
 
 
-In oleo, I would like to enter @code{@@gcd(6,20)}, and have the result
+In Oleo, I would like to enter @code{@@gcd(6,20)}, and have the result
 @code{2} displayed.  The following files need to be changed or created:
 
 @table @file
@@ -42,8 +42,8 @@ In oleo, I would like to enter @code{@@gcd(6,20)}, and have the result
 
 We will create a new class of functions called @var{int_funs}.  For
 simplicity, there is only one function, @code{gcd}, in this class, but
-there could be many more. In addition to the code for @var{gcd}, 
-we need an interface between oleo and @var{gcd}.  
+there could be many more. In addition to the code given above for @var{gcd}, 
+we need an interface between Oleo and @var{gcd}.  
 @example
 static void
 do_gcd (p)

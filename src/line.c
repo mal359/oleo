@@ -6,15 +6,8 @@
 #include "global.h"
 #include "line.h"
 
-#ifdef __STDC__
 void
 set_line (struct line *line, char *string)
-#else
-void
-set_line (line, string)
-     struct line *line;
-     char *string;
-#endif
 {
   int len;
 
@@ -34,16 +27,8 @@ set_line (line, string)
   strcpy (line->buf, string);
 }
 
-#ifdef __STDC__
 void
 setn_line (struct line *line, char *string, int n)
-#else
-void
-setn_line (line, string, n)
-     struct line *line;
-     char *string;
-     int n;
-#endif
 {
   int len = n;
   if (line->alloc <= len)
@@ -61,16 +46,8 @@ setn_line (line, string, n)
 
 #define Max(A,B)  ((A) > (B) ? (A) : (B))
 
-#ifdef __STDC__
 void
 catn_line (struct line *line, char *string, int n)
-#else
-void
-catn_line (line, string, n)
-     struct line *line;
-     char *string;
-     int n;
-#endif
 {
   int len = (line->buf ? strlen (line->buf) : 0);
   if (line->alloc <= len + n + 1)
@@ -84,16 +61,8 @@ catn_line (line, string, n)
 }
 
 
-#ifdef __STDC__
 void
 sprint_line (struct line *line, char * fmt, ...)
-#else
-void
-sprint_line (line, fmt, va_alist)
-     struct line *line;
-     char *fmt;
-     va_dcl
-#endif
 {
   va_list iggy;
   int len;
@@ -114,17 +83,8 @@ sprint_line (line, fmt, va_alist)
   va_end (iggy);
 }
 
-#ifdef __STDC__
 void
 splicen_line (struct line * line, char * str, int n, int pos)
-#else
-void
-splicen_line (line, str, n, pos)
-     struct line * line;
-     char * str;
-     int n;
-     int pos;
-#endif
 {
   int old_len = strlen (line->buf);
   int len = old_len + n;
@@ -145,16 +105,8 @@ splicen_line (line, str, n, pos)
     line->buf[pos + n] = str[n];
 }
 
-#ifdef __STDC__
 void
 edit_line (struct line * line, int begin, int len)
-#else
-void
-edit_line (line, begin, len)
-     struct line * line;
-     int begin;
-     int len;
-#endif
 {
   int old_len = strlen (line->buf);
   int new_len = old_len - len;
@@ -167,14 +119,8 @@ edit_line (line, begin, len)
 }
 
 
-#ifdef __STDC__
 void
 free_line (struct line * line)
-#else
-void
-free_line (line)
-     struct line * line;
-#endif
 {
   if (line->buf && line->alloc)
     free (line->buf);
@@ -185,16 +131,8 @@ free_line (line)
 
 
 
-#ifdef __STDC__
 int
 read_line (struct line * line, FILE * fp, int * linec)
-#else
-int
-read_line (line, fp, linec)
-     struct line * line;
-     FILE * fp;
-     int * linec;
-#endif
 {
   int pos = 0;
   int c = getc (fp);

@@ -1,5 +1,5 @@
 @c Oleo cell functions, included into oleo.texi    -*- texinfo -*-
-
+ 
 @node   Functions, Extending Oleo, Keymaps, Top
 @chapter Functions
 @cindex Functions
@@ -44,16 +44,19 @@ otherwise returns @code{#FALSE}.
  @item not(@var{bool})
   Returns @code{#TRUE} if @var{bool} is @code{#FALSE}; @code{#FALSE} if
 @code{#TRUE}.
-@end table
+
 
 @findex iserr
 @findex isnum
-  @code{iserr(@var{val})} returns @code{#TRUE} if @var{val} is an error,
-@code{#FALSE} otherwise.  @code{isnum(@var{val})} is @code{#TRUE} if
-@var{val} is a number, or can be automatically converted to a number.
-Thus, @code{isnum("12")} is @code{#TRUE}, while @code{isnum("foobar")}
-is @code{#FALSE}.
+ @item iserr(@var{val})
+   returns @code{#TRUE} if @var{val} is an error, @code{#FALSE}
+otherwise.  
+@item isnum(@var{val})
+ @code{#TRUE} if @var{val} is a number, or can be automatically
+converted to a number.  Thus, @code{isnum("12")} is @code{#TRUE}, while
+@code{isnum("foobar")} is @code{#FALSE}.
   
+@end table
 
 @page
 @node   Math functions, String functions, Boolean functions, Functions
@@ -76,12 +79,12 @@ For these these functions, the argument @var{x} can be a number (integer
 or floating point), a reference to a cell containing an integer, or a
 reference to a cell containing a quoted integer.  Thus, if cell
 @footnote{how do I make a reference to a cell?}
-@code{A1} contains @code{"-12.34"},
+@code{A2} contains @code{"-12.34"},
 then all of the following expressions compute the absolute
 value of -12.34:  
 @example
                @@abs(-12.34)
-               @@abs(A1)
+               @@abs(A2)
                @@abs(@@cell(2,1,"value"))
 @end example
 
@@ -93,7 +96,7 @@ value of -12.34:
 
  @item negate(@var{x})
   @findex negate
-  Returns 0 - @var{x}.
+  Returns  -@var{x}.
 
  @item int(@var{x}) 
 @code{int()} converts @var{x} to an integer by truncating
@@ -215,7 +218,7 @@ point (@var{x}, @var{y}).
  
 @item hypot(@var{x}, @var{y})
   Returns the length of the hypotenuse of a triangle with sides @var{x}
-and @var{y}; ie. @w{@code{sqrt(@var{x}*@var{x} + @var{y}*@var{y})}}.
+and @var{y}; i.e., @w{@code{sqrt(@var{x}*@var{x} + @var{y}*@var{y})}}.
 (@xref{General math functions}).
 @end table
 
@@ -230,12 +233,12 @@ and @var{y}; ie. @w{@code{sqrt(@var{x}*@var{x} + @var{y}*@var{y})}}.
 numeric type or a range.  If the value is a range, the values of all
 numeric cells in that range are used (strings, empty cells, etc. are
 ignored).  Values can also be strings that are easily convertible to
-numbers; ie. @code{"123"}.
+numbers; i.e., @code{"123"}.
 
   If none of the arguments include valid numbers, then the value of the
 function is @code{#NO_VALUES}.  To ensure that the expression doesn't
 return an error in such cases, you can provide a default value as an
-extra argument (e.g. @code{@@sum(0,r1:10c1:10)}).
+extra argument (e.g., @code{@@sum(0,r1:10c1:10)}).
 
  The spreadsheet below is used for examples of the statistical
 functions.
@@ -411,13 +414,13 @@ searched for in @var{str2}.}.  If @var{str2} does not appear at or
 beyond @var{pos}, 0 is returned.
  @item substr(@var{pos1}, @var{pos2}, @var{str})
   @findex substr
-  Extracts the subtring from index @var{pos1} through @var{pos2} of
+  Extracts the substring from index @var{pos1} through @var{pos2} of
 @var{str}.  Positive indices, starting with 1, count from the start of
 the string, and negative indices (from -1) count from the end of the
 string.  @var{pos1} must occur at or before @var{pos2}.
  @item mid(@var{str}, @var{pos}, @var{len})
   @findex mid
-  Extracts the subtring of @var{len} characters starting at @var{pos} in
+  Extracts the substring of @var{len} characters starting at @var{pos} in
 @var{str}.  The substring is truncated if it begins or extends beyond
 the end of @var{str}@footnote{In version 1.5 this function counts
 indices from 0 instead of 1 as with other string functions; this is
@@ -429,7 +432,7 @@ Negative indices can be used as with @code{substr}.
  @item repeat(@var{str}, @var{num})
   @findex repeat
   Returns a string of @var{num} concatenations of @var{str} with itself;
-e.g. @code{repeat("foo", 2)} returns @code{"foofoo"}.
+e.g., @code{repeat("foo", 2)} returns @code{"foofoo"}.
  @item concat(@var{vr1}, ...)
   @findex concat
   Returns the concatenation of all its arguments.  An argument may be a
@@ -496,7 +499,9 @@ Any other value generates @code{#BAD_INPUT}.
 cell-cursor is.
  @item cell(@var{row}, @var{col}, @var{key})
   @findex cell
-  Same as @code{my()}, but for the cell at (@var{row}, @var{col}).
+  Same as @code{my()}, but for the cell at (@var{row}, @var{col}).  Be
+careful about the indices in @code{a0} mode.  The cell in row 2, column
+1 is @code{A2}, not @code{B1}.
 @end table
 
 
@@ -506,7 +511,7 @@ cell-cursor is.
 
   These functions search for a value or string in a range of cells, and
 return the index of the first cell that matches.  Cells are numbered
-from 1 in column-major order; e.g. in the range @code{r1:2c1:3} cell
+from 1 in column-major order; e.g., in the range @code{r1:2c1:3} cell
 @code{r1c1} is index 1, cell @code{r2c1} is 2, cell @code{r1c2} is 3,
 etc.
 
@@ -527,7 +532,7 @@ string is a substring of an empty string.}.
  @item members(@var{rng}, @var{str})
   @findex members
   Like @code{members()}, but vice-versa: matches the first cell with a
-substring of @var{str} (ie. @var{str} is contained in the cell).  If
+substring of @var{str} (i.e., @var{str} is contained in the cell).  If
 @var{str} is empty, empty cells are still ignored (unlike
 @code{members()}).
  @item pmember(@var{rng}, @var{str})
@@ -653,7 +658,18 @@ be sold for $@var{scrap} and lasts @var{life}, in period @var{per}.
 
   Functions for manipulating date and time.  Arguments named @var{time}
 are times in seconds, either an arbitrary count or from a specific epoch
-(ie. local time), unless otherwise noted.
+(i.e., local time), unless otherwise noted.  Here are some examples.
+Assume that the date is December 16, 1994, and the time is 7:56 am.
+The left hand column is the command, and the right hand column is the
+result. 
+
+@example
+
+          local_month(now())             11
+          ctime(now())                   Fri Dec 16 7:58:34 1994
+          strftime("%d-%b-%C",now())     11-12-94
+@end example
+
 
 @table @code
  @item now()
@@ -687,7 +703,7 @@ of seconds.
 seconds since January 1, 1970 (typically).  The conversion assumes the
 local time zone.  For @code{ymd_dst()}, if @var{dst} is positive,
 daylight savings time is assumed; if 0, standard time; and if negative,
-neither (ie. the same as @code{ymd()}).
+neither (i.e., the same as @code{ymd()}).
  @item local_year(@var{time})
  @item local_month(@var{time})
   @findex local_year

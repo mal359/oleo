@@ -35,14 +35,9 @@
 
 
 /* Routines for formatting cell values */
-#ifdef __STDC__
 struct user_fmt;
 static char *pr_flt (double, struct user_fmt *, int);
 static char *pr_int (long, struct user_fmt *, int);
-#else
-static char *pr_flt ();
-static char *pr_int ();
-#endif
 
 
 /* Constants */
@@ -81,13 +76,8 @@ ignore_sig (sig)
  * (less informative) error value substituted.  Note that this 
  * should be called before init_eval.
  */
-#ifdef __STDC__
 void
 init_infinity (void)
-#else
-void
-init_infinity ()
-#endif
 {
   (void) signal (SIGFPE, ignore_sig);
   __plinf = divide (1., 0.);
@@ -164,14 +154,8 @@ struct user_fmt u[16] =
 /* Turn a floating-point number into the canonical text form.  This scribbles
    on print_buf */
 
-#ifdef __STDC__
 char *
 flt_to_str (double val)
-#else
-char *
-flt_to_str (val)
-     double val;
-#endif
 {
   double f;
 
@@ -189,14 +173,8 @@ flt_to_str (val)
 }
 
 
-#ifdef __STDC__
 char *
 long_to_str (long val)
-#else
-char *
-long_to_str (val)
-     long val;
-#endif
 {
   sprintf (print_buf, "%ld", val);
   return print_buf;
@@ -205,14 +183,8 @@ long_to_str (val)
 /* create the human-readable version of the contents of a cell
    This scribbles on print-buf bigtime */
 
-#ifdef __STDC__
 char *
 print_cell (CELL * cp)
-#else
-char *
-print_cell (cp)
-     CELL *cp;
-#endif
 {
   int j;
   int p;
@@ -391,15 +363,8 @@ print_cell (cp)
 /* Return the value of ROW,COL in a human-readable fashion
    In paticular, strings have "" around them, and are \\ed
  */
-#ifdef __STDC__
 char *
 cell_value_string (CELLREF row, CELLREF col)
-#else
-char *
-cell_value_string (row, col)
-     CELLREF row;
-     CELLREF col;
-#endif
 {
   CELL *cp;
 
@@ -665,18 +630,8 @@ pr_flt (val, fmt, prec)
   return iptr;
 }
 
-#ifdef __STDC__
 char *
 adjust_prc (char *oldp, CELL * cp, int width, int smallwid, int just)
-#else
-char *
-adjust_prc (oldp, cp, width, smallwid, just)
-     char *oldp;
-     CELL *cp;
-     int width;
-     int smallwid;
-     int just;
-#endif
 {
   int fmt;
   int prc;
@@ -812,15 +767,8 @@ adjust_prc (oldp, cp, width, smallwid, just)
 }
 
 
-#ifdef __STDC__
 void
 set_usr_stats (int usr_n, char **usr_buf)
-#else
-void
-set_usr_stats (usr_n, usr_buf)
-     int usr_n;
-     char **usr_buf;
-#endif
 {
   int len;
   int i;
@@ -908,13 +856,8 @@ set_usr_stats (usr_n, usr_buf)
   u[usr_n].scale = astof (&usr_buf[8]);
 }
 
-#ifdef __STDC__
 int
 usr_set_fmts (void)
-#else
-int
-usr_set_fmts ()
-#endif
 {
   int n;
   int ret = 0;
@@ -925,15 +868,8 @@ usr_set_fmts ()
   return ret;
 }
 
-#ifdef __STDC__
 void
 get_usr_stats (int usr_num, char **usr_buf)
-#else
-void
-get_usr_stats (usr_num, usr_buf)
-     int usr_num;
-     char **usr_buf;
-#endif
 {
   static char buf1[30];
   static char buf2[30];
@@ -959,15 +895,8 @@ get_usr_stats (usr_num, usr_buf)
 
 /* Functions for printing out the names of cells and ranges */
 
-#ifdef __STDC__
 char *
 cell_name (CELLREF rr, CELLREF cc)
-#else
-char *
-cell_name (rr, cc)
-     CELLREF rr;
-     CELLREF cc;
-#endif
 {
   static char strs[2][20];
   static num = 0;
@@ -1023,14 +952,8 @@ cell_name (rr, cc)
   return ptr;
 }
 
-#ifdef __STDC__
 char *
 range_name (struct rng *rng)
-#else
-char *
-range_name (rng)
-     struct rng *rng;
-#endif
 {
   CELLREF lr, lc, hr, hc;
   static char buf[2][40];
@@ -1065,15 +988,8 @@ range_name (rng)
 /* Parse a range, allowing variable names.
  * Return 1 on failure, 0 on succes.
  */
-#ifdef __STDC__
 int
 get_abs_rng (char **pptr, struct rng *retp)
-#else
-int
-get_abs_rng (pptr, retp)
-     char **pptr;
-     struct rng *retp;
-#endif
 {
   unsigned char n;
   struct rng ignored;
@@ -1106,14 +1022,8 @@ get_abs_rng (pptr, retp)
 }
 
 
-#ifdef __STDC__
 char *
 col_to_str (CELLREF col)
-#else
-char *
-col_to_str (col)
-     CELLREF col;
-#endif
 {
   static char strs[2][10];
   static num;
@@ -1160,13 +1070,8 @@ col_to_str (col)
   return ptr;
 }
 
-#ifdef __STDC__
 void
 clear_spreadsheet (void)
-#else
-void
-clear_spreadsheet ()
-#endif
 {
   int n;
 
@@ -1205,15 +1110,8 @@ char tname[] = "#TRUE";
 char fname[] = "#FALSE";
 
 
-#ifdef __STDC__
 int
 words_imatch (char **ptr, char *key)
-#else
-int
-words_imatch (ptr, key)
-     char **ptr;
-     char *key;
-#endif
 {
   char *str = *ptr;
 
@@ -1247,14 +1145,8 @@ words_imatch (ptr, key)
     }
 }
 
-#ifdef __STDC__
 int
 parray_len (char **array)
-#else
-int
-parray_len (array)
-     char **array;
-#endif
 {
   int x;
   for (x = 0; array[x]; ++x);
@@ -1265,16 +1157,8 @@ parray_len (array)
 /* Return the index of CHECK in KEYS or -1.  Case and whitespeace insenstive.
  */
 
-#ifdef __STDC__
 int
 words_member (char **keys, int len, char *check)
-#else
-int
-words_member (keys, len, check)
-     char **keys;
-     int len;
-     char *check;
-#endif
 {
   int x;
   for (x = 0; x < len; ++x)
@@ -1287,14 +1171,8 @@ words_member (keys, len, check)
   return -1;
 }
 
-#ifdef __STDC__
 int
 prompt_len (char *prompt)
-#else
-int
-prompt_len (prompt)
-     char *prompt;
-#endif
 {
   char *pos;
   if (!prompt)
@@ -1305,14 +1183,8 @@ prompt_len (prompt)
 }
 
 
-#ifdef __STDC__
 int
 says_default (char *str)
-#else
-int
-says_default (str)
-     char *str;
-#endif
 {
   char *key = "ault";
   if (strincmp (str, "def", 3))

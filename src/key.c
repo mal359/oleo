@@ -35,17 +35,8 @@ struct cmd_func **the_funcs;
 int num_funcs;
 
 
-#ifdef __STDC__
 int
 search_map_for_cmd (struct line * line, int map, int vec, int code)
-#else
-int
-search_map_for_cmd (line, map, vec, code)
-     struct line * line;
-     int map;
-     int vec;
-     int code;
-#endif
 {
   int len = strlen (line->buf);
   struct keymap * this_map;
@@ -88,33 +79,16 @@ search_map_for_cmd (line, map, vec, code)
   return 0;
 }
 
-#ifdef __STDC__
 static void 
 do_bind_key (struct keymap *m, int key, int vector, int code)
-#else
-static void 
-do_bind_key (m, key, vector, code)
-     struct keymap *m;
-     int key;
-     int vector;
-     int code;
-#endif
 {
   m->keys[key].vector = (short)vector;
   m->keys[key].code = (short)code;
 }
 
 
-#ifdef __STDC__
 void 
 bind_key (char * keymap, char * function, int ch)
-#else
-void 
-bind_key (keymap, function, ch)
-     char * keymap;
-     char * function;
-     int ch;
-#endif
 {
   struct cmd_func * tmpfunc;
   int map = map_id (keymap);
@@ -188,16 +162,8 @@ fini:
   do_bind_key (the_maps[map], ch, vec, code);
 }
 
-#ifdef __STDC__
 void
 bind_set (char * keymap, char * command, char * keyset)
-#else
-void
-bind_set (keymap, command, keyset)
-     char * keymap;
-     char * command;
-     char * keyset;
-#endif
 {
   int first;
   int last;
@@ -236,15 +202,8 @@ bind_set (keymap, command, keyset)
 }
 
 
-#ifdef __STDC__
 void 
 bind_all_keys (char * keymap, char * function)
-#else
-void 
-bind_all_keys (keymap, function)
-     char * keymap;
-     char * function;
-#endif
 {
   struct cmd_func * tmpfunc;
   int map = map_id (keymap);
@@ -322,14 +281,8 @@ fini:
 }
 
 
-#ifdef __STDC__
 void 
 write_keys_cmd (FILE *fp)
-#else
-void 
-write_keys_cmd (fp)
-     FILE *fp;
-#endif
 {
   struct keymap *map;
   int n;
@@ -379,14 +332,8 @@ write_keys_cmd (fp)
 
 
 
-#ifdef __STDC__
 void 
 clear_keymap (struct keymap *m)
-#else
-void 
-clear_keymap (m)
-     struct keymap *m;
-#endif
 {
   int n;
   for (n = 0; n < 256; n++)
@@ -396,15 +343,8 @@ clear_keymap (m)
     }
 }
 
-#ifdef __STDC__
 int 
 map_idn (char *name, int n)
-#else
-int 
-map_idn (name, n)
-     char *name;
-     int n;
-#endif
 {
   int x;
   for (x = 0; x < num_maps; ++x)
@@ -413,15 +353,8 @@ map_idn (name, n)
   return -1;
 }
 
-#ifdef __STDC__
 void
 create_keymap (char * mapname, char * parentname)
-#else
-void
-create_keymap (mapname, parentname)
-     char * mapname;
-     char * parentname;
-#endif
 {
   int map = map_id (mapname);
   int parent = parentname ? map_id (parentname) : -1;
@@ -458,15 +391,8 @@ create_keymap (mapname, parentname)
 }
 
 
-#ifdef __STDC__
 void
 set_map_prompt (char * map, char * str)
-#else
-void
-set_map_prompt (map, str)
-     char * map;
-     char * str;
-#endif
 {
   int id = map_id (map);
   if (id < 0)

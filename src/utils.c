@@ -43,10 +43,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #endif /* NDIR */
 #endif /* not (DIRENT or _POSIX_VERSION) */
 
-#ifdef __STDC__
-#undef NULL
-#endif
-
 #include <ctype.h>
 #include "utils.h"
 
@@ -81,15 +77,8 @@ int __make_backups;
 int __backup_by_copying;
 
 /* Blow chunks! */
-#ifdef __STDC__
 void
 panic (const char *s,...)
-#else
-void
-panic (s, va_alist)
-     char *s;
-     va_dcl
-#endif
 {
   va_list iggy;
 
@@ -454,13 +443,9 @@ ck_realloc (void *ptr, size_t size)
 
 /* Do a sprintf into an allocated buffer. */
 char *
-#ifdef __STDC__
 mk_sprintf (char *str,...)
 {
   va_list iggy;
-#ifdef __TURBOC__
-  static
-#endif
   char tmpbuf[1024 * 8];
   char *ret;
 
@@ -472,29 +457,6 @@ mk_sprintf (char *str,...)
   return ret;
 }
 
-#else
-
-mk_sprintf (str, va_alist)
-     char *str;
-     va_dcl
-{
-  va_list iggy;
-#ifdef __TURBOC__
-  static
-#endif
-  char tmpbuf[1024 * 8];
-  char *ret;
-
-  va_start (iggy);
-  vsprintf (tmpbuf, str, iggy);
-  va_end (iggy);
-
-  ret = (char *) ck_malloc (strlen (tmpbuf) + 1);
-  strcpy (ret, tmpbuf);
-  return ret;
-}
-
-#endif
 
 /* Implement a variable sized LIFO stack of pointers to void */
 

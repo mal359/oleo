@@ -30,14 +30,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 
 
-#ifdef __STDC__
 char *
 fmt_to_str (int fmt)
-#else
-char *
-fmt_to_str (fmt)
-     int fmt;
-#endif
 {
   char *ptr;
   static char buf[30];
@@ -141,14 +135,8 @@ static struct fmt withprec[] =
   {0, 0}
 };
 
-#ifdef __STDC__
 int
 str_to_fmt (char *ptr)
-#else
-int
-str_to_fmt (ptr)
-     char *ptr;
-#endif
 {
   struct fmt *f;
   char **strs;
@@ -208,14 +196,8 @@ str_to_fmt (ptr)
   return ret + n;
 }
 
-#ifdef __STDC__
 char *
 jst_to_str (int jst)
-#else
-char *
-jst_to_str (jst)
-     int jst;
-#endif
 {
   if (jst == JST_DEF)
     return "default";
@@ -228,14 +210,8 @@ jst_to_str (jst)
   return "unknown";
 }
 
-#ifdef __STDC__
 int
 chr_to_jst (int chr)
-#else
-int
-chr_to_jst (chr)
-     int chr;
-#endif
 {
   if (chr == 'd' || chr == 'D')
     return JST_DEF;

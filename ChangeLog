@@ -1,3 +1,37 @@
+Tue Nov 25 20:44:00 1997  Jeff Bailey  (jbailey@gnu.org)
+
+	* src/utils.c: ANSIfy
+	* src/forminfo.c: ""
+	* doc/*.texi: Update from fisk's 1.6 Oleo docs.
+	* doc/ranlib.texi: Add	
+	* doc/KEYS: remove
+	* USING: remove
+
+Tue Nov 17 19:40:00 1997  Jeff Bailey  (jbailey@gnu.org)
+
+	* src/io-edit.c: ANSIfy.
+	* src/io-term.c: ""
+	* src/io-utils.c: ""
+	* src/decompile.c: ""
+	* src/line.c: ""
+	* src/key.c: ""
+	* src/panic.c: ""
+	* src/utils.c: ""
+	* src/print.c: ""
+	* src/cmd.c: ""
+	* src/display.c: ""
+	* src/byte-compile.c: ""
+
+Mon Nov 17 23:49:00 1997  Jeff Bailey  (jbailey@gnu.org)
+
+	* src/format.c: ANSIfy.
+	* src/input.c: ""
+	* src/info.c: ""
+
+Sun Nov 16 15:00:00 1997  Jeff Bailey  (jbailey@gnu.org)
+
+	* THANKS: Fix typo.
+
 Sat Nov 15 17:27:00 1997  Jeff Bailey  (jbailey@gnu.org)
 
 	* THANKS: File added

@@ -35,30 +35,16 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 extern char **environ;
 /* I hope i don't need these since they aren't write for all systems. */
 #if 0
-#ifdef __STDC__
 extern int dup (int);
 extern int close (int);
 extern VOIDSTAR sbrk (size_t);
 extern VOIDSTAR brk (VOIDSTAR);
-#else
-extern int dup ();
-extern int close ();
-extern VOIDSTAR sbrk ();
-extern VOIDSTAR brk ();
-#endif
 #endif
 
 
 
-#ifdef __STDC__
 void
 panic_write_file (FILE *fp, struct rng *rng)
-#else
-void
-panic_write_file (fp, rng)
-     FILE *fp;
-     struct rng *rng;
-#endif
 {
 #ifdef atarist
   io_error_msg ("panic save format not implemented");
@@ -111,15 +97,8 @@ panic_write_file (fp, rng)
 #endif
 }
 
-#ifdef __STDC__
 void
 panic_read_file (FILE *fp, int ismerge)
-#else
-void
-panic_read_file (fp, ismerge)
-     FILE *fp;
-     int ismerge;
-#endif
 {
 #ifdef atarist
   io_error_msg ("panic save format not implemented");
@@ -163,27 +142,15 @@ panic_read_file (fp, ismerge)
 #endif
 }
 
-#ifdef __STDC__
 int
 panic_set_options (int set_opt, char *option)
-#else
-int
-panic_set_options (set_opt, option)
-     int set_opt;
-     char *option;
-#endif
 {
   return -1;
 }
 
 
-#ifdef __STDC__
 void
 panic_show_options (void)
-#else
-void
-panic_show_options ()
-#endif
 {
   io_text_line
     ("File format:  panic save   (quick-n-dirty data-segment dump)");

@@ -47,9 +47,10 @@ Change the default alignment.  The options are
 
 @node Formats for numbers
 @section Formats for numbers
-Oleo can display numbers in a variety of formats.  In addition to  sixteen
-user-defined formats, you can a variety of simple formats.  You can set
-the format for a cell, for a region, and change the default format.
+Oleo can display numbers in a variety of formats.  In addition to
+sixteen user-defined formats, you can choose from a variety of simple
+formats.  You can set the format for a cell, for a region, and change
+the default format.
 
 @table @kbd
 @item M-a f
@@ -74,7 +75,8 @@ Change the default format.  The options are as above.
 @kindex  M-r f
 @kindex  M-a f
 
-
+There are some examples following a description of the simple and
+general formats.
 
 @subsection Simple Formats
 
@@ -106,7 +108,7 @@ fixed?}, then a string of 35 #'s is displayed.
 The following formats require a precision.  The precision may be a number
 from zero to 14, in which case that number of digits will always be displayed
 after the decimal point (zero-padding or rounding the number as needed), or
-the precision may be 'float', in which case oleo will use as many digits as
+the precision may be 'float', in which case Oleo will use as many digits as
 necessary.  
 
 @table @code
@@ -117,13 +119,13 @@ the magnitude of the number and the width of the column.
 
 @item dollar
 Positive values are preceeded by '$', (so 3 is displayed as
-'$3').  Negative values are parenthasized (so -3 is displayed
+'$3').  Negative values are parenthesized (so -3 is displayed
 as '($3)'), and all large values have a ',' every three
 digits (so 1000 is displayed as '$1,000').
 
 @item comma
-Positive numbers are not preceeded by '$', but this is
-otherwise identical to 'dollar'.
+This is like the dollar option, but without the '$'.  Positive numbers
+are presented normally, and negative ones are in parenthesis.  
 
 @item percent
 The value is multiplied by 100, and is displayed with a
@@ -177,7 +179,7 @@ We use the definition of the 'dollar' format for an example.
 @item	Example:	
                 What it is:
 @item	$		
-                What to print before postive numbers.
+                What to print before positive numbers.
 @item	(		
                 What to print before negative numbers.
 @item			
@@ -266,7 +268,7 @@ Change the default width to a positive integer.
 
 @node Hidden Rows and Columns
 @section Creating Hidden Rows and Columns
-Rows and columsn of the spreadsheet can be hidden, so that they do not
+Rows and columns of the spreadsheet can be hidden, so that they do not
 appear on the screen.  They continue to exist, and are updated when
 necessary.  The following  hides the third column in @code{a0} mode
 
@@ -343,7 +345,7 @@ Change the default protection.  The options are
 @section Fonts (in X11)
 
 The default cell font is 12 point times-roman.
-The easiest way to specify a font is to use one of the built in
+The easiest way to specify a font is to use one of the built-in
 short-hand names.  These names are `fixed', `times', and `courier'.
 Optionally, these names can be followed by a scale.  The scale is the
 ratio of the default point size to the desired point size. For

@@ -3,7 +3,7 @@
 @cindex Windows in Oleo
 @cindex Multiple windows in Oleo
 
-  Oleo can split a spreadsheet into two or many windows.  
+  Oleo can split a spreadsheet into two or more windows.  
  The windows showing the spreadsheet can
 show different parts of it.
 Only one spreadsheet can be displayed at a time.

@@ -15,7 +15,7 @@
 @subsection Infix Expressions
 @cindex Infix expressions
 
-  The following infix expressions are defined.  Values labelled
+  The following infix expressions are defined.  Values labeled
 @var{N1} and @var{N2} are numbers (floats or integers), @var{bool} booleans,
 @var{str} strings, and @var{val} any type (but both sides must be the
 same type).
@@ -53,7 +53,7 @@ be numbers, strings, or boolean values.
  @item @var{val1} != @var{val2}
   Equivalent to @code{!(@var{val1} = @var{val2})}.
  @item @var{str1} & @var{str2}
-  Text concatentation of strings.
+  Text concatenation of strings.
  @item @var{bool} ? @var{val1} : @var{val2}
   Like the C operator: if @var{bool} is @code{#TRUE}, @var{val1} is
 evaluated; if @var{bool} is @code{#FALSE}, @var{val2} is evaluated;
@@ -155,7 +155,7 @@ expression.
  @item #NEED_CLOSE
   A close parenthesis is missing.
  @item #NEED_QUOTE
-  A quote was expected; e.g. the terminating quote of a string literal.
+  A quote was expected; e.g., the terminating quote of a string literal.
  @item #UNK_CHAR
   An unknown character was encountered.
  @item #UNK_FUNC

@@ -69,12 +69,12 @@ region @code{A1.A3} is named @code{test1}.  Typing
 
 @footnote{yes it's trivial - how about something complex!}
 
-If @file{filename} contains a list of @code{Oleo} commands (like to
+If @file{filename} contains a list of @code{Oleo} commands (like the
 @file{.oleorc} file), the commands in this file can be executed:
 
 @table @kbd
 @item M-x	read-commands	
-This command opens the file you specify reads in each
+This command opens the file you specify, reads in each
 line, and executes them as if you'd typed them in to
 execute-command.  If any command needs more arguments than are
 included on the line, it will prompt you (interactively) for
@@ -88,7 +88,7 @@ separated list arguments.  For example:
 @end example
 
 Blank lines and lines that begin with `#' are ignored.
-Lines may be continuted by preceeding the final newline with an
+Lines may be continued by preceeding the final newline with an
 odd number of `\\' characters.  One backslash and the newline will,
 be discarded.
 

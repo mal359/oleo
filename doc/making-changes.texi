@@ -24,8 +24,8 @@ to reflect the new cells they refer to.
         Copy a region.  Given two ranges, it copies the source
 range into the destination range.  If the destination range size is a
 multiple of the source range size, the source range is copied
-multiple times.  If the dest range is given as a cell, the
-cell is the location of the top-left corner of the dest range.
+multiple times.  If the destination range is given as a cell, that
+cell is the location of the top-left corner of the destination range.
 (@code{copy-region})
 @cmindex copy-region
 @item M-C-c
@@ -53,7 +53,7 @@ Consider the  spreadsheet, where @code{B2} contains @code{@@sum(C2.D2)}:
 
 If you type @code{@kbd{M-c} B2 @key{RET} B3.B4}, then @code{B2} is
 unchanged, but @code{B3} contains @code{@@sum(C3.D3)}, since it was
-copied from a formula with relative addresses; similarly, @code{B4}
+copied from a formula with relative addresses. Similarly, @code{B4}
 contains @code{@@sum(C4.D4)}.  The display shows
 
 @example
@@ -94,7 +94,9 @@ display shows
 This is similar to copy-region, except that the source region is erased
 after the copy.  The two ranges must be the same size.  Relative
 addresses and variables whose ranges are inside the source region are
-adjusted, as with @code{copy-region}.  (@code{move-region})
+adjusted, as with @code{copy-region}. @footnote{This can be subtle -
+some good examples are needed}
+ (@code{move-region})
 @cmindex move-region
 @end table
 @kindex  M-m

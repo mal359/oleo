@@ -184,14 +184,8 @@ struct cmd_func * break_cmd;
 struct cmd_func * universal_arg_cmd;
 
 /* A bland signal handler. */
-#ifdef __STDC__
 static RETSIGTYPE
 got_sig (int sig)
-#else
-static RETSIGTYPE
-got_sig (sig)
-     int sig;
-#endif
 {
 }
 
@@ -199,14 +193,8 @@ got_sig (sig)
 
 /* An parser for the language grokked by option setting commands. */
 
-#ifdef __STDC__
 static int 
 do_set_option (char *ptr)
-#else
-static int 
-do_set_option (ptr)
-     char *ptr;
-#endif
 {
   int set_opt = 1;
 
@@ -469,26 +457,15 @@ do_set_option (ptr)
   return 1;
 }
 
-#ifdef __STDC__
 void
 set_options (char * ptr)
-#else
-void
-set_options (ptr)
-     char *ptr;
-#endif
 {
   if (do_set_option (ptr))
     io_recenter_cur_win ();
 }
 
-#ifdef __STDC__
 void 
 show_options (void)
-#else
-void 
-show_options ()
-#endif
 {
   int n;
   int fmts;
@@ -546,14 +523,8 @@ show_options ()
 }
 
 
-#ifdef __STDC__
 void
 read_mp_usr_fmt (char *ptr)
-#else
-void
-read_mp_usr_fmt (ptr)
-     char *ptr;
-#endif
 {
   int usr_n = -1;
   int n_chrs = 0;
@@ -642,14 +613,8 @@ read_mp_usr_fmt (ptr)
 }
 
 /* Modify this to write out *all* the options */
-#ifdef __STDC__
 void
 write_mp_options (FILE *fp)
-#else
-void
-write_mp_options (fp)
-     FILE *fp;
-#endif
 {
   fprintf (fp, "O;%sauto;%sbackground;%sa0;ticks %d\n",
 	   auto_recalc ? "" : "no",
@@ -658,14 +623,8 @@ write_mp_options (fp)
 	   cell_timer_seconds);
 }
 
-#ifdef __STDC__
 void 
 read_mp_options (char *str)
-#else
-void 
-read_mp_options (str)
-     char *str;
-#endif
 {
   char *np;
 
@@ -686,15 +645,8 @@ read_mp_options (str)
 
 /* Commands related to variables. */
 
-#ifdef __STDC__
 void
 set_var (char * var, char * val)
-#else
-void
-set_var (var, val)
-     char * var;
-     char * val;
-#endif
 {
   char *ret;
   if (val)
@@ -710,14 +662,8 @@ set_var (var, val)
     io_error_msg ("Can't set-variable %s: %s\n", var, ret);
 }
 
-#ifdef __STDC__
 void
 show_var (char *ptr)
-#else
-void
-show_var (ptr)
-     char *ptr;
-#endif
 {
   struct var *v;
   int num;
@@ -745,15 +691,8 @@ show_var (ptr)
   io_info_msg (print_buf);
 }
 
-#ifdef __STDC__
 static void
 show_a_var (char *name, struct var *v)
-#else
-static void
-show_a_var (name, v)
-     char *name;
-     struct var *v;
-#endif
 {
   if (v->var_flags == VAR_UNDEF)
     return;
@@ -768,13 +707,8 @@ show_a_var (name, v)
     io_text_line ("%-20s  %s", v->var_name, range_name (&(v->v_rng)));
 }
 
-#ifdef __STDC__
 void
 show_all_var (void)
-#else
-void
-show_all_var ()
-#endif
 {
   io_text_start ();
   io_text_line ("%-20s  Current Value", "Variable Name");
@@ -784,15 +718,8 @@ show_all_var ()
 
 static FILE * write_variable_fp = 0;
 
-#ifdef __STDC__
 static void
 write_a_var (char *name, struct var *v)
-#else
-static void
-write_a_var (name, v)
-     char *name;
-     struct var *v;
-#endif
 {
   CELLREF r, c;
   if (v->var_flags == VAR_UNDEF)
@@ -804,14 +731,8 @@ write_a_var (name, v)
 	     v->var_name, cell_value_string (r, c));
 }
 
-#ifdef __STDC__
 void
 write_variables (FILE * fp)
-#else
-void
-write_variables (fp)
-     FILE * fp;
-#endif
 {
   if (write_variable_fp)
     io_error_msg ("Can't re-enter write_variables.");
@@ -823,14 +744,8 @@ write_variables (fp)
     }
 }
 
-#ifdef __STDC__
 void
 read_variables (FILE * fp)
-#else
-void
-read_variables (fp)
-     FILE * fp;
-#endif
 {
   char buf[1024];
   int lineno = 0;
@@ -898,13 +813,8 @@ read_variables (fp)
 
 
 
-#ifdef __STDC__
 void
 init_maps (void)
-#else
-void
-init_maps ()
-#endif
 {
   num_maps = 0;
   the_maps = 0;
@@ -925,14 +835,8 @@ init_maps ()
   push_command_frame (0, 0, 0);
 }
 
-#ifdef __STDC__
 int 
 add_usr_cmds (struct cmd_func *new_cmds)
-#else
-int 
-add_usr_cmds (new_cmds)
-     struct cmd_func *new_cmds;
-#endif
 {
   num_funcs++;
   the_funcs = ck_realloc (the_funcs, num_funcs * sizeof (struct cmd_func *));
@@ -941,14 +845,8 @@ add_usr_cmds (new_cmds)
 }
 
 #ifdef USE_DLD
-#ifdef __STDC__
 static int 
 add_usr_maps (struct keymap **new_maps)
-#else
-static int 
-add_usr_maps (new_maps)
-     struct keymap **new_maps;
-#endif
 {
   int n;
 
@@ -961,13 +859,8 @@ add_usr_maps (new_maps)
 }
 #endif /* USE_DLD */
 
-#ifdef __STDC__
 static void
 show_usage (void)
-#else
-static void
-show_usage ()
-#endif
 {
   char ** use = usage;
   fprintf (stderr, "Usage: %s ", PACKAGE);
@@ -978,14 +871,8 @@ show_usage ()
     }
 }
 
-#ifdef __STDC__
 static RETSIGTYPE
 continue_oleo (int sig)
-#else
-static RETSIGTYPE
-continue_oleo (sig)
-     int sig;
-#endif
 {
   io_repaint ();
   if (using_curses)
@@ -996,15 +883,8 @@ int display_opened = 0;
 
 extern int sneaky_linec;
 
-#ifdef __STDC__
 int 
 main (int argc, char **argv)
-#else
-int 
-main (argc, argv)
-     int argc;
-     char **argv;
-#endif
 {
   volatile int ignore_init_file = 0;
   FILE * init_fp[2];

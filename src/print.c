@@ -31,19 +31,9 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 
 
-#ifdef __STDC__
 static void 
 put_eps_header (struct display *dpy,
 		float scale, float wid, float hgt, FILE *fp)
-#else
-static void 
-put_eps_header (dpy, scale, wid, hgt, fp)
-     struct display *dpy;
-     float scale;
-     float wid;
-     float hgt;
-     FILE *fp;
-#endif
 {
   int dpy_wid = display_width (dpy);
   int dpy_hgt = display_height (dpy);
@@ -65,15 +55,8 @@ put_eps_header (dpy, scale, wid, hgt, fp)
   fputs ("%%EndComments\n", fp);
 }
 
-#ifdef __STDC__
 void 
 put_ps_string (char *str, FILE *fp)
-#else
-void 
-put_ps_string (str, fp)
-     char *str;
-     FILE *fp;
-#endif
 {
   fputc ('(', fp);
   while (*str)
@@ -89,18 +72,9 @@ put_ps_string (str, fp)
   fputc (')', fp);
 }
 
-#ifdef __STDC__
 void 
 psprint_region (FILE * fp, struct rng * rng,
 		float wid, float hgt, char * font)
-#else
-void 
-psprint_region (fp, rng, wid, hgt, font)
-     FILE *fp;
-     struct rng *rng;
-     float wid, hgt;
-     char * font;
-#endif
 {
   struct display dpy;
   int rows = rng->hr - rng->lr + 1;
@@ -463,15 +437,8 @@ static struct page_size size_table[] =
   { "quarto",       610,  780     }
 };
 
-#ifdef __STDC__
 static struct page_size *
 find_size( char * size, int len )
-#else
-static struct page_size *
-find_size( size, len )
-     char *size;
-     int len;
-#endif
 {
   int i;
   struct page_size *p = size_table;
@@ -487,14 +454,8 @@ find_size( size, len )
 static float default_pswid = 8.5 * 72.;
 static float default_pshgt = 11. * 72.;
 
-#ifdef __STDC__
 void
 set_page_size_cmd (char * whole_str)
-#else
-void
-set_page_size_cmd (whole_str)
-     char * whole_str;
-#endif
 {
   char * str = whole_str;
   float neww;
@@ -566,15 +527,8 @@ set_page_size_cmd (whole_str)
     }
 }
 
-#ifdef __STDC__
 void 
 psprint_region_cmd (struct rng *rng, FILE *fp)
-#else
-void 
-psprint_region_cmd (rng, fp)
-     struct rng *rng;
-     FILE *fp;
-#endif
 {
   psprint_region (fp, rng, default_pswid, default_pshgt, 0);
 }

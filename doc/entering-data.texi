@@ -24,11 +24,12 @@ There are 5 types of values:
  @item Integers.
  @item Floats, expressed in the usual format:
 [@code{-}]@var{nnn}[@code{.}@var{nnn}][@code{e}[@code{-}]@var{nnn}],
-e.g. -103.14e-7.
+e.g., -103.14e-7 or .00000012 or 103.14.
   @cindex String values
   @item Strings, which are surrounded by double quotes.  To include
-unusual characters, you can either quote them with a backslash (e.g.
-@w{@code{"This is \"quoted\"."}} or use an octal escape code: @samp{\@var{nnn}}
+unusual characters, you can either quote them with a backslash (e.g.,
+@w{@code{"This is \"quoted\"."}}) or use an octal escape code: 
+@samp{\@var{nnn}}
 where @var{nnn} is the octal code for the ASCII value of the character.
 @c an expression isn't really another type; it's a group of values:
 @c @item Expressions, such as @code{@@sum(A1.B3)}, or @code{A1 + B2}.
@@ -74,7 +75,7 @@ yank command.  If you accidentally type @kbd{C-u}, the text is @emph{erased}.
 
 While the input area is active, the commands that move the cell cursor
 are disabled.  If you want to move the cell cursor, use the
-other-window command (@kbd{C-X o}) to leave and later reenter the input area.
+other-window command (@kbd{C-x o}) to leave and later reenter the input area.
 
 @table @kbd
 @item M-a
@@ -168,15 +169,18 @@ type in your new text.
 @section Moving to the next input cell while editing
 
 When you are finished entering data in a cell, you type @key{RET}. If
-you wish to enter data in the cell below, type @kbd{C-i}, and you are
-placed in the next cell, waiting for input.  If you type @kbd{C-j}, you
+you wish to enter data in the cell below, type either @kbd{C-i} or the
+down-arrow key, and you are
+placed in the  cell below, waiting for input.  If you type the up-arrow
+key, you are placed in the cell above, waiting for input.
+If you type @kbd{C-j}, you
 move to the right.  The direction of @kbd{C-i} can be changed - the
 commands are  given below.  For example, if you wish to move upwards when you
 type @kbd{C-i}, type @code{C-x m ^}.
 
 @table @kbd
 @item C-i
-Enter the data, and move to next cell
+Enter the data, and move to next cell.  The tab key also does this.
 (@code{next-edit})
 @cmindex next-edit
 @item C-j
@@ -197,7 +201,7 @@ Enter the data, and move to next cell in alternative direction
 @code{auto-move-up-right}
 @item C-x m /
 @code{auto-move-down-left}
-@item C-x m \\
+@item C-x m \
 @code{auto-move-down-right}
 @item C-x m  
 @code{auto-move-no-motion}

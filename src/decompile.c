@@ -52,17 +52,8 @@ static CELLREF decomp_col;
 
 /* We decompile things with these wierd node-things.  It's ugly, but it works.
  */
-#ifdef __STDC__
 static struct pr_node *
 n_alloc (int size, int tightness, char *fmt,...)
-#else
-static struct pr_node *
-n_alloc (size, tightness, fmt, va_alist)
-     int size;
-     int tightness;
-     char *fmt;
-     va_dcl
-#endif
 {
   struct pr_node *ret;
   va_list args;
@@ -567,16 +558,8 @@ next_byte:
 /* Actual entry points to this file */
 /* decomp(row, col, cell) returns a string that can be byte_compiled to create
    cell->formula  decomp_free() frees up the allocated string */
-#if __STDC__
 char *
 decomp (CELLREF r, CELLREF c, CELL *cell)
-#else
-char *
-decomp (r, c, cell)
-     CELLREF r;
-     CELLREF c;
-     CELL *cell;
-#endif
 {
   struct pr_node *ret;
   char *str;
@@ -630,13 +613,8 @@ decomp (r, c, cell)
   return &(ret->string[0]);
 }
 
-#ifdef __STDC__
 void
 decomp_free (void)
-#else
-void
-decomp_free ()
-#endif
 {
 #ifdef TEST
   if (!save_decomp)
@@ -653,15 +631,8 @@ decomp_free ()
    Note that this returns a pointer to a static area that is overwritten with
    each call. . .
  */
-#ifdef __STDC__
 char *
 backslash_a_string (char *string, int add_quote)
-#else
-char *
-backslash_a_string (string, add_quote)
-     char *string;
-     int add_quote;
-#endif
 {
   char *pf;
   char *pt;

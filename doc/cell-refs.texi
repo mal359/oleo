@@ -38,7 +38,7 @@ In both modes the case of cell and range letters is ignored.
 @menu
 * noa0 mode::                   Using noa0 Mode
 * a0 mode::                     Using a0 Mode
-* Comparison::                  Comparing a0 and noa0 modey
+* Comparison::                  Comparing a0 and noa0 modes
 @end menu
 
 
@@ -50,7 +50,7 @@ In both modes the case of cell and range letters is ignored.
   In @code{noa0} mode (the default), absolute cell addresses have the
 form @w{@code{R@var{row}C@var{col}}}, where @var{row} and @var{col} are
 the row and column (as integers).  Thus, @code{R1C2} is the second cell
-from the left on the top row.  The cell in the leftmost uppermost corner
+from the left on the top row.       The cell in the leftmost uppermost corner
 is @code{R1C1}, and the cell in the rightmost lowermost corner is
 @code{R65535C65535}.  
 
@@ -88,13 +88,13 @@ quadruple letters (AAAA-CRXO).
 @code{B3} refers to the cell in the second column of row 3.
 Since this is a relative reference, it will change when the containing
 cell is moved, to refer to the cell at the same relative position;
-e.g. if the cell is moved two columns to the right the reference will
+e.g., if the cell is moved two columns to the right the reference will
 change to @code{D3}.
 
   Absolute references have the form
 @code{$}@var{col_let}@code{$}@var{row_num}, as in @code{$A$1} (top left
 cell).  These do not change when the containing cell is moved.  Both
-types can be mixed with predictable results, e.g. @code{$A4} has an
+types can be mixed with predictable results, e.g., @code{$A4} has an
 absolute column but a relative row.
 
   Ranges are given as @var{cell_ref}@code{:}@var{cell_ref} or
@@ -105,7 +105,7 @@ the topmost, leftmost four cells in the spreadsheet.
 @node Comparison,  , a0 mode, Cell referencing
 @subsection Comparison
 
-In order to get an understanding of these two adressing modes, assume that the
+In order to get an understanding of these two addressing modes, assume that the
 cell cursor is in @code{E7} = @code{R7C5}.  The left hand column is @code{noao}
 mode, and the right hand one is @code{a0} mode.
 
@@ -113,6 +113,6 @@ mode, and the right hand one is @code{a0} mode.
                  R1C2              $B$1
                  R[-1]C[+1]        F6
                  RC[+2]            G7
-                 R4C[-1]           D$4
+                 R4C[-1]           $D4
 @end example
 

@@ -47,11 +47,7 @@ local_free (p)
 #include "ref.h"
 
 
-#ifdef __STDC__
 extern int yyparse (void);
-#else
-extern int yyparse ();
-#endif
 
 extern struct function date_funs[];
 extern struct function busi_funs[];
@@ -63,11 +59,7 @@ extern struct node *parse_return;
 extern void sort ();
 
 
-#ifdef __STDC__
 static void add_backpatch (unsigned, unsigned);
-#else
-static void add_backpatch ();
-#endif
 
 struct backpatch
   {
