@@ -70,7 +70,13 @@ move up one cell in the main keymap, type
         @key{M-x} bind-key @key{RET} main @key{RET} up-cell @key{C-1} @key{RET}
 @end example
 
-
+@item M-x unbind-key
+@cmindex unbind-key
+This asks for the name of a keymap and the key in that map to unbind.
+For example, to remove the default mapping bound to @kbd{M-k}, type
+@example
+	@key{M-k} unbind-key @key{RET} meta @key{RET} @key{k}
+@end example
 
 @item  M-x describe-key 
 @cmindex describe-key
