@@ -1,5 +1,8 @@
 TODO's:
 
+* Configuration
+	fail on funky options --with-motif --without-Xbae
+
 * Get our stuff together for an upcoming 2.0 release of Oleo.
 
 * Add "date" and "time" formats, allow them to be input and allow
@@ -14,6 +17,7 @@ TODO's:
  - Make a LessTif/Motif interface
 	(busy) printing
 	(busy) GNU Plotutils dialogs
+	(todo) print dialog
 
 * Include texi2html in the oleo source, and enhance it so it can
   process all the texinfo commands used in the documentation.
@@ -22,6 +26,8 @@ TODO's:
 * Use GNU PlotUtils instead of GnuPlot.
   This is being worked on : simple bar, pie, and XY charts are available.
   In the process, make the plotting user interface more transparent.
+	(todo) allow an empty range to be input without warnings
+	(todo) port the plotutils user interface to curses (long term ?)
 
 * Make io_error_msg work right in Motif.
 	(done)
@@ -46,6 +52,7 @@ Longer term or obsolete TODO's :
  - CSV would be nice (DB 17/3/1999: LIST format can do this,
 	now also recognizes CSV file name suffix)
  - DBII or DBIII is useful.
+	(db 19/3/1999: XBASE library can do this. Somewhat implemented.)
  - Fixed width.
 
 * Fix sort routines

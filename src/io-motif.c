@@ -1,9 +1,9 @@
 /*
- *  $Id: io-motif.c,v 1.34 1999/03/17 21:21:37 danny Exp $
+ *  $Id: io-motif.c,v 1.35 1999/03/18 23:55:08 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
- *  Copyright (C) 1998 by the Free Software Foundation, Inc.
+ *  Copyright (C) 1998, 1999 by the Free Software Foundation, Inc.
  *  Written by Danny Backx <danny@gnu.org>.
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.34 1999/03/17 21:21:37 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.35 1999/03/18 23:55:08 danny Exp $";
 
 #include "config.h"
 
@@ -983,7 +983,9 @@ static struct {
 	char *plotter, *pusymb, *ext;
 } PuPlotters[32];
 
+#ifdef HAVE_LIBPLOT
 PuFunction ThisPuFunction = NULL;	/* The function to plot with */
+#endif
 
 void PuSelectPlotter(Widget w, XtPointer client, XtPointer call)
 {
@@ -3173,6 +3175,8 @@ GscBuildSplash(Widget parent)
 #endif
 			XmNx,			300,
 			XmNy,			300,
+			XmNwidth,		100,
+			XmNheight,		100,
 		NULL);
 
 	/* MenuShell wants an RC child */

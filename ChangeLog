@@ -1,7 +1,20 @@
+Fri 19 Mar 00:49:19 1999, Danny Backx
+	* Xbase file read works for the first time; you need the latest
+	  and greatest Xbase library (1.8.0c or later) for this to work.
+	  Get it from http://www.startech.keller.tx.us/xbase/xbase.html .
+	* Remove some configuration macro junk. E.g. we were checking
+	  --without-motif in more than one place.
+	* Update TODO
+	* Just specify dimensions for splash shell, no need to be
+	  very specific. Remove LessTif-ness from fallback.c .
+
+Wed 17 Mar 1999, Andreas Jaeger  <aj@arthur.rhein-neckar.de>
+	* src/io-motif.c: Protect definition of ThisPuFunction by #ifdef
+	  HAVE_LIBPLOT.
 
 Wed 17 Mar 22:21:06 1999, Danny Backx
-	* Motif vs. LessTif issue: need to make sure splashShell has
-	  non-zero geometry in Motif.
+	* src/fallback.c : Motif vs. LessTif issue: need to make sure
+	  splashShell has non-zero geometry in Motif.
 	* Protect against crash when reading CSV file with list
 	  format using default (tab) separator.
 	* Add stuff for Xbase (again). Still crashes big time.

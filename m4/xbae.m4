@@ -9,8 +9,8 @@ AC_DEFUN(ICE_FIND_Xbae,
 AC_REQUIRE([AC_PATH_XTRA])
 xbae_includes=
 xbae_libraries=
-AC_ARG_WITH(Xbae,
-[  --without-Xbae         do not use Xbae widgets])
+dnl AC_ARG_WITH(Xbae,
+dnl [  --without-Xbae         do not use Xbae widgets])
 dnl Treat --without-Xbae like
 dnl --without-Xbae-includes --without-Xbae-libraries.
 if test "$with_Xbae" = "no"

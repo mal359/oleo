@@ -1,5 +1,5 @@
 /*
- *  $Id: xbase.cpp,v 1.2 1999/03/17 21:21:39 danny Exp $
+ *  $Id: xbase.cpp,v 1.3 1999/03/18 23:55:10 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -23,7 +23,7 @@
 
 extern "C" {
 
-static char rcsid[] = "$Id: xbase.cpp,v 1.2 1999/03/17 21:21:39 danny Exp $";
+static char rcsid[] = "$Id: xbase.cpp,v 1.3 1999/03/18 23:55:10 danny Exp $";
 
 #include "config.h"
 
@@ -43,15 +43,26 @@ static char rcsid[] = "$Id: xbase.cpp,v 1.2 1999/03/17 21:21:39 danny Exp $";
 #if defined(HAVE_LIBXBASE)
 
 #include <stdio.h>
+
+/*
+ * Avoid Xbase madness
+ */
+#ifdef	PACKAGE
+#undef	PACKAGE
+#endif
+#ifdef	VERSION
+#undef	VERSION
+#endif
+
 #include <xbase/xbase.h>
 
 void
 CppReadXbaseFile(char *fn)
 {
-//	char	*fn;
-	XBASE	x;
-	DBF	db(&x);
-	int	i, fc;
+	xbXBase	x;
+	xbDbf	db(&x);
+
+	int	i, fc, rc, j;
 	char	*r;
 
 //	fn = cell_value_string(curow, cucol, True);
@@ -60,14 +71,69 @@ CppReadXbaseFile(char *fn)
 	db.OpenDatabase(fn);
 	fc = db.FieldCount();
 
+	/* Put DBF file headers on current row */
 	for (i=0; i<fc; i++) {
-		r = new_value(curow + 1, i + cucol,
-			db.GetFieldName(i));
+		char	*s = db.GetFieldName(i),
+			*ss = (char *)malloc(strlen(s) + 3);
+
+		ss[0] = '"'; ss[1] = '\0';
+		strcat(ss, s);
+		strcat(ss, "\"");
+
+		r = new_value(curow, i + cucol, ss);
+	}
+
+	/* Put DBF file data on subsequent rows */
+	rc = db.GetFirstRecord();
+	j = 1;
+	while (rc == XB_NO_ERROR) {
+		for (i=0; i<fc; i++) {
+			char	t = db.GetFieldType(i);
+			long	l;
+			float	f;
+			char	buf[128];
+
+			switch (t) {
+			case 'C':	/* character */
+				buf[0] = '"';
+				rc = db.GetField(i, buf+1, 0);
+				strcat(buf, "\"");
+
+				r = new_value(curow + j, cucol + i, buf);
+				break;
+			case 'D':	/* date */
+				buf[0] = '"';
+				rc = db.GetField(i, buf+1, 0);
+				strcat(buf, "\"");
+
+				/* FIX ME probably CCYYMMDD format, need to convert */
+				r = new_value(curow + j, cucol + i, buf);
+				break;
+			case 'L':	/* logical */
+				break;
+			case 'M':	/* memo */
+				break;
+			case 'N':	/* numeric */
+				l = db.GetLongField(i);
+				sprintf(buf, "%ld", l);
+				r = new_value(curow + j, cucol + i, buf);
+				break;
+			case 'F':	/* float */
+				f = db.GetFloatField(i);
+				sprintf(buf, "%f", f);
+				r = new_value(curow + j, cucol + i, buf);
+				break;
+			default:
+				break;
+			}
+		}
+
+		rc = db.GetNextRecord();
+		j++;
 	}
 
 	modified = 1;
 	recalculate(1);
-//	MotifUpdateDisplay();
 
 	db.CloseDatabase();
 }

@@ -261,7 +261,7 @@ dnl
 dnl The link_x variable should be fit to put on the application's
 dnl link line in the Makefile.
 dnl
-dnl Oleo CVS $Id: aclocal.m4,v 1.36 1999/03/17 21:21:31 danny Exp $
+dnl Oleo CVS $Id: aclocal.m4,v 1.37 1999/03/18 23:54:53 danny Exp $
 dnl
 AC_DEFUN(AC_LINK_X,
 [if test "$with_x" = "yes"; then
@@ -285,7 +285,7 @@ dnl
 dnl The link_motif and include_motif variables should be fit to put on
 dnl your application's link line in your Makefile.
 dnl
-dnl Oleo CVS $Id: aclocal.m4,v 1.36 1999/03/17 21:21:31 danny Exp $
+dnl Oleo CVS $Id: aclocal.m4,v 1.37 1999/03/18 23:54:53 danny Exp $
 dnl
 AC_DEFUN(AC_FIND_MOTIF,
 [
@@ -295,15 +295,15 @@ AC_REQUIRE([AC_PATH_XTRA])
 motif_includes=
 motif_libraries=
 
-AC_ARG_WITH(motif,
-[  --without-motif         do not use Motif widgets])
+dnl AC_ARG_WITH(motif,
+dnl [  --without-motif         do not use Motif widgets])
 dnl Treat --without-motif like
 dnl --without-motif-includes --without-motif-libraries.
-if test "$with_motif" = "no"
-then
-  motif_includes=none
-  motif_libraries=none
-fi
+dnl if test "$with_motif" = "no"
+dnl then
+dnl   motif_includes=none
+dnl   motif_libraries=none
+dnl fi
 
 AC_ARG_WITH(motif-includes,
 [  --with-motif-includes=DIR    Motif include files are in DIR],
@@ -474,8 +474,8 @@ AC_DEFUN(ICE_FIND_Xbae,
 AC_REQUIRE([AC_PATH_XTRA])
 xbae_includes=
 xbae_libraries=
-AC_ARG_WITH(Xbae,
-[  --without-Xbae         do not use Xbae widgets])
+dnl AC_ARG_WITH(Xbae,
+dnl [  --without-Xbae         do not use Xbae widgets])
 dnl Treat --without-Xbae like
 dnl --without-Xbae-includes --without-Xbae-libraries.
 if test "$with_Xbae" = "no"

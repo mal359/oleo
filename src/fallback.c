@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.9 1999/03/17 21:26:27 danny Exp $
+ *  $Id: fallback.c,v 1.10 1999/03/18 23:55:08 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -262,9 +262,6 @@ char *fallback[] = {
 /* Graph Print Dialog */
 	"*printDialog_popup.title:		Select a file to print to",
 	"*puselectfile_popup.title:		Select a file to print to",
-
-#ifndef	LESSTIF_VERSION
-	"*splashShell.geometry:				10x10",
 /* End */
 	NULL
 };

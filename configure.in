@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.49 1999/03/17 21:21:32 danny Exp $
+dnl $Id: configure.in,v 1.50 1999/03/18 23:54:54 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -32,7 +32,6 @@ dnl
 dnl Find a C compiler before even detecting systems
 dnl
 AC_PROG_CC
-AC_PROG_CXX
 
 dnl
 dnl Detect strange environments
@@ -67,13 +66,17 @@ dnl How good is the C compiler ?
 dnl
 AM_C_PROTOTYPES
 
+dnl
 dnl Checks for libraries.
+dnl
 AC_CHECK_LIB(ncurses, waddch, ,
 	AC_CHECK_LIB(curses, addch, ,
 		AC_CHECK_LIB(termlib, tgetent, ,
 			AC_CHECK_LIB(termcap, tgetend))))
 
+dnl
 dnl This library is required on FreeBSD.
+dnl
 AC_CHECK_LIB(mytinfo, tputs)
 
 dnl
@@ -84,7 +87,9 @@ dnl	Yes: "main" just detects presence of the library.
 dnl
 AC_CHECK_LIB(m, main)
 
+dnl
 dnl Checks for X11
+dnl
 AC_PATH_XTRA
 
 dnl
@@ -107,8 +112,11 @@ AC_ARG_WITH(motif,
 
 dnl
 dnl If you ask not to have Xbae then you can't have Motif either.
+dnl And the other way around.
 dnl
 test "$with_Xbae" = "no" && with_motif="no"
+test "$with_motif" = "no" && with_Xbae="no"
+
 dnl
 dnl Checks for Motif
 dnl These should not happen if --without-motif has been used.
@@ -178,7 +186,7 @@ AC_CHECK_HEADERS(locale.h time.h)
 dnl
 dnl Do we have xbase library ?
 dnl
-echo Yow $CFLAGS Yow $LIBS Yow
+AC_PROG_CXX
 AC_CHECK_LIB(xbase, main)
 AM_CONDITIONAL(HaveXbase, test x$ac_cv_lib_xbase_main = xyes)
 

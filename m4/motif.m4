@@ -14,7 +14,7 @@ dnl
 dnl The link_motif and include_motif variables should be fit to put on
 dnl your application's link line in your Makefile.
 dnl
-dnl Oleo CVS $Id: motif.m4,v 1.7 1999/02/04 22:32:49 danny Exp $
+dnl Oleo CVS $Id: motif.m4,v 1.8 1999/03/18 23:55:05 danny Exp $
 dnl
 AC_DEFUN(AC_FIND_MOTIF,
 [
@@ -24,15 +24,15 @@ AC_REQUIRE([AC_PATH_XTRA])
 motif_includes=
 motif_libraries=
 
-AC_ARG_WITH(motif,
-[  --without-motif         do not use Motif widgets])
+dnl AC_ARG_WITH(motif,
+dnl [  --without-motif         do not use Motif widgets])
 dnl Treat --without-motif like
 dnl --without-motif-includes --without-motif-libraries.
-if test "$with_motif" = "no"
-then
-  motif_includes=none
-  motif_libraries=none
-fi
+dnl if test "$with_motif" = "no"
+dnl then
+dnl   motif_includes=none
+dnl   motif_libraries=none
+dnl fi
 
 AC_ARG_WITH(motif-includes,
 [  --with-motif-includes=DIR    Motif include files are in DIR],
