@@ -1,5 +1,9 @@
 
-$Id: ChangeLog,v 1.134 2000/11/22 19:33:00 danny Exp $
+$Id: ChangeLog,v 1.135 2000/11/25 10:08:29 danny Exp $
+
+	* Added bunches of .cvsignore files to allow working more
+	  transparently with a directory accessing CVS and holding
+	  a build at the same time.
 
 Wed Nov 22 00:24:12 CET 2000, Danny
 
