@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.55 2001/02/08 00:21:23 pw Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.56 2001/02/08 00:26:36 pw Exp $
 #
 # CPPFLAGS = -Wall
 
@@ -8,7 +8,7 @@ localedir = $(prefix)/share/locale
 AUTOMAKE_OPTIONS = ../lib/ansi2knr dejagnu
 
 EXTRA_DIST=	xbase.cpp oleo_xb.h mysql.c parse.h gpl.sed
-CLEANFILES = parse.c parse.h posxitm.c posxitm.h
+CLEANFILES = parse.c parse.h posixtm.c posixtm.h
 DISTCLEANFILES = tags
 MAINTAINERCLEANFILES = Makefile.in
 
