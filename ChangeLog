@@ -1,3 +1,11 @@
+Thu Oct 23 20:31:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
+
+	* src/io-term.c: Add about menu and scroll bars.
+
+Thu Oct 23 17:56:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
+
+	* doc/interface.texi: Fix to work with Texinfo 3.11
+
 Wed Oct 22 22:35:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
 
 	* io-term.c: Add File, Edit menus to window.

@@ -8,7 +8,7 @@
 
 
 @menu
-* New @@ functions::            Adding new @@ Functions
+* New @ functions::            Adding new @@ Functions
 @end menu
 
 @node New @@ functions,  , Extending Oleo, Extending Oleo

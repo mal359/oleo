@@ -1,24 +1,24 @@
-/*	Copyright (C) 1990, 1992, 1993 Free Software Foundation, Inc.
+/*      Copyright (C) 1990, 1992, 1993 Free Software Foundation, Inc.
 
-This file is part of Oleo, the GNU Spreadsheet.
+   This file is part of Oleo, the GNU Spreadsheet.
 
-Oleo is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
+   Oleo is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
 
-Oleo is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   Oleo is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with
-Oleo; see the file COPYING.  If not, write to the Free Software Foundation, 675
-Mass Ave, Cambridge, MA 02139, USA.  */
+   You should have received a copy of the GNU General Public License along with
+   Oleo; see the file COPYING.  If not, write to the Free Software Foundation, 675
+   Mass Ave, Cambridge, MA 02139, USA.  */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif 
+#endif
 
 #include <stdio.h>
 #include <ctype.h>
@@ -73,7 +73,7 @@ static RETSIGTYPE
 ignore_sig (sig)
      int sig;
 {
-  (void)signal (SIGFPE, ignore_sig);
+  (void) signal (SIGFPE, ignore_sig);
 }
 
 /* It's ok of this fails and generates signals.  In that case, 
@@ -89,11 +89,11 @@ void
 init_infinity ()
 #endif
 {
-  (void)signal (SIGFPE, ignore_sig);
+  (void) signal (SIGFPE, ignore_sig);
   __plinf = divide (1., 0.);
-  (void)signal (SIGFPE, ignore_sig);
+  (void) signal (SIGFPE, ignore_sig);
   __neinf = divide (-1., 0.);
-  (void)signal (SIGFPE, ignore_sig);
+  (void) signal (SIGFPE, ignore_sig);
   __nan = __plinf + __neinf;
 }
 
@@ -207,7 +207,7 @@ long_to_str (val)
 
 #ifdef __STDC__
 char *
-print_cell (CELL *cp)
+print_cell (CELL * cp)
 #else
 char *
 print_cell (cp)
@@ -667,7 +667,7 @@ pr_flt (val, fmt, prec)
 
 #ifdef __STDC__
 char *
-adjust_prc (char *oldp, CELL *cp, int width, int smallwid, int just)
+adjust_prc (char *oldp, CELL * cp, int width, int smallwid, int just)
 #else
 char *
 adjust_prc (oldp, cp, width, smallwid, just)
@@ -729,10 +729,10 @@ adjust_prc (oldp, cp, width, smallwid, just)
       if (prc != PRC_FLT)
 	return numb_oflo;
       len = strlen (oldp);
-      bptr = (char *)strstr (oldp, ufmt->decpt);
+      bptr = (char *) strstr (oldp, ufmt->decpt);
       if (!bptr)
 	return numb_oflo;
-      while (eptr = (char *)strstr (bptr + 1, ufmt->decpt))
+      while (eptr = (char *) strstr (bptr + 1, ufmt->decpt))
 	bptr = eptr;
 
       if (width < bptr - oldp)
@@ -765,7 +765,7 @@ adjust_prc (oldp, cp, width, smallwid, just)
 	else			/* if(f>9.9999999e9 || f<1e-9) */
 	  len = width - 6;
 	/* else
-				len=width-5; */
+	   len=width-5; */
 	if (cp->cell_flt < 0)
 	  --len;
 	if (len > 0)
@@ -790,7 +790,7 @@ adjust_prc (oldp, cp, width, smallwid, just)
     }
 
   /* If we get here, bptr points to a a string of len characters
-	   (len<=width) that we want to output */
+     (len<=width) that we want to output */
   if (len < smallwid)
     {
       if (just == JST_RGT || just == JST_CNT)
@@ -1207,15 +1207,15 @@ char fname[] = "#FALSE";
 
 #ifdef __STDC__
 int
-words_imatch (char ** ptr, char * key)
+words_imatch (char **ptr, char *key)
 #else
 int
 words_imatch (ptr, key)
-     char ** ptr;
-     char * key;
+     char **ptr;
+     char *key;
 #endif
 {
-  char * str = * ptr;
+  char *str = *ptr;
 
   while (isspace (*str))
     ++str;
@@ -1249,15 +1249,15 @@ words_imatch (ptr, key)
 
 #ifdef __STDC__
 int
-parray_len (char ** array)
+parray_len (char **array)
 #else
 int
 parray_len (array)
-     char ** array;
+     char **array;
 #endif
 {
   int x;
-  for (x = 0; array[x]; ++x) ;
+  for (x = 0; array[x]; ++x);
   return x;
 }
 
@@ -1267,19 +1267,19 @@ parray_len (array)
 
 #ifdef __STDC__
 int
-words_member (char ** keys, int len, char * check)
+words_member (char **keys, int len, char *check)
 #else
 int
 words_member (keys, len, check)
-     char ** keys;
+     char **keys;
      int len;
-     char * check;
+     char *check;
 #endif
 {
   int x;
   for (x = 0; x < len; ++x)
     {
-      char * ch = check;
+      char *ch = check;
       if (words_imatch (&ch, keys[x]))
 	if (!*ch)
 	  return x;
@@ -1289,14 +1289,14 @@ words_member (keys, len, check)
 
 #ifdef __STDC__
 int
-prompt_len (char * prompt)
+prompt_len (char *prompt)
 #else
 int
 prompt_len (prompt)
-     char * prompt;
+     char *prompt;
 #endif
 {
-  char * pos;
+  char *pos;
   if (!prompt)
     return 0;
   for (pos = prompt; *pos && (*pos != '\n'); ++pos)
@@ -1307,15 +1307,15 @@ prompt_len (prompt)
 
 #ifdef __STDC__
 int
-says_default (char * str)
+says_default (char *str)
 #else
 int
 says_default (str)
-     char * str;
+     char *str;
 #endif
 {
-  char * key = "ault";
-  if (strincmp(str, "def", 3))
+  char *key = "ault";
+  if (strincmp (str, "def", 3))
     return 0;
   str += 3;
   while (*str && *key)
@@ -1326,7 +1326,7 @@ says_default (str)
       ++key;
       ++str;
     }
-  while (isspace(*str))
+  while (isspace (*str))
     ++str;
   return !*str;
 }
