@@ -282,14 +282,14 @@ cell:	L_CELL
 %%
 
 void
-yyerror FUN1(char *, s)
+yyerror (char * s)
 {
 	if(!parse_error)
 		parse_error=PARSE_ERR;
 }
 
 YYSTYPE
-make_list FUN2(YYSTYPE, car, YYSTYPE, cdr)
+make_list (YYSTYPE car, YYSTYPE cdr)
 {
 	YYSTYPE ret;
 
@@ -312,7 +312,7 @@ unsigned char parse_cell_or_range ();
 #endif
 
 int
-yylex FUN0()
+yylex ()
 {
 	int ch;
 	struct node *new;
@@ -584,7 +584,7 @@ yylex FUN0()
 	RANGE if it is a range (ptr points past the chars)
  */
 unsigned char
-parse_cell_or_range FUN2(char **,ptr, struct rng *,retp)
+parse_cell_or_range (char **ptr, struct rng *retp)
 {
 	if(a0) {
 		unsigned tmpc,tmpr;
@@ -846,7 +846,7 @@ parse_cell_or_range FUN2(char **,ptr, struct rng *,retp)
 }
 
 int
-str_to_col FUN1(char **,str)
+str_to_col (char **str)
 {
 	int ret;
 	char c,cc,ccc;

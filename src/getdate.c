@@ -1,5 +1,6 @@
 
-/*  A Bison parser, made from /phydeaux/ni/lord/unsupported/oleo/getdate.y with Bison version GNU Bison version 1.22
+/*  A Bison parser, made from /home/jbailey/oleo/src/getdate.y
+ by  GNU Bison version 1.25
   */
 
 #define YYBISON 1  /* Identify Bison output.  */
@@ -18,9 +19,9 @@
 #define	tZONE	269
 #define	tDST	270
 
-#line 1 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 1 "/home/jbailey/oleo/src/getdate.y"
 
-/* $Revision: 1.1 $
+/* $Revision: 1.2 $
 **
 **  Originally written by Steven M. Bellovin <smb@research.att.com> while
 **  at the University of North Carolina at Chapel Hill.  Later tweaked by
@@ -33,7 +34,7 @@
 **  This code is in the public domain and has no copyright.
 */
 /* SUPPRESS 287 on yaccpar_sccsid *//* Unusd static variable */
-/* SUPPRESS 288 on gtderrlab *//* Label unused */
+/* SUPPRESS 288 on yyerrlab *//* Label unused */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -113,13 +114,13 @@ struct timeb {
 
 extern struct tm	*localtime();
 
-#define gtdparse getdate_gtdparse
-#define gtdlex getdate_gtdlex
-#define gtderror getdate_gtderror
+#define yyparse getdate_yyparse
+#define yylex getdate_yylex
+#define yyerror getdate_yyerror
 
 #if	!defined(lint) && !defined(SABER)
 static char RCS[] =
-	"$Header: /home/matt/cvs/oleo/oleo/src/Attic/getdate.c,v 1.1 1997/09/13 16:43:04 jbailey Exp $";
+	"$Header: /home/matt/cvs/oleo/oleo/src/Attic/getdate.c,v 1.2 1997/09/15 16:21:01 jbailey Exp $";
 #endif	/* !defined(lint) && !defined(SABER) */
 
 
@@ -159,49 +160,32 @@ typedef enum _MERIDIAN {
 **  yacc had the %union construct.)  Maybe someday; right now we only use
 **  the %union very rarely.
 */
-static char	*gtdInput;
-static DSTMODE	gtdDSTmode;
-static time_t	gtdDayOrdinal;
-static time_t	gtdDayNumber;
-static int	gtdHaveDate;
-static int	gtdHaveDay;
-static int	gtdHaveRel;
-static int	gtdHaveTime;
-static int	gtdHaveZone;
-static time_t	gtdTimezone;
-static time_t	gtdDay;
-static time_t	gtdHour;
-static time_t	gtdMinutes;
-static time_t	gtdMonth;
-static time_t	gtdSeconds;
-static time_t	gtdYear;
-static MERIDIAN	gtdMeridian;
-static time_t	gtdRelMonth;
-static time_t	gtdRelSeconds;
+static char	*yyInput;
+static DSTMODE	yyDSTmode;
+static time_t	yyDayOrdinal;
+static time_t	yyDayNumber;
+static int	yyHaveDate;
+static int	yyHaveDay;
+static int	yyHaveRel;
+static int	yyHaveTime;
+static int	yyHaveZone;
+static time_t	yyTimezone;
+static time_t	yyDay;
+static time_t	yyHour;
+static time_t	yyMinutes;
+static time_t	yyMonth;
+static time_t	yySeconds;
+static time_t	yyYear;
+static MERIDIAN	yyMeridian;
+static time_t	yyRelMonth;
+static time_t	yyRelSeconds;
 
 
-#line 163 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 163 "/home/jbailey/oleo/src/getdate.y"
 typedef union {
     time_t		Number;
     enum _MERIDIAN	Meridian;
 } YYSTYPE;
-
-#ifndef YYLTYPE
-typedef
-  struct gtdltype
-    {
-      int timestamp;
-      int first_line;
-      int first_column;
-      int last_line;
-      int last_column;
-      char *text;
-   }
-  gtdltype;
-
-#define YYLTYPE gtdltype
-#endif
-
 #include <stdio.h>
 
 #ifndef __cplusplus
@@ -216,9 +200,9 @@ typedef
 #define	YYFLAG		-32768
 #define	YYNTBASE	19
 
-#define YYTRANSLATE(x) ((unsigned)(x) <= 270 ? gtdtranslate[x] : 29)
+#define YYTRANSLATE(x) ((unsigned)(x) <= 270 ? yytranslate[x] : 29)
 
-static const char gtdtranslate[] = {     0,
+static const char yytranslate[] = {     0,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -249,14 +233,14 @@ static const char gtdtranslate[] = {     0,
 };
 
 #if YYDEBUG != 0
-static const short gtdprhs[] = {     0,
+static const short yyprhs[] = {     0,
      0,     1,     4,     6,     8,    10,    12,    14,    16,    19,
     24,    29,    36,    43,    45,    47,    50,    52,    55,    58,
     62,    68,    72,    75,    80,    83,    87,    90,    92,    95,
     98,   100,   103,   106,   108,   111,   114,   116,   118,   119
 };
 
-static const short gtdrhs[] = {    -1,
+static const short yyrhs[] = {    -1,
     19,    20,     0,    21,     0,    22,     0,    24,     0,    23,
      0,    25,     0,    27,     0,    13,     7,     0,    13,    16,
     13,    28,     0,    13,    16,    13,    12,     0,    13,    16,
@@ -274,35 +258,39 @@ static const short gtdrhs[] = {    -1,
 #endif
 
 #if YYDEBUG != 0
-static const short gtdrline[] = { 0,
+static const short yyrline[] = { 0,
    177,   178,   181,   184,   187,   190,   193,   196,   199,   205,
    211,   218,   224,   234,   238,   242,   249,   253,   257,   263,
    267,   272,   278,   282,   287,   291,   298,   302,   305,   308,
    311,   314,   317,   320,   323,   326,   329,   334,   362,   365
 };
+#endif
 
-static const char * const gtdtname[] = {   "$","error","$illegal.","tAGO","tDAY",
+
+#if YYDEBUG != 0 || defined (YYERROR_VERBOSE)
+
+static const char * const yytname[] = {   "$","error","$undefined.","tAGO","tDAY",
 "tDAYZONE","tID","tMERIDIAN","tMINUTE_UNIT","tMONTH","tMONTH_UNIT","tSEC_UNIT",
 "tSNUMBER","tUNUMBER","tZONE","tDST","':'","','","'/'","spec","item","time",
-"zone","day","date","rel","relunit","number","o_merid",""
+"zone","day","date","rel","relunit","number","o_merid", NULL
 };
 #endif
 
-static const short gtdr1[] = {     0,
+static const short yyr1[] = {     0,
     19,    19,    20,    20,    20,    20,    20,    20,    21,    21,
     21,    21,    21,    22,    22,    22,    23,    23,    23,    24,
     24,    24,    24,    24,    24,    24,    25,    25,    26,    26,
     26,    26,    26,    26,    26,    26,    26,    27,    28,    28
 };
 
-static const short gtdr2[] = {     0,
+static const short yyr2[] = {     0,
      0,     2,     1,     1,     1,     1,     1,     1,     2,     4,
      4,     6,     6,     1,     1,     2,     1,     2,     2,     3,
      5,     3,     2,     4,     2,     3,     2,     1,     2,     2,
      1,     2,     2,     1,     2,     2,     1,     1,     0,     1
 };
 
-static const short gtddefact[] = {     1,
+static const short yydefact[] = {     1,
      0,    17,    15,    31,     0,    37,    34,     0,    38,    14,
      2,     3,     4,     6,     5,     7,    28,     8,    18,    23,
     30,    35,    32,    19,     9,    29,    25,    36,    33,     0,
@@ -311,11 +299,11 @@ static const short gtddefact[] = {     1,
      0
 };
 
-static const short gtddefgoto[] = {     1,
+static const short yydefgoto[] = {     1,
     11,    12,    13,    14,    15,    16,    17,    18,    44
 };
 
-static const short gtdpact[] = {-32768,
+static const short yypact[] = {-32768,
      0,   -15,-32768,-32768,   -10,-32768,-32768,    25,    11,    -8,
 -32768,-32768,-32768,-32768,-32768,-32768,    13,-32768,-32768,     7,
 -32768,-32768,-32768,-32768,-32768,-32768,     4,-32768,-32768,    14,
@@ -324,7 +312,7 @@ static const short gtdpact[] = {-32768,
 -32768
 };
 
-static const short gtdpgoto[] = {-32768,
+static const short yypgoto[] = {-32768,
 -32768,-32768,-32768,-32768,-32768,-32768,-32768,-32768,    -5
 };
 
@@ -332,7 +320,7 @@ static const short gtdpgoto[] = {-32768,
 #define	YYLAST		41
 
 
-static const short gtdtable[] = {    50,
+static const short yytable[] = {    50,
     41,    19,    20,     2,     3,    48,    33,     4,     5,     6,
      7,     8,     9,    10,    24,    34,    36,    25,    26,    27,
     28,    29,    30,    35,    41,    37,    31,    38,    32,    42,
@@ -340,7 +328,7 @@ static const short gtdtable[] = {    50,
     49
 };
 
-static const short gtdcheck[] = {     0,
+static const short yycheck[] = {     0,
      7,    17,    13,     4,     5,    12,    15,     8,     9,    10,
     11,    12,    13,    14,     4,     3,    13,     7,     8,     9,
     10,    11,    12,    17,     7,    12,    16,    13,    18,    12,
@@ -348,14 +336,14 @@ static const short gtdcheck[] = {     0,
     46
 };
 /* -*-C-*-  Note some compilers choke on comments on `#line' lines.  */
-#line 3 "/usr/unsupported/lib/bison.simple"
+#line 3 "/usr/local/share/bison.simple"
 
 /* Skeleton output parser for bison,
-   Copyright (C) 1984, 1989, 1990 Bob Corbett and Richard Stallman
+   Copyright (C) 1984, 1989, 1990 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 1, or (at your option)
+   the Free Software Foundation; either version 2, or (at your option)
    any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -367,6 +355,10 @@ static const short gtdcheck[] = {     0,
    along with this program; if not, write to the Free Software
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
+/* As a special exception, when this file is copied by Bison into a
+   Bison output file, you may use that output file without restriction.
+   This special exception was added by the Free Software Foundation
+   in version 1.24 of Bison.  */
 
 #ifndef alloca
 #ifdef __GNUC__
@@ -406,64 +398,72 @@ void *alloca ();
    It is replaced by the list of actions, each action
    as one case of the switch.  */
 
-#define gtderrok		(gtderrstatus = 0)
-#define gtdclearin	(gtdchar = YYEMPTY)
+#define yyerrok		(yyerrstatus = 0)
+#define yyclearin	(yychar = YYEMPTY)
 #define YYEMPTY		-2
 #define YYEOF		0
 #define YYACCEPT	return(0)
 #define YYABORT 	return(1)
-#define YYERROR		goto gtderrlab1
-/* Like YYERROR except do call gtderror.
+#define YYERROR		goto yyerrlab1
+/* Like YYERROR except do call yyerror.
    This remains here temporarily to ease the
    transition to the new meaning of YYERROR, for GCC.
    Once GCC version 2 has supplanted version 1, this can go.  */
-#define YYFAIL		goto gtderrlab
-#define YYRECOVERING()  (!!gtderrstatus)
+#define YYFAIL		goto yyerrlab
+#define YYRECOVERING()  (!!yyerrstatus)
 #define YYBACKUP(token, value) \
 do								\
-  if (gtdchar == YYEMPTY && gtdlen == 1)				\
-    { gtdchar = (token), gtdlval = (value);			\
-      gtdchar1 = YYTRANSLATE (gtdchar);				\
+  if (yychar == YYEMPTY && yylen == 1)				\
+    { yychar = (token), yylval = (value);			\
+      yychar1 = YYTRANSLATE (yychar);				\
       YYPOPSTACK;						\
-      goto gtdbackup;						\
+      goto yybackup;						\
     }								\
   else								\
-    { gtderror ("syntax error: cannot back up"); YYERROR; }	\
+    { yyerror ("syntax error: cannot back up"); YYERROR; }	\
 while (0)
 
 #define YYTERROR	1
 #define YYERRCODE	256
 
 #ifndef YYPURE
-#define YYLEX		gtdlex()
+#define YYLEX		yylex()
 #endif
 
 #ifdef YYPURE
 #ifdef YYLSP_NEEDED
-#define YYLEX		gtdlex(&gtdlval, &gtdlloc)
+#ifdef YYLEX_PARAM
+#define YYLEX		yylex(&yylval, &yylloc, YYLEX_PARAM)
 #else
-#define YYLEX		gtdlex(&gtdlval)
+#define YYLEX		yylex(&yylval, &yylloc)
 #endif
+#else /* not YYLSP_NEEDED */
+#ifdef YYLEX_PARAM
+#define YYLEX		yylex(&yylval, YYLEX_PARAM)
+#else
+#define YYLEX		yylex(&yylval)
+#endif
+#endif /* not YYLSP_NEEDED */
 #endif
 
 /* If nonreentrant, generate the variables here */
 
 #ifndef YYPURE
 
-int	gtdchar;			/*  the lookahead symbol		*/
-YYSTYPE	gtdlval;			/*  the semantic value of the		*/
+int	yychar;			/*  the lookahead symbol		*/
+YYSTYPE	yylval;			/*  the semantic value of the		*/
 				/*  lookahead symbol			*/
 
 #ifdef YYLSP_NEEDED
-YYLTYPE gtdlloc;			/*  location data for the lookahead	*/
+YYLTYPE yylloc;			/*  location data for the lookahead	*/
 				/*  symbol				*/
 #endif
 
-int gtdnerrs;			/*  number of parse errors so far       */
+int yynerrs;			/*  number of parse errors so far       */
 #endif  /* not YYPURE */
 
 #if YYDEBUG != 0
-int gtddebug;			/*  nonzero means print parse trace	*/
+int yydebug;			/*  nonzero means print parse trace	*/
 /* Since this is uninitialized, it does not stop multiple parsers
    from coexisting.  */
 #endif
@@ -487,20 +487,20 @@ int gtddebug;			/*  nonzero means print parse trace	*/
 
 /* Prevent warning if -Wstrict-prototypes.  */
 #ifdef __GNUC__
-int gtdparse (void);
+int yyparse (void);
 #endif
 
 #if __GNUC__ > 1		/* GNU C and GNU C++ define this.  */
-#define __gtd_bcopy(FROM,TO,COUNT)	__builtin_memcpy(TO,FROM,COUNT)
+#define __yy_memcpy(TO,FROM,COUNT)	__builtin_memcpy(TO,FROM,COUNT)
 #else				/* not GNU C or C++ */
 #ifndef __cplusplus
 
 /* This is the most reliable way to avoid incompatibilities
    in available built-in functions on various systems.  */
 static void
-__gtd_bcopy (from, to, count)
-     char *from;
+__yy_memcpy (to, from, count)
      char *to;
+     char *from;
      int count;
 {
   register char *f = from;
@@ -516,7 +516,7 @@ __gtd_bcopy (from, to, count)
 /* This is the most reliable way to avoid incompatibilities
    in available built-in functions on various systems.  */
 static void
-__gtd_bcopy (char *from, char *to, int count)
+__yy_memcpy (char *to, char *from, int count)
 {
   register char *f = from;
   register char *t = to;
@@ -529,602 +529,623 @@ __gtd_bcopy (char *from, char *to, int count)
 #endif
 #endif
 
-#line 184 "/usr/unsupported/lib/bison.simple"
+#line 196 "/usr/local/share/bison.simple"
+
+/* The user can define YYPARSE_PARAM as the name of an argument to be passed
+   into yyparse.  The argument should have type void *.
+   It should actually point to an object.
+   Grammar actions can access the variable by casting it
+   to the proper pointer type.  */
+
+#ifdef YYPARSE_PARAM
+#ifdef __cplusplus
+#define YYPARSE_PARAM_ARG void *YYPARSE_PARAM
+#define YYPARSE_PARAM_DECL
+#else /* not __cplusplus */
+#define YYPARSE_PARAM_ARG YYPARSE_PARAM
+#define YYPARSE_PARAM_DECL void *YYPARSE_PARAM;
+#endif /* not __cplusplus */
+#else /* not YYPARSE_PARAM */
+#define YYPARSE_PARAM_ARG
+#define YYPARSE_PARAM_DECL
+#endif /* not YYPARSE_PARAM */
+
 int
-gtdparse()
+yyparse(YYPARSE_PARAM_ARG)
+     YYPARSE_PARAM_DECL
 {
-  register int gtdstate;
-  register int gtdn;
-  register short *gtdssp;
-  register YYSTYPE *gtdvsp;
-  int gtderrstatus;	/*  number of tokens to shift before error messages enabled */
-  int gtdchar1 = 0;		/*  lookahead token as an internal (translated) token number */
+  register int yystate;
+  register int yyn;
+  register short *yyssp;
+  register YYSTYPE *yyvsp;
+  int yyerrstatus;	/*  number of tokens to shift before error messages enabled */
+  int yychar1 = 0;		/*  lookahead token as an internal (translated) token number */
 
-  short	gtdssa[YYINITDEPTH];	/*  the state stack			*/
-  YYSTYPE gtdvsa[YYINITDEPTH];	/*  the semantic value stack		*/
+  short	yyssa[YYINITDEPTH];	/*  the state stack			*/
+  YYSTYPE yyvsa[YYINITDEPTH];	/*  the semantic value stack		*/
 
-  short *gtdss = gtdssa;		/*  refer to the stacks thru separate pointers */
-  YYSTYPE *gtdvs = gtdvsa;	/*  to allow gtdoverflow to reallocate them elsewhere */
+  short *yyss = yyssa;		/*  refer to the stacks thru separate pointers */
+  YYSTYPE *yyvs = yyvsa;	/*  to allow yyoverflow to reallocate them elsewhere */
 
 #ifdef YYLSP_NEEDED
-  YYLTYPE gtdlsa[YYINITDEPTH];	/*  the location stack			*/
-  YYLTYPE *gtdls = gtdlsa;
-  YYLTYPE *gtdlsp;
+  YYLTYPE yylsa[YYINITDEPTH];	/*  the location stack			*/
+  YYLTYPE *yyls = yylsa;
+  YYLTYPE *yylsp;
 
-#define YYPOPSTACK   (gtdvsp--, gtdssp--, gtdlsp--)
+#define YYPOPSTACK   (yyvsp--, yyssp--, yylsp--)
 #else
-#define YYPOPSTACK   (gtdvsp--, gtdssp--)
+#define YYPOPSTACK   (yyvsp--, yyssp--)
 #endif
 
-  int gtdstacksize = YYINITDEPTH;
+  int yystacksize = YYINITDEPTH;
 
 #ifdef YYPURE
-  int gtdchar;
-  YYSTYPE gtdlval;
-  int gtdnerrs;
+  int yychar;
+  YYSTYPE yylval;
+  int yynerrs;
 #ifdef YYLSP_NEEDED
-  YYLTYPE gtdlloc;
+  YYLTYPE yylloc;
 #endif
 #endif
 
-  YYSTYPE gtdval;		/*  the variable used to return		*/
+  YYSTYPE yyval;		/*  the variable used to return		*/
 				/*  semantic values from the action	*/
 				/*  routines				*/
 
-  int gtdlen;
+  int yylen;
 
 #if YYDEBUG != 0
-  if (gtddebug)
+  if (yydebug)
     fprintf(stderr, "Starting parse\n");
 #endif
 
-  gtdstate = 0;
-  gtderrstatus = 0;
-  gtdnerrs = 0;
-  gtdchar = YYEMPTY;		/* Cause a token to be read.  */
+  yystate = 0;
+  yyerrstatus = 0;
+  yynerrs = 0;
+  yychar = YYEMPTY;		/* Cause a token to be read.  */
 
   /* Initialize stack pointers.
      Waste one element of value and location stack
      so that they stay on the same level as the state stack.
      The wasted elements are never initialized.  */
 
-  gtdssp = gtdss - 1;
-  gtdvsp = gtdvs;
+  yyssp = yyss - 1;
+  yyvsp = yyvs;
 #ifdef YYLSP_NEEDED
-  gtdlsp = gtdls;
+  yylsp = yyls;
 #endif
 
-/* Push a new state, which is found in  gtdstate  .  */
+/* Push a new state, which is found in  yystate  .  */
 /* In all cases, when you get here, the value and location stacks
    have just been pushed. so pushing a state here evens the stacks.  */
-gtdnewstate:
+yynewstate:
 
-  *++gtdssp = gtdstate;
+  *++yyssp = yystate;
 
-  if (gtdssp >= gtdss + gtdstacksize - 1)
+  if (yyssp >= yyss + yystacksize - 1)
     {
       /* Give user a chance to reallocate the stack */
       /* Use copies of these so that the &'s don't force the real ones into memory. */
-      YYSTYPE *gtdvs1 = gtdvs;
-      short *gtdss1 = gtdss;
+      YYSTYPE *yyvs1 = yyvs;
+      short *yyss1 = yyss;
 #ifdef YYLSP_NEEDED
-      YYLTYPE *gtdls1 = gtdls;
+      YYLTYPE *yyls1 = yyls;
 #endif
 
       /* Get the current used size of the three stacks, in elements.  */
-      int size = gtdssp - gtdss + 1;
+      int size = yyssp - yyss + 1;
 
-#ifdef gtdoverflow
+#ifdef yyoverflow
       /* Each stack pointer address is followed by the size of
 	 the data in use in that stack, in bytes.  */
 #ifdef YYLSP_NEEDED
       /* This used to be a conditional around just the two extra args,
-	 but that might be undefined if gtdoverflow is a macro.  */
-      gtdoverflow("parser stack overflow",
-		 &gtdss1, size * sizeof (*gtdssp),
-		 &gtdvs1, size * sizeof (*gtdvsp),
-		 &gtdls1, size * sizeof (*gtdlsp),
-		 &gtdstacksize);
+	 but that might be undefined if yyoverflow is a macro.  */
+      yyoverflow("parser stack overflow",
+		 &yyss1, size * sizeof (*yyssp),
+		 &yyvs1, size * sizeof (*yyvsp),
+		 &yyls1, size * sizeof (*yylsp),
+		 &yystacksize);
 #else
-      gtdoverflow("parser stack overflow",
-		 &gtdss1, size * sizeof (*gtdssp),
-		 &gtdvs1, size * sizeof (*gtdvsp),
-		 &gtdstacksize);
+      yyoverflow("parser stack overflow",
+		 &yyss1, size * sizeof (*yyssp),
+		 &yyvs1, size * sizeof (*yyvsp),
+		 &yystacksize);
 #endif
 
-      gtdss = gtdss1; gtdvs = gtdvs1;
+      yyss = yyss1; yyvs = yyvs1;
 #ifdef YYLSP_NEEDED
-      gtdls = gtdls1;
+      yyls = yyls1;
 #endif
-#else /* no gtdoverflow */
+#else /* no yyoverflow */
       /* Extend the stack our own way.  */
-      if (gtdstacksize >= YYMAXDEPTH)
+      if (yystacksize >= YYMAXDEPTH)
 	{
-	  gtderror("parser stack overflow");
+	  yyerror("parser stack overflow");
 	  return 2;
 	}
-      gtdstacksize *= 2;
-      if (gtdstacksize > YYMAXDEPTH)
-	gtdstacksize = YYMAXDEPTH;
-      gtdss = (short *) alloca (gtdstacksize * sizeof (*gtdssp));
-      __gtd_bcopy ((char *)gtdss1, (char *)gtdss, size * sizeof (*gtdssp));
-      gtdvs = (YYSTYPE *) alloca (gtdstacksize * sizeof (*gtdvsp));
-      __gtd_bcopy ((char *)gtdvs1, (char *)gtdvs, size * sizeof (*gtdvsp));
+      yystacksize *= 2;
+      if (yystacksize > YYMAXDEPTH)
+	yystacksize = YYMAXDEPTH;
+      yyss = (short *) alloca (yystacksize * sizeof (*yyssp));
+      __yy_memcpy ((char *)yyss, (char *)yyss1, size * sizeof (*yyssp));
+      yyvs = (YYSTYPE *) alloca (yystacksize * sizeof (*yyvsp));
+      __yy_memcpy ((char *)yyvs, (char *)yyvs1, size * sizeof (*yyvsp));
 #ifdef YYLSP_NEEDED
-      gtdls = (YYLTYPE *) alloca (gtdstacksize * sizeof (*gtdlsp));
-      __gtd_bcopy ((char *)gtdls1, (char *)gtdls, size * sizeof (*gtdlsp));
+      yyls = (YYLTYPE *) alloca (yystacksize * sizeof (*yylsp));
+      __yy_memcpy ((char *)yyls, (char *)yyls1, size * sizeof (*yylsp));
 #endif
-#endif /* no gtdoverflow */
+#endif /* no yyoverflow */
 
-      gtdssp = gtdss + size - 1;
-      gtdvsp = gtdvs + size - 1;
+      yyssp = yyss + size - 1;
+      yyvsp = yyvs + size - 1;
 #ifdef YYLSP_NEEDED
-      gtdlsp = gtdls + size - 1;
+      yylsp = yyls + size - 1;
 #endif
 
 #if YYDEBUG != 0
-      if (gtddebug)
-	fprintf(stderr, "Stack size increased to %d\n", gtdstacksize);
+      if (yydebug)
+	fprintf(stderr, "Stack size increased to %d\n", yystacksize);
 #endif
 
-      if (gtdssp >= gtdss + gtdstacksize - 1)
+      if (yyssp >= yyss + yystacksize - 1)
 	YYABORT;
     }
 
 #if YYDEBUG != 0
-  if (gtddebug)
-    fprintf(stderr, "Entering state %d\n", gtdstate);
+  if (yydebug)
+    fprintf(stderr, "Entering state %d\n", yystate);
 #endif
 
-  goto gtdbackup;
- gtdbackup:
+  goto yybackup;
+ yybackup:
 
 /* Do appropriate processing given the current state.  */
 /* Read a lookahead token if we need one and don't already have one.  */
-/* gtdresume: */
+/* yyresume: */
 
   /* First try to decide what to do without reference to lookahead token.  */
 
-  gtdn = gtdpact[gtdstate];
-  if (gtdn == YYFLAG)
-    goto gtddefault;
+  yyn = yypact[yystate];
+  if (yyn == YYFLAG)
+    goto yydefault;
 
   /* Not known => get a lookahead token if don't already have one.  */
 
-  /* gtdchar is either YYEMPTY or YYEOF
+  /* yychar is either YYEMPTY or YYEOF
      or a valid token in external form.  */
 
-  if (gtdchar == YYEMPTY)
+  if (yychar == YYEMPTY)
     {
 #if YYDEBUG != 0
-      if (gtddebug)
+      if (yydebug)
 	fprintf(stderr, "Reading a token: ");
 #endif
-      gtdchar = YYLEX;
+      yychar = YYLEX;
     }
 
-  /* Convert token to internal form (in gtdchar1) for indexing tables with */
+  /* Convert token to internal form (in yychar1) for indexing tables with */
 
-  if (gtdchar <= 0)		/* This means end of input. */
+  if (yychar <= 0)		/* This means end of input. */
     {
-      gtdchar1 = 0;
-      gtdchar = YYEOF;		/* Don't call YYLEX any more */
+      yychar1 = 0;
+      yychar = YYEOF;		/* Don't call YYLEX any more */
 
 #if YYDEBUG != 0
-      if (gtddebug)
+      if (yydebug)
 	fprintf(stderr, "Now at end of input.\n");
 #endif
     }
   else
     {
-      gtdchar1 = YYTRANSLATE(gtdchar);
+      yychar1 = YYTRANSLATE(yychar);
 
 #if YYDEBUG != 0
-      if (gtddebug)
+      if (yydebug)
 	{
-	  fprintf (stderr, "Next token is %d (%s", gtdchar, gtdtname[gtdchar1]);
+	  fprintf (stderr, "Next token is %d (%s", yychar, yytname[yychar1]);
 	  /* Give the individual parser a way to print the precise meaning
 	     of a token, for further debugging info.  */
 #ifdef YYPRINT
-	  YYPRINT (stderr, gtdchar, gtdlval);
+	  YYPRINT (stderr, yychar, yylval);
 #endif
 	  fprintf (stderr, ")\n");
 	}
 #endif
     }
 
-  gtdn += gtdchar1;
-  if (gtdn < 0 || gtdn > YYLAST || gtdcheck[gtdn] != gtdchar1)
-    goto gtddefault;
+  yyn += yychar1;
+  if (yyn < 0 || yyn > YYLAST || yycheck[yyn] != yychar1)
+    goto yydefault;
 
-  gtdn = gtdtable[gtdn];
+  yyn = yytable[yyn];
 
-  /* gtdn is what to do for this token type in this state.
-     Negative => reduce, -gtdn is rule number.
-     Positive => shift, gtdn is new state.
+  /* yyn is what to do for this token type in this state.
+     Negative => reduce, -yyn is rule number.
+     Positive => shift, yyn is new state.
        New state is final state => don't bother to shift,
        just return success.
      0, or most negative number => error.  */
 
-  if (gtdn < 0)
+  if (yyn < 0)
     {
-      if (gtdn == YYFLAG)
-	goto gtderrlab;
-      gtdn = -gtdn;
-      goto gtdreduce;
+      if (yyn == YYFLAG)
+	goto yyerrlab;
+      yyn = -yyn;
+      goto yyreduce;
     }
-  else if (gtdn == 0)
-    goto gtderrlab;
+  else if (yyn == 0)
+    goto yyerrlab;
 
-  if (gtdn == YYFINAL)
+  if (yyn == YYFINAL)
     YYACCEPT;
 
   /* Shift the lookahead token.  */
 
 #if YYDEBUG != 0
-  if (gtddebug)
-    fprintf(stderr, "Shifting token %d (%s), ", gtdchar, gtdtname[gtdchar1]);
+  if (yydebug)
+    fprintf(stderr, "Shifting token %d (%s), ", yychar, yytname[yychar1]);
 #endif
 
   /* Discard the token being shifted unless it is eof.  */
-  if (gtdchar != YYEOF)
-    gtdchar = YYEMPTY;
+  if (yychar != YYEOF)
+    yychar = YYEMPTY;
 
-  *++gtdvsp = gtdlval;
+  *++yyvsp = yylval;
 #ifdef YYLSP_NEEDED
-  *++gtdlsp = gtdlloc;
+  *++yylsp = yylloc;
 #endif
 
   /* count tokens shifted since error; after three, turn off error status.  */
-  if (gtderrstatus) gtderrstatus--;
+  if (yyerrstatus) yyerrstatus--;
 
-  gtdstate = gtdn;
-  goto gtdnewstate;
+  yystate = yyn;
+  goto yynewstate;
 
 /* Do the default action for the current state.  */
-gtddefault:
+yydefault:
 
-  gtdn = gtddefact[gtdstate];
-  if (gtdn == 0)
-    goto gtderrlab;
+  yyn = yydefact[yystate];
+  if (yyn == 0)
+    goto yyerrlab;
 
-/* Do a reduction.  gtdn is the number of a rule to reduce with.  */
-gtdreduce:
-  gtdlen = gtdr2[gtdn];
-  if (gtdlen > 0)
-    gtdval = gtdvsp[1-gtdlen]; /* implement default value of the action */
+/* Do a reduction.  yyn is the number of a rule to reduce with.  */
+yyreduce:
+  yylen = yyr2[yyn];
+  if (yylen > 0)
+    yyval = yyvsp[1-yylen]; /* implement default value of the action */
 
 #if YYDEBUG != 0
-  if (gtddebug)
+  if (yydebug)
     {
       int i;
 
       fprintf (stderr, "Reducing via rule %d (line %d), ",
-	       gtdn, gtdrline[gtdn]);
+	       yyn, yyrline[yyn]);
 
       /* Print the symbols being reduced, and their result.  */
-      for (i = gtdprhs[gtdn]; gtdrhs[i] > 0; i++)
-	fprintf (stderr, "%s ", gtdtname[gtdrhs[i]]);
-      fprintf (stderr, " -> %s\n", gtdtname[gtdr1[gtdn]]);
+      for (i = yyprhs[yyn]; yyrhs[i] > 0; i++)
+	fprintf (stderr, "%s ", yytname[yyrhs[i]]);
+      fprintf (stderr, " -> %s\n", yytname[yyr1[yyn]]);
     }
 #endif
 
 
-  switch (gtdn) {
+  switch (yyn) {
 
 case 3:
-#line 181 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 181 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdHaveTime++;
+	    yyHaveTime++;
 	;
     break;}
 case 4:
-#line 184 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 184 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdHaveZone++;
+	    yyHaveZone++;
 	;
     break;}
 case 5:
-#line 187 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 187 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdHaveDate++;
+	    yyHaveDate++;
 	;
     break;}
 case 6:
-#line 190 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 190 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdHaveDay++;
+	    yyHaveDay++;
 	;
     break;}
 case 7:
-#line 193 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 193 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdHaveRel++;
+	    yyHaveRel++;
 	;
     break;}
 case 9:
-#line 199 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 199 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdHour = gtdvsp[-1].Number;
-	    gtdMinutes = 0;
-	    gtdSeconds = 0;
-	    gtdMeridian = gtdvsp[0].Meridian;
+	    yyHour = yyvsp[-1].Number;
+	    yyMinutes = 0;
+	    yySeconds = 0;
+	    yyMeridian = yyvsp[0].Meridian;
 	;
     break;}
 case 10:
-#line 205 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 205 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdHour = gtdvsp[-3].Number;
-	    gtdMinutes = gtdvsp[-1].Number;
-	    gtdSeconds = 0;
-	    gtdMeridian = gtdvsp[0].Meridian;
+	    yyHour = yyvsp[-3].Number;
+	    yyMinutes = yyvsp[-1].Number;
+	    yySeconds = 0;
+	    yyMeridian = yyvsp[0].Meridian;
 	;
     break;}
 case 11:
-#line 211 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 211 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdHour = gtdvsp[-3].Number;
-	    gtdMinutes = gtdvsp[-1].Number;
-	    gtdMeridian = MER24;
-	    gtdDSTmode = DSToff;
-	    gtdTimezone = - (gtdvsp[0].Number % 100 + (gtdvsp[0].Number / 100) * 60);
+	    yyHour = yyvsp[-3].Number;
+	    yyMinutes = yyvsp[-1].Number;
+	    yyMeridian = MER24;
+	    yyDSTmode = DSToff;
+	    yyTimezone = - (yyvsp[0].Number % 100 + (yyvsp[0].Number / 100) * 60);
 	;
     break;}
 case 12:
-#line 218 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 218 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdHour = gtdvsp[-5].Number;
-	    gtdMinutes = gtdvsp[-3].Number;
-	    gtdSeconds = gtdvsp[-1].Number;
-	    gtdMeridian = gtdvsp[0].Meridian;
+	    yyHour = yyvsp[-5].Number;
+	    yyMinutes = yyvsp[-3].Number;
+	    yySeconds = yyvsp[-1].Number;
+	    yyMeridian = yyvsp[0].Meridian;
 	;
     break;}
 case 13:
-#line 224 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 224 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdHour = gtdvsp[-5].Number;
-	    gtdMinutes = gtdvsp[-3].Number;
-	    gtdSeconds = gtdvsp[-1].Number;
-	    gtdMeridian = MER24;
-	    gtdDSTmode = DSToff;
-	    gtdTimezone = - (gtdvsp[0].Number % 100 + (gtdvsp[0].Number / 100) * 60);
+	    yyHour = yyvsp[-5].Number;
+	    yyMinutes = yyvsp[-3].Number;
+	    yySeconds = yyvsp[-1].Number;
+	    yyMeridian = MER24;
+	    yyDSTmode = DSToff;
+	    yyTimezone = - (yyvsp[0].Number % 100 + (yyvsp[0].Number / 100) * 60);
 	;
     break;}
 case 14:
-#line 234 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 234 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdTimezone = gtdvsp[0].Number;
-	    gtdDSTmode = DSToff;
+	    yyTimezone = yyvsp[0].Number;
+	    yyDSTmode = DSToff;
 	;
     break;}
 case 15:
-#line 238 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 238 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdTimezone = gtdvsp[0].Number;
-	    gtdDSTmode = DSTon;
+	    yyTimezone = yyvsp[0].Number;
+	    yyDSTmode = DSTon;
 	;
     break;}
 case 16:
-#line 243 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 243 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdTimezone = gtdvsp[-1].Number;
-	    gtdDSTmode = DSTon;
+	    yyTimezone = yyvsp[-1].Number;
+	    yyDSTmode = DSTon;
 	;
     break;}
 case 17:
-#line 249 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 249 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdDayOrdinal = 1;
-	    gtdDayNumber = gtdvsp[0].Number;
+	    yyDayOrdinal = 1;
+	    yyDayNumber = yyvsp[0].Number;
 	;
     break;}
 case 18:
-#line 253 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 253 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdDayOrdinal = 1;
-	    gtdDayNumber = gtdvsp[-1].Number;
+	    yyDayOrdinal = 1;
+	    yyDayNumber = yyvsp[-1].Number;
 	;
     break;}
 case 19:
-#line 257 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 257 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdDayOrdinal = gtdvsp[-1].Number;
-	    gtdDayNumber = gtdvsp[0].Number;
+	    yyDayOrdinal = yyvsp[-1].Number;
+	    yyDayNumber = yyvsp[0].Number;
 	;
     break;}
 case 20:
-#line 263 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 263 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdMonth = gtdvsp[-2].Number;
-	    gtdDay = gtdvsp[0].Number;
+	    yyMonth = yyvsp[-2].Number;
+	    yyDay = yyvsp[0].Number;
 	;
     break;}
 case 21:
-#line 267 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 267 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdMonth = gtdvsp[-4].Number;
-	    gtdDay = gtdvsp[-2].Number;
-	    gtdYear = gtdvsp[0].Number;
+	    yyMonth = yyvsp[-4].Number;
+	    yyDay = yyvsp[-2].Number;
+	    yyYear = yyvsp[0].Number;
 	;
     break;}
 case 22:
-#line 272 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 272 "/home/jbailey/oleo/src/getdate.y"
 {
-	    /* ISO 8601 format.  gtdgtd-mm-dd.  */
-	    gtdYear = gtdvsp[-2].Number;
-	    gtdMonth = -gtdvsp[-1].Number;
-	    gtdDay = -gtdvsp[0].Number;
+	    /* ISO 8601 format.  yyyy-mm-dd.  */
+	    yyYear = yyvsp[-2].Number;
+	    yyMonth = -yyvsp[-1].Number;
+	    yyDay = -yyvsp[0].Number;
 	;
     break;}
 case 23:
-#line 278 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 278 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdMonth = gtdvsp[-1].Number;
-	    gtdDay = gtdvsp[0].Number;
+	    yyMonth = yyvsp[-1].Number;
+	    yyDay = yyvsp[0].Number;
 	;
     break;}
 case 24:
-#line 282 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 282 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdMonth = gtdvsp[-3].Number;
-	    gtdDay = gtdvsp[-2].Number;
-	    gtdYear = gtdvsp[0].Number;
+	    yyMonth = yyvsp[-3].Number;
+	    yyDay = yyvsp[-2].Number;
+	    yyYear = yyvsp[0].Number;
 	;
     break;}
 case 25:
-#line 287 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 287 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdMonth = gtdvsp[0].Number;
-	    gtdDay = gtdvsp[-1].Number;
+	    yyMonth = yyvsp[0].Number;
+	    yyDay = yyvsp[-1].Number;
 	;
     break;}
 case 26:
-#line 291 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 291 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdMonth = gtdvsp[-1].Number;
-	    gtdDay = gtdvsp[-2].Number;
-	    gtdYear = gtdvsp[0].Number;
+	    yyMonth = yyvsp[-1].Number;
+	    yyDay = yyvsp[-2].Number;
+	    yyYear = yyvsp[0].Number;
 	;
     break;}
 case 27:
-#line 298 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 298 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdRelSeconds = -gtdRelSeconds;
-	    gtdRelMonth = -gtdRelMonth;
+	    yyRelSeconds = -yyRelSeconds;
+	    yyRelMonth = -yyRelMonth;
 	;
     break;}
 case 29:
-#line 305 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 305 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdRelSeconds += gtdvsp[-1].Number * gtdvsp[0].Number * 60L;
+	    yyRelSeconds += yyvsp[-1].Number * yyvsp[0].Number * 60L;
 	;
     break;}
 case 30:
-#line 308 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 308 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdRelSeconds += gtdvsp[-1].Number * gtdvsp[0].Number * 60L;
+	    yyRelSeconds += yyvsp[-1].Number * yyvsp[0].Number * 60L;
 	;
     break;}
 case 31:
-#line 311 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 311 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdRelSeconds += gtdvsp[0].Number * 60L;
+	    yyRelSeconds += yyvsp[0].Number * 60L;
 	;
     break;}
 case 32:
-#line 314 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 314 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdRelSeconds += gtdvsp[-1].Number;
+	    yyRelSeconds += yyvsp[-1].Number;
 	;
     break;}
 case 33:
-#line 317 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 317 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdRelSeconds += gtdvsp[-1].Number;
+	    yyRelSeconds += yyvsp[-1].Number;
 	;
     break;}
 case 34:
-#line 320 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 320 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdRelSeconds++;
+	    yyRelSeconds++;
 	;
     break;}
 case 35:
-#line 323 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 323 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdRelMonth += gtdvsp[-1].Number * gtdvsp[0].Number;
+	    yyRelMonth += yyvsp[-1].Number * yyvsp[0].Number;
 	;
     break;}
 case 36:
-#line 326 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 326 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdRelMonth += gtdvsp[-1].Number * gtdvsp[0].Number;
+	    yyRelMonth += yyvsp[-1].Number * yyvsp[0].Number;
 	;
     break;}
 case 37:
-#line 329 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 329 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdRelMonth += gtdvsp[0].Number;
+	    yyRelMonth += yyvsp[0].Number;
 	;
     break;}
 case 38:
-#line 334 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 334 "/home/jbailey/oleo/src/getdate.y"
 {
-	    if (gtdHaveTime && gtdHaveDate && !gtdHaveRel)
-		gtdYear = gtdvsp[0].Number;
+	    if (yyHaveTime && yyHaveDate && !yyHaveRel)
+		yyYear = yyvsp[0].Number;
 	    else {
-		if(gtdvsp[0].Number>10000) {
+		if(yyvsp[0].Number>10000) {
 		    time_t date_part;
 
-		    date_part= gtdvsp[0].Number/10000;
-		    gtdHaveDate++;
-		    gtdDay= (date_part)%100;
-		    gtdMonth= (date_part/100)%100;
-		    gtdYear = date_part/10000;
+		    date_part= yyvsp[0].Number/10000;
+		    yyHaveDate++;
+		    yyDay= (date_part)%100;
+		    yyMonth= (date_part/100)%100;
+		    yyYear = date_part/10000;
 		} 
-	        gtdHaveTime++;
-		if (gtdvsp[0].Number < 100) {
-		    gtdHour = gtdvsp[0].Number;
-		    gtdMinutes = 0;
+	        yyHaveTime++;
+		if (yyvsp[0].Number < 100) {
+		    yyHour = yyvsp[0].Number;
+		    yyMinutes = 0;
 		}
 		else {
-		    gtdHour = gtdvsp[0].Number / 100;
-		    gtdMinutes = gtdvsp[0].Number % 100;
+		    yyHour = yyvsp[0].Number / 100;
+		    yyMinutes = yyvsp[0].Number % 100;
 		}
-		gtdSeconds = 0;
-		gtdMeridian = MER24;
+		yySeconds = 0;
+		yyMeridian = MER24;
 	    }
 	;
     break;}
 case 39:
-#line 362 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 362 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdval.Meridian = MER24;
+	    yyval.Meridian = MER24;
 	;
     break;}
 case 40:
-#line 365 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 365 "/home/jbailey/oleo/src/getdate.y"
 {
-	    gtdval.Meridian = gtdvsp[0].Meridian;
+	    yyval.Meridian = yyvsp[0].Meridian;
 	;
     break;}
 }
    /* the action file gets copied in in place of this dollarsign */
-#line 465 "/usr/unsupported/lib/bison.simple"
+#line 498 "/usr/local/share/bison.simple"
 
-  gtdvsp -= gtdlen;
-  gtdssp -= gtdlen;
+  yyvsp -= yylen;
+  yyssp -= yylen;
 #ifdef YYLSP_NEEDED
-  gtdlsp -= gtdlen;
+  yylsp -= yylen;
 #endif
 
 #if YYDEBUG != 0
-  if (gtddebug)
+  if (yydebug)
     {
-      short *ssp1 = gtdss - 1;
+      short *ssp1 = yyss - 1;
       fprintf (stderr, "state stack now");
-      while (ssp1 != gtdssp)
+      while (ssp1 != yyssp)
 	fprintf (stderr, " %d", *++ssp1);
       fprintf (stderr, "\n");
     }
 #endif
 
-  *++gtdvsp = gtdval;
+  *++yyvsp = yyval;
 
 #ifdef YYLSP_NEEDED
-  gtdlsp++;
-  if (gtdlen == 0)
+  yylsp++;
+  if (yylen == 0)
     {
-      gtdlsp->first_line = gtdlloc.first_line;
-      gtdlsp->first_column = gtdlloc.first_column;
-      gtdlsp->last_line = (gtdlsp-1)->last_line;
-      gtdlsp->last_column = (gtdlsp-1)->last_column;
-      gtdlsp->text = 0;
+      yylsp->first_line = yylloc.first_line;
+      yylsp->first_column = yylloc.first_column;
+      yylsp->last_line = (yylsp-1)->last_line;
+      yylsp->last_column = (yylsp-1)->last_column;
+      yylsp->text = 0;
     }
   else
     {
-      gtdlsp->last_line = (gtdlsp+gtdlen-1)->last_line;
-      gtdlsp->last_column = (gtdlsp+gtdlen-1)->last_column;
+      yylsp->last_line = (yylsp+yylen-1)->last_line;
+      yylsp->last_column = (yylsp+yylen-1)->last_column;
     }
 #endif
 
@@ -1133,38 +1154,38 @@ case 40:
      based on the state we popped back to
      and the rule number reduced by.  */
 
-  gtdn = gtdr1[gtdn];
+  yyn = yyr1[yyn];
 
-  gtdstate = gtdpgoto[gtdn - YYNTBASE] + *gtdssp;
-  if (gtdstate >= 0 && gtdstate <= YYLAST && gtdcheck[gtdstate] == *gtdssp)
-    gtdstate = gtdtable[gtdstate];
+  yystate = yypgoto[yyn - YYNTBASE] + *yyssp;
+  if (yystate >= 0 && yystate <= YYLAST && yycheck[yystate] == *yyssp)
+    yystate = yytable[yystate];
   else
-    gtdstate = gtddefgoto[gtdn - YYNTBASE];
+    yystate = yydefgoto[yyn - YYNTBASE];
 
-  goto gtdnewstate;
+  goto yynewstate;
 
-gtderrlab:   /* here on detecting error */
+yyerrlab:   /* here on detecting error */
 
-  if (! gtderrstatus)
+  if (! yyerrstatus)
     /* If not already recovering from an error, report this error.  */
     {
-      ++gtdnerrs;
+      ++yynerrs;
 
 #ifdef YYERROR_VERBOSE
-      gtdn = gtdpact[gtdstate];
+      yyn = yypact[yystate];
 
-      if (gtdn > YYFLAG && gtdn < YYLAST)
+      if (yyn > YYFLAG && yyn < YYLAST)
 	{
 	  int size = 0;
 	  char *msg;
 	  int x, count;
 
 	  count = 0;
-	  /* Start X at -gtdn if nec to avoid negative indexes in gtdcheck.  */
-	  for (x = (gtdn < 0 ? -gtdn : 0);
-	       x < (sizeof(gtdtname) / sizeof(char *)); x++)
-	    if (gtdcheck[x + gtdn] == x)
-	      size += strlen(gtdtname[x]) + 15, count++;
+	  /* Start X at -yyn if nec to avoid negative indexes in yycheck.  */
+	  for (x = (yyn < 0 ? -yyn : 0);
+	       x < (sizeof(yytname) / sizeof(char *)); x++)
+	    if (yycheck[x + yyn] == x)
+	      size += strlen(yytname[x]) + 15, count++;
 	  msg = (char *) malloc(size + 15);
 	  if (msg != 0)
 	    {
@@ -1173,120 +1194,120 @@ gtderrlab:   /* here on detecting error */
 	      if (count < 5)
 		{
 		  count = 0;
-		  for (x = (gtdn < 0 ? -gtdn : 0);
-		       x < (sizeof(gtdtname) / sizeof(char *)); x++)
-		    if (gtdcheck[x + gtdn] == x)
+		  for (x = (yyn < 0 ? -yyn : 0);
+		       x < (sizeof(yytname) / sizeof(char *)); x++)
+		    if (yycheck[x + yyn] == x)
 		      {
 			strcat(msg, count == 0 ? ", expecting `" : " or `");
-			strcat(msg, gtdtname[x]);
+			strcat(msg, yytname[x]);
 			strcat(msg, "'");
 			count++;
 		      }
 		}
-	      gtderror(msg);
+	      yyerror(msg);
 	      free(msg);
 	    }
 	  else
-	    gtderror ("parse error; also virtual memory exceeded");
+	    yyerror ("parse error; also virtual memory exceeded");
 	}
       else
 #endif /* YYERROR_VERBOSE */
-	gtderror("parse error");
+	yyerror("parse error");
     }
 
-  goto gtderrlab1;
-gtderrlab1:   /* here on error raised explicitly by an action */
+  goto yyerrlab1;
+yyerrlab1:   /* here on error raised explicitly by an action */
 
-  if (gtderrstatus == 3)
+  if (yyerrstatus == 3)
     {
       /* if just tried and failed to reuse lookahead token after an error, discard it.  */
 
       /* return failure if at end of input */
-      if (gtdchar == YYEOF)
+      if (yychar == YYEOF)
 	YYABORT;
 
 #if YYDEBUG != 0
-      if (gtddebug)
-	fprintf(stderr, "Discarding token %d (%s).\n", gtdchar, gtdtname[gtdchar1]);
+      if (yydebug)
+	fprintf(stderr, "Discarding token %d (%s).\n", yychar, yytname[yychar1]);
 #endif
 
-      gtdchar = YYEMPTY;
+      yychar = YYEMPTY;
     }
 
   /* Else will try to reuse lookahead token
      after shifting the error token.  */
 
-  gtderrstatus = 3;		/* Each real token shifted decrements this */
+  yyerrstatus = 3;		/* Each real token shifted decrements this */
 
-  goto gtderrhandle;
+  goto yyerrhandle;
 
-gtderrdefault:  /* current state does not do anything special for the error token. */
+yyerrdefault:  /* current state does not do anything special for the error token. */
 
 #if 0
   /* This is wrong; only states that explicitly want error tokens
      should shift them.  */
-  gtdn = gtddefact[gtdstate];  /* If its default is to accept any token, ok.  Otherwise pop it.*/
-  if (gtdn) goto gtddefault;
+  yyn = yydefact[yystate];  /* If its default is to accept any token, ok.  Otherwise pop it.*/
+  if (yyn) goto yydefault;
 #endif
 
-gtderrpop:   /* pop the current state because it cannot handle the error token */
+yyerrpop:   /* pop the current state because it cannot handle the error token */
 
-  if (gtdssp == gtdss) YYABORT;
-  gtdvsp--;
-  gtdstate = *--gtdssp;
+  if (yyssp == yyss) YYABORT;
+  yyvsp--;
+  yystate = *--yyssp;
 #ifdef YYLSP_NEEDED
-  gtdlsp--;
+  yylsp--;
 #endif
 
 #if YYDEBUG != 0
-  if (gtddebug)
+  if (yydebug)
     {
-      short *ssp1 = gtdss - 1;
+      short *ssp1 = yyss - 1;
       fprintf (stderr, "Error: state stack now");
-      while (ssp1 != gtdssp)
+      while (ssp1 != yyssp)
 	fprintf (stderr, " %d", *++ssp1);
       fprintf (stderr, "\n");
     }
 #endif
 
-gtderrhandle:
+yyerrhandle:
 
-  gtdn = gtdpact[gtdstate];
-  if (gtdn == YYFLAG)
-    goto gtderrdefault;
+  yyn = yypact[yystate];
+  if (yyn == YYFLAG)
+    goto yyerrdefault;
 
-  gtdn += YYTERROR;
-  if (gtdn < 0 || gtdn > YYLAST || gtdcheck[gtdn] != YYTERROR)
-    goto gtderrdefault;
+  yyn += YYTERROR;
+  if (yyn < 0 || yyn > YYLAST || yycheck[yyn] != YYTERROR)
+    goto yyerrdefault;
 
-  gtdn = gtdtable[gtdn];
-  if (gtdn < 0)
+  yyn = yytable[yyn];
+  if (yyn < 0)
     {
-      if (gtdn == YYFLAG)
-	goto gtderrpop;
-      gtdn = -gtdn;
-      goto gtdreduce;
+      if (yyn == YYFLAG)
+	goto yyerrpop;
+      yyn = -yyn;
+      goto yyreduce;
     }
-  else if (gtdn == 0)
-    goto gtderrpop;
+  else if (yyn == 0)
+    goto yyerrpop;
 
-  if (gtdn == YYFINAL)
+  if (yyn == YYFINAL)
     YYACCEPT;
 
 #if YYDEBUG != 0
-  if (gtddebug)
+  if (yydebug)
     fprintf(stderr, "Shifting error token, ");
 #endif
 
-  *++gtdvsp = gtdlval;
+  *++yyvsp = yylval;
 #ifdef YYLSP_NEEDED
-  *++gtdlsp = gtdlloc;
+  *++yylsp = yylloc;
 #endif
 
-  gtdstate = gtdn;
-  goto gtdnewstate;
+  yystate = yyn;
+  goto yynewstate;
 }
-#line 370 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
+#line 370 "/home/jbailey/oleo/src/getdate.y"
 
 
 /* Month and day table. */
@@ -1478,7 +1499,7 @@ static TABLE const MilitaryTable[] = {
 
 /* ARGSUSED */
 static int
-gtderror(s)
+yyerror(s)
     char	*s;
 {
   return 0;
@@ -1547,7 +1568,7 @@ Convert(Month, Day, Year, Hours, Minutes, Seconds, Meridian, DSTmode)
     for (i = EPOCH; i < Year; i++)
 	Julian += 365 + (i % 4 == 0);
     Julian *= SECSPERDAY;
-    Julian += gtdTimezone * 60L;
+    Julian += yyTimezone * 60L;
     if ((tod = ToSeconds(Hours, Minutes, Seconds, Meridian)) < 0)
 	return -1;
     Julian += tod;
@@ -1627,11 +1648,11 @@ LookupWord(buff)
 	    *p = tolower(*p);
 
     if (strcmp(buff, "am") == 0 || strcmp(buff, "a.m.") == 0) {
-	gtdlval.Meridian = MERam;
+	yylval.Meridian = MERam;
 	return tMERIDIAN;
     }
     if (strcmp(buff, "pm") == 0 || strcmp(buff, "p.m.") == 0) {
-	gtdlval.Meridian = MERpm;
+	yylval.Meridian = MERpm;
 	return tMERIDIAN;
     }
 
@@ -1648,19 +1669,19 @@ LookupWord(buff)
     for (tp = MonthDayTable; tp->name; tp++) {
 	if (abbrev) {
 	    if (strncmp(buff, tp->name, 3) == 0) {
-		gtdlval.Number = tp->value;
+		yylval.Number = tp->value;
 		return tp->type;
 	    }
 	}
 	else if (strcmp(buff, tp->name) == 0) {
-	    gtdlval.Number = tp->value;
+	    yylval.Number = tp->value;
 	    return tp->type;
 	}
     }
 
     for (tp = TimezoneTable; tp->name; tp++)
 	if (strcmp(buff, tp->name) == 0) {
-	    gtdlval.Number = tp->value;
+	    yylval.Number = tp->value;
 	    return tp->type;
 	}
 
@@ -1669,7 +1690,7 @@ LookupWord(buff)
 
     for (tp = UnitsTable; tp->name; tp++)
 	if (strcmp(buff, tp->name) == 0) {
-	    gtdlval.Number = tp->value;
+	    yylval.Number = tp->value;
 	    return tp->type;
 	}
 
@@ -1679,7 +1700,7 @@ LookupWord(buff)
 	buff[i] = '\0';
 	for (tp = UnitsTable; tp->name; tp++)
 	    if (strcmp(buff, tp->name) == 0) {
-		gtdlval.Number = tp->value;
+		yylval.Number = tp->value;
 		return tp->type;
 	    }
 	buff[i] = 's';		/* Put back for "this" in OtherTable. */
@@ -1687,7 +1708,7 @@ LookupWord(buff)
 
     for (tp = OtherTable; tp->name; tp++)
 	if (strcmp(buff, tp->name) == 0) {
-	    gtdlval.Number = tp->value;
+	    yylval.Number = tp->value;
 	    return tp->type;
 	}
 
@@ -1695,7 +1716,7 @@ LookupWord(buff)
     if (buff[1] == '\0' && isalpha(*buff)) {
 	for (tp = MilitaryTable; tp->name; tp++)
 	    if (strcmp(buff, tp->name) == 0) {
-		gtdlval.Number = tp->value;
+		yylval.Number = tp->value;
 		return tp->type;
 	    }
     }
@@ -1710,7 +1731,7 @@ LookupWord(buff)
     if (i)
 	for (tp = TimezoneTable; tp->name; tp++)
 	    if (strcmp(buff, tp->name) == 0) {
-		gtdlval.Number = tp->value;
+		yylval.Number = tp->value;
 		return tp->type;
 	    }
 
@@ -1719,7 +1740,7 @@ LookupWord(buff)
 
 
 static int
-gtdlex()
+yylex()
 {
     register char	c;
     register char	*p;
@@ -1728,38 +1749,38 @@ gtdlex()
     int			sign;
 
     for ( ; ; ) {
-	while (isspace(*gtdInput))
-	    gtdInput++;
+	while (isspace(*yyInput))
+	    yyInput++;
 
-	if (isdigit(c = *gtdInput) || c == '-' || c == '+') {
+	if (isdigit(c = *yyInput) || c == '-' || c == '+') {
 	    if (c == '-' || c == '+') {
 		sign = c == '-' ? -1 : 1;
-		if (!isdigit(*++gtdInput))
+		if (!isdigit(*++yyInput))
 		    /* skip the '-' sign */
 		    continue;
 	    }
 	    else
 		sign = 0;
-	    for (gtdlval.Number = 0; isdigit(c = *gtdInput++); )
-		gtdlval.Number = 10 * gtdlval.Number + c - '0';
-	    gtdInput--;
+	    for (yylval.Number = 0; isdigit(c = *yyInput++); )
+		yylval.Number = 10 * yylval.Number + c - '0';
+	    yyInput--;
 	    if (sign < 0)
-		gtdlval.Number = -gtdlval.Number;
+		yylval.Number = -yylval.Number;
 	    return sign ? tSNUMBER : tUNUMBER;
 	}
 	if (isalpha(c)) {
-	    for (p = buff; isalpha(c = *gtdInput++) || c == '.'; )
+	    for (p = buff; isalpha(c = *yyInput++) || c == '.'; )
 		if (p < &buff[sizeof buff - 1])
 		    *p++ = c;
 	    *p = '\0';
-	    gtdInput--;
+	    yyInput--;
 	    return LookupWord(buff);
 	}
 	if (c != '(')
-	    return *gtdInput++;
+	    return *yyInput++;
 	Count = 0;
 	do {
-	    c = *gtdInput++;
+	    c = *yyInput++;
 	    if (c == '\0')
 		return c;
 	    if (c == '(')
@@ -1781,7 +1802,7 @@ get_date(p, now)
     time_t		Start;
     time_t		tod;
 
-    gtdInput = p;
+    yyInput = p;
     if (now == NULL) {
         now = &ftz;
 #if	!defined(HAVE_FTIME)
@@ -1814,44 +1835,44 @@ get_date(p, now)
     }
 
     tm = localtime(&now->time);
-    gtdYear = tm->tm_year;
-    gtdMonth = tm->tm_mon + 1;
-    gtdDay = tm->tm_mday;
-    gtdTimezone = now->timezone;
-    gtdDSTmode = DSTmaybe;
-    gtdHour = 0;
-    gtdMinutes = 0;
-    gtdSeconds = 0;
-    gtdMeridian = MER24;
-    gtdRelSeconds = 0;
-    gtdRelMonth = 0;
-    gtdHaveDate = 0;
-    gtdHaveDay = 0;
-    gtdHaveRel = 0;
-    gtdHaveTime = 0;
-    gtdHaveZone = 0;
+    yyYear = tm->tm_year;
+    yyMonth = tm->tm_mon + 1;
+    yyDay = tm->tm_mday;
+    yyTimezone = now->timezone;
+    yyDSTmode = DSTmaybe;
+    yyHour = 0;
+    yyMinutes = 0;
+    yySeconds = 0;
+    yyMeridian = MER24;
+    yyRelSeconds = 0;
+    yyRelMonth = 0;
+    yyHaveDate = 0;
+    yyHaveDay = 0;
+    yyHaveRel = 0;
+    yyHaveTime = 0;
+    yyHaveZone = 0;
 
-    if (gtdparse()
-     || gtdHaveTime > 1 || gtdHaveZone > 1 || gtdHaveDate > 1 || gtdHaveDay > 1)
+    if (yyparse()
+     || yyHaveTime > 1 || yyHaveZone > 1 || yyHaveDate > 1 || yyHaveDay > 1)
 	return -1;
 
-    if (gtdHaveDate || gtdHaveTime || gtdHaveDay) {
-	Start = Convert(gtdMonth, gtdDay, gtdYear, gtdHour, gtdMinutes, gtdSeconds,
-		    gtdMeridian, gtdDSTmode);
+    if (yyHaveDate || yyHaveTime || yyHaveDay) {
+	Start = Convert(yyMonth, yyDay, yyYear, yyHour, yyMinutes, yySeconds,
+		    yyMeridian, yyDSTmode);
 	if (Start < 0)
 	    return -1;
     }
     else {
 	Start = now->time;
-	if (!gtdHaveRel)
+	if (!yyHaveRel)
 	    Start -= ((tm->tm_hour * 60L + tm->tm_min) * 60L) + tm->tm_sec;
     }
 
-    Start += gtdRelSeconds;
-    Start += RelativeMonth(Start, gtdRelMonth);
+    Start += yyRelSeconds;
+    Start += RelativeMonth(Start, yyRelMonth);
 
-    if (gtdHaveDay && !gtdHaveDate) {
-	tod = RelativeDate(Start, gtdDayOrdinal, gtdDayNumber);
+    if (yyHaveDay && !yyHaveDate) {
+	tod = RelativeDate(Start, yyDayOrdinal, yyDayNumber);
 	Start += tod;
     }
 

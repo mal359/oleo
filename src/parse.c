@@ -1,5 +1,6 @@
 
-/*  A Bison parser, made from parse.y with Bison version GNU Bison version 1.22
+/*  A Bison parser, made from /home/jbailey/oleo/src/parse.y
+ by  GNU Bison version 1.25
   */
 
 #define YYBISON 1  /* Identify Bison output.  */
@@ -27,7 +28,7 @@
 #define	L_NE	278
 #define	L_GE	279
 
-#line 1 "parse.y"
+#line 1 "/home/jbailey/oleo/src/parse.y"
 
 /*	Copyright (C) 1990, 1992, 1993 Free Software Foundation, Inc.
 
@@ -46,7 +47,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Oleo; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-#line 41 "parse.y"
+#line 41 "/home/jbailey/oleo/src/parse.y"
 
 #include "funcdef.h"
 
@@ -89,23 +90,6 @@ YYSTYPE make_list ();
 char *instr;
 int parse_error = 0;
 extern struct obstack tmp_mem;
-
-
-#ifndef YYLTYPE
-typedef
-  struct yyltype
-    {
-      int timestamp;
-      int first_line;
-      int first_column;
-      int last_line;
-      int last_column;
-      char *text;
-   }
-  yyltype;
-
-#define YYLTYPE yyltype
-#endif
 
 #ifndef YYSTYPE
 #define YYSTYPE int
@@ -200,12 +184,16 @@ static const short yyrline[] = { 0,
    214,   218,   222,   226,   241,   245,   247,   255,   262,   264,
    268,   269,   272,   274,   278,   280
 };
+#endif
 
-static const char * const yytname[] = {   "$","error","$illegal.","'?'","':'",
+
+#if YYDEBUG != 0 || defined (YYERROR_VERBOSE)
+
+static const char * const yytname[] = {   "$","error","$undefined.","'?'","':'",
 "'&'","'='","NE","'<'","LE","'>'","GE","'+'","'-'","'*'","'/'","'%'","'^'","NEG",
 "'!'","L_CELL","L_RANGE","L_VAR","L_CONST","L_FN0","L_FN1","L_FN2","L_FN3","L_FN4",
 "L_FNN","L_FN1R","L_FN2R","L_FN3R","L_FN4R","L_FNNR","L_LE","L_NE","L_GE","'('",
-"')'","','","line","exp","exp_list","range_exp","range_exp_list","cell",""
+"')'","','","line","exp","exp_list","range_exp","range_exp_list","cell", NULL
 };
 #endif
 
@@ -391,14 +379,14 @@ static const short yycheck[] = {     0,
     14,    15,    16,    17
 };
 /* -*-C-*-  Note some compilers choke on comments on `#line' lines.  */
-#line 3 "/usr/lib/bison.simple"
+#line 3 "/usr/local/share/bison.simple"
 
 /* Skeleton output parser for bison,
-   Copyright (C) 1984, 1989, 1990 Bob Corbett and Richard Stallman
+   Copyright (C) 1984, 1989, 1990 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 1, or (at your option)
+   the Free Software Foundation; either version 2, or (at your option)
    any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -410,6 +398,10 @@ static const short yycheck[] = {     0,
    along with this program; if not, write to the Free Software
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
+/* As a special exception, when this file is copied by Bison into a
+   Bison output file, you may use that output file without restriction.
+   This special exception was added by the Free Software Foundation
+   in version 1.24 of Bison.  */
 
 #ifndef alloca
 #ifdef __GNUC__
@@ -483,10 +475,18 @@ while (0)
 
 #ifdef YYPURE
 #ifdef YYLSP_NEEDED
+#ifdef YYLEX_PARAM
+#define YYLEX		yylex(&yylval, &yylloc, YYLEX_PARAM)
+#else
 #define YYLEX		yylex(&yylval, &yylloc)
+#endif
+#else /* not YYLSP_NEEDED */
+#ifdef YYLEX_PARAM
+#define YYLEX		yylex(&yylval, YYLEX_PARAM)
 #else
 #define YYLEX		yylex(&yylval)
 #endif
+#endif /* not YYLSP_NEEDED */
 #endif
 
 /* If nonreentrant, generate the variables here */
@@ -534,16 +534,16 @@ int yyparse (void);
 #endif
 
 #if __GNUC__ > 1		/* GNU C and GNU C++ define this.  */
-#define __yy_bcopy(FROM,TO,COUNT)	__builtin_memcpy(TO,FROM,COUNT)
+#define __yy_memcpy(TO,FROM,COUNT)	__builtin_memcpy(TO,FROM,COUNT)
 #else				/* not GNU C or C++ */
 #ifndef __cplusplus
 
 /* This is the most reliable way to avoid incompatibilities
    in available built-in functions on various systems.  */
 static void
-__yy_bcopy (from, to, count)
-     char *from;
+__yy_memcpy (to, from, count)
      char *to;
+     char *from;
      int count;
 {
   register char *f = from;
@@ -559,7 +559,7 @@ __yy_bcopy (from, to, count)
 /* This is the most reliable way to avoid incompatibilities
    in available built-in functions on various systems.  */
 static void
-__yy_bcopy (char *from, char *to, int count)
+__yy_memcpy (char *to, char *from, int count)
 {
   register char *f = from;
   register char *t = to;
@@ -572,9 +572,30 @@ __yy_bcopy (char *from, char *to, int count)
 #endif
 #endif
 
-#line 184 "/usr/lib/bison.simple"
+#line 196 "/usr/local/share/bison.simple"
+
+/* The user can define YYPARSE_PARAM as the name of an argument to be passed
+   into yyparse.  The argument should have type void *.
+   It should actually point to an object.
+   Grammar actions can access the variable by casting it
+   to the proper pointer type.  */
+
+#ifdef YYPARSE_PARAM
+#ifdef __cplusplus
+#define YYPARSE_PARAM_ARG void *YYPARSE_PARAM
+#define YYPARSE_PARAM_DECL
+#else /* not __cplusplus */
+#define YYPARSE_PARAM_ARG YYPARSE_PARAM
+#define YYPARSE_PARAM_DECL void *YYPARSE_PARAM;
+#endif /* not __cplusplus */
+#else /* not YYPARSE_PARAM */
+#define YYPARSE_PARAM_ARG
+#define YYPARSE_PARAM_DECL
+#endif /* not YYPARSE_PARAM */
+
 int
-yyparse()
+yyparse(YYPARSE_PARAM_ARG)
+     YYPARSE_PARAM_DECL
 {
   register int yystate;
   register int yyn;
@@ -690,12 +711,12 @@ yynewstate:
       if (yystacksize > YYMAXDEPTH)
 	yystacksize = YYMAXDEPTH;
       yyss = (short *) alloca (yystacksize * sizeof (*yyssp));
-      __yy_bcopy ((char *)yyss1, (char *)yyss, size * sizeof (*yyssp));
+      __yy_memcpy ((char *)yyss, (char *)yyss1, size * sizeof (*yyssp));
       yyvs = (YYSTYPE *) alloca (yystacksize * sizeof (*yyvsp));
-      __yy_bcopy ((char *)yyvs1, (char *)yyvs, size * sizeof (*yyvsp));
+      __yy_memcpy ((char *)yyvs, (char *)yyvs1, size * sizeof (*yyvsp));
 #ifdef YYLSP_NEEDED
       yyls = (YYLTYPE *) alloca (yystacksize * sizeof (*yylsp));
-      __yy_bcopy ((char *)yyls1, (char *)yyls, size * sizeof (*yylsp));
+      __yy_memcpy ((char *)yyls, (char *)yyls1, size * sizeof (*yylsp));
 #endif
 #endif /* no yyoverflow */
 
@@ -856,84 +877,84 @@ yyreduce:
   switch (yyn) {
 
 case 1:
-#line 87 "parse.y"
+#line 87 "/home/jbailey/oleo/src/parse.y"
 { parse_return=yyvsp[0]; ;
     break;}
 case 2:
-#line 88 "parse.y"
+#line 88 "/home/jbailey/oleo/src/parse.y"
 {
 		if(!parse_error)
 			parse_error=PARSE_ERR;
 		parse_return=0; ;
     break;}
 case 5:
-#line 96 "parse.y"
+#line 96 "/home/jbailey/oleo/src/parse.y"
 {
 		yyval=yyvsp[-2]; ;
     break;}
 case 6:
-#line 98 "parse.y"
+#line 98 "/home/jbailey/oleo/src/parse.y"
 {
 		(yyvsp[-3])->n_x.v_subs[0]=yyvsp[-1];
 		(yyvsp[-3])->n_x.v_subs[1]=(struct node *)0;
 		yyval=yyvsp[-3]; ;
     break;}
 case 7:
-#line 102 "parse.y"
+#line 102 "/home/jbailey/oleo/src/parse.y"
 {
 		(yyvsp[-5])->n_x.v_subs[0]=yyvsp[-3];
 		(yyvsp[-5])->n_x.v_subs[1]=yyvsp[-1];
 		yyval=yyvsp[-5]; ;
     break;}
 case 8:
-#line 106 "parse.y"
+#line 106 "/home/jbailey/oleo/src/parse.y"
 {
 		(yyvsp[-7])->n_x.v_subs[0]=make_list(yyvsp[-5],yyvsp[-3]);
  		(yyvsp[-7])->n_x.v_subs[1]=yyvsp[-1];
  		yyval=yyvsp[-7];;
     break;}
 case 9:
-#line 110 "parse.y"
+#line 110 "/home/jbailey/oleo/src/parse.y"
 {
 		(yyvsp[-9])->n_x.v_subs[0]=make_list(yyvsp[-7],yyvsp[-5]);
  		(yyvsp[-9])->n_x.v_subs[1]=make_list(yyvsp[-3],yyvsp[-1]);
  		yyval=yyvsp[-9];;
     break;}
 case 10:
-#line 114 "parse.y"
+#line 114 "/home/jbailey/oleo/src/parse.y"
 {
 		(yyvsp[-3])->n_x.v_subs[0]=(struct node *)0;
 		(yyvsp[-3])->n_x.v_subs[1]=yyvsp[-1];
 		yyval=yyvsp[-3]; ;
     break;}
 case 11:
-#line 118 "parse.y"
+#line 118 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-3]->n_x.v_subs[0]=yyvsp[-1];
 		yyval=yyvsp[-3]; ;
     break;}
 case 12:
-#line 121 "parse.y"
+#line 121 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-3]->n_x.v_subs[0]=yyvsp[-1];
 		yyval=yyvsp[-3]; ;
     break;}
 case 13:
-#line 125 "parse.y"
+#line 125 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-5]->n_x.v_subs[0]=yyvsp[-3];
 		yyvsp[-5]->n_x.v_subs[1]=yyvsp[-1];
 		yyval=yyvsp[-5]; ;
     break;}
 case 14:
-#line 129 "parse.y"
+#line 129 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-5]->n_x.v_subs[0]=yyvsp[-3];
 		yyvsp[-5]->n_x.v_subs[1]=yyvsp[-1];
 		yyval=yyvsp[-5]; ;
     break;}
 case 15:
-#line 135 "parse.y"
+#line 135 "/home/jbailey/oleo/src/parse.y"
 {
 		if(yyvsp[-7]->comp_value!=F_INDEX)
 			parse_error=PARSE_ERR;
@@ -943,7 +964,7 @@ case 15:
 		yyval=yyvsp[-7]; ;
     break;}
 case 16:
-#line 142 "parse.y"
+#line 142 "/home/jbailey/oleo/src/parse.y"
 {
 		if(yyvsp[-7]->comp_value!=F_INDEX)
 			parse_error=PARSE_ERR;
@@ -953,28 +974,28 @@ case 16:
 		yyval=yyvsp[-7]; ;
     break;}
 case 17:
-#line 150 "parse.y"
+#line 150 "/home/jbailey/oleo/src/parse.y"
 {
 		(yyvsp[-7])->n_x.v_subs[0]=make_list(yyvsp[-5],yyvsp[-3]);
  		(yyvsp[-7])->n_x.v_subs[1]=yyvsp[-1];
  		yyval=yyvsp[-7];;
     break;}
 case 18:
-#line 154 "parse.y"
+#line 154 "/home/jbailey/oleo/src/parse.y"
 {
 		(yyvsp[-7])->n_x.v_subs[0]=make_list(yyvsp[-5],yyvsp[-3]);
  		(yyvsp[-7])->n_x.v_subs[1]=yyvsp[-1];
  		yyval=yyvsp[-7];;
     break;}
 case 19:
-#line 159 "parse.y"
+#line 159 "/home/jbailey/oleo/src/parse.y"
 {
 		(yyvsp[-3])->n_x.v_subs[0]=(struct node *)0;
 		(yyvsp[-3])->n_x.v_subs[1]=yyvsp[-1];
 		yyval=yyvsp[-3]; ;
     break;}
 case 20:
-#line 163 "parse.y"
+#line 163 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-3]->comp_value=IF;
 		yyvsp[-3]->n_x.v_subs[0]=yyvsp[-1];
@@ -984,98 +1005,98 @@ case 20:
 		yyval=yyvsp[-3]; ;
     break;}
 case 21:
-#line 174 "parse.y"
+#line 174 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 22:
-#line 178 "parse.y"
+#line 178 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 23:
-#line 182 "parse.y"
+#line 182 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 24:
-#line 186 "parse.y"
+#line 186 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 25:
-#line 190 "parse.y"
+#line 190 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 26:
-#line 194 "parse.y"
+#line 194 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 27:
-#line 198 "parse.y"
+#line 198 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 28:
-#line 202 "parse.y"
+#line 202 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 29:
-#line 206 "parse.y"
+#line 206 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 30:
-#line 210 "parse.y"
+#line 210 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 31:
-#line 214 "parse.y"
+#line 214 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 32:
-#line 218 "parse.y"
+#line 218 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 33:
-#line 222 "parse.y"
+#line 222 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 34:
-#line 226 "parse.y"
+#line 226 "/home/jbailey/oleo/src/parse.y"
 {
 		if(yyvsp[0]->comp_value==CONST_FLT) {
 			yyvsp[0]->n_x.v_float= -(yyvsp[0]->n_x.v_float);
@@ -1093,53 +1114,53 @@ case 34:
 		} ;
     break;}
 case 35:
-#line 241 "parse.y"
+#line 241 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[0];
 		yyvsp[-1]->n_x.v_subs[1]=(struct node *)0;
 		yyval = yyvsp[-1]; ;
     break;}
 case 36:
-#line 246 "parse.y"
+#line 246 "/home/jbailey/oleo/src/parse.y"
 { yyval = yyvsp[-1]; ;
     break;}
 case 37:
-#line 247 "parse.y"
+#line 247 "/home/jbailey/oleo/src/parse.y"
 {
 		if(!parse_error)
 			parse_error=NO_CLOSE;
 		;
     break;}
 case 38:
-#line 255 "parse.y"
+#line 255 "/home/jbailey/oleo/src/parse.y"
 {
 		if(!parse_error)
 			parse_error=NO_CLOSE;
 		;
     break;}
 case 39:
-#line 263 "parse.y"
+#line 263 "/home/jbailey/oleo/src/parse.y"
 { yyval = make_list(yyvsp[0], 0); ;
     break;}
 case 40:
-#line 265 "parse.y"
+#line 265 "/home/jbailey/oleo/src/parse.y"
 { yyval = make_list(yyvsp[0], yyvsp[-2]); ;
     break;}
 case 43:
-#line 273 "parse.y"
+#line 273 "/home/jbailey/oleo/src/parse.y"
 { yyval=make_list(yyvsp[0], 0); ;
     break;}
 case 44:
-#line 275 "parse.y"
+#line 275 "/home/jbailey/oleo/src/parse.y"
 { yyval=make_list(yyvsp[0],yyvsp[-2]); ;
     break;}
 case 45:
-#line 279 "parse.y"
+#line 279 "/home/jbailey/oleo/src/parse.y"
 { yyval=yyvsp[0]; ;
     break;}
 }
    /* the action file gets copied in in place of this dollarsign */
-#line 465 "/usr/lib/bison.simple"
+#line 498 "/usr/local/share/bison.simple"
 
   yyvsp -= yylen;
   yyssp -= yylen;
@@ -1335,18 +1356,18 @@ yyerrhandle:
   yystate = yyn;
   goto yynewstate;
 }
-#line 282 "parse.y"
+#line 282 "/home/jbailey/oleo/src/parse.y"
 
 
 void
-yyerror FUN1(char *, s)
+yyerror (char * s)
 {
 	if(!parse_error)
 		parse_error=PARSE_ERR;
 }
 
 YYSTYPE
-make_list FUN2(YYSTYPE, car, YYSTYPE, cdr)
+make_list (YYSTYPE car, YYSTYPE cdr)
 {
 	YYSTYPE ret;
 
@@ -1369,7 +1390,7 @@ unsigned char parse_cell_or_range ();
 #endif
 
 int
-yylex FUN0()
+yylex ()
 {
 	int ch;
 	struct node *new;
@@ -1641,7 +1662,7 @@ yylex FUN0()
 	RANGE if it is a range (ptr points past the chars)
  */
 unsigned char
-parse_cell_or_range FUN2(char **,ptr, struct rng *,retp)
+parse_cell_or_range (char **ptr, struct rng *retp)
 {
 	if(a0) {
 		unsigned tmpc,tmpr;
@@ -1903,7 +1924,7 @@ parse_cell_or_range FUN2(char **,ptr, struct rng *,retp)
 }
 
 int
-str_to_col FUN1(char **,str)
+str_to_col (char **str)
 {
 	int ret;
 	char c,cc,ccc;
