@@ -14,7 +14,6 @@ You should have received a copy of the GNU General Public License
 along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -116,8 +115,6 @@ static struct line graph_title [NUM_DATASETS];
 static struct rng graph_data [NUM_DATASETS];
 static enum graph_pair_ordering graph_data_order [graph_num_axis];
 
-
-
 
 enum graph_axis
 chr_to_axis (int c)
@@ -226,7 +223,6 @@ char_to_q_char (char *str)
   tmp = line_to_q_char (tmp_line);
   return (tmp);
 }
-
 
 void
 graph_x11_mono (void)
@@ -268,13 +264,18 @@ graph_postscript (char * file, int kind, int spectrum, char * font, int pt_size)
   plot_fn = spew_for_ps;
 }
 
-
-
 void
 graph_set_axis_title (int axis_c, char * title)
 {
   enum graph_axis axis = chr_to_axis (axis_c);
   set_line (&graph_axis_title [axis], char_to_q_char (title));
+}
+
+char *
+graph_get_axis_title (int axis_c)
+{
+  enum graph_axis axis = chr_to_axis (axis_c);
+  return graph_axis_title[axis].buf;
 }
 
 void
@@ -295,6 +296,13 @@ graph_set_logness (int axis_c, int explicit, int newval)
 	       graph_logness [graph_x] ? "x" : "",
 	       graph_logness [graph_y] ? "y" : "");
   io_info_msg ("set %s", msg_buf.buf);
+}
+
+int
+graph_get_logness(int axis_c)
+{
+  enum graph_axis axis = chr_to_axis (axis_c);
+  return graph_logness [axis];
 }
 
 void
@@ -378,8 +386,6 @@ graph_default_axis_labels (int axis_c)
   graph_axis_labels [axis].lr = NON_ROW;
 }
 
-
-
 static char * graph_plot_styles [] =
 {
   "lines",
@@ -423,6 +429,14 @@ graph_set_data_title (int data_set, char * title)
   set_line (&graph_title [data_set], title);
 }
 
+char *
+graph_get_data_title (int data_set, char * title)
+{
+  if ((data_set < 0) || (data_set >= NUM_DATASETS))
+    return NULL;
+  return graph_title[data_set].buf;
+}
+
 void
 graph_set_data (int data_set, struct rng * rng, int pair, int dir)
 {
@@ -441,8 +455,6 @@ graph_get_data(int data_set)
 	return graph_data[data_set];
 }
 
-
-
 
 void
 graph_presets (void)
@@ -596,7 +608,6 @@ graph_make_info (void)
 }
 
 
-
 static FILE *
 mk_tmp_file (struct line * line, char * dir, char * base)
 {
@@ -857,7 +868,6 @@ spew_gnuplot (FILE  * fp, struct line * data_files, char * dir, char * dbase)
     fprintf (fp, "\n");
   }
 }
-
 
 static void
 graph_spew_with_parameters (struct line * shell_script, struct line *
@@ -898,7 +908,6 @@ graph_spew_with_parameters (struct line * shell_script, struct line *
     }
   fclose (fp);
 }
-
 
 static FILE * pipe_to_gnuplot = 0;
 static char * cleanup_script = 0;
@@ -961,8 +970,6 @@ death_to_gnuplot (void)
 }
 
 
-
-
 
 static void
 spew_for_x (void)

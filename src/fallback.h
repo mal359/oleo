@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.h,v 1.4 1998/09/02 22:42:44 danny Exp $
+ *  $Id: fallback.h,v 1.5 1998/09/12 14:34:06 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -26,7 +26,7 @@ char *fallback[] = {
 	"Oleo.title:			Oleo",
 	"Oleo.geometry:			800x600",
 	"*tearOffModel:			XmTEAR_OFF_ENABLED",
-#if 0
+#if 0							/* FIX ME */
 	"oleo.rows:			65536",
 	"oleo.columns:			65536",
 #else
@@ -38,12 +38,9 @@ char *fallback[] = {
 	"*bae.background:		#CCCCCC",
 	"*formula.columns:		40",
 	"*splash.fontList:		-b&h-lucidatypewriter-bold-r-normal-sans-64-*-*-*-*-*-iso8859-1=large,-b&h-lucida-medium-i-normal-sans-18-*-*-*-*-*-iso8859-1=small",
-#if 0
-	"*splash.fontList:		-b&h-lucidatypewriter-bold-r-normal-sans-64-*-*-*-*-*-iso8859-1=large,-b&h-lucidatypewriter-medium-r-normal-sans-18-*-*-*-*-*-iso8859-1=small",
-#endif
 	"*splash.background:		#AAAAAA",
 	"*splash.foreground:		red",
-	"*messagesSW.height:		70",
+	"*messagesSW.height:		70",		/* FIX ME */
 /* Menu System */
 /* File */
 	"*filecascade.labelString:	File",
@@ -88,10 +85,10 @@ char *fallback[] = {
 	"*formats.labelString:		Formats",
 	"*printoptions.labelString:	Print Options",
 	"*defaultfileformat.labelString:	Default File Format",
-	"*setvariable.labelString:		Set Variable",
-	"*showvariable.labelString:		Show Variable",
-	"*listvariables.labelString:		List Variables",
-	"*showoptions.labelString:		Show Options",
+	"*setvariable.labelString:	Set Variable",
+	"*showvariable.labelString:	Show Variable",
+	"*listvariables.labelString:	List Variables",
+	"*showoptions.labelString:	Show Options",
 /* Graph */
 	"*graphcascade.labelString:	Graph",
 	"*define.labelString:		Define Graph",
@@ -115,6 +112,10 @@ char *fallback[] = {
 	"*error.labelString:		Error Values",
 	"*helpmenu.format.labelString:	Formats",
 	"*helpmenu.option.labelString:	Options",
+/* Dialog titles */
+	"*selectfile_popup.title:	Select a file to load or save",
+	"*versionD_popup.title:		Oleo Version Dialog",
+	"*helpShell.title:		Oleo Help Window",
 /* BaeMatrix */
 	"*bae.allowColumnResize:	True",
 	"*bae.columnLabelColor:		dark slate blue",
@@ -123,17 +124,30 @@ char *fallback[] = {
 	"*versionD*Help*labelString:	GPL",
 /* Configuration Dialogs */
 	"*configureGraph_popup*.title:			Configure the Graph",
-	"*configureGraphFrame*cap1.labelString:		X Axis",
-	"*configureGraphFrame*cap2.labelString:		Data 1",
-	"*configureGraphFrame*cap3.labelString:		Data 2",
-	"*configureGraphFrame*cap4.labelString:		Data 3",
-	"*configureGraphFrame*cap5.labelString:		Data 4",
+	"*configureGraph*xlog.labelString:		Logarithmic Axes",
+	"*configureGraph*ylog.labelString:		Logarithmic Axes",
 	"*configureGraph*ok.labelString:		OK",
 	"*configureGraph*cancel.labelString:		Cancel",
 	"*configureGraph*help.labelString:		Help",
+	"*configureGraph*l1.labelString:		X Axis",
+	"*configureGraph*l2.labelString:		Data 1",
+	"*configureGraph*l3.labelString:		Data 2",
+	"*configureGraph*l4.labelString:		Data 3",
+	"*configureGraph*l5.labelString:		Data 4",
+	"*configureGraph*s1.labelString:		",
+	"*configureGraph*s2.labelString:		",
+	"*configureGraph*s3.labelString:		",
+	"*configureGraph*s4.labelString:		",
+	"*configureGraph*s5.labelString:		",
+	"*configureGraph*l0.labelString:		",
+	"*configureGraph*r0.labelString:		Data Range",
+	"*configureGraph*t0.labelString:		Data Set Name",
+	"*configureGraph*s0.labelString:		Dotted Lines",
+	"*configureGraph*xl.labelString:		X Axis Title",
+	"*configureGraph*yl.labelString:		Y Axis Title",
 /* Copy dialog */
-	"*copyDialog*cap1.labelString:		From :",
-	"*copyDialog*cap2.labelString:		To :",
+	"*copyDialog*cap1.labelString:	From :",
+	"*copyDialog*cap2.labelString:	To :",
 /* Mnemonics */
 	"*filecascade.mnemonic:		F",
 	"*open.mnemonic:		O",
@@ -142,21 +156,15 @@ char *fallback[] = {
 	"*save.mnemonic:		S",
 	"*saveas.mnemonic:		A",
 	"*filemenu.print.mnemonic:	P",
-
 	"*editcascade.mnemonic:		E",
 	"*undo.mnemonic:		U",
 	"*copy.mnemonic:		C",
 	"*cut.mnemonic:			t",
 	"*paste.mnemonic:		P",
-
 	"*stylecascade.mnemonic:	S",
-
 	"*optionscascade.mnemonic:	O",
-
 	"*graphcascade.mnemonic:	G",
-
 	"*helpcascade.mnemonic:		H",
-
 /* Accelerators */
 	"*open.accelerator:		Ctrl<Key>o",
 	"*close.accelerator:		Ctrl<Key>x",
@@ -164,7 +172,6 @@ char *fallback[] = {
 	"*saveas.accelerator:		Ctrl<Key>a",
 	"*filemenu.print.accelerator:	Ctrl<Key>p",
 	"*quit.accelerator:		Ctrl<Key>q",
-
 	"*undo.accelerator:		Ctrl<Key>u",
 	"*copy.accelerator:		Ctrl<Key>osfInsert",
 #ifndef LESSTIF_VERSION
@@ -181,14 +188,12 @@ char *fallback[] = {
 	"*close.acceleratorText:	Ctrl-X",
 	"*print.acceleratorText:	Ctrl-P",
 	"*quit.acceleratorText:		Ctrl-Q",
-
 	"*undo.acceleratorText:		Ctrl-U",
 	"*copy.acceleratorText:		Ctrl-Insert",
 	"*cut.acceleratorText:		Shift-Delete",
 	"*paste.acceleratorText:	Ctrl-Insert",
 	"*insert.acceleratorText:	Ctrl-+",
 	"*gotocell.acceleratorText:	F5",
-
 	"*format.acceleratorText:	Ctrl-F",
 /* End */
 	NULL

@@ -931,13 +931,13 @@ main (int argc, char **argv)
 	switch (opt)
 	  {
 	  case 'V':
-	    printf ("%s %s\n", GNU_PACKAGE, VERSION);
-            printf ("Copyright (C) 1997-1998 Free Software Foundation, Inc.\n");
-            printf ("%s comes with ABSOLUTELY NO WARRANTY.\n", GNU_PACKAGE);
-            printf ("You may redistribute copies of %s\n", PACKAGE);
-            printf ("under the terms of the GNU General Public License.\n");
-            printf ("For more information about these matters, ");
-            printf ("see the files named COPYING.\n");
+	    printf(_("%s %s\n"), GNU_PACKAGE, VERSION);
+            printf(_("Copyright (C) 1997-1998 Free Software Foundation, Inc.\n"));
+            printf(_("%s comes with ABSOLUTELY NO WARRANTY.\n"), GNU_PACKAGE);
+            printf(_("You may redistribute copies of %s\n"), PACKAGE);
+            printf(_("under the terms of the GNU General Public License.\n"));
+            printf(_("For more information about these matters, "));
+            printf(_("see the files named COPYING.\n"));
 	    exit (0);
 	    break;
 	  case 'q':
@@ -962,8 +962,11 @@ main (int argc, char **argv)
   }
   if (argc - optind > 1)
     {
-      show_usage ();
-      exit (1);
+      if (no_motif)
+      {
+        show_usage ();
+        exit (1);
+      }
     }
   init_infinity ();
   init_mem ();

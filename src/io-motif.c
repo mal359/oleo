@@ -1,7 +1,7 @@
 /*
- *  $Id: io-motif.c,v 1.7 1998/09/02 22:42:45 danny Exp $
+ *  $Id: io-motif.c,v 1.8 1998/09/12 14:34:09 danny Exp $
  *
- *  This file is part of Oleo, a free spreadsheet.
+ *  This file is part of Oleo, the GNU spreadsheet.
  *
  *  Copyright (C) 1998 by the Free Software Foundation, Inc.
  *  Written by Danny Backx <danny@gnu.org>.
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.7 1998/09/02 22:42:45 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.8 1998/09/12 14:34:09 danny Exp $";
 
 #include "config.h"
 
@@ -95,6 +95,17 @@ static char	input_buf[1024];
 static int	input_buf_allocated = 1024;
 
 static int	chars_buffered = 0;
+
+/*
+ * This is used in two places.
+ */
+#define	CopyRightString							\
+	_(								\
+	"\nGNU Oleo is free software, you are welcome to\n"		\
+	"distribute copies of it. See the file COPYING for the\n"	\
+	"conditions.\n\n"						\
+	"GNU Oleo comes with ABSOLUTELY NO WARRANTY."			\
+	)
 
 /*
  * Conditionally (only when the user wants it) print debugging info
@@ -195,11 +206,23 @@ PopDownHelpCB(Widget widget, XtPointer client, XtPointer call)
  *			Graphs					*
  *								*
  ****************************************************************/
-/* For testing purposes ... */
+struct ConfigureWidgets {
+	Widget	x,
+		a, b, c, d, e, f, g, h, i,
+		sa, sb, sc, sd, se, sf, sg, sh, si,
+		ta, tb, tc, td, te, tf, tg, th, ti,
+		xlog, ylog,
+		title, xtitle, ytitle;
+};
+
+/*
+ * For testing purposes ...
+ */
 void DoGraph(Widget w, XtPointer client, XtPointer call)
 {
 	Widget	f, sw, plot, sep, ok;
 	int	i;
+	int	xlog, ylog;
 
 	gs = XtVaCreatePopupShell("graphShell",
 		topLevelShellWidgetClass,
@@ -212,9 +235,6 @@ void DoGraph(Widget w, XtPointer client, XtPointer call)
 #if	HAVE_SciPlot_H
 	sw = XtVaCreateManagedWidget("scroll",
 		xmScrolledWindowWidgetClass, f,
-#if 0
-			XmNscrollingPolicy,	XmAUTOMATIC,
-#endif
 			XmNtopAttachment,	XmATTACH_FORM,
 			XmNleftAttachment,	XmATTACH_FORM,
 			XmNrightAttachment,	XmATTACH_FORM,
@@ -223,6 +243,9 @@ void DoGraph(Widget w, XtPointer client, XtPointer call)
 			XmNrightOffset,		10,
 		NULL);
 
+	xlog = graph_get_logness('x');
+	ylog = graph_get_logness('y');
+
 	plot = XtVaCreateManagedWidget("plot",
 		sciplotWidgetClass, sw,
 			XmNmarginWidth,		20,
@@ -230,11 +253,17 @@ void DoGraph(Widget w, XtPointer client, XtPointer call)
 			XmNwidth,		600,
 			XmNheight,		500,
 		/* test */
+#if 0
 			XtNplotTitle,		"Test [A:J][1:2]",
+#endif
 			XtNchartType,		XtCARTESIAN,
+			XtNxLabel,		graph_get_axis_title('x'),
+			XtNyLabel,		graph_get_axis_title('y'),
+			XtNxLog,		xlog,
+			XtNyLog,		ylog,
 		NULL);
 #else
-	/* Fallback */
+	/* Fallback if we don't have SciPlot */
 	sw = plot = NULL;
 #endif
 
@@ -287,22 +316,21 @@ void DoGraph(Widget w, XtPointer client, XtPointer call)
 		va[ii] = 0.0;
 		sscanf(s, "%lf", &va[ii]);
 	}
-	lst = SciPlotListCreateDouble(plot, 10, vx, va, "test");
+
+	lst = SciPlotListCreateDouble(plot, 10, vx, va,
+			graph_get_data_title(0));
 	SciPlotListSetStyle(plot, lst, 1, XtMARKER_CIRCLE,
 		1, XtLINE_DOTTED);
 
-	t = XtMalloc(100);	/* enough */
-	sprintf(t,
-		_("Plotting X in %d [%d.%d], A in %d [%d.%d]\n"),
-		rngx.lc, rngx.lr, rngx.hr,
-		rnga.lc, rnga.lr, rnga.hr);
-	MessageAppend(False, t);
-
-	sprintf(t,
-		_("Graph X [%s] A [%s]\n"),
-		range_name(&rngx), range_name(&rnga));
-	XtVaSetValues(plot, XtNplotTitle, t, NULL);
-	XtFree(t);
+#if 0
+	s = XmTextFieldGetString(cw->title);
+	if (s && strlen(s)) {
+		XtVaSetValues(plot, XtNplotTitle, s, NULL);
+	}
+#ifdef	FREE_TF_STRING
+	XtFree(s);
+#endif
+#endif
 
 	XtFree((XtPointer)vx);
 	XtFree((XtPointer)va);
@@ -317,58 +345,121 @@ void DoGraph(Widget w, XtPointer client, XtPointer call)
 	XtPopup(gs, XtGrabNone);
 }
 
-struct ConfigureWidgets {
-	Widget	x,
-		a, b, c, d, e, f, g, h, i;
-};
-
 /*
  * Create a widget tree to configure a graph with.
  *	The result is a widget that isn't managed yet.
  *	(So you can put it in a dialog).
+ *
+ * Information that's present in traditional oleo graphs :
+ * - general :
+ *	X Axis		Title, Range
+ *	Y Axis		Title, Range
+ *	Logarithmic axes
+ * - per data set :
+ *	Data Set Name
+ *	Style		(Linespoints, lines)
  */
 Widget CreateConfigureGraph(Widget parent)
 {
-	Widget	frame, w, rc, cap;
+	Widget	toprc, frame, w, rc, cap;
 	struct ConfigureWidgets	*cw;
 
 	cw = (struct ConfigureWidgets *)XtMalloc(
 		sizeof(struct ConfigureWidgets));
 
-	frame = XtVaCreateWidget("configureGraphFrame", xmFrameWidgetClass,
+	/*
+	 * We need to set the userdata on the toplevel widget here.
+	 */
+	toprc = XtVaCreateWidget("configureGraphRC", xmRowColumnWidgetClass,
 		parent,
 			XmNuserData,	cw,
 		NULL);
 
+	frame = XtVaCreateManagedWidget("dataFrame",
+		xmFrameWidgetClass, toprc,
+		NULL);
+
+	rc = XtVaCreateManagedWidget("rc", xmRowColumnWidgetClass, frame,
+			XmNnumColumns,	4,
+			XmNorientation,	XmVERTICAL,
+			XmNpacking,	XmPACK_COLUMN,
+		NULL);
+	XtVaCreateManagedWidget("l0", xmLabelGadgetClass, rc,
+		NULL);
+	XtVaCreateManagedWidget("l1", xmLabelGadgetClass, rc,
+		NULL);
+	XtVaCreateManagedWidget("l2", xmLabelGadgetClass, rc,
+		NULL);
+	XtVaCreateManagedWidget("l3", xmLabelGadgetClass, rc,
+		NULL);
+	XtVaCreateManagedWidget("l4", xmLabelGadgetClass, rc,
+		NULL);
+	XtVaCreateManagedWidget("l5", xmLabelGadgetClass, rc,
+		NULL);
+
+	XtVaCreateManagedWidget("r0", xmLabelGadgetClass, rc,
+		NULL);
+	cw->x = XtVaCreateManagedWidget("r1", xmTextFieldWidgetClass, rc,
+		NULL);
+	cw->a = XtVaCreateManagedWidget("r2", xmTextFieldWidgetClass, rc,
+		NULL);
+	cw->b = XtVaCreateManagedWidget("r3", xmTextFieldWidgetClass, rc,
+		NULL);
+	cw->c = XtVaCreateManagedWidget("r4", xmTextFieldWidgetClass, rc,
+		NULL);
+	cw->d = XtVaCreateManagedWidget("r5", xmTextFieldWidgetClass, rc,
+		NULL);
+
+	XtVaCreateManagedWidget("s0", xmLabelGadgetClass, rc,
+		NULL);
+	cw->sa = XtVaCreateManagedWidget("s1", xmToggleButtonGadgetClass, rc,
+		NULL);
+	cw->sb = XtVaCreateManagedWidget("s2", xmToggleButtonGadgetClass, rc,
+		NULL);
+	cw->sc = XtVaCreateManagedWidget("s3", xmToggleButtonGadgetClass, rc,
+		NULL);
+	cw->sd = XtVaCreateManagedWidget("s4", xmToggleButtonGadgetClass, rc,
+		NULL);
+	cw->se = XtVaCreateManagedWidget("s5", xmToggleButtonGadgetClass, rc,
+		NULL);
+
+	XtVaCreateManagedWidget("t0", xmLabelGadgetClass, rc,
+		NULL);
+	cw->ta = XtVaCreateManagedWidget("t1", xmTextFieldWidgetClass, rc,
+		NULL);
+	cw->tb = XtVaCreateManagedWidget("t2", xmTextFieldWidgetClass, rc,
+		NULL);
+	cw->tc = XtVaCreateManagedWidget("t3", xmTextFieldWidgetClass, rc,
+		NULL);
+	cw->td = XtVaCreateManagedWidget("t4", xmTextFieldWidgetClass, rc,
+		NULL);
+	cw->te = XtVaCreateManagedWidget("t5", xmTextFieldWidgetClass, rc,
+		NULL);
+	
+	frame = XtVaCreateManagedWidget("dataFrame",
+		xmFrameWidgetClass, toprc,
+		NULL);
 	rc = XtVaCreateManagedWidget("rc", xmRowColumnWidgetClass, frame,
 		NULL);
-
-	cap = XtVaCreateManagedWidget("cap1", xbaeCaptionWidgetClass, rc,
+	XtVaCreateManagedWidget("xl", xmLabelGadgetClass, rc,
 		NULL);
-	cw->x = w = XtVaCreateManagedWidget("r1", xmTextFieldWidgetClass, cap,
+	cw->xtitle = XtVaCreateManagedWidget("xt", xmTextFieldWidgetClass, rc,
 		NULL);
-
-	cap = XtVaCreateManagedWidget("cap2", xbaeCaptionWidgetClass, rc,
+	cw->xlog = XtVaCreateManagedWidget("xlog",
+		xmToggleButtonGadgetClass, rc,
 		NULL);
-	cw->a = w = XtVaCreateManagedWidget("r2", xmTextFieldWidgetClass, cap,
+	XtVaCreateManagedWidget("yl", xmLabelGadgetClass, rc,
 		NULL);
-
-	cap = XtVaCreateManagedWidget("cap3", xbaeCaptionWidgetClass, rc,
+	cw->ytitle = XtVaCreateManagedWidget("yt", xmTextFieldWidgetClass, rc,
 		NULL);
-	cw->b = w = XtVaCreateManagedWidget("r3", xmTextFieldWidgetClass, cap,
-		NULL);
-
-	cap = XtVaCreateManagedWidget("cap4", xbaeCaptionWidgetClass, rc,
-		NULL);
-	cw->c = w = XtVaCreateManagedWidget("r4", xmTextFieldWidgetClass, cap,
+	cw->ylog = XtVaCreateManagedWidget("ylog",
+		xmToggleButtonGadgetClass, rc,
 		NULL);
 
-	cap = XtVaCreateManagedWidget("cap5", xbaeCaptionWidgetClass, rc,
-		NULL);
-	cw->d = w = XtVaCreateManagedWidget("r5", xmTextFieldWidgetClass, cap,
+	cw->title = XtVaCreateManagedWidget("title", xmTextFieldWidgetClass, rc,
 		NULL);
 
-	return frame;
+	return toprc;
 }
 
 void ConversionError(char *s, char *t)
@@ -402,31 +493,39 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 
 	MessageAppend(False, "ConfigureGraphOk\n");
 
+/* X Axis */
+	s = XmTextFieldGetString(cw->xtitle);
+	graph_set_axis_title('x', s);
+#ifdef	FREE_TF_STRING
+	XtFree(s);
+#endif
+	graph_set_logness('x', 1, XmToggleButtonGadgetGetState(cw->xlog));
+
+/* Y Axis */
+	s = XmTextFieldGetString(cw->ytitle);
+	graph_set_axis_title('y', s);
+#ifdef	FREE_TF_STRING
+	XtFree(s);
+#endif
+	graph_set_logness('y', 1, XmToggleButtonGadgetGetState(cw->ylog));
+
+/* Data 1 */
 	p = s = XmTextFieldGetString(cw->x);
 	if ((r = parse_cell_or_range(&p, &rngx)) == 0)
 		ConversionError(s, _("range"));
 	else if (r & RANGE) {
 		graph_set_data(0, &rngx, 'h', 'r');
-#if 0
-		fprintf(stderr, "X %d %d %d %d\n",
-			rngx.lr,
-			rngx.lc,
-			rngx.hr,
-			rngx.hc);
-#endif
 	} else {
 		rngx.hr = rngx.lr;
 		rngx.hc = rngx.lc;
 		graph_set_data(0, &rngx, 'h', 'r');
-#if 0
-		fprintf(stderr, "X %d %d %d %d\n",
-			rngx.lr,
-			rngx.lc,
-			rngx.hr,
-			rngx.hc);
-#endif
 	}
+#ifdef	FREE_TF_STRING
+	XtFree(s);
+#endif
 
+	s = XmTextFieldGetString(cw->tb);
+	graph_set_data_title(0, s);
 #ifdef	FREE_TF_STRING
 	XtFree(s);
 #endif
@@ -436,24 +535,10 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 		ConversionError(s, _("range"));
 	else if (r & RANGE) {
 		graph_set_data(1, &rngx, 'h', 'r');
-#if 0
-		fprintf(stderr, "A %d %d %d %d\n",
-			rngx.lr,
-			rngx.lc,
-			rngx.hr,
-			rngx.hc);
-#endif
 	} else {
 		rngx.hr = rngx.lr;
 		rngx.hc = rngx.lc;
 		graph_set_data(1, &rngx, 'h', 'r');
-#if 0
-		fprintf(stderr, "A %d %d %d %d\n",
-			rngx.lr,
-			rngx.lc,
-			rngx.hr,
-			rngx.hc);
-#endif
 	}
 
 #ifdef	FREE_TF_STRING
@@ -510,15 +595,15 @@ void ConfigureGraphReset(Widget f)
 
 void ConfigureGraph(Widget w, XtPointer client, XtPointer call)
 {
-	Widget		f, ok, cancel, help;
-	static Widget	configureGraph = NULL;
+	Widget		ok, cancel, help;
+	static Widget	configureGraph = NULL, inside = NULL;
 
 	if (! configureGraph) {
 		configureGraph = XmCreateTemplateDialog(mw, "configureGraph",
 			NULL, 0);
 
-		f = CreateConfigureGraph(configureGraph);
-		XtManageChild(f);
+		inside = CreateConfigureGraph(configureGraph);
+		XtManageChild(inside);
 
 		ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass,
 			configureGraph,
@@ -530,14 +615,12 @@ void ConfigureGraph(Widget w, XtPointer client, XtPointer call)
 			configureGraph,
 			NULL);
 
-		XtAddCallback(ok, XmNactivateCallback, ConfigureGraphOk, f);
+		XtAddCallback(ok, XmNactivateCallback, ConfigureGraphOk, inside);
 
 		/* FIX ME need something to call the help system */
-	} else {
-		f = XtNameToWidget(configureGraph, "configureGraphFrame");
 	}
 
-	ConfigureGraphReset(f);
+	ConfigureGraphReset(inside);
 	XtManageChild(configureGraph);
 }
 
@@ -664,7 +747,9 @@ void FormulaCB(Widget w, XtPointer client, XtPointer call)
 	} else
 		modified = 1;
 
+#ifdef	FREE_TF_STRING
 	XtFree(s);
+#endif
 
 	recalculate(1);		/* 1 is recalculate all */
 	XbaeMatrixRefresh(mat);	/* refresh */
@@ -1173,15 +1258,26 @@ void PasteCB(Widget w, XtPointer client, XtPointer call)
  *		Oleo move/copy functionality			*
  *								*
  ****************************************************************/
-static Widget	copyDialog = NULL, copyShell;
+static Widget	copyDialog = NULL;
 
 void CreateCopyDialog(char *t, void (*cb)(Widget, XtPointer, XtPointer))
 {
-	Widget	w, rc, cap;
+	Widget		w, rc, cap;
+	Arg		al[3];
+	int		ac;
+	XmString	ok, cancel;
 
 	if (copyDialog == NULL) {
-		copyDialog = XmCreatePromptDialog(toplevel, "copyDialog",
-			NULL, 0);
+		ac = 0;
+		ok = XmStringCreateSimple(_("OK"));
+		cancel = XmStringCreateSimple(_("Cancel"));
+		XtSetArg(al[ac], XmNokLabelString, ok); ac++;
+		XtSetArg(al[ac], XmNcancelLabelString, cancel); ac++;
+		copyDialog = XmCreateTemplateDialog(toplevel, "copyDialog",
+			al, ac);
+		XmStringFree(ok);
+		XmStringFree(cancel);
+
 		rc = XtVaCreateManagedWidget("rc", xmRowColumnWidgetClass,
 			copyDialog,
 			NULL);
@@ -1196,21 +1292,12 @@ void CreateCopyDialog(char *t, void (*cb)(Widget, XtPointer, XtPointer))
 			NULL);
 		w = XtVaCreateManagedWidget("r2", xmTextFieldWidgetClass, cap,
 			NULL);
-		XtDestroyWidget(XmSelectionBoxGetChild(copyDialog,
-			XmDIALOG_SELECTION_LABEL));
-		XtDestroyWidget(XmSelectionBoxGetChild(copyDialog,
-			XmDIALOG_TEXT));
 	}
 
 	XtRemoveAllCallbacks(copyDialog, XmNokCallback);
 	XtAddCallback(copyDialog, XmNokCallback, cb, NULL);
 
 	XtVaSetValues(XtParent(copyDialog), XmNtitle, t, NULL);
-}
-
-void MoveCB(Widget w, XtPointer client, XtPointer call)
-{
-	none(w, client, call);
 }
 
 void ReallyCopyRegionCB(Widget w, XtPointer client, XtPointer call)
@@ -1256,15 +1343,108 @@ void ReallyCopyRegionCB(Widget w, XtPointer client, XtPointer call)
 	XtFree(t);
 }
 
+void ReallyMoveCB(Widget w, XtPointer client, XtPointer call)
+{
+	Widget		ft, tt;
+	char		*f, *t, *p;
+	struct rng	from, to;
+	int		r;
+
+	ft = XtNameToWidget(copyDialog, "*r1");
+	tt = XtNameToWidget(copyDialog, "*r2");
+
+	f = XmTextFieldGetString(ft);
+	t = XmTextFieldGetString(tt);
+
+	MessageAppend(False, "ReallyMoveCB (%s -> %s)!!\n", f, t);
+
+	p = f;
+	if ((r = parse_cell_or_range(&p, &from)) == 0)
+		ConversionError(f, _("range"));
+	else if ((r & RANGE) == 0) {
+		/* It's a cell address, not a range */
+		from.hr = from.lr;
+		from.hc = from.lc;
+	}
+
+	p = t;
+	if ((r = parse_cell_or_range(&p, &to)) == 0)
+		ConversionError(t, _("range"));
+	else if ((r & RANGE) == 0) {
+		/* It's a cell address, not a range */
+		to.hr = to.lr;
+		to.hc = to.lc;
+	}
+
+	move_region(&from, &to);
+	modified = 1;
+
+	recalculate(1);
+	XbaeMatrixRefresh(mat);
+
+	XtFree(f);
+	XtFree(t);
+}
+
+void ReallyCopyValuesCB(Widget w, XtPointer client, XtPointer call)
+{
+	Widget		ft, tt;
+	char		*f, *t, *p;
+	struct rng	from, to;
+	int		r;
+
+	ft = XtNameToWidget(copyDialog, "*r1");
+	tt = XtNameToWidget(copyDialog, "*r2");
+
+	f = XmTextFieldGetString(ft);
+	t = XmTextFieldGetString(tt);
+
+	MessageAppend(False, "ReallyCopyValuesCB (%s -> %s)!!\n", f, t);
+
+	p = f;
+	if ((r = parse_cell_or_range(&p, &from)) == 0)
+		ConversionError(f, _("range"));
+	else if ((r & RANGE) == 0) {
+		/* It's a cell address, not a range */
+		from.hr = from.lr;
+		from.hc = from.lc;
+	}
+
+	p = t;
+	if ((r = parse_cell_or_range(&p, &to)) == 0)
+		ConversionError(t, _("range"));
+	else if ((r & RANGE) == 0) {
+		/* It's a cell address, not a range */
+		to.hr = to.lr;
+		to.hc = to.lc;
+	}
+
+	copy_values_region(&from, &to);
+	modified = 1;
+
+	recalculate(1);
+	XbaeMatrixRefresh(mat);
+
+	XtFree(f);
+	XtFree(t);
+}
+
 void CopyRegionCB(Widget w, XtPointer client, XtPointer call)
 {
-	CreateCopyDialog("Copy a region", ReallyCopyRegionCB);
+	CreateCopyDialog(_("Copy a region"), ReallyCopyRegionCB);
 	XtManageChild(copyDialog);
 }
 
 void CopyValuesCB(Widget w, XtPointer client, XtPointer call)
 {
-	none(w, client, call);
+	CreateCopyDialog(_("Copy Values"), ReallyCopyValuesCB);
+	XtManageChild(copyDialog);
+}
+
+void MoveCB(Widget w, XtPointer client, XtPointer call)
+{
+	CreateCopyDialog(_("Move"), ReallyMoveCB);
+	XtManageChild(copyDialog);
 }
 
 /****************************************************************
@@ -1322,17 +1502,7 @@ GscBuildSplash(Widget parent)
 #else
 	x1 = XmStringCreateLtoR(GNU_PACKAGE " " VERSION "\n",
 		"large");
-	x2 = XmStringCreateLtoR(
-		/*
-		 * Do not change the string below,
-		 * it's in two places and changing it in one will screw
-		 * up the translation.
-		 */
-		_( "\nGNU Oleo is free software, you are welcome to\n"
-		"distribute copies of it. See the file COPYING for the\n"
-		"conditions.\n\n"
-		"GNU Oleo comes with ABSOLUTELY NO WARRANTY."),
-		"small");
+	x2 = XmStringCreateLtoR(CopyRightString, "small");
 	xms = XmStringConcat(x1, x2);
 	XtSetArg(al[ac], XmNlabelString, xms); ac++;
 	XtSetArg(al[ac], XmNlabelType, XmSTRING); ac++;
@@ -2368,18 +2538,7 @@ void versionCB(Widget w, XtPointer client, XtPointer call)
 
 	xms1 = XmStringCreateLtoR(GNU_PACKAGE " " VERSION,
 		XmFONTLIST_DEFAULT_TAG);
-	xms2 = XmStringCreateLtoR(
-		/*
-		 * Do not change the string below,
-		 * it's in two places and changing it in one will screw
-		 * up the translation.
-		 */
-		_( "\nGNU Oleo is free software, you are welcome to\n"
-		"distribute copies of it. See the file COPYING for the\n"
-		"conditions.\n\n"
-		"GNU Oleo comes with ABSOLUTELY NO WARRANTY."),
-		XmFONTLIST_DEFAULT_TAG
-		);
+	xms2 = XmStringCreateLtoR(CopyRightString, XmFONTLIST_DEFAULT_TAG);
 	xms = XmStringConcat(xms1, xms2);
 
 	ac = 0;

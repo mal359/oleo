@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1998-09-03 00:33+0200\n"
+"POT-Creation-Date: 1998-09-11 00:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,98 +32,135 @@ msgid ""
 "Report bugs to <bug-oleo@gnu.org>.\n"
 msgstr ""
 
-#: src/io-motif.c:296
+#: src/io-term.c:934
+#, c-format
+msgid "%s %s\n"
+msgstr ""
+
+#: src/io-term.c:935
+msgid "Copyright (C) 1997-1998 Free Software Foundation, Inc.\n"
+msgstr ""
+
+#: src/io-term.c:936
+#, c-format
+msgid "%s comes with ABSOLUTELY NO WARRANTY.\n"
+msgstr ""
+
+#: src/io-term.c:937
+#, c-format
+msgid "You may redistribute copies of %s\n"
+msgstr ""
+
+#: src/io-term.c:938
+msgid "under the terms of the GNU General Public License.\n"
+msgstr ""
+
+#: src/io-term.c:939
+msgid "For more information about these matters, "
+msgstr ""
+
+#: src/io-term.c:940
+msgid "see the files named COPYING.\n"
+msgstr ""
+
+#: src/io-motif.c:320
 #, c-format
 msgid "Plotting X in %d [%d.%d], A in %d [%d.%d]\n"
 msgstr ""
 
-#: src/io-motif.c:302
+#: src/io-motif.c:326
 #, c-format
 msgid "Graph X [%s] A [%s]\n"
 msgstr ""
 
-#: src/io-motif.c:379
+#: src/io-motif.c:458
 #, c-format
 msgid "Conversion error: cannot convert '%s' to a %s\n"
 msgstr ""
 
-#: src/io-motif.c:399 src/io-motif.c:497
+#: src/io-motif.c:478 src/io-motif.c:566
 msgid "Cannot find XmNuserData\n"
 msgstr ""
 
-#: src/io-motif.c:407 src/io-motif.c:436 src/io-motif.c:1233
-#: src/io-motif.c:1242
+#: src/io-motif.c:486 src/io-motif.c:519 src/io-motif.c:1304
+#: src/io-motif.c:1313 src/io-motif.c:1347 src/io-motif.c:1356
+#: src/io-motif.c:1390 src/io-motif.c:1399
 msgid "range"
 msgstr ""
 
 #. Set window title
 #. enough
-#: src/io-motif.c:748
+#: src/io-motif.c:817
 #, c-format
 msgid "[Oleo: %s]"
 msgstr ""
 
-#: src/io-motif.c:752
+#: src/io-motif.c:821
 #, c-format
 msgid "Read file '%s'\n"
 msgstr ""
 
-#: src/io-motif.c:768
+#: src/io-motif.c:837
 msgid "*.oleo"
 msgstr ""
 
-#: src/io-motif.c:781
+#: src/io-motif.c:850
 msgid "File Format"
 msgstr ""
 
-#: src/io-motif.c:825
+#: src/io-motif.c:894
 msgid "Choose a file to load"
 msgstr ""
 
-#: src/io-motif.c:857
+#: src/io-motif.c:926
 #, c-format
 msgid "Saved file '%s'\n"
 msgstr ""
 
-#: src/io-motif.c:879
+#: src/io-motif.c:948
 msgid "Choose a file to save in"
 msgstr ""
 
-#: src/io-motif.c:991 src/io-motif.c:1022
+#: src/io-motif.c:1060 src/io-motif.c:1091
 msgid ""
 "<html><body>Can't find the requested help file\n"
 "</body></html>"
 msgstr ""
 
-#: src/io-motif.c:1030
+#: src/io-motif.c:1099
 #, c-format
 msgid "Help requested on '%s'"
 msgstr ""
 
-#: src/io-motif.c:1032
+#: src/io-motif.c:1101
 msgid "Help requested on using Oleo"
 msgstr ""
 
-#.
-#. * Do not change the string below,
-#. * it's in two places and changing it in one will screw
-#. * up the translation.
-#.
-#: src/io-motif.c:1331 src/io-motif.c:2377
-msgid ""
-"\n"
-"GNU Oleo is free software, you are welcome to\n"
-"distribute copies of it. See the file COPYING for the\n"
-"conditions.\n"
-"\n"
-"GNU Oleo comes with ABSOLUTELY NO WARRANTY."
+#: src/io-motif.c:1256
+msgid "OK"
 msgstr ""
 
-#: src/io-motif.c:2301
+#: src/io-motif.c:1257
+msgid "Cancel"
+msgstr ""
+
+#: src/io-motif.c:1418
+msgid "Copy a region"
+msgstr ""
+
+#: src/io-motif.c:1424
+msgid "Copy Values"
+msgstr ""
+
+#: src/io-motif.c:1430
+msgid "Move"
+msgstr ""
+
+#: src/io-motif.c:2455
 msgid "XmProcessTraversal failed\n"
 msgstr ""
 
-#: src/io-motif.c:2321
+#: src/io-motif.c:2475
 msgid ""
 "There are unsaved changes.\n"
 "Do you want to quit anyway ?"
