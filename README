@@ -49,17 +49,10 @@ GNU Oleo is what I like to refer to as a "top of the food chain" application.
 Many other packages are required to ensure full functionality.  Among those
 that are required:
 
-GNU Readline 2.0 or later
-GNU Guile 1.3 or later
-GNU Plotutils
-Gtk+
-NCurses or Termcap/curses
-
-Further, to debug this application you will need the following:
-GNU Automake 1.2
-GNU Autoconf 2.12
-GNU Gettext 0.10.32
-and the various components to make these applications run.
+* some version of curses (NCurses or Termcap/curses)
+* GNU Gettext 0.10.32 (currently included in oleo)
+* Motif or LessTif if you want the Motif GUI (incomplete)
+* Gtk+ if you want the Gnome GUI (very incomplete)
 
 That GNU Oleo is strongly dependant on those applications is a clear
 indication of my lack of desire to support these applications myself.
@@ -76,23 +69,23 @@ ABOUT-NLS, and consider getting involved in a GNU translation effort.
 Getting Help and Reporting Bugs
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-There are 2 lists setup for your convenience:
+There is a mailing list set up for your convenience:
 
-help-oleo@gnu.org
-bug-oleo@gnu.org
+	bug-oleo@gnu.org
 
 Please remember a couple quick points when emailing these lists:
-o Oleo suffered a long period of inactivity.  It's popularity is just
-beginning to increase again.
 
-o We're all volunteers, be nice =)
+	o Oleo suffered a long period of inactivity.  It's popularity is just
+	  beginning to increase again.
 
-o More detail is good.  Suggestions as to what you think the problem might
-be are also good.
+	o We're all volunteers, be nice =)
 
-o Please make sure you're running a recent version before reporting the bug.
-Excessively old version won't be patched if the fix already exists in a
-more recent version.
+	o More detail is good.  Suggestions as to what you think the problem
+	  might be are also good.
+
+	o Please make sure you're running a recent version before reporting the
+	  bug. Excessively old version won't be patched if the fix already
+	  exists in a more recent version.
 
 Tks,
 Jeff Bailey
