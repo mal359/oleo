@@ -1174,6 +1174,13 @@ main (int argc, char **argv)
     motif_build_gui();
     setjmp (error_exception);
     motif_main_loop();
+  } else {
+    /* Compile with Motif but don't run with it. */
+    while (1)
+    {
+      setjmp (error_exception);
+      command_loop (0, 0);
+    }
   }
 #else
   while (1)

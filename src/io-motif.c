@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.10 1998/09/17 22:09:43 danny Exp $
+ *  $Id: io-motif.c,v 1.11 1998/09/26 18:24:01 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.10 1998/09/17 22:09:43 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.11 1998/09/26 18:24:01 danny Exp $";
 
 #include "config.h"
 
@@ -204,6 +204,20 @@ void
 PopDownHelpCB(Widget widget, XtPointer client, XtPointer call)
 {
 	XtPopdown((Widget)client);
+}
+
+void MotifUpdateDisplay()
+{
+        XbaeMatrixRefresh(mat); /* refresh */
+ 
+        /*
+         * Apparently the refresh above doesn't refresh the cell whose
+         * formula we just changed, and which therefore almost certainly
+         * needs an update. XbaeMatrixRefreshCell also doesn't work.
+         * This does :  
+         */
+        XbaeMatrixSetCell(mat, curow - 1, cucol - 1,
+                cell_value_string(curow, cucol, True));
 }
 
 /****************************************************************
@@ -744,7 +758,7 @@ void LeaveCell(Widget w, XtPointer client, XtPointer call)
 		modified = 1;
 
 		recalculate(1);
-		XbaeMatrixRefresh(mat);
+		MotifUpdateDisplay();
 	}
 }
 
@@ -809,7 +823,11 @@ void DrawCell(Widget w, XtPointer client, XtPointer call)
 		cbp->row, cbp->column, cbp->string);
 #endif
 	cbp->type = XbaeString;
+#if 0
 	cbp->string = cell_value_string(cbp->row + 1, cbp->column + 1, True);
+#else
+	cbp->string = print_cell(find_cell(cbp->row + 1, cbp->column + 1));
+#endif
 }
 
 void FormulaCB(Widget w, XtPointer client, XtPointer call)
@@ -830,16 +848,7 @@ void FormulaCB(Widget w, XtPointer client, XtPointer call)
 #endif
 
 	recalculate(1);		/* 1 is recalculate all */
-	XbaeMatrixRefresh(mat);	/* refresh */
-
-	/*
-	 * Apparently the refresh above doesn't refresh the cell whose
-	 * formula we just changed, and which therefore almost certainly
-	 * needs an update. XbaeMatrixRefreshCell also doesn't work.
-	 * This does :
-	 */
-	XbaeMatrixSetCell(mat, curow - 1, cucol - 1,
-		cell_value_string(curow, cucol, True));
+	MotifUpdateDisplay();	/* refresh */
 }
 
 /****************************************************************
@@ -899,7 +908,7 @@ void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 	recalculate(1);		/* 1 is all */
 
 	/* Force redisplay */
-	XbaeMatrixRefresh(mat);
+	MotifUpdateDisplay();
 
 	/* Set the widget as well as the spreadsheet to a default state. */
 	modified = 0;
@@ -1423,10 +1432,12 @@ void ReallyCopyRegionCB(Widget w, XtPointer client, XtPointer call)
 	modified = 1;
 
 	recalculate(1);
-	XbaeMatrixRefresh(mat);
+	MotifUpdateDisplay();
 
+#if 0
 	XtFree(f);
 	XtFree(t);
+#endif
 }
 
 void ReallyMoveCB(Widget w, XtPointer client, XtPointer call)
@@ -1466,10 +1477,11 @@ void ReallyMoveCB(Widget w, XtPointer client, XtPointer call)
 	modified = 1;
 
 	recalculate(1);
-	XbaeMatrixRefresh(mat);
-
+	MotifUpdateDisplay();
+#if 0
 	XtFree(f);
 	XtFree(t);
+#endif
 }
 
 void ReallyCopyValuesCB(Widget w, XtPointer client, XtPointer call)
@@ -1509,10 +1521,11 @@ void ReallyCopyValuesCB(Widget w, XtPointer client, XtPointer call)
 	modified = 1;
 
 	recalculate(1);
-	XbaeMatrixRefresh(mat);
-
+	MotifUpdateDisplay();
+#if 0
 	XtFree(f);
 	XtFree(t);
+#endif
 }
 
 void CopyRegionCB(Widget w, XtPointer client, XtPointer call)
@@ -1538,6 +1551,11 @@ void MoveCB(Widget w, XtPointer client, XtPointer call)
  *		Formats Dialog					*
  *								*
  ****************************************************************/
+void Yeah(Widget w, XtPointer client, XtPointer call)
+{
+	fprintf(stderr, "Yeah %s %X %X\n", XtName(w), client, call);
+}
+
 void CreateFormatsDialog(Widget p)
 {
 	Widget	frame;
@@ -1568,6 +1586,7 @@ void CreateFormatsDialog(Widget p)
 	w = XmVaCreateSimpleOptionMenu(frame, "formatsOption",
 		xms, /* mnemonic ? */0, /* initial selection */ 0, 
 		/* callback */ NULL,
+		/* Type, LabelString, Mnemonic, Accelerator, AcceleratorText */
 		XmVaPUSHBUTTON, x1, 'D', NULL, NULL,
 		XmVaPUSHBUTTON, x2, 'P', NULL, NULL,
 		XmVaPUSHBUTTON, x3, ' ', NULL, NULL,
@@ -1608,6 +1627,18 @@ void CreateFormatsDialog(Widget p)
 
 void FormatsDialogOk(Widget w, XtPointer client, XtPointer call)
 {
+	struct rng	rng;
+	int		fmt;
+	Widget		ww = (Widget)client, om, b = NULL;
+
+	om = XtNameToWidget(ww, "*formatsFrame*formatsOption*formatsOption");
+	if (om)
+		XtVaGetValues(om, XmNmenuHistory, &b, NULL);
+	/* FIX ME */
+#if 0
+	format_region(&rng, fmt, -1);
+#endif
+	MotifUpdateDisplay();
 }
 
 void FormatsDialogReset(Widget d)
@@ -1633,7 +1664,8 @@ void FormatsDialog(Widget w, XtPointer Client, XtPointer call)
 			FormatD,
 			NULL);
 
-		XtAddCallback(ok, XmNactivateCallback, FormatsDialogOk, NULL);
+		XtAddCallback(ok, XmNactivateCallback, FormatsDialogOk,
+			(XtPointer)FormatD);
 	}
 
 	FormatsDialogReset(FormatD);
