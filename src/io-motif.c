@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.25 1999/02/23 21:24:43 danny Exp $
+ *  $Id: io-motif.c,v 1.26 1999/03/02 20:04:03 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.25 1999/02/23 21:24:43 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.26 1999/03/02 20:04:03 danny Exp $";
 
 #include "config.h"
 
@@ -699,6 +699,7 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 	XtFree(s);
 #endif
 
+/* Data 2 */
 	p = s = XmTextFieldGetString(cw->a);
 	if ((r = parse_cell_or_range(&p, &rngx)) == 0)
 		ConversionError(s, _("range"));
@@ -714,19 +715,46 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 	XtFree(s);
 #endif
 
+/* Data 3 */
 	p = s = XmTextFieldGetString(cw->b);
-	MessageAppend(False, s);
+	if ((r = parse_cell_or_range(&p, &rngx)) == 0)
+		ConversionError(s, _("range"));
+	else if (r & RANGE) {
+		graph_set_data(2, &rngx, 'h', 'r');
+	} else {
+		rngx.hr = rngx.lr;
+		rngx.hc = rngx.lc;
+		graph_set_data(2, &rngx, 'h', 'r');
+	}
 #ifdef	FREE_TF_STRING
 	XtFree(s);
 #endif
 
 	p = s = XmTextFieldGetString(cw->c);
+	if ((r = parse_cell_or_range(&p, &rngx)) == 0)
+		ConversionError(s, _("range"));
+	else if (r & RANGE) {
+		graph_set_data(3, &rngx, 'h', 'r');
+	} else {
+		rngx.hr = rngx.lr;
+		rngx.hc = rngx.lc;
+		graph_set_data(3, &rngx, 'h', 'r');
+	}
 	MessageAppend(False, s);
 #ifdef	FREE_TF_STRING
 	XtFree(s);
 #endif
 
 	p = s = XmTextFieldGetString(cw->d);
+	if ((r = parse_cell_or_range(&p, &rngx)) == 0)
+		ConversionError(s, _("range"));
+	else if (r & RANGE) {
+		graph_set_data(4, &rngx, 'h', 'r');
+	} else {
+		rngx.hr = rngx.lr;
+		rngx.hc = rngx.lc;
+		graph_set_data(4, &rngx, 'h', 'r');
+	}
 	MessageAppend(False, s);
 #ifdef	FREE_TF_STRING
 	XtFree(s);
@@ -763,6 +791,18 @@ void ConfigureGraphReset(Widget f)
 	r = graph_get_data(1);
 	s = range_name(&r);
 	XmTextFieldSetString(cw->a, s);
+
+	r = graph_get_data(2);
+	s = range_name(&r);
+	XmTextFieldSetString(cw->b, s);
+
+	r = graph_get_data(3);
+	s = range_name(&r);
+	XmTextFieldSetString(cw->c, s);
+
+	r = graph_get_data(4);
+	s = range_name(&r);
+	XmTextFieldSetString(cw->d, s);
 
 	s = graph_get_title();
 	XmTextFieldSetString(cw->title, s);

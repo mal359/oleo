@@ -196,59 +196,157 @@ PuPieChart(char *plotter, FILE *outfile)
 
 /*
  * Stacked and unstacked bar charts
- *
- * FIX ME currently only one data set, so not much stacking :-(
  */
 void
 PuBarChart(char *plotter, FILE *outfile, int stacked)
 {
-	int		i, num;
-	double		x, y, y1, y2;
+	int		i, num, r, nsets, dsvalid[NUM_DATASETS + 1];
+	double		x, y, y1, y2, ymin, ymax, *ys;
 	struct rng	rngx;
 	CELL		*cp;
 
+	stacked = 1;					/* FIX ME only stacked for now */
+
 	PuOpen(plotter, outfile);
 
-	rngx = graph_get_data(0);
+	/* How many items ? */
+	nsets = num = 0;
+	for (r = 1; r < NUM_DATASETS; r++) {
+		dsvalid[r] = 0;
+		rngx = graph_get_data(r);
+
+		if (rngx.lr == 0 && rngx.lc == 0 && rngx.hr == 0 && rngx.hc == 0)
+			continue;
+
+		dsvalid[r] = 1;
+		nsets++;
+
+		make_cells_in_range(&rngx);
+		i = 0;
+		while ((cp = next_cell_in_range()))
+			i++;
+		if (num < i)
+			num = i;
+	}
+
+	ys = (double *)calloc(NUM_DATASETS * num, sizeof(double));
+#define	YS(a,b)	ys[NUM_DATASETS * (a-1) + b]
+
+	for (r = 1; r < NUM_DATASETS; r++) {
+		rngx = graph_get_data(r);
+
+		if (rngx.lr == 0 && rngx.lc == 0 && rngx.hr == 0 && rngx.hc == 0)
+			continue;
+
+		make_cells_in_range(&rngx);
+		i = 0;
+		while ((cp = next_cell_in_range())) {
+			YS(r,i) = float_cell(cp);
+			i++;
+		}
+	}
+
+#if 0
+	fprintf(stderr, "PuBarChart: num %d, nsets %d\n", num, nsets);
+	for (r = 1; r < NUM_DATASETS; r++) {
+		fprintf(stderr, "Data Set %d :\t", r);
+		if (! dsvalid[r]) {
+			fprintf(stderr, "invalid\n");
+			continue;
+		}
+		for (i=0; i<num; i++)
+			fprintf(stderr, "%f\t", YS(r,i));
+		fprintf(stderr, "\n");
+	}
+#endif
 
 	/* Find Y boundaries */
-	make_cells_in_range(&rngx);
-	num = 0;
-	while ((cp = next_cell_in_range())) {
-		y = float_cell(cp);
-		if (num == 0) y1 = y2 = y;
-		if (y < y1) y1 = y;
-		if (y > y2) y2 = y;
-		num++;
+	if (stacked) {
+		ymin = ymax = 0.0;
+		for (i=0; i<num; i++) {
+			y = 0.0;
+			for (r = 1; r < NUM_DATASETS; r++)
+				if (dsvalid[r])
+					y += YS(r,i);
+			if (ymax < y) ymax = y;
+			if (ymin > y) ymin = y;
+		}
+	} else {
+		/* FIX ME */
+		for (r = 1; r < NUM_DATASETS; r++) {
+			rngx = graph_get_data(r);
+
+		    if (rngx.lr == 0 && rngx.lc == 0 && rngx.hr == 0 && rngx.hc == 0)
+			continue;
+
+		/* Find Y boundaries */
+			make_cells_in_range(&rngx);
+			num = 0;
+			while ((cp = next_cell_in_range())) {
+				y = float_cell(cp);
+				if (num == 0) y1 = y2 = y;
+				if (y < y1) y1 = y;
+				if (y > y2) y2 = y;
+				num++;
+			}
+		}
 	}
 
 	fspace(-1., -1., 11., 11.);			/* FIX ME */
 	pencolorname(defaultcolor);
-	fillcolorname(colors[0]);
 	fline(0., 0., 0., 10.);
 	fline(0., 0., 10., 0.);
 
+	for (i=0; i<num; i++) {
+		for (r = 1; r < NUM_DATASETS; r++) {
+			fillcolorname(colors[r % ncolors]);
+#define	TO_X(ii)	(1.5 + 10.0 * ((double)ii) / ((double)num))
+			x = TO_X(i);
+			if (ymax) {
+				if (r > 1) {
+					int ii;
+					double	s = 0.0;
+
+					for (ii=1; ii<r; ii++)
+						s += YS(ii,i);
+						
+					fbox(TO_X(i - 0.6), s / ymax * 10., TO_X(i), (s + YS(r,i)) / ymax * 10.);
+				} else
+					fbox(TO_X(i - 0.6), 0.0, TO_X(i), YS(r,i) / ymax * 10.);
+			}
+		}
+	}
+
+	/* General Title */
+	fmove(5.0, -0.75);
+	alabel(1, 1, graph_get_title());
+
+	/* X Axis Labels */
+	rngx = graph_get_data(0);
 	make_cells_in_range(&rngx);
 	i = 1;
 	while ((cp = next_cell_in_range())) {
-#define	TO_X(ii)	(10.0 * ((double)ii) / ((double)num))
-		x = TO_X(i);
-		y = float_cell(cp);
-		if (y2) fbox(TO_X(i - 0.6), 0.0, TO_X(i), y / y2 * 10.);
+		x = TO_X(i - 0.6);
+		if (GET_TYP(cp) == TYP_STR)
+			if (cp->cell_str) {
+				fmove(x, -0.3);
+				alabel(1, 1, cp->cell_str);
+			}
+		else
+			/* ??? */ ;
+
 		i++;
 	}
-
-	/* Title */
-	fmove(5.0, -0.5);
-	alabel(1, 1, graph_get_title());
+	
 
 	/* Data titles */
-	fmove(10.0, -0.5);
+	fmove(10.0, -0.75);
 	alabel(1, 1, graph_get_axis_title('x'));
 	fmove(0.0, 10.5);
 	alabel(1, 1, graph_get_axis_title('y'));
 
 	PuClose();
+	free(ys);
 }
 
 /*
@@ -258,7 +356,7 @@ void
 PuXYChart(char *plotter, FILE *outfile)
 {
 	int		i, r, num;
-	double		x, y, xmin, xmax, delta, *xes, ymax, ymin;
+	double		x, y, xmin, xmax, delta, *xes, ymax, ymin, oldx, oldy;
 	struct rng	rngx;
 	CELL		*cp;
 
@@ -322,14 +420,37 @@ PuXYChart(char *plotter, FILE *outfile)
 	    while ((cp = next_cell_in_range())) {
 		    x = xes[i];
 		    y = float_cell(cp);
-		    fcont((x - xmin) * 10.0, 10.0 * (y - ymin) / (ymax - ymin));
-#if 0
-		fprintf(stderr, "Data point %d %f %f (%f %f)\n", i+1, x, y,
-		    (x - xmin) * 10.0, 10.0 * (y - ymin) / (ymax - ymin));
+#if 1
+		    if (i > 0) {
+			fline(10.0 * (oldx - xmin) / (xmax - xmin),
+				10.0 * (oldy - ymin) / (ymax - ymin),
+				10.0 * (x - xmin) / (xmax - xmin),
+				10.0 * (y - ymin) / (ymax - ymin));
+			fmove(
+				10.0 * (x - xmin) / (xmax - xmin),
+				10.0 * (y - ymin) / (ymax - ymin));
+		    }
+#else
+			fmarker(10.0 * (x - xmin) / (xmax - xmin),
+				10.0 * (y - ymin) / (ymax - ymin),
+				2 /* + marker */,
+				0.2);
 #endif
+#if 0
+			{ char txt[30];
+			sprintf(txt, " (%1.1f,%1.1f)", x, y);
+			alabel('l', 'c', txt);
+			}
+#endif
+
+		    oldx = x;
+		    oldy = y;
+
 		    i++;
 	    }
+#if 1
 	    endpath();
+#endif
 	}
 
 	/* Title */

@@ -1,4 +1,10 @@
 
+Tue  2 Mar 20:59:24 1999, Danny Backx
+	* Fix both io-motif.c and plot.c so the XY and bar charts now do sensible
+	  things, including display of multiple data sets.
+	  Beware: this is all still quite simplistic.
+	* Add data labels to bar chart.
+
 Tue 23 Feb 22:23:14 1999, Danny Backx
 	* Add some details to Motif graph interface.
 	* The infinity initialisation wasn't working on FreeBSD but it was
