@@ -1,5 +1,5 @@
 /*
- * $Id: cmd.c,v 1.23 2001/02/05 00:12:40 pw Exp $
+ * $Id: cmd.c,v 1.24 2001/02/06 02:37:47 pw Exp $
  *
  * Copyright © 1993, 1999, 2000 Free Software Foundation, Inc.
  *
@@ -419,28 +419,20 @@ select_hooks (void)
  * can do i/o or, until we timeout (timeout is specified in seconds,
  * 0 means block indefinately).  (Front end to select)
  */
-static void
-block_until_excitment (int timeout_seconds)
+void
+block_until_excitement(struct timeval *tv)
 {
   int ret;
-  struct timeval timeout;
-  struct timeval * time_p = 0;
 
-  if (timeout_seconds)
-    {
-      timeout.tv_sec = timeout_seconds;
-      timeout.tv_usec = 0;
-      time_p = &timeout;
-    }
   bcopy ((char *)&read_fd_set, (char *)&read_pending_fd_set,
-	 sizeof (SELECT_TYPE)) ;
+	 sizeof (SELECT_TYPE));
   bcopy ((char *)&exception_fd_set,
 	 (char *)&exception_pending_fd_set, sizeof (SELECT_TYPE));
   bcopy ((char *)&write_fd_set,
 	 (char *)&write_pending_fd_set, sizeof (SELECT_TYPE));
   ret = select (SELECT_SET_SIZE,
 		&read_pending_fd_set, &write_pending_fd_set,
-		&exception_pending_fd_set, time_p);
+		&exception_pending_fd_set, tv);
   if (ret < 0)
     {
       FD_ZERO (&read_pending_fd_set);
@@ -461,6 +453,7 @@ block_until_excitment (int timeout_seconds)
 int 
 real_get_chr (void)
 {
+  int ret;
   unsigned int ch = EOF;		/* The char that will be returned. */
 
   /* Characters with the meta bit set are returned as
@@ -496,57 +489,51 @@ real_get_chr (void)
       alarm_hooks ();
       select_hooks ();
       io_scan_for_input (0);
-      if (!io_input_avail ())
+      if (io_input_avail ())
+        break;
+      if (Global->auto_recalc && eval_next_cell ())
 	{
-	  if (Global->auto_recalc && eval_next_cell ())
-	    {
-	      if (Global->bkgrnd_recalc)
-		while (!io_input_avail () && eval_next_cell ())
-		  io_scan_for_input (0);
-	      else
-		while (eval_next_cell ())
-		  ;
+	  if (Global->bkgrnd_recalc) {
+	    int loop = 0;
+	    while (!io_input_avail () && eval_next_cell () && ++loop < 10)
 	      io_scan_for_input (0);
-	      if (!io_input_avail ())
-		io_redisp ();
-	      io_flush ();
-	      io_scan_for_input (0);
-	    }
-	  else
-	    {
-	      int timeout = (Global->alarm_active
-			     ? (Global->alarm_seconds == 1
-				? 1
-				: (Global->alarm_seconds / 2))
-			     : 0);
-			     
-	      io_redisp ();
-	      io_flush ();
-	      io_scan_for_input (0);
-	      if (!io_input_avail ())
-		block_until_excitment (timeout);
-	    }
+	  } else
+	    while (eval_next_cell ())
+	      ;
+	  io_scan_for_input (0);
+	  if (!io_input_avail ())
+	    io_redisp ();
+	  io_flush ();
+	  io_scan_for_input (0);
+	}
+      else
+	{
+	  io_redisp ();
+	  io_flush ();
+	  io_scan_for_input (0);
+	  if (io_input_avail())
+	      break;
+	  if (!Global->alarm_active)
+	      block_until_excitement(0);
+	  else {
+	      struct timeval tv;
+	      tv.tv_sec = Global->alarm_seconds == 1 ? 1
+	        : Global->alarm_seconds / 2;
+	      tv.tv_usec = 0;
+	      block_until_excitement(&tv);
+	  }
 	}
     }
 
-  {
-    int ret;
     ret = io_read_kbd (ibuf, sizeof (ibuf));
     if (ret == 1)
-      {
 	ch = ibuf[0];
-	goto fini;
-      }
-    if (ret > 1)
-      {
+    else if (ret > 1) {
 	i_cnt = 1;
 	i_in = ret;
 	ch = ibuf[0];
-	goto fini;
-      }
-    if (ret == 0 || errno != EINTR)
-      return EOF;
-  }
+    } else if (ret == 0 || errno != EINTR)
+	return EOF;
 
 fini:
 
