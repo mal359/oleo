@@ -1,7 +1,0 @@
-cd /home/www/html/software/oleo
-ren oleo.html oleo.html.Old
-put doc/oleo_web.html oleo.html
-cd /home/ftp/gnu/oleo
-bin
-put oleo-version.tar.gz
-quit

@@ -1,4 +1,0 @@
-cd /fs/share/ftp/gnu/oleo
-bin
-put oleo-version.tar.gz
-quit
