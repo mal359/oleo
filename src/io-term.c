@@ -963,7 +963,7 @@ show_usage ()
 #endif
 {
   char ** use = usage;
-  fprintf (stderr, "Usage: %s ", argv_name);
+  fprintf (stderr, "Usage: %s ", PACKAGE);
   while (*use)
     {
       fprintf (stderr, "%s\n", *use);
@@ -1005,7 +1005,6 @@ main (argc, argv)
   volatile int init_fpc = 0;
   int command_line_file = 0;	/* was there one? */
 
-  argv_name = argv[0];
   __make_backups = 1;
 
   /* Set up the minimal io handler. */
@@ -1022,7 +1021,13 @@ main (argc, argv)
 	switch (opt)
 	  {
 	  case 'V':
-	    fprintf  (stdout, "%s %s\n", GNU_PACKAGE, VERSION);
+	    printf ("%s %s\n", GNU_PACKAGE, VERSION);
+            printf ("Copyright (C) 1997 Free Software Foundation, Inc.\n");
+            printf ("%s comes with ABSOLUTELY NO WARRANTY.\n", GNU_PACKAGE);
+            printf ("You may redistribute copies of %s\n", PACKAGE);
+            printf ("under the terms of the GNU General Public License.\n");
+            printf ("For more information about these matters, ");
+            printf ("see the files named COPYING.\n");
 	    exit (0);
 	    break;
 	  case 'q':

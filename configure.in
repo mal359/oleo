@@ -8,6 +8,9 @@ AC_DEFINE_UNQUOTED(GNU_PACKAGE, "$GNU_PACKAGE")
 AC_ARG_PROGRAM
 AM_CONFIG_HEADER(config.h)
 
+dnl Detect Cygwin32 environment
+AM_CYGWIN32
+
 dnl Checks for programs.
 AC_PROG_YACC
 AC_PROG_CC

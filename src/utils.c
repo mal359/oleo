@@ -80,9 +80,6 @@ int __id_f;
 int __make_backups;
 int __backup_by_copying;
 
-/* Stash argv[0] here so panic will know what the program is called */
-char *argv_name = 0;
-
 /* Blow chunks! */
 #ifdef __STDC__
 void
@@ -97,8 +94,7 @@ panic (s, va_alist)
   va_list iggy;
 
   var_start (iggy, s);
-  if (argv_name)
-    fprintf (stderr, "%s:", argv_name);
+  fprintf (stderr, "%s %s:", GNU_PACKAGE, VERSION);
   vfprintf (stderr, s, iggy);
   putc ('\n', stderr);
   va_end (iggy);

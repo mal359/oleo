@@ -1,3 +1,9 @@
+Tue Oct 7  20:39:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
+
+	* utils.c, panic.c: Remove hard coded "Oleo" words.
+	* io-term.c: Update copywrite.
+	* configure.in: Add AM_CYGWIN32
+
 Sun Oct 5  19:03:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
 
 	* xmalloc.c: Update from Glibc 2.0.5
