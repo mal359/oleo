@@ -1,5 +1,5 @@
 /*
- *  $Id: oleosql.h,v 1.1 1999/07/23 16:22:42 danny Exp $
+ *  $Id: oleosql.h,v 1.2 2000/03/03 07:52:40 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -33,5 +33,10 @@ struct DatabaseGlobalType {
 extern void DatabaseSetHost(const char *);
 extern void DatabaseSetName(const char *);
 extern void DatabaseSetUser(const char *);
+
+extern int DatabaseInitialised(void);
+extern char *DatabaseGetHost(void);
+extern char *DatabaseGetName(void);
+extern char *DatabaseGetUser(void);
 
 #endif

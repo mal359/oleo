@@ -147,7 +147,7 @@ The number is displayed in scientific notation.
 
 
 
-@subsection Examples
+@subsection StyleExamples
 
 Suppose that a cell contains @samp{1234.567}.  If we set the format of
 the cell to the left hand column, the cell is displayed as in the right

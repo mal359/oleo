@@ -1,5 +1,5 @@
 /*
- * $Header: /home/matt/cvs/oleo/oleo/src/sciplot.h,v 1.1 2000/02/22 23:34:14 danny Exp $
+ * $Header: /home/matt/cvs/oleo/oleo/src/sciplot.h,v 1.2 2000/03/03 07:52:40 danny Exp $
  *
  * This file is part of GNU plotutils.
  *
@@ -155,7 +155,7 @@ void plot_point(Multigrapher *multigrapher, const Point *point);
 
 void plot_point_array(Multigrapher *multigrapher, const Point *p, int length);
 void end_polyline_and_flush(Multigrapher *multigrapher);
-
+void sp_set_axis_label_font_size(Multigrapher *mg, int axis, double s);
 
 /* Don't add anything after this */
 #endif	/* __SCIPLOT_H__ */

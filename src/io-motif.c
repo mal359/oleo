@@ -1,6 +1,6 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.56 2000/02/22 23:29:33 danny Exp $
+ *  $Id: io-motif.c,v 1.57 2000/03/03 07:52:40 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -22,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.56 2000/02/22 23:29:33 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.57 2000/03/03 07:52:40 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -64,8 +64,10 @@ static char rcsid[] = "$Id: io-motif.c,v 1.56 2000/02/22 23:29:33 danny Exp $";
 
 #ifdef	HAVE_LIBXPM
 #include <X11/xpm.h>
-#include	"oleo_icon.xpm"
+#include "oleo_icon.xpm"
 #endif
+
+#include "global.h"
 
 #ifdef	HAVE_LIBPLOT
 #include <plot.h>
@@ -81,7 +83,6 @@ static char rcsid[] = "$Id: io-motif.c,v 1.56 2000/02/22 23:29:33 danny Exp $";
 #include <cups/cups.h>
 #endif
 
-#include "global.h"
 #include "utils.h"
 #include "io-generic.h"
 #include "io-edit.h"
@@ -1561,29 +1562,21 @@ void ConfigureXYOk(void)
 {
 	char	*s;
 
-	XYxAuto = XmToggleButtonGadgetGetState(XYxAutoToggle);
-
 	s = XmTextFieldGetString(XYxMinText);
-	sscanf(s, "%lf", &XYxMin);
-	s = XmTextFieldGetString(XYxMaxText);
-	sscanf(s, "%lf", &XYxMax);
+	graph_set_axis_lo('x', s);
 
-	XYyAuto = XmToggleButtonGadgetGetState(XYyAutoToggle);
+	s = XmTextFieldGetString(XYxMaxText);
+	graph_set_axis_hi('x', s);
 
 	s = XmTextFieldGetString(XYyMinText);
-	sscanf(s, "%lf", &XYyMin);
+	graph_set_axis_lo('y', s);
+
 	s = XmTextFieldGetString(XYyMaxText);
-	sscanf(s, "%lf", &XYyMax);
+	graph_set_axis_hi('y', s);
 
-	LineToOffscreen = XmToggleButtonGadgetGetState(lineToOffscreen);
-
-#if 0
-	fprintf(stderr, "ConfigureXY: X %s %f %f, Y %s %f %f\n",
-		XYxAuto ? "auto" : "man",
-		XYxMin, XYxMax,
-		XYyAuto ? "auto" : "man",
-		XYyMin, XYyMax);
-#endif
+	graph_set_axis_auto(0, XmToggleButtonGadgetGetState(XYxAutoToggle));
+	graph_set_axis_auto(1, XmToggleButtonGadgetGetState(XYyAutoToggle));
+	graph_set_linetooffscreen(XmToggleButtonGadgetGetState(lineToOffscreen));
 }
 
 static void TextFieldSetFloat(Widget w, float f)
@@ -1596,13 +1589,13 @@ static void TextFieldSetFloat(Widget w, float f)
 
 void ConfigureXYReset(void)
 {
-	XmToggleButtonGadgetSetState(XYxAutoToggle, XYxAuto, False);
-	TextFieldSetFloat(XYxMinText, XYxMin);
-	TextFieldSetFloat(XYxMaxText, XYxMax);
-	XmToggleButtonGadgetSetState(XYyAutoToggle, XYyAuto, False);
-	TextFieldSetFloat(XYyMinText, XYyMin);
-	TextFieldSetFloat(XYyMaxText, XYyMax);
-	XmToggleButtonGadgetSetState(lineToOffscreen, LineToOffscreen, False);
+	XmToggleButtonGadgetSetState(XYxAutoToggle, graph_get_axis_auto(0), False);
+	TextFieldSetFloat(XYxMinText, graph_get_axis_lo(0));
+	TextFieldSetFloat(XYxMaxText, graph_get_axis_hi(0));
+	XmToggleButtonGadgetSetState(XYyAutoToggle, graph_get_axis_auto(1), False);
+	TextFieldSetFloat(XYyMinText, graph_get_axis_lo(1));
+	TextFieldSetFloat(XYyMaxText, graph_get_axis_hi(1));
+	XmToggleButtonGadgetSetState(lineToOffscreen, graph_get_linetooffscreen(), False);
 }
 
 Widget ConfigurePieChart(Widget parent)
@@ -4194,6 +4187,7 @@ MySQLDialogOk(Widget w, XtPointer client, XtPointer call)
 	char	*h, *n, *u;
 
 	MotifSelectGlobal(w);
+	XtUnmanageChild(MySQLDialog);
 
 	if (dbhosttf == NULL || dbnametf == NULL)
 		return;
@@ -4217,6 +4211,17 @@ MySQLDialogOk(Widget w, XtPointer client, XtPointer call)
 void
 ConfigureMySQLDialogReset(Widget w)
 {
+	Widget	d = FindDialog(w),
+		dbhosttf = XtNameToWidget(d, "*dbhosttf"),
+		dbnametf = XtNameToWidget(d, "*dbnametf"),
+		dbusertf = XtNameToWidget(d, "*dbusertf");
+
+	if (dbhosttf == NULL || dbnametf == NULL)
+		return;
+
+	XmTextFieldSetString(dbhosttf, DatabaseGetHost());
+	XmTextFieldSetString(dbnametf, DatabaseGetName());
+	XmTextFieldSetString(dbusertf, DatabaseGetUser());
 }
 
 void
@@ -5462,6 +5467,7 @@ void MotifGlobalInitialize(void)
 	Global->MotifGlobal->havea0 = -1;
 	Global->MotifGlobal->selectedcells = NULL;
 	Global->MotifGlobal->newcall = True;
+	Global->MotifGlobal->needrecalculate = False;
 }
 
 void motif_init(int *argc, char **argv)
@@ -5579,6 +5585,10 @@ void motif_build_gui(void)
 
 	if (! XmProcessTraversal(mat, XmTRAVERSE_CURRENT)) {
 		fprintf(stderr, _("XmProcessTraversal failed\n"));
+	}
+
+	if (Global->MotifGlobal->needrecalculate) {
+		recalculate(1);
 	}
 
 }
@@ -5787,6 +5797,11 @@ MotifButton(int r, int c, char *lbl, char *cmd)
 {
 	Widget	button;
 	char	*command;
+
+	if (mat == 0) {
+		Global->MotifGlobal->needrecalculate = True;
+		return;
+	}
 
 	if (XbaeMatrixGetCellWidget(mat, r-1, c-1) == NULL) {
 		button = XtVaCreateManagedWidget(lbl, xmPushButtonWidgetClass, mat, NULL);

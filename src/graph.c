@@ -16,6 +16,8 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#undef	GRAPH_VERBOSE
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -45,8 +47,6 @@
 static struct line graph_term_cmd;
 static struct line graph_output_file;
 
-typedef void (*plotter) (void);
-
 struct get_symbols_frame;
 struct write_data_frame;
 static void get_symbols_thunk (struct get_symbols_frame * fr,
@@ -58,7 +58,6 @@ static void spew_gnuplot (FILE  * fp, struct line * data_files, char * dir,
 static void spew_for_x (void);
 static void spew_for_ps (void);
 
-static plotter plot_fn = 0;
 
 char * gnuplot_program = "gnuplot";
 char * gnuplot_shell = "/bin/sh";
@@ -86,44 +85,10 @@ char *graph_pair_order_name[graph_num_pair_orders] =
   "enumerated cols"
 };
 
+static plotter plot_fn = 0;
+
 int graph_ornt_row_magic [graph_num_pair_orientations] = { 0, 1, 0 };
 int graph_ornt_col_magic [graph_num_pair_orientations] = { 1, 0, 0 };
-
-
-/* `set label %s' for each axis.
- */
-static struct line graph_axis_title [graph_num_axis];
-
-/* set logarithmic */
-static int graph_logness [graph_num_axis];
-
-/* Arguments to `set range [%s:%s]' */
-static struct line graph_rng_lo [graph_num_axis];
-static struct line graph_rng_hi [graph_num_axis];
-
-/* The ranges (if any) of the symbolic names
- * for integer coordinates starting at 0.
- * If none, these will have lr == NON_ROW.
- */
-static struct rng graph_axis_symbols [graph_num_axis];
-static enum graph_ordering graph_axis_ordering [graph_num_axis];
-
-/* Names to print along the axes */
-static struct rng graph_axis_labels [graph_num_axis];
-static enum graph_pair_ordering graph_axis_label_order [graph_num_axis];
-
-/* plot .... with %s */
-static struct line graph_style [NUM_DATASETS];
-static struct line graph_title [NUM_DATASETS];
-static struct rng graph_data [NUM_DATASETS];
-static enum graph_pair_ordering graph_data_order [graph_num_axis];
-
-/* Automatic axis ? */
-static int graph_auto[2];
-
-/* Numeric values for axis ranges */
-static double	graph_axis_lo[graph_num_axis],
-		graph_axis_hi[graph_num_axis];
 
 enum graph_axis
 chr_to_axis (int c)
@@ -277,14 +242,17 @@ void
 graph_set_axis_title (int axis_c, char * title)
 {
   enum graph_axis axis = chr_to_axis (axis_c);
-  set_line (&graph_axis_title [axis], char_to_q_char (title));
+#ifdef	GRAPH_VERBOSE
+  fprintf(stderr, "graph_set_axis_title(%c,%s)\n", axis_c, title);
+#endif
+  set_line (&Global->PlotGlobal->graph_axis_title [axis], char_to_q_char (title));
 }
 
 char *
 graph_get_axis_title (int axis_c)
 {
   enum graph_axis axis = chr_to_axis (axis_c);
-  return graph_axis_title[axis].buf;
+  return Global->PlotGlobal->graph_axis_title[axis].buf;
 }
 
 void
@@ -294,16 +262,16 @@ graph_set_logness (int axis_c, int explicit, int newval)
   static struct line msg_buf;
 
   if (!explicit)
-    newval = !graph_logness [axis];
+    newval = !Global->PlotGlobal->graph_logness [axis];
   else
     newval = (newval > 0);
 
-  graph_logness [axis] = newval;
+  Global->PlotGlobal->graph_logness [axis] = newval;
   sprint_line (&msg_buf, "%slogarithmic %s%s",
-	       ((graph_logness [graph_x] || graph_logness [graph_y])
+	       ((Global->PlotGlobal->graph_logness [graph_x] || Global->PlotGlobal->graph_logness [graph_y])
 		? "" : "no"),
-	       graph_logness [graph_x] ? "x" : "",
-	       graph_logness [graph_y] ? "y" : "");
+	       Global->PlotGlobal->graph_logness [graph_x] ? "x" : "",
+	       Global->PlotGlobal->graph_logness [graph_y] ? "y" : "");
 #if 0
   io_info_msg ("set %s", msg_buf.buf);
 #endif
@@ -313,7 +281,7 @@ int
 graph_get_logness(int axis_c)
 {
   enum graph_axis axis = chr_to_axis (axis_c);
-  return graph_logness [axis];
+  return Global->PlotGlobal->graph_logness [axis];
 }
 
 void
@@ -351,10 +319,13 @@ void
 graph_set_axis_lo (int axis_c, char * val)
 {
   enum graph_axis axis = chr_to_axis (axis_c);
+#ifdef	GRAPH_VERBOSE
+  fprintf(stderr, "graph_set_axis_lo(%c,%s)\n", axis_c, val);
+#endif
   graph_check_range (val);
-  set_line (&graph_rng_lo [axis], val);
-  graph_axis_lo[axis] = atof(val);
-  graph_axis_symbols [axis].lr = NON_ROW;
+  set_line (&Global->PlotGlobal->graph_rng_lo [axis], val);
+  Global->PlotGlobal->XYMin[axis] = atof(val);
+  Global->PlotGlobal->graph_axis_symbols [axis].lr = NON_ROW;
 }
 
 
@@ -362,10 +333,13 @@ void
 graph_set_axis_hi (int axis_c, char * val)
 {
   enum graph_axis axis = chr_to_axis (axis_c);
+#ifdef	GRAPH_VERBOSE
+  fprintf(stderr, "graph_set_axis_hi(%c,%s)\n", axis_c, val);
+#endif
   graph_check_range (val);
-  set_line (&graph_rng_hi [axis], val);
-  graph_axis_hi[axis] = atof(val);
-  graph_axis_symbols [axis].lr = NON_ROW;
+  set_line (&Global->PlotGlobal->graph_rng_hi [axis], val);
+  Global->PlotGlobal->XYMax[axis] = atof(val);
+  Global->PlotGlobal->graph_axis_symbols [axis].lr = NON_ROW;
 }
 
 void
@@ -379,8 +353,8 @@ graph_set_axis_symbolic (int axis_c, struct rng * rng, int ordering_c)
   sprintf (buf, "%d.5", top);
   graph_set_axis_lo (axis, "-0.5");
   graph_set_axis_hi (axis, buf);
-  graph_axis_symbols [axis] = *rng;
-  graph_axis_ordering [axis] = ordering;
+  Global->PlotGlobal->graph_axis_symbols [axis] = *rng;
+  Global->PlotGlobal->graph_axis_ordering [axis] = ordering;
 }
 
 void
@@ -388,15 +362,15 @@ graph_set_axis_labels (int axis_c, struct rng * rng, int pair, int dir)
 {
   enum graph_pair_ordering order = chrs_to_graph_pair_ordering (pair, dir);
   enum graph_axis axis = chr_to_axis (axis_c);
-  graph_axis_labels [axis] = *rng;
-  graph_axis_label_order [axis] = order;
+  Global->PlotGlobal->graph_axis_labels [axis] = *rng;
+  Global->PlotGlobal->graph_axis_label_order [axis] = order;
 }
 
 void
 graph_default_axis_labels (int axis_c)
 {
   enum graph_axis axis = chr_to_axis (axis_c);
-  graph_axis_labels [axis].lr = NON_ROW;
+  Global->PlotGlobal->graph_axis_labels [axis].lr = NON_ROW;
 }
 
 static char * graph_plot_styles [] =
@@ -429,7 +403,7 @@ graph_set_style (int data_set, char * style)
     io_error_msg
       ("set-graph-style -- data-set out of range: %d (should be in [0..%d])",
        data_set, NUM_DATASETS);
-  set_line (&graph_style [data_set], graph_plot_styles [x]);
+  set_line (&Global->PlotGlobal->graph_style [data_set], graph_plot_styles [x]);
 }
 
 void
@@ -439,7 +413,10 @@ graph_set_data_title (int data_set, char * title)
     io_error_msg
       ("set-graph-title -- data-set out of range: %d (should be in [0..%d])",
        data_set, NUM_DATASETS);
-  set_line (&graph_title [data_set], title);
+#ifdef	GRAPH_VERBOSE
+  fprintf(stderr, "graph_set_data_title(%d,%s)\n", data_set, title);
+#endif
+  set_line (&Global->PlotGlobal->graph_title [data_set], title);
 }
 
 char *
@@ -447,7 +424,7 @@ graph_get_data_title(int data_set)
 {
   if ((data_set < 0) || (data_set >= NUM_DATASETS))
     return NULL;
-  return graph_title[data_set].buf;
+  return Global->PlotGlobal->graph_title[data_set].buf;
 }
 
 void
@@ -458,14 +435,14 @@ graph_set_data (int data_set, struct rng * rng, int pair, int dir)
     io_error_msg
       ("set-graph-data -- data-set out of range: %d (should be in [0..%d])",
        data_set, NUM_DATASETS);
-  graph_data [data_set] = *rng;
-  graph_data_order [data_set] = order;
+  Global->PlotGlobal->graph_data [data_set] = *rng;
+  Global->PlotGlobal->graph_data_order [data_set] = order;
 }
 
 struct rng
 graph_get_data(int data_set)
 {
-	return graph_data[data_set];
+	return Global->PlotGlobal->graph_data[data_set];
 }
 
 
@@ -481,7 +458,7 @@ graph_presets (void)
     for (axis = graph_x; axis < graph_num_axis; ++axis)
       {
 	int axis_c = graph_axis_name [axis][0];
-	graph_logness [axis] = 0;
+	Global->PlotGlobal->graph_logness [axis] = 0;
 	graph_set_axis_title (axis_c, "");
 	graph_set_axis_lo (axis_c, "def");
 	graph_set_axis_hi (axis_c, "def");
@@ -503,7 +480,7 @@ graph_clear_datasets (void)
     {
       graph_set_style (x, "lines");
       graph_set_data_title (x, "");
-      graph_data [x].lr = NON_ROW;
+      Global->PlotGlobal->graph_data [x].lr = NON_ROW;
     }
 }
 
@@ -511,6 +488,8 @@ graph_clear_datasets (void)
 void
 init_graphing (void)
 {
+  PlotInit();
+
   gnuplot_program = getenv ("GNUPLOT_PROG");
   if (!gnuplot_program)
     gnuplot_program = "gnuplot";
@@ -523,8 +502,7 @@ init_graphing (void)
   graph_presets ();
   graph_clear_datasets ();
 
-  graph_auto[0] = 1;
-  graph_auto[1] = 1;
+  XYxAuto = XYyAuto = 1;
 }
 
 
@@ -563,61 +541,61 @@ graph_make_info (void)
     print_info
       (ib,
        "%s-axis title		%s",
-       graph_axis_name [axis], graph_axis_title[axis].buf);
+       graph_axis_name [axis], Global->PlotGlobal->graph_axis_title[axis].buf);
 
   {
     print_info
       (ib,
        "logarithmic axes	%s",
-       (graph_logness [graph_x]
-	? (graph_logness [graph_y] ? "x,y" : "x")
-	: (graph_logness [graph_y] ? "y" : "-neither-")));
+       (Global->PlotGlobal->graph_logness [graph_x]
+	? (Global->PlotGlobal->graph_logness [graph_y] ? "x,y" : "x")
+	: (Global->PlotGlobal->graph_logness [graph_y] ? "y" : "-neither-")));
 
   }
   for (axis = graph_x; axis <= graph_y; ++axis)
     {
-      if (graph_axis_symbols[axis].lr != NON_ROW)
+      if (Global->PlotGlobal->graph_axis_symbols[axis].lr != NON_ROW)
 	print_info
 	  (ib,
 	   	"%s-axis symbols	%s in %s",
 	   graph_axis_name [axis],
-	   graph_order_name [graph_axis_ordering [axis]],
-	   range_name (&graph_axis_symbols [axis]));
+	   graph_order_name [Global->PlotGlobal->graph_axis_ordering [axis]],
+	   range_name (&Global->PlotGlobal->graph_axis_symbols [axis]));
       else
 	print_info
 	  (ib,
 		"%s-axis range		[%s..%s]",
 	   graph_axis_name [axis],
-	   graph_rng_lo [axis].buf, graph_rng_hi [axis].buf,
-	   graph_rng_hi [axis].buf, graph_rng_hi [axis].buf);
+	   Global->PlotGlobal->graph_rng_lo [axis].buf, Global->PlotGlobal->graph_rng_hi [axis].buf,
+	   Global->PlotGlobal->graph_rng_hi [axis].buf, Global->PlotGlobal->graph_rng_hi [axis].buf);
     }
 
   for (axis = graph_x; axis <= graph_y; ++axis)
     {
-      if (graph_axis_labels[axis].lr != NON_ROW)
+      if (Global->PlotGlobal->graph_axis_labels[axis].lr != NON_ROW)
 	print_info
 	  (ib,
 	   	"%s-axis labels		%s in %s",
 	   graph_axis_name [axis],
-	   graph_pair_order_name [graph_axis_label_order [axis]],
-	   range_name (&graph_axis_labels [axis]));
+	   graph_pair_order_name [Global->PlotGlobal->graph_axis_label_order [axis]],
+	   range_name (&Global->PlotGlobal->graph_axis_labels [axis]));
     }
 
   {
     int x;
     for (x = 0; x < NUM_DATASETS; ++x)
-      if (graph_data [x].lr != NON_ROW)
+      if (Global->PlotGlobal->graph_data [x].lr != NON_ROW)
       {
 	print_info (ib, "");
 	print_info (ib,"Data Set %d%s%s",
 		    x,
-		    graph_title[x].buf[0] ? " entitled " : "",
-		    graph_title[x].buf);
+		    Global->PlotGlobal->graph_title[x].buf[0] ? " entitled " : "",
+		    Global->PlotGlobal->graph_title[x].buf);
 	print_info (ib,"  data for this set: %s in %s",
-		    graph_pair_order_name [graph_data_order [x]],
-		    range_name (&graph_data[x]));
+		    graph_pair_order_name [Global->PlotGlobal->graph_data_order [x]],
+		    range_name (&Global->PlotGlobal->graph_data[x]));
 	print_info (ib,"  style for this set: %s",
-		    graph_style[x].buf);
+		    Global->PlotGlobal->graph_style[x].buf);
 	print_info (ib,"");
       }
   }
@@ -766,7 +744,7 @@ write_data_thunk (struct write_data_frame * fr,
       CELL * x_cell = find_cell (x_r, x_c);
       if (x_cell && GET_TYP(x_cell))
 	{
-	  if (graph_axis_symbols [graph_x].lr == NON_ROW)
+	  if (Global->PlotGlobal->graph_axis_symbols [graph_x].lr == NON_ROW)
 	    fprintf (fr->fp, "%s ", print_cell (x_cell));
 	  else
 	    {
@@ -800,39 +778,39 @@ spew_gnuplot (FILE  * fp, struct line * data_files, char * dir, char * dbase)
     for (axis = graph_x; axis <= graph_y; ++axis)
       {
 	fprintf (fp, "set %slabel %s\n", graph_axis_name[axis],
-		 (graph_axis_title[axis].buf[0]
-		  ? graph_axis_title[axis].buf
+		 (Global->PlotGlobal->graph_axis_title[axis].buf[0]
+		  ? Global->PlotGlobal->graph_axis_title[axis].buf
 		  : ""));
 
 	fprintf (fp, "set %srange [%s:%s]\n",
 		 graph_axis_name [axis],
-		 (says_default (graph_rng_lo [axis].buf)
+		 (says_default (Global->PlotGlobal->graph_rng_lo [axis].buf)
 		  ? ""
-		  : graph_rng_lo[axis].buf),
-		 (says_default (graph_rng_hi [axis].buf)
+		  : Global->PlotGlobal->graph_rng_lo[axis].buf),
+		 (says_default (Global->PlotGlobal->graph_rng_hi [axis].buf)
 		  ? ""
-		  : graph_rng_hi[axis].buf));
-	if (   (graph_axis_symbols [axis].lr != NON_ROW)
-	    && (graph_axis_labels [axis].lr == NON_ROW))
-	  write_tics_command (fp, axis, &graph_axis_symbols [axis],
-			      PAIR_ORDER(graph_axis_ordering[axis],
+		  : Global->PlotGlobal->graph_rng_hi[axis].buf));
+	if (   (Global->PlotGlobal->graph_axis_symbols [axis].lr != NON_ROW)
+	    && (Global->PlotGlobal->graph_axis_labels [axis].lr == NON_ROW))
+	  write_tics_command (fp, axis, &Global->PlotGlobal->graph_axis_symbols [axis],
+			      PAIR_ORDER(Global->PlotGlobal->graph_axis_ordering[axis],
 						   graph_implicit));
-	else if (graph_axis_labels [axis].lr != NON_ROW)
+	else if (Global->PlotGlobal->graph_axis_labels [axis].lr != NON_ROW)
 	  write_tics_command (fp, axis,
-			      &graph_axis_labels [axis],
-			      graph_axis_label_order [axis]);
+			      &Global->PlotGlobal->graph_axis_labels [axis],
+			      Global->PlotGlobal->graph_axis_label_order [axis]);
 	else
 	  fprintf (fp, "set %stics\n", graph_axis_name [axis]);
       }
-    if (!(graph_logness[graph_x] && graph_logness[graph_y]))
+    if (!(Global->PlotGlobal->graph_logness[graph_x] && Global->PlotGlobal->graph_logness[graph_y]))
       fprintf (fp, "set nolog %s%s\n",
-	       graph_logness[graph_x] ? "" : "x",
-	       graph_logness[graph_y] ? "" : "y");
+	       Global->PlotGlobal->graph_logness[graph_x] ? "" : "x",
+	       Global->PlotGlobal->graph_logness[graph_y] ? "" : "y");
 
-    if (graph_logness[graph_x] || graph_logness[graph_y])
+    if (Global->PlotGlobal->graph_logness[graph_x] || Global->PlotGlobal->graph_logness[graph_y])
       fprintf (fp, "set log %s%s\n",
-	       graph_logness[graph_x] ? "x" : "",
-	       graph_logness[graph_y] ? "y" : "");
+	       Global->PlotGlobal->graph_logness[graph_x] ? "x" : "",
+	       Global->PlotGlobal->graph_logness[graph_y] ? "y" : "");
   }
   {
     int need_comma = 0;
@@ -841,7 +819,7 @@ spew_gnuplot (FILE  * fp, struct line * data_files, char * dir, char * dbase)
     for (x = 0; x < NUM_DATASETS; ++x)
       {
 	init_line (&data_files [x]);
-	if (graph_data [x].lr != NON_ROW)
+	if (Global->PlotGlobal->graph_data [x].lr != NON_ROW)
 	  {
 	    FILE * df = mk_tmp_file (&data_files [x], dir, dbase);
 	    struct write_data_frame wdf;
@@ -852,19 +830,19 @@ spew_gnuplot (FILE  * fp, struct line * data_files, char * dir, char * dbase)
 			      data_files [x].buf);
 	      }
 	    wdf.fp = df;
-	    wdf.ornt = graph_data_order [x] % graph_num_pair_orientations;
+	    wdf.ornt = Global->PlotGlobal->graph_data_order [x] % graph_num_pair_orientations;
 	    wdf.data_cnt = 0;
 	    wdf.gsf.symbols = 0;
 	    wdf.gsf.names = 0;
-	    if (graph_axis_symbols [graph_x].lr != NON_ROW)
-	      for_pairs_in (&graph_axis_symbols [graph_x],
-			    PAIR_ORDER (graph_axis_ordering [graph_x],
+	    if (Global->PlotGlobal->graph_axis_symbols [graph_x].lr != NON_ROW)
+	      for_pairs_in (&Global->PlotGlobal->graph_axis_symbols [graph_x],
+			    PAIR_ORDER (Global->PlotGlobal->graph_axis_ordering [graph_x],
 					graph_implicit),
 			    (fpi_thunk)get_symbols_thunk,
 			    &wdf.gsf);
-	    for_pairs_in (&graph_data [x], graph_data_order [x],
+	    for_pairs_in (&Global->PlotGlobal->graph_data [x], Global->PlotGlobal->graph_data_order [x],
 			  (fpi_thunk)write_data_thunk, &wdf);
-	    if (graph_axis_symbols [graph_x].lr != NON_ROW)
+	    if (Global->PlotGlobal->graph_axis_symbols [graph_x].lr != NON_ROW)
 	      {
 		int x;
 		for (x = 0; x < wdf.gsf.symbols; ++x)
@@ -874,9 +852,9 @@ spew_gnuplot (FILE  * fp, struct line * data_files, char * dir, char * dbase)
 	    fprintf (fp, "%s %s %s %s with %s",
 		     need_comma ? "," : "",
 		     line_to_q_char (data_files [x]),
-		     graph_title[x].buf[0] ? " title " : "",
-                     graph_title[x].buf[0] ? line_to_q_char (graph_title [x]) : "",
-		     graph_style [x].buf);
+		     Global->PlotGlobal->graph_title[x].buf[0] ? " title " : "",
+                     Global->PlotGlobal->graph_title[x].buf[0] ? line_to_q_char (Global->PlotGlobal->graph_title [x]) : "",
+		     Global->PlotGlobal->graph_style [x].buf);
 	    need_comma = 1;
 	    fclose (df);
 	  }
@@ -1040,6 +1018,9 @@ graph_set_title(char *t)
 	if (graph_plot_title)
 		free(graph_plot_title);
 	graph_plot_title = strdup(t);
+#ifdef	GRAPH_VERBOSE
+	fprintf(stderr, "graph_set_title(%s)\n", t);
+#endif
 }
 
 char *
@@ -1051,18 +1032,21 @@ graph_get_title(void)
 void
 graph_set_axis_auto(int axis, int set)
 {
-	if (axis == 0 || axis == 1)
-		graph_auto[axis] = set;
+	if (axis == 0  || axis == 1)
+		Global->PlotGlobal->XYAuto[axis] = set;
 	else {
 		io_error_msg("Invalid graph axis %d, must be 0 or 1", axis);
 	}
+#ifdef	GRAPH_VERBOSE
+	fprintf(stderr, "graph_set_axis_auto(%d,%d)\n", axis, set);
+#endif
 }
 
 int
 graph_get_axis_auto(int axis)
 {
-	if (axis == 0 || axis == 1)
-		return graph_auto[axis];
+	if (axis == 0  || axis == 1)
+		return Global->PlotGlobal->XYAuto[axis];
 
 	io_error_msg("Invalid graph axis %d, must be 0 or 1", axis);
 	return 1;
@@ -1075,7 +1059,7 @@ graph_get_axis_lo(int axis)
 		io_error_msg("graph_get_axis_lo : invalid graph axis %d, must be 0 or 1", axis);
 		return 0.0;
 	}
-	return graph_axis_lo[axis];
+	return Global->PlotGlobal->XYMin[axis];
 }
 
 double
@@ -1085,5 +1069,20 @@ graph_get_axis_hi(int axis)
 		io_error_msg("graph_get_axis_hi: invalid graph axis %d, must be 0 or 1", axis);
 		return 0.0;
 	}
-	return graph_axis_hi[axis];
+	return Global->PlotGlobal->XYMax[axis];
+}
+
+void
+graph_set_linetooffscreen(int set)
+{
+	Global->PlotGlobal->LineToOffscreen = set;
+#ifdef	GRAPH_VERBOSE
+	fprintf(stderr, "graph_set_linetooffscreen(%d)\n", set);
+#endif
+}
+
+int
+graph_get_linetooffscreen(void)
+{
+	return Global->PlotGlobal->LineToOffscreen;
 }

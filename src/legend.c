@@ -1,5 +1,5 @@
 /*
- * $Header: /home/matt/cvs/oleo/oleo/src/legend.c,v 1.1 2000/02/22 23:34:14 danny Exp $
+ * $Header: /home/matt/cvs/oleo/oleo/src/legend.c,v 1.2 2000/03/03 07:52:40 danny Exp $
  *
  * This file is part of libsciplot, one of the libraries in the GNU PlotUtils package.
  *
@@ -33,6 +33,17 @@
 #include <sciplot.h>
 #include <sciplotI.h>
 
+#define	POS_X_MIN	0.800
+#define	POS_X_MIN_LINE	0.810
+#define	POS_X_MAX_LINE	0.850
+#define	POS_X_MIN_TXT	0.870
+#define	POS_X_INC	0.0125
+#define	POS_X_MAX	0.875
+
+#define	POS_Y_MIN	0.900
+#define	POS_Y_INC	0.025
+#define	POS_Y_MAX	0.975
+
 void sp_legend_draw(Multigrapher *mg)
 {
 	double	y;
@@ -50,31 +61,28 @@ void sp_legend_draw(Multigrapher *mg)
 	pl_pencolorname_r(mg->plotter, "black");	/* FIX ME */
 
 	/* Draw rectangle */
-	pl_fbox_r(mg->plotter, PLOT_SIZE * 0.8, PLOT_SIZE * 0.8, PLOT_SIZE, PLOT_SIZE);
+	pl_fbox_r(mg->plotter,
+		PLOT_SIZE * POS_X_MIN, PLOT_SIZE * POS_Y_MIN,
+		PLOT_SIZE, PLOT_SIZE);
 
 #if 0
 	fprintf(stderr, "sp_legend_draw(%d datasets, %d legend texts)\n",
 		mg->datasetnum, mg->nlegend);
 #endif
 
-	for (y = 0.975 * PLOT_SIZE, i=1;
+	for (y = POS_Y_MAX * PLOT_SIZE, i=1;
 			(i <= mg->datasetnum) && (i <= mg->nlegend);
-			i++, y -= 0.025 * PLOT_SIZE) {
+			i++, y -= POS_Y_INC * PLOT_SIZE) {
 		if (mg->legend[i]) {
 			int	ly = y + 0.0125 * PLOT_SIZE;
 
 			pl_colorname_r(mg->plotter, colorstyle[(i-1) % NO_OF_LINEMODES]);
 			pl_fline_r(mg->plotter,
-					0.81 * PLOT_SIZE, ly,
-					0.85 * PLOT_SIZE, ly);
-			pl_fmove_r(mg->plotter, 0.87 * PLOT_SIZE, y);
+					POS_X_MIN_LINE * PLOT_SIZE, ly,
+					POS_X_MAX_LINE * PLOT_SIZE, ly);
+			pl_fmove_r(mg->plotter, POS_X_MIN_TXT * PLOT_SIZE, y);
 			pl_alabel_r(mg->plotter, 'l', 'x', mg->legend[i]);
 
-#if 0
-			fprintf(stderr, "Legend no %d, '%s', at %f %f\n",
-				i, mg->legend[i],
-				0.8 * PLOT_SIZE, y);
-#endif
 		} else {
 #if 0
 			fprintf(stderr, "Legend no %d - no text\n", i);

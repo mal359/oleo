@@ -745,6 +745,46 @@ sp_xy_end_graph(multigrapher)
   pl_restorestate_r (multigrapher->plotter);
 }
 
+static void
+OtherAxisLoc(Multigrapher *multigrapher)
+{
+  /* fill in fields in Axis structs dealing with location of other axis */
+  if (multigrapher->grid_spec != AXES_AT_ORIGIN)
+    /* Normal case */
+    {
+      /* axes are at left/bottom */
+      multigrapher->x_axis.other_axis_loc = multigrapher->x_trans.input_min;
+      multigrapher->y_axis.other_axis_loc = multigrapher->y_trans.input_min;
+      /* secondary axes (used only if --switch-axis-end is specified) */
+      multigrapher->x_axis.alt_other_axis_loc = multigrapher->x_trans.input_max;
+      multigrapher->y_axis.alt_other_axis_loc = multigrapher->y_trans.input_max;
+    }
+  else
+    /* Special case: grid type #4, AXES_AT_ORIGIN */
+    {
+      /* In this case (grid type #4), we don't allow the user to move the
+         axis position by using the --switch-axis-end option.  Each axis is
+         at the value 0 (the origin) if the value 0 is between the limits
+         of the opposing axis.  Otherwise, the position is at the end
+         closer to the value of 0. */
+      multigrapher->x_axis.other_axis_loc 
+	= (multigrapher->x_trans.input_min * multigrapher->x_trans.input_max <= 0.0) ? 0.0 : 
+	  (multigrapher->x_trans.input_min > 0.0 ? multigrapher->x_trans.input_min : multigrapher->x_trans.input_max);
+      multigrapher->y_axis.other_axis_loc 
+	= (multigrapher->y_trans.input_min * multigrapher->y_trans.input_max <= 0.0) ? 0.0 : 
+	  (multigrapher->y_trans.input_min > 0.0 ? multigrapher->y_trans.input_min : multigrapher->y_trans.input_max);
+      /* secondary axes are the same */
+      multigrapher->x_axis.alt_other_axis_loc = multigrapher->x_axis.other_axis_loc;
+      multigrapher->y_axis.alt_other_axis_loc = multigrapher->y_axis.other_axis_loc;
+      multigrapher->x_axis.switch_axis_end = (((multigrapher->x_trans.input_max - multigrapher->x_axis.other_axis_loc)
+				 < (multigrapher->x_axis.other_axis_loc - multigrapher->x_trans.input_min))
+				? true : false);
+      multigrapher->y_axis.switch_axis_end = (((multigrapher->y_trans.input_max - multigrapher->y_axis.other_axis_loc)
+				 < (multigrapher->y_axis.other_axis_loc - multigrapher->y_trans.input_min))
+				? true : false);
+    }
+}
+
 
 void 
 #ifdef _HAVE_PROTOS
@@ -1028,41 +1068,7 @@ set_graph_parameters (multigrapher, frame_line_width, frame_color, title, title_
   multigrapher->y_trans.output_max = (double)PLOT_SIZE;
   multigrapher->y_trans.output_range = multigrapher->y_trans.output_max - multigrapher->y_trans.output_min;
 
-  /* fill in fields in Axis structs dealing with location of other axis */
-  if (multigrapher->grid_spec != AXES_AT_ORIGIN)
-    /* Normal case */
-    {
-      /* axes are at left/bottom */
-      multigrapher->x_axis.other_axis_loc = multigrapher->x_trans.input_min;
-      multigrapher->y_axis.other_axis_loc = multigrapher->y_trans.input_min;
-      /* secondary axes (used only if --switch-axis-end is specified) */
-      multigrapher->x_axis.alt_other_axis_loc = multigrapher->x_trans.input_max;
-      multigrapher->y_axis.alt_other_axis_loc = multigrapher->y_trans.input_max;
-    }
-  else
-    /* Special case: grid type #4, AXES_AT_ORIGIN */
-    {
-      /* In this case (grid type #4), we don't allow the user to move the
-         axis position by using the --switch-axis-end option.  Each axis is
-         at the value 0 (the origin) if the value 0 is between the limits
-         of the opposing axis.  Otherwise, the position is at the end
-         closer to the value of 0. */
-      multigrapher->x_axis.other_axis_loc 
-	= (multigrapher->x_trans.input_min * multigrapher->x_trans.input_max <= 0.0) ? 0.0 : 
-	  (multigrapher->x_trans.input_min > 0.0 ? multigrapher->x_trans.input_min : multigrapher->x_trans.input_max);
-      multigrapher->y_axis.other_axis_loc 
-	= (multigrapher->y_trans.input_min * multigrapher->y_trans.input_max <= 0.0) ? 0.0 : 
-	  (multigrapher->y_trans.input_min > 0.0 ? multigrapher->y_trans.input_min : multigrapher->y_trans.input_max);
-      /* secondary axes are the same */
-      multigrapher->x_axis.alt_other_axis_loc = multigrapher->x_axis.other_axis_loc;
-      multigrapher->y_axis.alt_other_axis_loc = multigrapher->y_axis.other_axis_loc;
-      multigrapher->x_axis.switch_axis_end = (((multigrapher->x_trans.input_max - multigrapher->x_axis.other_axis_loc)
-				 < (multigrapher->x_axis.other_axis_loc - multigrapher->x_trans.input_min))
-				? true : false);
-      multigrapher->y_axis.switch_axis_end = (((multigrapher->y_trans.input_max - multigrapher->y_axis.other_axis_loc)
-				 < (multigrapher->y_axis.other_axis_loc - multigrapher->y_trans.input_min))
-				? true : false);
-    }
+  OtherAxisLoc(multigrapher);
 
   /* The following is a version of (multigrapher->frame_line_width)/2
      (expressed in terms of libplot coordinates) which the plotter uses as
@@ -2829,9 +2835,9 @@ sp_create_plot(plPlotter *plotter, const SpPlotType plot_type)
 		0,	0,		/* X, Y spacing */
 		0.75,	0.75,		/* Plot width, height */
 		0.125,	0.125,		/* Margin around plot */
-		NULL,	0.0525,		/* X Axis label font */
+		NULL,	0.025,		/* X Axis label font */
 		"X Axis Label",		/* X Axis label */
-		NULL,	0.0525,		/* Y Axis label font */
+		NULL,	0.025,		/* Y Axis label font */
 		"Y Axis Label",		/* Y Axis label */
 		0,
 		0,			/* Log */
@@ -3039,6 +3045,8 @@ sp_set_axis_range(Multigrapher *mg, int axis, double min, double max, double spa
 		(bool)(mg->round_to_next_tick & Y_AXIS),
 		(bool)(mg->log_axis & Y_AXIS), 
 		(bool)(mg->reverse_axis & Y_AXIS));
+
+	OtherAxisLoc(mg);
 }
 
 void
@@ -3406,6 +3414,17 @@ sp_pie_end_graph(Multigrapher *mg)
 #undef	Y(r,a)
 #undef	RAD(a)
 #undef	XY(r,a)
+}
+
+void
+sp_set_axis_label_font_size(Multigrapher *mg, int axis, double s)
+{
+	if (axis & X_AXIS) {
+		mg->x_axis.font_size = s;
+	}
+	if (axis & Y_AXIS) {
+		mg->y_axis.font_size = s;
+	}
 }
 
 /*

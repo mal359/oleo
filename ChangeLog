@@ -1,4 +1,27 @@
-$Id: ChangeLog,v 1.124 2000/02/23 19:51:54 danny Exp $
+$Id: ChangeLog,v 1.125 2000/03/03 07:52:40 danny Exp $
+
+
+Fri  3 Mar 08:48:49 2000, Danny
+	* Oleo sources are now in CVS at subversions.gnu.org,
+	  not the old cvs.gnu.org.
+	* File with an @button command can be read without
+	  crashing. Make sure the buttons get created then.
+	* Add more stuff for graphs to file save format.
+	* Renamed a node in doc/ to remove name clash reported
+	  by the recent version of texi2html.
+	* MySQL error messages now reported in the standard way
+	  (io_error_msg), not fprintf.
+	* Read and write DBMS parameters in oleo file format,
+	  and get the Motif dialog to query them before appearing.
+	* Remove global variables in graph.c and plot.c, replace by
+	  stuff in Global structure.
+	* Detect getcwd(), use it instead of getwd when possible.
+	* Fixed problem in intl/Makefile.am which prevented
+	  config.h from being used.
+	* plotter.c, legend.c : concentrate hardcoded numbers,
+	  fix the legend position somewhat, call a new function
+	  to make the Y axis appear in the right place so PostScript
+	  output makes sense.
 
 Wed 23 Feb 20:51:06 2000, Danny
 	* Correct ChangeLog

@@ -2,7 +2,7 @@
 #define GRAPHH
 
 /*
-	$Id: graph.h,v 1.5 2000/02/23 19:51:54 danny Exp $
+	$Id: graph.h,v 1.6 2000/03/03 07:52:40 danny Exp $
 
 	Copyright (C) 1993-1998 Free Software Foundation, Inc.
 
@@ -22,83 +22,12 @@
  */
 #include "cell.h"
 
-/* Parameters for each dataset. */
-#define NUM_DATASETS 10
-
-enum graph_axis
-{
-  graph_x = 0,
-  graph_y = 1,
-  graph_num_axis = 2
-};
 extern char * graph_axis_name [graph_num_axis];
-
-/*
- * These are named according to the outermost iterator.
- * Thus graph_rows indicates that cells should be read in
- * the loop:
- *
- *	for (r = lr; r <= hr; ++r)
- *          for (c = lc; c <= hc; ++c)
- *		....
- */
-enum graph_ordering
-{
-  graph_rows = 0,
-  graph_cols = 1,
-  graph_num_orders = 2
-};
 extern char * graph_order_name [graph_num_orders];
 
-/* These describe supported ways to iterate over a range extracting
- * pairs of cells.
- *
- * There are two degrees of freedom:  the 2 cells in each
- * pair may be oriented horizontally or verically
- *			 ______________
- *	horizontal	 |   1  |  2  |
- *			 --------------
- *
- *
- *			 --------
- *	vertical	 |   1	|
- *			 --------
- *      		 |   2  |
- *			 --------
- *
- *      or the first member of each pair may be implicitly supplied.
- *	In that case, the values used will be 0, 1, 2 ...
- *
- * Pairs themselves can be read off either row-wise or column-wise as above.
- *
- */
-
-enum graph_pair_orientation 
-{
-  graph_hz = 0,
-  graph_vt = 1,
-  graph_implicit = 2,
-  graph_num_pair_orientations = 3
-};
 
 extern int graph_ornt_row_magic [graph_num_pair_orientations];
 extern int graph_ornt_col_magic [graph_num_pair_orientations];
-
-#define PAIR_ORDER(ORDER,ORNT)  \
-  (((ORDER) * graph_num_pair_orientations) + ORNT)
-
-#define ORDER_OF_PAIRS(GPO) ((GPO) / graph_num_pair_orientations)
-
-enum graph_pair_ordering 
-{
-  graph_rows_hz = PAIR_ORDER(graph_rows, graph_hz),
-  graph_rows_vt = PAIR_ORDER(graph_rows, graph_vt),
-  graph_rows_implicit = PAIR_ORDER(graph_rows, graph_implicit),
-  graph_cols_hz = PAIR_ORDER(graph_cols, graph_hz),
-  graph_cols_vt = PAIR_ORDER(graph_cols, graph_vt),
-  graph_cols_implicit = PAIR_ORDER(graph_cols, graph_implicit),
-  graph_num_pair_orders = graph_cols_implicit + 1
-};
 
 extern char *pair_order_name [graph_num_pair_orders];
 
@@ -144,5 +73,35 @@ int graph_get_axis_auto(int axis);
 
 double graph_get_axis_lo(int axis);
 double graph_get_axis_hi(int axis);
+void graph_set_linetooffscreen(int set);
+int graph_get_linetooffscreen(void);
 
+typedef void (*plotter) (void);
+
+typedef struct oleo_graph {
+	plotter	plot_fn;
+	struct line graph_axis_title [graph_num_axis];	/* `set label %s' for each axis.  */
+	int graph_logness [graph_num_axis];		/* set logarithmic */
+/* Arguments to `set range [%s:%s]' */
+	struct line graph_rng_lo [graph_num_axis];
+	struct line graph_rng_hi [graph_num_axis];
+/* The ranges (if any) of the symbolic names
+ * for integer coordinates starting at 0.
+ * If none, these will have lr == NON_ROW.
+ */
+	struct rng graph_axis_symbols [graph_num_axis];
+	enum graph_ordering graph_axis_ordering [graph_num_axis];
+/* Names to print along the axes */
+	struct rng graph_axis_labels [graph_num_axis];
+	enum graph_pair_ordering graph_axis_label_order [graph_num_axis];
+/* plot .... with %s */
+	struct line graph_style [NUM_DATASETS];
+	struct line graph_title [NUM_DATASETS];
+	struct rng graph_data [NUM_DATASETS];
+	enum graph_pair_ordering graph_data_order [graph_num_axis];
+
+/* Numeric values for axis ranges */
+	double	graph_axis_lo[graph_num_axis],
+		graph_axis_hi[graph_num_axis];
+} oleo_graph;
 #endif  /* GRAPHH */

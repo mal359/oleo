@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.h,v 1.11 1999/12/19 16:42:42 danny Exp $
+ *  $Id: io-motif.h,v 1.12 2000/03/03 07:52:40 danny Exp $
  *
  *  This file is part of GnuSheet, a free spreadsheet.
  *
@@ -67,7 +67,7 @@ struct MotifGlobalType {
 	int	input_buf_allocated, chars_buffered;
 	char	fileformat[10], pattern[13];
 	int	fmt, havea0;
-	Boolean	**selectedcells, newcall;
+	Boolean	**selectedcells, newcall, needrecalculate;
 };
 
 #define	app			Global->MotifGlobal->app_c

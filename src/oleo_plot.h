@@ -1,6 +1,5 @@
-
 /*
-	$Id: oleo_plot.h,v 1.5 1999/08/31 08:44:58 danny Exp $
+	$Id: oleo_plot.h,v 1.6 2000/03/03 07:52:40 danny Exp $
 
 	Copyright (C) 1998-1999 Free Software Foundation, Inc.
 
@@ -21,6 +20,9 @@
 
 #ifndef _OLEO_PLOT_H_
 #define _OLEO_PLOT_H_
+
+#include "line.h"
+
 /*
  * The public functions in plot.c should all have the same signature,
  * as indicated in the typedef PuFunction.
@@ -41,18 +43,38 @@ void PuXYChart(char *plotter, FILE *outfile);
 void PlotInit(void);
 
 struct PlotGlobalType {
-	double	XYxMin, XYxMax, XYyMin, XYyMax;
-	int	XYxAuto, XYyAuto, LineToOffscreen;
-	int	img_width, img_height;
+	double		XYMin[graph_num_axis], XYMax[graph_num_axis];
+	int		XYAuto[graph_num_axis];
+	int		LineToOffscreen;
+	int		img_width, img_height;
+	struct line	graph_axis_title[graph_num_axis];
+	struct line	graph_rng_lo [graph_num_axis];
+	struct line	graph_rng_hi [graph_num_axis];
+	int		graph_logness [graph_num_axis]; /* set logarithmic */
+	/* The ranges (if any) of the symbolic names
+	 * for integer coordinates starting at 0.
+	 * If none, these will have lr == NON_ROW.
+	 */
+	struct rng graph_axis_symbols [graph_num_axis];
+	enum graph_ordering graph_axis_ordering [graph_num_axis];
+
+	/* Names to print along the axes */
+	struct rng	graph_axis_labels [graph_num_axis];
+	enum graph_pair_ordering	graph_axis_label_order [graph_num_axis];
+
+	/* plot .... with %s */
+	struct line graph_style [NUM_DATASETS];
+	struct line graph_title [NUM_DATASETS];
+	struct rng graph_data [NUM_DATASETS];
+	enum graph_pair_ordering graph_data_order [graph_num_axis];
 };
 
-#define	XYxMin			Global->PlotGlobal->XYxMin
-#define	XYxMax			Global->PlotGlobal->XYxMax
-#define	XYyMin			Global->PlotGlobal->XYyMin
-#define	XYyMax			Global->PlotGlobal->XYyMax
-#define	XYxAuto			Global->PlotGlobal->XYxAuto
-#define	XYyAuto			Global->PlotGlobal->XYyAuto
-#define	LineToOffscreen		Global->PlotGlobal->LineToOffscreen
+#define	XYxMin			Global->PlotGlobal->XYMin[0]
+#define	XYxMax			Global->PlotGlobal->XYMax[0]
+#define	XYyMin			Global->PlotGlobal->XYMin[1]
+#define	XYyMax			Global->PlotGlobal->XYMax[1]
+#define	XYxAuto			Global->PlotGlobal->XYAuto[0]
+#define	XYyAuto			Global->PlotGlobal->XYAuto[1]
 
 /* Defaults */
 #define	PLOT_WINDOW_WIDTH	600

@@ -1,5 +1,5 @@
 /*
- *  $Id: mysql.c,v 1.8 2000/02/22 23:29:33 danny Exp $
+ *  $Id: mysql.c,v 1.9 2000/03/03 07:52:40 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,9 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: mysql.c,v 1.8 2000/02/22 23:29:33 danny Exp $";
-
-#ifndef	TEST
+static char rcsid[] = "$Id: mysql.c,v 1.9 2000/03/03 07:52:40 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -122,21 +120,21 @@ do_mysql_query(struct value *p)
 
 	if (mysql_connect(&db, Global->DatabaseGlobal->host, Global->DatabaseGlobal->user, "")
 			== NULL) {
-		fprintf(stderr, "MySQL error '%s'\n", mysql_error(&db));
+		io_error_msg("MySQL error '%s'\n", mysql_error(&db));
 		return;		/* FIX ME */
 	}
 
 	r = mysql_select_db(&db, Global->DatabaseGlobal->name);
 
 	if (r != 0) {
-		fprintf(stderr, "MySQL error '%s'\n", mysql_error(&db));
+		io_error_msg("MySQL error '%s'\n", mysql_error(&db));
 		return;		/* FIX ME */
 	}
 
 	r = mysql_query(&db, sql);
 
 	if (r != 0) {
-		fprintf(stderr, "MySQL error '%s'\n", mysql_error(&db));
+		io_error_msg("MySQL error '%s'\n", mysql_error(&db));
 		return;		/* FIX ME */
 	}
 
@@ -320,107 +318,6 @@ MySQLRead(void)
 }
 #endif	/* HAVE_LIBMYSQLCLIENT */
 
-#else	/* TEST */
-/*
- * This is a test program
- */
-#include <stdio.h>
-#include <stdlib.h>
-#include <mysql/mysql.h>
-
-main(int argc, char argv[])
-{
-	MYSQL		db;
-	MYSQL_RES	*res;
-	MYSQL_ROW	*row;
-	MYSQL_FIELD	*field;
-	int		r, i, j;
-
-	if (mysql_connect(&db, "localhost", "danny", "") == NULL) {
-		fprintf(stderr, "MySQL error '%s'\n", mysql_error(&db));
-		exit(1);
-	}
-
-	res = mysql_list_dbs(&db, "*");
-
-	if (res == NULL) {
-		fprintf(stderr, "MySQL error '%s'\n", mysql_error(&db));
-		exit(1);
-	}
-	fprintf(stderr, "Results : %d rows, %d fields\n",
-		mysql_num_rows(res), mysql_num_fields(res));
-
-	mysql_free_result(res);
-
-	r = mysql_select_db(&db, "test");
-
-	if (r != 0) {
-		fprintf(stderr, "MySQL error '%s'\n", mysql_error(&db));
-		exit(1);
-	}
-
-	r = mysql_query(&db, "select * from koers");
-
-	if (r != 0) {
-		fprintf(stderr, "MySQL error '%s'\n", mysql_error(&db));
-		exit(1);
-	}
-
-	res = mysql_store_result(&db);
-
-	fprintf(stderr, "Results : %d rows, %d fields\n",
-		mysql_num_rows(res), mysql_num_fields(res));
-
-
-	for (j=0; j<mysql_num_fields(res); j++) {
-		field = mysql_fetch_field(res);
-
-		/* This prints all the field properties */
-		fprintf(stderr, "Field %d is %s, %s, %s, type %d, len %d, %d, %d, %d\n",
-			j, field->name, field->table,
-			/* default */	field->def ? field->def : "(no default)",
-			(int) field->type,
-			field->length, field->max_length, field->flags, field->decimals);
-	}
-
-#if 0
-enum enum_field_types {
-	FIELD_TYPE_DECIMAL,
-	FIELD_TYPE_CHAR,
-	FIELD_TYPE_SHORT,
-	FIELD_TYPE_LONG,
-	FIELD_TYPE_FLOAT,
-	FIELD_TYPE_DOUBLE,
-	FIELD_TYPE_NULL,
-	FIELD_TYPE_TIMESTAMP,
-	FIELD_TYPE_LONGLONG,
-	FIELD_TYPE_INT24,
-	FIELD_TYPE_DATE,
-	FIELD_TYPE_TIME,
-	FIELD_TYPE_DATETIME,
-	FIELD_TYPE_TINY_BLOB=249,
-	FIELD_TYPE_MEDIUM_BLOB=250,
-	FIELD_TYPE_LONG_BLOB=251,
-	FIELD_TYPE_BLOB=252,
-	FIELD_TYPE_VAR_STRING=253,
-	FIELD_TYPE_STRING=254
-#endif
-
-	for (i=0; i<mysql_num_rows(res); i++) {
-		row = mysql_fetch_row(res);
-		fprintf(stderr, "---> ");
-		for (j=0; j<mysql_num_fields(res); j++) {
-			fprintf(stderr, "%s\t", row[j]);
-		}
-		fprintf(stderr, "\n");
-	}
-
-	mysql_free_result(res);
-
-	mysql_close(&db);
-}
-#endif	/* TEST */
-
 /*
  * The functions below need to exist even if we don't have MySQL
  */
@@ -452,6 +349,38 @@ void DatabaseSetUser(const char *user)
 	if (Global->DatabaseGlobal->user)
 		free(Global->DatabaseGlobal->user);
 	Global->DatabaseGlobal->user = strdup(user);
+}
+
+int
+DatabaseInitialised(void)
+{
+	if (Global->DatabaseGlobal)
+		return 1;
+	return 0;
+}
+
+char *
+DatabaseGetName(void)
+{
+	if (Global->DatabaseGlobal)
+		return Global->DatabaseGlobal->name;
+	return NULL;
+}
+
+char *
+DatabaseGetHost(void)
+{
+	if (Global->DatabaseGlobal)
+		return Global->DatabaseGlobal->host;
+	return NULL;
+}
+
+char *
+DatabaseGetUser(void)
+{
+	if (Global->DatabaseGlobal)
+		return Global->DatabaseGlobal->user;
+	return NULL;
 }
 
 #ifndef	HAVE_LIBMYSQLCLIENT

@@ -46,6 +46,8 @@
 
 #include "graph.h"
 
+#include "oleosql.h"
+
 /* These functions read and write OLEO style files. */
 
 void
@@ -100,8 +102,7 @@ oleo_read_file (fp, ismerge)
 	  break;
 	case '%':		/* Font or pixel size data. */
 	  ptr++;
-	  switch (*ptr)
-	    {
+	  switch (*ptr) {
 	    case 'F':		/* %F font-name */
 	      if (fnt_map_size == fnt_map_alloc)
 		{
@@ -134,7 +135,7 @@ oleo_read_file (fp, ismerge)
 		}
 		break;
 	      }
-	    default:
+	    default:		/* % with something invalid */
 	      goto bad_field;
 	    }
 	  break;
@@ -147,8 +148,7 @@ oleo_read_file (fp, ismerge)
 	      if (*ptr != ';')
 		goto bad_field;
 	      ptr++;
-	      switch (*ptr++)
-		{
+	      switch (*ptr++) {
 		  int clo, chi, cwid;
 		case 'C':	/* Column from rows 1 to 255 */
 		  czcol = astol (&ptr);
@@ -571,6 +571,15 @@ oleo_read_file (fp, ismerge)
 	  case 'a':	/* Automatic axis setting : Gax0 or Gax1 */
 	    graph_set_axis_auto(cbuf[2] - '0', cbuf[3] == '1');
 	    break;
+	  case 'o':	/* Whether to draw line to offscreen data points */
+	    graph_set_linetooffscreen(cbuf[2] == '1');
+	    break;
+	  case 'r':	/* Axis range : GrxlVALUE , l = 0 for low, 1 for high */
+	    if (cbuf[3] == '0')
+		graph_set_axis_lo('x' + cbuf[2] - '0', &cbuf[4]);
+	    else if (cbuf[3] == '1')
+		graph_set_axis_hi('x' + cbuf[2] - '0', &cbuf[4]);
+	    break;
 	  case 'L':	/* Axis logness GLx0 or GLx1 */
 	    graph_set_logness(cbuf[2], 1, cbuf[3] == '1');
 	    break;
@@ -592,6 +601,22 @@ oleo_read_file (fp, ismerge)
 	    fprintf(stderr, "Graph: invalid line '%s'\n", cbuf);
 	  }
 	  break;
+	case 'D':	/* Database Access */
+		ptr++;
+		switch (*ptr) {
+		case 'u':
+			DatabaseSetUser(ptr+1);
+			break;
+		case 'h':
+			DatabaseSetHost(ptr+1);
+			break;
+		case 'n':
+			DatabaseSetName(ptr+1);
+			break;
+		default:
+			io_error_msg("Line %d - unknown code %s\n", lineno, cbuf);
+		}
+		break;
 	default:
 	bad_field:
 	  Global->a0 = old_a0;
@@ -600,7 +625,7 @@ oleo_read_file (fp, ismerge)
 	  io_recenter_all_win ();
 	  io_error_msg ("Line %d: Unknown OLEO line \"%s\"", lineno, cbuf);
 	  return;
-	}
+	}	/* End of switch */
     }
   if (!feof (fp))
     {
@@ -763,7 +788,7 @@ oleo_write_file (fp, rng)
   /* All versions of the oleo file format should have a 
    * version cookie on the second line.
    */
-  (void) fprintf (fp, "# format 2.0 (requires Oleo 1.6.14 or higher)\n");
+  (void) fprintf (fp, "# format 2.1 (requires Oleo 1.99.9 or higher)\n");
 
   /* If no range given, write the entire file */
   if (!rng)
@@ -992,9 +1017,25 @@ oleo_write_file (fp, rng)
 		fprintf(fp, "Gt%c%s\n", i + '0', graph_get_data_title(i));
   }
 
+  /* Axis range : GrxlVALUE , l = 0 for low, 1 for high */
+  for (i=0; i< 2; i++) {
+	fprintf(fp, "Gr%c0%f\n", '0' + i, graph_get_axis_lo(i));
+	fprintf(fp, "Gr%c1%f\n", '0' + i, graph_get_axis_hi(i));
+  }
+
   /* Automatic axis setting : Gax0 or Gax1 */
-  fprintf(fp, "Ga0%c\n", '0' + graph_get_axis_auto(0));	/* X axis */
-  fprintf(fp, "Ga1%c\n", '0' + graph_get_axis_auto(1));	/* Y axis */
+  fprintf(fp, "Ga0%c\n", graph_get_axis_auto(0) ? '1' : '0');	/* X axis */
+  fprintf(fp, "Ga1%c\n", graph_get_axis_auto(1) ? '1' : '0');	/* Y axis */
+
+  /* Draw line to offscreen data points */
+  fprintf(fp, "Go%c\n", graph_get_linetooffscreen() ? '1' : '0');
+
+  /* Database stuff */
+  if (DatabaseInitialised()) {
+	fprintf(fp, "Dn%s\n", DatabaseGetName() ? DatabaseGetName() : "");
+	fprintf(fp, "Dh%s\n", DatabaseGetHost() ? DatabaseGetHost() : "");
+	fprintf(fp, "Du%s\n", DatabaseGetUser() ? DatabaseGetUser() : "");
+  }
 
   /* End of writing */
   (void) fprintf (fp, "E\n");

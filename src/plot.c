@@ -45,13 +45,13 @@ PlotInit(void)
 		Global->PlotGlobal = (struct PlotGlobalType *)XtMalloc(sizeof(struct PlotGlobalType));
 		memset(Global->PlotGlobal, 0, sizeof(struct PlotGlobalType));
 
-		/*
-		 * These need to be put into the graph system
-		 * by using graph_set_*() API's.
-		 */
-		XYxMin = 0.0; XYxMax = 100.0; XYyMin = 0.0; XYyMax = 100.0;
-		XYxAuto = 1; XYyAuto = 1;
-		LineToOffscreen = 0;
+		graph_set_axis_lo('x', "0.0");
+		graph_set_axis_hi('x', "100.0");
+		graph_set_axis_lo('y', "0.0");
+		graph_set_axis_hi('y', "100.0");
+		graph_set_axis_auto(0, 1);	/* X auto */
+		graph_set_axis_auto(1, 1);	/* Y auto */
+		graph_set_linetooffscreen(0);
 
 		Global->PlotGlobal->img_width = PLOT_WINDOW_WIDTH;
 		Global->PlotGlobal->img_height = PLOT_WINDOW_HEIGHT;
@@ -333,16 +333,16 @@ PuXYChart(char *plotter, FILE *outfile)
 		xes[i++] = float_cell(cp);
 	}
 
-	if (XYxAuto) {
+	if (graph_get_axis_auto(0)) {
 		delta = xmax - xmin;
 		xmin -= delta * 0.1;
 		xmax += delta * 0.1;
 	} else {
-		xmin = XYxMin;	/* FIX ME */
-		xmax = XYxMax;
+		xmin = graph_get_axis_lo(0);
+		xmax = graph_get_axis_lo(1);
 	}
 
-	if (XYyAuto) {
+	if (graph_get_axis_auto(1)) {
 	    for (r = 1; r < NUM_DATASETS; r++) {
 		rngx = graph_get_data(r);
 
@@ -440,7 +440,7 @@ PuXYChart(char *plotter, FILE *outfile)
 			sp_plot_point_simple(mg, 0, oldx, oldy);
 			sp_plot_point_simple(mg, 1, x, y);
 
-			if (LineToOffscreen) {	/* Always draw */
+			if (Global->PlotGlobal->LineToOffscreen) {	/* Always draw */
 //				pl_fline_r(handle, x1, y1, x2, y2);
 //				pl_fmove_r(handle, x2, y2);
 			} else {
