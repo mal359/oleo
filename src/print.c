@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.18 1999/10/15 23:52:34 danny Exp $
+ * $Id: print.c,v 1.19 1999/10/23 13:40:07 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +55,7 @@
 #include "io-utils.h"
 
 #include "print.h"
+#include "afm.h"
 
 /*
  * Add an include line for new printer types here
@@ -311,6 +312,7 @@ print_region_cmd (struct rng *print, FILE *fp)
 	/* Set default font */
 	Global->CurrentPrintDriver->font(default_font_family, default_font_slant,
 		default_font_size, fp);
+	AfmSetFont(default_font_family, default_font_slant, default_font_size);
 
 	/* Adapted from txt_print_region */
 	npages = 1;
@@ -361,11 +363,15 @@ print_region_cmd (struct rng *print, FILE *fp)
 				default_font_slant,			/* FIX ME */
 				current_size,
 				fp);
+			AfmSetFont(cp->cell_font->names->ps_name,
+				default_font_slant,
+				current_size);
 		    } else {
 			Global->CurrentPrintDriver->font(default_font_family,
 				default_font_slant,
 				default_font_size,
 				fp);
+			AfmSetFont(default_font_family, default_font_slant, default_font_size);
 			current_size = default_font_size;
 		    }
 

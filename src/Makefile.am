@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.41 1999/10/12 00:55:11 jbailey Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.42 1999/10/23 13:40:06 danny Exp $
 #
 localedir = $(prefix)/share/locale
 
@@ -45,7 +45,7 @@ oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
  graph.c plot.c \
  forminfo.c posixtm.y date.c xrdb.c \
  $(GUI) $(XBSRC) $(MYSQL) \
- print.c postscript.c pcl.c epson.c prtext.c \
+ print.c postscript.c pcl.c epson.c prtext.c afm.c \
  mdi.c
 
 if UseMotif
@@ -88,7 +88,7 @@ noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  sc.h stub.h stubs.h sylk.h \
  sysdef.h utils.h window.h list.h ir.h sort.h \
  io-motif.h appres.h \
- print.h pcl.h postscript.h epson.h prtext.h \
+ print.h pcl.h postscript.h epson.h prtext.h afm.h \
  mdi.h
 
 EXTRA_DIST =	gpl.sed

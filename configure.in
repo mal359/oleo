@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.67 1999/10/15 23:52:17 danny Exp $
+dnl $Id: configure.in,v 1.68 1999/10/23 13:40:04 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -307,4 +307,4 @@ AC_SUBST(link_xmhtml)
 AC_SUBST(include_sciplot)
 AC_SUBST(link_sciplot)
 
-AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile m4/Makefile po/Makefile.in Xresources/Makefile examples/Makefile oleo.spec],[sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])
+AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile m4/Makefile po/Makefile.in Xresources/Makefile examples/Makefile oleo.spec afm/Makefile],[sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])

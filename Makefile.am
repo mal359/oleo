@@ -3,14 +3,14 @@
 #
 # Process this file with automake to produce Makefile.in
 #
-# $Header: /home/matt/cvs/oleo/oleo/Makefile.am,v 1.31 1999/10/15 23:52:17 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/Makefile.am,v 1.32 1999/10/23 13:40:04 danny Exp $
 #
 AUTOMAKE_OPTIONS = gnu 1.4 readme-alpha
 ACLOCAL_AMFLAGS = -I m4
 
 D=	`date +%G%m%d.%H%M%S`
 
-SUBDIRS = doc lib intl src m4 po Xresources examples
+SUBDIRS = doc lib intl src m4 po Xresources examples afm
 
 # Remove this file here (it is created via configure), not from within intl.
 DISTCLEANFILES = intl/libintl.h

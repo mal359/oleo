@@ -1,4 +1,11 @@
-$Id: ChangeLog,v 1.110 1999/10/17 07:41:56 danny Exp $
+$Id: ChangeLog,v 1.111 1999/10/23 13:40:04 danny Exp $
+
+	* Right align requires knowledge of the font metrics, unless
+	  we'd use PostScript magic. The printer driver shouldn't
+	  be doing this if we want to print on non-PostScript,
+	  so add files src/afm.c and src/afm.h to add a module
+	  that reads AFM (Adobe Font Metric) files.
+	* Add an afm/ directory with a couple of files.
 
 Sun 17 Oct 09:38:29 CEST 1999
 	* io-x11.c Some copy/pasted i18n code from the LessTif
