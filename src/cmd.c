@@ -1,5 +1,5 @@
 /*
- * $Id: cmd.c,v 1.22 2001/02/04 15:54:20 danny Exp $
+ * $Id: cmd.c,v 1.23 2001/02/05 00:12:40 pw Exp $
  *
  * Copyright © 1993, 1999, 2000 Free Software Foundation, Inc.
  *
@@ -91,9 +91,9 @@ SELECT_TYPE write_pending_fd_set;
 /* Hooks for asynchronos i/o
  */
 
-struct select_hook file_read_hooks[SELECT_SET_SIZE] = {0};
-struct select_hook file_exception_hooks[SELECT_SET_SIZE] = {0};
-struct select_hook file_write_hooks[SELECT_SET_SIZE] = {0};
+struct select_hook file_read_hooks[SELECT_SET_SIZE] = {{0}};
+struct select_hook file_exception_hooks[SELECT_SET_SIZE] = {{0}};
+struct select_hook file_write_hooks[SELECT_SET_SIZE] = {{0}};
 
 int ioerror = 0;
 
