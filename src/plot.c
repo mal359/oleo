@@ -1,5 +1,5 @@
 /*
- * $Id: plot.c,v 1.26 2000/11/22 19:33:01 danny Exp $
+ * $Id: plot.c,v 1.27 2001/02/05 00:15:15 pw Exp $
  *
  * Copyright © 1998-2000 Free Software Foundation, Inc.
  * 
@@ -19,7 +19,7 @@
  */
 
 /*
- * $Id: plot.c,v 1.26 2000/11/22 19:33:01 danny Exp $
+ * $Id: plot.c,v 1.27 2001/02/05 00:15:15 pw Exp $
  *
  * This file contains the code to draw plots from the Oleo data
  * layered on top of the libsciplot functions.
@@ -80,18 +80,6 @@ struct PlotutilsDevices PlotutilsDeviceArray[] = {
 };
 
 #include <stdarg.h>
-
-static void OleoLog(char *fmt, ...)
-{
-	va_list	ap;
-	FILE	*log = fopen("/tmp/oleolog", "a");
-	if (log) {
-		va_start(ap, fmt);
-		vfprintf(log, fmt, ap);
-		va_end(ap);
-		fclose(log);
-	}
-}
 
 typedef void (*sh) (int);
 sh	oldsig;
