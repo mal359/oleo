@@ -18,7 +18,7 @@ noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  input.h io-abstract.h io-curses.h io-edit.h io-generic.h io-term.h \
  io-utils.h io-x11.h ir.h key.h line.h lists.h node.h oleofile.h \
  panic.h parse.h print.h proto.h ref.h regions.h sc.h stub.h stubs.h sylk.h \
- sysdef.h utils.h window.h list.h ir.h 
+ sysdef.h utils.h window.h list.h ir.h io-gtk.h
 
 # oleo_LDADD = $(X_PRE_LIBS) $(X_LIBS) -lX11
 #oleo_LDADD = $(X_PRE_LIBS) $(X_LIBS)
