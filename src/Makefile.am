@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.25 1999/02/10 02:03:04 bennett Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.26 1999/03/04 22:55:52 danny Exp $
 #
 localedir = $(prefix)/share/locale
 
@@ -8,7 +8,7 @@ AUTOMAKE_OPTIONS = ../lib/ansi2knr dejagnu
 bin_PROGRAMS = oleo
 
 if UseMotif
-GUI = io-motif.c appres.c fallback.c
+GUI = io-motif.c appres.c fallback.c oleo_icon.xpm
 else
 GUI =
 endif
