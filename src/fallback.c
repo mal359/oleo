@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.7 1999/03/09 21:29:36 danny Exp $
+ *  $Id: fallback.c,v 1.8 1999/03/16 22:57:23 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -94,12 +94,12 @@ char *fallback[] = {
 	"*listvariables.labelString:	List Variables",
 	"*showoptions.labelString:	Show Options",
 /* Graph */
-	"*graphcascade.labelString:	Graph",
-	"*define.labelString:		Define Graph",
-	"*show.labelString:		Show Graph",
-	"*graphmenu.print.labelString:	Print Graph",
+	"*graphcascade.labelString:		Graph",
+	"*graphmenu.define.labelString:		Define Graph",
+	"*graphmenu.show.labelString:		Show SciPlot Graph",
+	"*graphmenu.print.labelString:		Print SciPlot Graph",
 	"*graphmenu.pulabel.labelString:	GNU Plotutils",
-	"*graphmenu.pushowpie.labelString:		Show Pie Chart",
+	"*graphmenu.pushowpie.labelString:	Show Pie Chart",
 	"*graphmenu.pushowbar.labelString:	Show Bar Chart",
 	"*graphmenu.pushowxy.labelString:	Show XY Chart",
 	"*graphmenu.puprintpie.labelString:	Print Pie Chart",
@@ -259,6 +259,9 @@ char *fallback[] = {
 				"PCL,pcl,pcl;"
 				"HP-GL,hpgl,hpgl;"
 				"Tektronix,tek,tek",
+/* Graph Print Dialog */
+	"*printDialog_popup.title:		Select a file to print to",
+	"*puselectfile_popup.title:		Select a file to print to",
 /* End */
 	NULL
 };

@@ -26,8 +26,7 @@ Features
 	* Charts generated from spreadsheet data
 	    (interface is not yet stable, but the capability is in there)
 	* Sizeable library of expressions
-	    (these have not been extensively tested, and do not include
-	    statistical regressions)
+	    (doesn't currently include statistical regressions)
 	* File format conversions
 	    (support of this is still pretty primitive; don't plan
 	    on importing E*cel files anytime soon)
@@ -97,6 +96,6 @@ Enter key :) are missing.  To compile with Motif support, you will need the
 following libraries on your system:
 
 	* Motif or LessTif, Xlt (from LessTif) and Xbae 4.6.2
-	* SciPlot (for charts, if Xlt not used)
+	* SciPlot (optional, for charts, if Xlt not used)
 	* GNU plotutils (optional, for charts)
 	* XmHTML (optional, for still-incomplete online documentation)

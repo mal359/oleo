@@ -1,5 +1,7 @@
 TODO's:
 
+* Get our stuff together for an upcoming 2.0 release of Oleo.
+
 * Add "date" and "time" formats, allow them to be input and allow
   for arithmetic with them.
 	(done) Clean up cell.h's junk.

@@ -1,4 +1,14 @@
 
+Tue 16 Mar 23:56:50 1999, Danny Backx
+	* Add stuff to the top Makefile to automatically put the
+	  relevant files on the right *.gnu.org systems.
+	* src/plot.h has a name conflict with the general header file
+	  for GNU plotutils which is also plot.h, renamed it to
+	  src/oleo_plot.h . Thank you Stephan Hegel for reporting a
+	  problem that uncovered this.
+	* Next release will be named Oleo 1.99.1 to indicate we're moving
+	  towards a 2.0 release of Oleo.
+
 Tue 16 Mar 22:20:43 1999, Danny Backx
 	* Default file format dialog now gets initial values right.
 	* One more bug removed from command line processing. Now

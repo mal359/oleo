@@ -1,3 +1,20 @@
+===== Oleo 1.99.1 =====
+
+This release is numbered 1.99.1 to indicate that we're working towards a
+2.0 release of Oleo.
+
+Stuff that has been added since 1.6 includes :
+- build support by GNU automake and GNU autoconf
+- bug fixes
+- source cleanup
+- Motif (LessTif in a free world) graphical user interface
+- GNU plotutils
+- internationalisation support (not many translations included though)
+- filter options allow Oleo to work as a traditional Unix filter program,
+  reading from standard input and writing to standard output.
+- recognise file name extensions at startup ("oleo q110399.csv" works)
+
+
 ===== Oleo 1.6.13 =====
 
 Oleo 1.6.13 (dated 28 december 1998) has progressed in having a more and more
@@ -8,7 +25,7 @@ exercise are invited to join.
 
 Please note that Xbae widgets can be found at
   ftp://ftp.x.org/contrib/widgets/motif/Xbae-4.6.2.tar.gz
-Its home page seems to have vanished into some Cyber-grave. Pity.
+in addition to its home page http://www.xbae.syd.net.au/ .
 
 ===== Oleo 1.6.7 =====
 

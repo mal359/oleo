@@ -2,7 +2,7 @@
 #define _OLEO_PLOT_H_
 
 /*
-	$Id: oleo_plot.h,v 1.1 1999/03/16 22:56:02 danny Exp $
+	$Id: oleo_plot.h,v 1.2 1999/03/16 22:57:25 danny Exp $
 
 	Copyright (C) 1998-1999 Free Software Foundation, Inc.
 

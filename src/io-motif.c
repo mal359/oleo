@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.32 1999/03/16 21:21:43 danny Exp $
+ *  $Id: io-motif.c,v 1.33 1999/03/16 22:57:24 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.32 1999/03/16 21:21:43 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.33 1999/03/16 22:57:24 danny Exp $";
 
 #include "config.h"
 
@@ -65,8 +65,9 @@ static char rcsid[] = "$Id: io-motif.c,v 1.32 1999/03/16 21:21:43 danny Exp $";
 #endif
 
 #ifdef	HAVE_LIBPLOT
-#include "plot.h"
+#include <plot.h>
 #endif
+#include "oleo_plot.h"
 
 #include "global.h"
 #include "utils.h"
