@@ -1,7 +1,7 @@
 #define	I18N_VERBOSE
 #define	X_I18N
 /*
- * $Id: io-x11.c,v 1.27 2001/02/04 15:54:20 danny Exp $
+ * $Id: io-x11.c,v 1.28 2001/02/05 00:14:36 pw Exp $
  *
  *	Copyright © 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 	
@@ -262,7 +262,7 @@ GetXIC(Display *theDisplay)
 {
 	XIMStyles	*xim_styles;
 	XIMStyle	input_style = 0;
-	char		*p, *buf, *b, *k;
+	char		*p;
 	int		i, j, found = 0;
 #if 0
 	XVaNestedList	list;
@@ -327,7 +327,7 @@ GetXIC(Display *theDisplay)
 	/* Match input styles between X server + input method and ourselves */
 	for (i = 0, found = False; styles[i] && !found; i++) {
 #ifdef	I18N_VERBOSE
-		fprintf(stderr, "Trying %s (0x%X)\n", styles[i], style_bits[i]);
+		fprintf(stderr, "Trying %s (0x%lx)\n", styles[i], style_bits[i]);
 #endif
 
 		if (strstr(preeditTypes, styles[i]) == 0) {
@@ -2408,7 +2408,7 @@ xio_open_display (void)
 	    char string[10];
 	    KeyCode *tmpptr;
 	    int *modptr;
-	    int idx, i, n ;
+	    int i, n;
 
 	    /* Build list of appropriate KeyCodes */
 	    n = 0;
