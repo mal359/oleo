@@ -1860,6 +1860,11 @@ execute_command (char *str)
   int count = 1;
   ioerror = 0;
 
+#if 0
+	/* Danny */
+  fprintf(stderr, "execute_command(%s)\n", str);
+#endif
+
   /* Chop off the first word. */
   while (isspace (*str))
     ++str;

@@ -170,6 +170,7 @@ get_x11_args (int * argc_p, char ** argv)
   if (!Global->io_x11_display_name)
     return;
   
+  setlocale(LC_ALL, "");	/* i18n */
   theDisplay = XOpenDisplay (Global->io_x11_display_name);
   if (!theDisplay)
     panic ("Can not connect to X.  Check your DISPLAY evironment variable.");

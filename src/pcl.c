@@ -1,5 +1,5 @@
 /*
- *  $Id: pcl.c,v 1.11 1999/12/01 21:12:43 danny Exp $
+ *  $Id: pcl.c,v 1.12 1999/12/19 16:42:43 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: pcl.c,v 1.11 1999/12/01 21:12:43 danny Exp $";
+static char rcsid[] = "$Id: pcl.c,v 1.12 1999/12/19 16:42:43 danny Exp $";
 
 #include <stdio.h>
 
@@ -185,6 +185,8 @@ void PCLFont(char *family, char *slant, int size, FILE *fp)
 	if (found == 0)
 		fprintf(fp, "%s", TypeFaces[0].code);
 
+#if 0
+	/* Don't send pitch */
 	/* Pitch (number of characters per inch) */
 #ifndef	TEST
 	fprintf(fp, "\033(s%dH", AfmPitch());
@@ -197,6 +199,7 @@ void PCLFont(char *family, char *slant, int size, FILE *fp)
 	fprintf(fp, "\033(s%dH", i);
 }
 #endif
+#endif
 
 	/* Primary size */
 	fprintf(fp, "\033(s%dV", size);
@@ -205,61 +208,27 @@ void PCLFont(char *family, char *slant, int size, FILE *fp)
 	if (slant == NULL || stricmp(slant, "normal") == 0
 			|| stricmp(slant, "medium") == 0
 			|| strlen(slant) ==0) {
-		fputc('\033', fp);
-		fputc('(', fp);
-		fputc('s', fp);
-		fputc('0', fp);
-		fputc('S', fp);
-		fputc('\033', fp);
-		fputc('(', fp);
-		fputc('s', fp);
-		fputc('0', fp);
-		fputc('B', fp);
+		fprintf(fp, "\033(s0S\033(s0B");
 	} else if (strstr(slant, "bold") != NULL) {	/* Bold */
 		if (strstr(slant, "italic") != NULL) {	/* Bold-Italic */
-			fputc('\033', fp);
-			fputc('(', fp);
-			fputc('s', fp);
-			fputc('1', fp);
-			fputc('S', fp);
+			fprintf(fp, "\033(s1S");
 		} else {
-			fputc('\033', fp);
-			fputc('(', fp);
-			fputc('s', fp);
-			fputc('0', fp);
-			fputc('S', fp);
+			fprintf(fp, "\033(s0S");
 		}
-			fputc('\033', fp);
-			fputc('(', fp);
-			fputc('s', fp);
-			fputc('3', fp);
-			fputc('B', fp);
+			fprintf(fp, "\033(s3B");
 	} else {	/* Not bold */
 		if (strstr(slant, "italic") != NULL) {	/* Italic */
-			fputc('\033', fp);
-			fputc('(', fp);
-			fputc('s', fp);
-			fputc('1', fp);
-			fputc('S', fp);
+			fprintf(fp, "\033(s1S");
 		} else {
-			fputc('\033', fp);
-			fputc('(', fp);
-			fputc('s', fp);
-			fputc('0', fp);
-			fputc('S', fp);
+			fprintf(fp, "\033(s0S");
 		}
-			fputc('\033', fp);
-			fputc('(', fp);
-			fputc('s', fp);
-			fputc('0', fp);
-			fputc('B', fp);
+			fprintf(fp, "\033(s0B");
 	}
 }
 
 void PCLNewLine(int ht, FILE *fp)
 {
-	fputc('\n', fp);
-	fputc('\r', fp);
+	fprintf(fp, "\n\r");
 
 	y += ht;
 }
@@ -267,12 +236,7 @@ void PCLNewLine(int ht, FILE *fp)
 void PCLPaperSize(int wid, int ht, FILE *fp)
 {
 	/* A4 */
-	fputc('\033', fp);
-	fputc('&', fp);
-	fputc('l', fp);
-	fputc('2', fp);
-	fputc('6', fp);
-	fputc('A', fp);
+	fprintf(fp, "\033&l26A");
 }
 
 void PCLSetEncoding(char *encoding)

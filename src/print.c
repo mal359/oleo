@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.26 1999/12/01 21:12:46 danny Exp $
+ * $Id: print.c,v 1.27 1999/12/19 16:42:44 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,7 +92,7 @@ float default_pshgt = 792;
 /*
  * Default font
  */
-static char	*default_font_family = "Courier",
+static char	*default_font_family = "CGTimes",
 		*default_font_slant = NULL;
 static int	default_font_size = 10;
 

@@ -1,4 +1,17 @@
-$Id: ChangeLog,v 1.120 1999/12/01 21:12:29 danny Exp $
+$Id: ChangeLog,v 1.121 1999/12/19 16:42:35 danny Exp $
+
+Sun 19 Dec 17:40:28 1999, Danny
+	* Define a function @button(label, command). Motif should
+	  create a cell widget which is a button displaying "label",
+	  when the user clicks it, it should execute "command".
+	  In a non-Motif environment, the result of @button(a,b)
+	  is still b so you can safely wrap @button around the cells
+	  containing programs.
+	-- Doesn't work yet
+	* Clean up the (Motif) user interface to MDI.
+	  The only thing left to clean up (I think) is the global
+	  quit menu item - it doesn't currently inquire about all
+	  individual open files.
 
 Wed  1 Dec 22:10:51 1999, Danny
 	* Release 1.99.8.

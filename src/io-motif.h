@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.h,v 1.10 1999/10/23 23:28:01 jbailey Exp $
+ *  $Id: io-motif.h,v 1.11 1999/12/19 16:42:42 danny Exp $
  *
  *  This file is part of GnuSheet, a free spreadsheet.
  *
@@ -29,7 +29,7 @@
 #include <X11/Intrinsic.h>
 
 extern void versionCB(Widget, XtPointer, XtPointer);
-extern void quitCB(Widget, XtPointer, XtPointer);
+extern void QuitCB(Widget, XtPointer, XtPointer);
 extern void motif_init(int *argc, char **argv);
 extern void ResetColumnWidths(void);
 extern void MotifUpdateWidth(int, int);
@@ -38,6 +38,8 @@ extern void motif_main_loop(void);
 extern void MotifSetWindowName(const char *);
 extern void MessageAppend(Boolean beep, char *fmt, ...); 
 extern void MotifGlobalInitialize(void);
+
+extern void MotifButton(int, int, char *, char *);
 
 struct MotifGlobalType {
 	XtAppContext app_c;

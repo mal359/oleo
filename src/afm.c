@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Free Software Foundation, Inc.
  *
- * $Id: afm.c,v 1.4 1999/12/01 21:12:49 danny Exp $
+ * $Id: afm.c,v 1.5 1999/12/19 16:42:44 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,9 @@
 
 #include "afm.h"
 
-#define	AFM_PATH	BUILD_PREFIX "/share/afm"
+#define	AFM_PATH	"/share/afm"
+#define	USRLOCAL_PATH	"/usr/local"
+#define	GS_PATH		"/share/ghostscript/fonts"
 
 #define	LINE_LEN	256
 
@@ -192,6 +194,54 @@ ReadAfmLine(void)
 	}
 }
 
+char *
+GSName(char *name, char *slant)
+{
+	if (slant == NULL)
+		slant = "";
+
+	if (strcmp(name, "Courier") == 0 && strcmp(slant, "") == 0)
+		return "n022003l";	/* NimbusMonL-Regu */
+	if (strcmp(name, "CGTimes") == 0 && strcmp(slant, "") == 0)
+		return "n021003l";	/* NimbusRomNo9L-Regu */
+	return NULL;
+}
+
+FILE *
+OpenAfmFile(char *name, char *slant)
+{
+	FILE	*fp;
+	char	*fn, *alias;
+
+	fn = malloc(MAXPATHLEN);
+
+	sprintf(fn, "%s/%s%s.afm", BUILD_PREFIX AFM_PATH, name, slant ? slant : "");
+	fp = fopen(fn, "r");
+	if (fp)
+		return fp;
+
+	sprintf(fn, "%s/%s%s.afm", USRLOCAL_PATH GS_PATH, name, slant ? slant : "");
+	fp = fopen(fn, "r");
+	if (fp)
+		return fp;
+
+	if ((alias = GSName(name, slant)) != NULL) {
+		sprintf(fn, "%s/%s.afm", USRLOCAL_PATH GS_PATH, alias);
+		fp = fopen(fn, "r");
+		if (fp)
+			return fp;
+	}
+
+	if (fp == 0) {
+		io_info_msg(PACKAGE ": couldn't open AFM file for %s%s\n", name, slant);
+		free(fn);
+		return;
+	}
+	free(fn);
+
+	return fp;
+}
+
 void
 AfmSetFont(char *name, char *slant, int size)
 {
@@ -226,24 +276,7 @@ AfmSetFont(char *name, char *slant, int size)
 /*
  * Start reading file.
  */
-	fn = malloc(MAXPATHLEN);
-	sprintf(fn, "%s/%s%s.afm", AFM_PATH, name, slant ? slant : "");
-
-	fp = fopen(fn, "r");
-
-	if (fp == 0) {
-#if 0
-		fprintf(stderr, PACKAGE ": couldn't open %s\n", fn);
-#endif
-		io_info_msg(PACKAGE ": couldn't open %s\n", fn);
-		free(fn);
-		return;
-	}
-#if 0
-	fprintf(stderr, PACKAGE ": opened %s\n", fn);
-#endif
-	free(fn);
-
+	fp = OpenAfmFile(name, slant);
 	line = malloc(LINE_LEN + 3);
 
 	while (fgets(line, LINE_LEN, fp) != NULL) {
@@ -273,7 +306,7 @@ AfmFontWidth(void)
 	if (! afm) {
 		/* FIX ME */
 		io_info_msg("AfmFontWidth: failed\n");
-		return 0;
+		return 8;
 	}
 	return afm->FontBBox3 * CurrentFontSize / 1000;
 }
@@ -285,7 +318,7 @@ AfmPitch(void)
 
 	if (! afm) {
 		io_info_msg("AfmPitch: failed\n");
-		return 0;
+		return 10;	/* FIX ME this is the fallback value */
 	}
 	p = 72.0 * 1000 / (afm->FontBBox3 * CurrentFontSize);
 	return p;

@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.21 1999/11/27 18:56:55 danny Exp $
+ *  $Id: fallback.c,v 1.22 1999/12/19 16:42:39 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -25,8 +25,9 @@
 
 char *fallback[] = {
 /* Global */
-	"Oleo.title:			Oleo",
-	"Oleo.geometry:			800x600",
+	"*oleo.title:			Oleo",
+	"*oleo.geometry:			800x600",
+	"*Oleo.geometry:		800x600",
 	"*tearOffModel:			XmTEAR_OFF_ENABLED",
 #if 0							/* FIX ME */
 	"oleo.rows:			65536",

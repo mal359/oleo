@@ -38,6 +38,10 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "cmd.h"
 #include "ref.h"
 
+#ifdef	HAVE_MOTIF
+#include "io-motif.h"
+#endif
+
 struct value
   {
     int type;
@@ -626,6 +630,17 @@ do_varval (struct value *p)
   }
 }
 
+static void
+do_button(struct value *p)
+{
+#ifdef	HAVE_MOTIF
+  MotifButton(cur_row, cur_col, p->String, (p+1)->String);
+#endif
+
+  p->type = TYP_STR;
+  p->String = (p+1)->String;
+}
+
 struct function cells_funs[] =
 {
   {C_FN1 | C_T, X_A1, "S", do_curcell, "curcell"},
@@ -642,6 +657,8 @@ struct function cells_funs[] =
   {C_FN3, X_A3, "RFI", do_hlookup, "hlookup"},
   {C_FN3, X_A3, "RFI", do_vlookup, "vlookup"},
   {C_FN3, X_A3, "RSI", do_vlookup_str, "vlookup_str"},
+
+  {C_FN2,	X_A2,	"SS",	do_button,	"button" },
 
   {0, 0, "", 0, 0},
 };

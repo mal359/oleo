@@ -1,5 +1,5 @@
 /*
- *  $Id: mdi.c,v 1.5 1999/10/23 23:28:07 jbailey Exp $
+ *  $Id: mdi.c,v 1.6 1999/12/19 16:42:44 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: mdi.c,v 1.5 1999/10/23 23:28:07 jbailey Exp $";
+static char rcsid[] = "$Id: mdi.c,v 1.6 1999/12/19 16:42:44 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -46,7 +46,7 @@ static char rcsid[] = "$Id: mdi.c,v 1.5 1999/10/23 23:28:07 jbailey Exp $";
 #define	True	1
 #endif
 
-static int nglobals = 0;
+static int	maxglobals = 0, nglobals = 0;
 static struct OleoGlobal	*globals = 0;
 
 #define	NGLOBALS_INC	10
@@ -65,6 +65,18 @@ void MessageAppend()
 }
 #endif
 
+void MdiError(int offset1, int offset2, void *ptr)
+{
+#if 0
+	fprintf(stderr,
+		"MdiSelectGlobal: no match for offset %d,%d ptr %p\n",
+		offset1, offset2, ptr);
+#endif
+	MessageAppend(True,
+		"MdiSelectGlobal: no match for offset %d,%d ptr %p\n",
+		offset1, offset2, ptr);
+}
+
 static void AllocateSubStructures(void)
 {
 	PlotInit();
@@ -78,10 +90,11 @@ MdiInitialize(void)
 {
 	globals = (struct OleoGlobal *)
 		calloc(NGLOBALS_INC, sizeof(struct OleoGlobal));
-	nglobals = NGLOBALS_INC;
+	maxglobals = NGLOBALS_INC;
 
 	Global = &globals[0];
 	globals[0].valid = 1;
+	nglobals++;
 
 	AllocateSubStructures();
 }
@@ -96,22 +109,23 @@ MdiOpen()
 {
 	int	i, j, found = 0;
 
-	for (i=0; i<nglobals; i++)
+	for (i=0; i<maxglobals; i++)
 		if (globals[i].valid == 0) {
 			found = 1;
 			break;
 		}
 	/* If none free, allocate more entries */
 	if (! found) {
-		i = nglobals;
-		nglobals += NGLOBALS_INC;
-		globals = realloc(globals, nglobals * sizeof(struct OleoGlobal));
-		for (j=i; j<nglobals; j++)
+		i = maxglobals;
+		maxglobals += NGLOBALS_INC;
+		globals = realloc(globals, maxglobals * sizeof(struct OleoGlobal));
+		for (j=i; j<maxglobals; j++)
 			globals[j].valid = 0;
 	}
 
 	/* Grab it */
 	globals[i].valid = 1;
+	nglobals++;
 
 	/* Start using it */
 	Global = &globals[i];
@@ -126,6 +140,21 @@ MdiOpen()
 MdiClose()
 {
 	MessageAppend(False, "Closing file '%s'", Global->FileName);
+
+	/* Indicate file closed */
+	free(Global->FileName);
+	Global->FileName = 0;
+
+	/* Release this global entry */
+	Global->valid = 0;
+	nglobals--;
+
+	/*
+	 * We've close the last open window/file, therefore the
+	 *	application must end.
+	 */
+	if (nglobals <= 0)
+		exit(0);
 }
 
 void
@@ -134,7 +163,7 @@ MdiSelectGlobal(int offset1, int offset2, void *ptr)
 	int	i;
 	char	**p, **q;
 
-	for (i=0; i < nglobals; i++)
+	for (i=0; i < maxglobals; i++)
 		if (globals[i].valid) {
 			p = (char **) (((char *)&globals[i]) + offset1);
 			q = (char **) (*p + offset2);
@@ -147,12 +176,17 @@ MdiSelectGlobal(int offset1, int offset2, void *ptr)
 				return;
 			}
 		}
-#if 0
-	fprintf(stderr,
-		"MdiSelectGlobal: no match for offset %d,%d ptr %p\n",
-		offset1, offset2, ptr);
-#endif
-	MessageAppend(True,
-		"MdiSelectGlobal: no match for offset %d,%d ptr %p\n",
-		offset1, offset2, ptr);
+
+	MdiError(offset1, offset2, ptr);
+}
+
+int
+MdiHasFile(void)
+{
+	return	Global->FileName != NULL;
+}
+
+void
+MdiQuit(void)
+{
 }

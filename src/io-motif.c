@@ -1,6 +1,6 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.54 1999/11/27 18:56:57 danny Exp $
+ *  $Id: io-motif.c,v 1.55 1999/12/19 16:42:41 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -22,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.54 1999/11/27 18:56:57 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.55 1999/12/19 16:42:41 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -2665,12 +2665,10 @@ void CreateFSD()
 	XtAddCallback(XtParent(fsd), XmNpopupCallback, DefaultFileResetCB, (XtPointer)menu);
 }
 
-void LoadCB(Widget w, XtPointer client, XtPointer call)
+void PopupLoad(void)
 {
 	Arg	al[10];
 	int	ac = 0;
-
-	MotifSelectGlobal(w);
 
 	if (fsd == NULL)
 		CreateFSD();
@@ -2684,6 +2682,13 @@ void LoadCB(Widget w, XtPointer client, XtPointer call)
 	XtManageChild(fsd);
 }
 
+void LoadCB(Widget w, XtPointer client, XtPointer call)
+{
+	MotifSelectGlobal(w);
+
+	PopupLoad();
+}
+
 void NewCB(Widget w, XtPointer client, XtPointer call)
 {
 	MotifSelectGlobal(w);
@@ -2692,14 +2697,18 @@ void NewCB(Widget w, XtPointer client, XtPointer call)
 	none(w, client, call);
 }
 
-void OpenCB(Widget w, XtPointer client, XtPointer call)
+void DestroyToplevel(Widget w, XtPointer client, XtPointer call)
 {
-	MotifSelectGlobal(w);
-
-	LoadCB(w, client, call);
+#if 0
+	fprintf(stderr, "In DestroyToplevel()\n");
+#endif
+	MotifGlobalInitialize();
+	MdiClose();
 }
 
-/* Experimental code to open a second window */
+/*
+ * MDI : Experimental code to open a second window.
+ */
 
 void OpenNewCB(Widget w, XtPointer client, XtPointer call)
 {
@@ -2713,6 +2722,12 @@ void OpenNewCB(Widget w, XtPointer client, XtPointer call)
 
 	toplevel = XtVaAppCreateShell(PACKAGE, PACKAGE,
 		topLevelShellWidgetClass, d, NULL);
+	XtAddCallback(toplevel, XtNdestroyCallback, DestroyToplevel, NULL);
+
+	/* FIX ME do we need to do this again ?? */
+	XtVaGetApplicationResources(toplevel, &AppRes,
+		resources, num_resources,
+		NULL);
 
 	/* Without this we have NULL in cwin. */
 	io_init_windows(AppRes.rows, AppRes.columns, 1, 2, 1, 1, 1, 1);
@@ -2720,17 +2735,69 @@ void OpenNewCB(Widget w, XtPointer client, XtPointer call)
 	m = GscBuildMainWindow(toplevel);
 	XtManageChild(m);
 	XtRealizeWidget(toplevel);
+
+	PopupLoad();
 }
 
-/* End experimental code to open a second window */
-
-void CloseCB(Widget w, XtPointer client, XtPointer call)
+void OpenCB(Widget w, XtPointer client, XtPointer call)
 {
 	MotifSelectGlobal(w);
 
-	MessageAppend(False, "This should close the current window\n");
+	/*
+	 * FIX ME
+	 *
+	 * Figure out when to open a new window :
+	 *	- when this window has been modified
+	 *	- when this window has an open file
+	 */
+	if (Global->modified || MdiHasFile())
+		OpenNewCB(w, client, call);
+	else
+		LoadCB(w, client, call);
+}
 
-	MdiClose();
+void ReallyCloseCB(Widget w, XtPointer client, XtPointer call)
+{
+	MotifSelectGlobal(w);
+	/*
+	 * Destroying the widget tree should take care of calling
+	 *	MdiClose(), and therefore also of closing the Global
+	 *	structure.
+	 * When MdiClose notices this is the last window, it'll also
+	 *	exit the application.
+	 */
+	XtDestroyWidget(toplevel);
+}
+
+void CloseCB(Widget w, XtPointer client, XtPointer call)
+{
+	Arg	al[3];
+	int	ac;
+	Widget	md;
+
+	MotifSelectGlobal(w);
+
+	if (Global->modified && !option_filter) {
+		XmString xms = XmStringCreateLtoR(
+			_("There are unsaved changes.\n"
+			  "Do you want to quit anyway ?"),
+			XmFONTLIST_DEFAULT_TAG);
+
+		ac = 0;
+		/* Application resource for message allow i18n */
+		XtSetArg(al[ac], XmNmessageString, xms); ac++;
+
+		md = XmCreateQuestionDialog(toplevel, "quitMB", al, ac);
+		XtAddCallback(md, XmNokCallback, ReallyCloseCB, NULL);
+		XtDestroyWidget(XmMessageBoxGetChild(md,
+			XmDIALOG_HELP_BUTTON));
+		XtManageChild(md);
+		XmStringFree(xms);
+		return;
+	}
+
+	/* No dialog - just close */
+	XtDestroyWidget(toplevel);
 }
 
 FILE *OleoOpenForWrite(const char *s)
@@ -4533,7 +4600,7 @@ GscBuildMainWindow(Widget parent)
 
 	w = XtVaCreateManagedWidget("quit", xmPushButtonGadgetClass, filemenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, quitCB, NULL);
+	XtAddCallback(w, XmNactivateCallback, QuitCB, NULL);
 
 	/*
 	 *	Edit Menu.
@@ -4898,7 +4965,6 @@ GscBuildMainWindow(Widget parent)
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, ExecuteCommandCB, NULL);
 
-
 #endif	/* HAVE_TEST */
 
 	/*
@@ -5262,17 +5328,16 @@ xio_close_display (void)
 #ifdef	VERBOSE
 	Debug(__FILE__, "xio_close_display\n");
 #endif
-	if (toplevel && XtDisplay(toplevel))
-		XCloseDisplay (XtDisplay(toplevel));
+	if (toplevel && XtDisplay(toplevel)) {
+		XtDestroyWidget(toplevel);
+	}
+
 	toplevel = NULL;
 }
 
 static void
 xio_flush (void)
 {
-#ifdef	VERBOSE
-	Debug(__FILE__, "xio_flush\n");
-#endif
 #if 0
 	XFlush (theDisplay);
 #endif
@@ -5282,9 +5347,6 @@ xio_flush (void)
 static void
 xio_bell (void)
 {
-#ifdef	VERBOSE
-	Debug(__FILE__, "xio_bell\n");
-#endif
 #if 0
 	XBell (XtDisplay(toplevel), 30);
 	XFlush (XtDisplay(toplevel));
@@ -5364,6 +5426,8 @@ void MotifGlobalInitialize(void)
 
 void motif_init(int *argc, char **argv)
 {
+	Display	*dpy;
+
 	MotifGlobalInitialize();
 
 	io_command_loop = xio_command_loop;
@@ -5414,9 +5478,16 @@ void motif_init(int *argc, char **argv)
 	/*
 	 * Open a connection to the display and create a toplevel shell widget.
 	 */
-	toplevel = XtVaAppInitialize(&app, "Oleo", NULL, 0,
-		argc, argv, fallback,
-		NULL);
+	XtToolkitInitialize();
+	app = XtCreateApplicationContext();
+	XtAppSetFallbackResources(app, fallback);
+	dpy = XtOpenDisplay(app, NULL, PACKAGE, PACKAGE,
+		/* options */		NULL, 0,
+		/* command line */	argc, argv);
+
+	toplevel = XtVaAppCreateShell(PACKAGE, PACKAGE,
+		topLevelShellWidgetClass, dpy, NULL);
+	XtAddCallback(toplevel, XtNdestroyCallback, DestroyToplevel, NULL);
 
 	/*
 	 * Add converter for tearoffs.
@@ -5477,13 +5548,16 @@ void ReallyQuit(Widget w, XtPointer client, XtPointer call)
 	kill_oleo();
 }
 
-void quitCB(Widget w, XtPointer client, XtPointer call)
+void QuitCB(Widget w, XtPointer client, XtPointer call)
 {
 	Widget		md;
 	Arg		al[4];
 	int		ac;
 
 	MotifSelectGlobal(w);
+
+	/* FIX ME this should work on all open files */
+	MdiQuit();
 
 	if (Global->modified && !option_filter) {
 		XmString xms = XmStringCreateLtoR(
@@ -5658,4 +5732,29 @@ MotifSelectGlobal(Widget w)
 	MdiSelectGlobal(offsetof(struct OleoGlobal, MotifGlobal),
 		offsetof(struct MotifGlobalType, toplevel_w),
 		p);
+}
+
+void
+ActivateCellWidget(Widget w, XtPointer client, XtPointer call)
+{
+	char	*cell_name = (char *)client;
+
+	execute_command(cell_name);
+}
+
+void
+MotifButton(int r, int c, char *lbl, char *cmd)
+{
+	Widget	button;
+	char	*command;
+
+	if (XbaeMatrixGetCellWidget(mat, r-1, c-1) == NULL) {
+		button = XtVaCreateManagedWidget(lbl, xmPushButtonWidgetClass, mat, NULL);
+		XbaeMatrixSetCellWidget(mat, r-1, c-1, button);
+
+		command = strdup(cmd);
+		XtAddCallback(button, XmNactivateCallback, ActivateCellWidget, (XtPointer)command);
+
+		fprintf(stderr, "MotifButton(%d,%d,%s,%s)\n", r-1, c-1, lbl, command);
+	}
 }
