@@ -1,3 +1,18 @@
+Sun Oct 5  13:55:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
+
+	* getopt.[ch]: Update from Glibc 2.0.5
+	* getopt1.c: ""
+	
+	* mktime.c: Move to lib/
+	* obstack.[ch]: ""
+	* getdate.y: ""
+	* getopt.[ch]: ""
+	* getopt1.c: ""
+	* */Makefile.am: Create library in lib/ of all sources that
+	do not come from oleo itself.  This is so that ansi2knr won't
+	attach those sources, which may not be formatted correctly.
+	Also, allows for easy updating of files.
+
 Sat Oct 4  18:42:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
 
 	* Fix stub #defines in stub.c

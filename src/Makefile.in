@@ -60,6 +60,7 @@ CPP = @CPP@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
 PACKAGE = @PACKAGE@
+RANLIB = @RANLIB@
 U = @U@
 VERSION = @VERSION@
 YACC = @YACC@
@@ -70,27 +71,27 @@ bin_PROGRAMS = oleo
 
 oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
  decompile.c sort.c regions.c utils.c lists.c\
- io-term.c getopt.c getopt1.c io-utils.c io-x11.c window.c io-edit.c\
+ io-term.c io-utils.c io-x11.c window.c io-edit.c\
  hash.c panic.c line.c key.c format.c funcs.c \
  ir.c io-curses.c font.c display.c print.c init.c \
  sylk.c oleofile.c sc.c list.c busi.c string.c cells.c \
  random.c cmd.c basic.c args.c \
- stub.c input.c info.c help.c graph.c forminfo.c getdate.y \
+ stub.c input.c info.c help.c graph.c forminfo.c \
  posixtm.y date.c xmalloc.c xrdb.c
-
-# EXTRA_oleo_SOURCES = mktime.c obstack.c
 
 noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  defun.h defuns.h display.h errors.h eval.h font.h format.h forminfo.h \
- funcdef.h funcs.h getopt.h global.h graph.h hash.h help.h info.h init.h \
+ funcdef.h funcs.h global.h graph.h hash.h help.h info.h init.h \
  input.h io-abstract.h io-curses.h io-edit.h io-generic.h io-term.h \
- io-utils.h io-x11.h ir.h key.h line.h lists.h node.h obstack.h oleofile.h \
+ io-utils.h io-x11.h ir.h key.h line.h lists.h node.h oleofile.h \
  panic.h parse.h print.h proto.h ref.h regions.h sc.h stub.h stubs.h sylk.h \
  sysdef.h utils.h window.h list.h ir.h 
 
 # oleo_LDADD = $(X_PRE_LIBS) $(X_LIBS) -lX11
 #oleo_LDADD = $(X_PRE_LIBS) $(X_LIBS)
 # oleo_LDADD = @LIBOBJS@
+
+oleo_LDADD = ../lib/liboleo.a
 
 INCLUDES = $(X_CFLAGS)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -110,15 +111,13 @@ X_PRE_LIBS = @X_PRE_LIBS@
 ANSI2KNR = ../lib/ansi2knr
 oleo_OBJECTS =  parse$U.o byte-compile$U.o eval$U.o ref$U.o \
 decompile$U.o sort$U.o regions$U.o utils$U.o lists$U.o io-term$U.o \
-getopt$U.o getopt1$U.o io-utils$U.o io-x11$U.o window$U.o io-edit$U.o \
-hash$U.o panic$U.o line$U.o key$U.o format$U.o funcs$U.o ir$U.o \
-io-curses$U.o font$U.o display$U.o print$U.o init$U.o sylk$U.o \
-oleofile$U.o sc$U.o list$U.o busi$U.o string$U.o cells$U.o random$U.o \
-cmd$U.o basic$U.o args$U.o stub$U.o input$U.o info$U.o help$U.o \
-graph$U.o forminfo$U.o getdate$U.o posixtm$U.o date$U.o xmalloc$U.o \
-xrdb$U.o
-oleo_LDADD = $(LDADD)
-oleo_DEPENDENCIES = 
+io-utils$U.o io-x11$U.o window$U.o io-edit$U.o hash$U.o panic$U.o \
+line$U.o key$U.o format$U.o funcs$U.o ir$U.o io-curses$U.o font$U.o \
+display$U.o print$U.o init$U.o sylk$U.o oleofile$U.o sc$U.o list$U.o \
+busi$U.o string$U.o cells$U.o random$U.o cmd$U.o basic$U.o args$U.o \
+stub$U.o input$U.o info$U.o help$U.o graph$U.o forminfo$U.o posixtm$U.o \
+date$U.o xmalloc$U.o xrdb$U.o
+oleo_DEPENDENCIES =  ../lib/liboleo.a
 oleo_LDFLAGS = 
 YLWRAP = $(srcdir)/ylwrap
 CFLAGS = @CFLAGS@
@@ -126,8 +125,7 @@ COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
 LINK = $(CC) $(CFLAGS) $(LDFLAGS) -o $@
 HEADERS =  $(noinst_HEADERS)
 
-DIST_COMMON =  Makefile.am Makefile.in getdate.c parse.c posixtm.c \
-ylwrap
+DIST_COMMON =  Makefile.am Makefile.in parse.c posixtm.c ylwrap
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
@@ -137,15 +135,14 @@ GZIP = --best
 DEP_FILES =  .deps/args.P .deps/basic.P .deps/busi.P \
 .deps/byte-compile.P .deps/cells.P .deps/cmd.P .deps/date.P \
 .deps/decompile.P .deps/display.P .deps/eval.P .deps/font.P \
-.deps/format.P .deps/forminfo.P .deps/funcs.P .deps/getdate.P \
-.deps/getopt.P .deps/getopt1.P .deps/graph.P .deps/hash.P .deps/help.P \
-.deps/info.P .deps/init.P .deps/input.P .deps/io-curses.P \
-.deps/io-edit.P .deps/io-term.P .deps/io-utils.P .deps/io-x11.P \
-.deps/ir.P .deps/key.P .deps/line.P .deps/list.P .deps/lists.P \
-.deps/oleofile.P .deps/panic.P .deps/parse.P .deps/posixtm.P \
-.deps/print.P .deps/random.P .deps/ref.P .deps/regions.P .deps/sc.P \
-.deps/sort.P .deps/string.P .deps/stub.P .deps/sylk.P .deps/utils.P \
-.deps/window.P .deps/xmalloc.P .deps/xrdb.P
+.deps/format.P .deps/forminfo.P .deps/funcs.P .deps/graph.P \
+.deps/hash.P .deps/help.P .deps/info.P .deps/init.P .deps/input.P \
+.deps/io-curses.P .deps/io-edit.P .deps/io-term.P .deps/io-utils.P \
+.deps/io-x11.P .deps/ir.P .deps/key.P .deps/line.P .deps/list.P \
+.deps/lists.P .deps/oleofile.P .deps/panic.P .deps/parse.P \
+.deps/posixtm.P .deps/print.P .deps/random.P .deps/ref.P \
+.deps/regions.P .deps/sc.P .deps/sort.P .deps/string.P .deps/stub.P \
+.deps/sylk.P .deps/utils.P .deps/window.P .deps/xmalloc.P .deps/xrdb.P
 SOURCES = $(oleo_SOURCES)
 OBJECTS = $(oleo_OBJECTS)
 
@@ -246,12 +243,6 @@ forminfo_.c: forminfo.c $(ANSI2KNR)
 	$(ANSI2KNR) `if test -f $(srcdir)/forminfo.c; then echo $(srcdir)/forminfo.c; else echo forminfo.c; fi` forminfo_.c
 funcs_.c: funcs.c $(ANSI2KNR)
 	$(ANSI2KNR) `if test -f $(srcdir)/funcs.c; then echo $(srcdir)/funcs.c; else echo funcs.c; fi` funcs_.c
-getdate_.c: getdate.c $(ANSI2KNR)
-	$(ANSI2KNR) `if test -f $(srcdir)/getdate.c; then echo $(srcdir)/getdate.c; else echo getdate.c; fi` getdate_.c
-getopt_.c: getopt.c $(ANSI2KNR)
-	$(ANSI2KNR) `if test -f $(srcdir)/getopt.c; then echo $(srcdir)/getopt.c; else echo getopt.c; fi` getopt_.c
-getopt1_.c: getopt1.c $(ANSI2KNR)
-	$(ANSI2KNR) `if test -f $(srcdir)/getopt1.c; then echo $(srcdir)/getopt1.c; else echo getopt1.c; fi` getopt1_.c
 graph_.c: graph.c $(ANSI2KNR)
 	$(ANSI2KNR) `if test -f $(srcdir)/graph.c; then echo $(srcdir)/graph.c; else echo graph.c; fi` graph_.c
 hash_.c: hash.c $(ANSI2KNR)
@@ -320,12 +311,11 @@ xrdb_.c: xrdb.c $(ANSI2KNR)
 	$(ANSI2KNR) `if test -f $(srcdir)/xrdb.c; then echo $(srcdir)/xrdb.c; else echo xrdb.c; fi` xrdb_.c
 args_.o basic_.o busi_.o byte-compile_.o cells_.o cmd_.o date_.o \
 decompile_.o display_.o eval_.o font_.o format_.o forminfo_.o funcs_.o \
-getdate_.o getopt_.o getopt1_.o graph_.o hash_.o help_.o info_.o \
-init_.o input_.o io-curses_.o io-edit_.o io-term_.o io-utils_.o \
-io-x11_.o ir_.o key_.o line_.o list_.o lists_.o oleofile_.o panic_.o \
-parse_.o posixtm_.o print_.o random_.o ref_.o regions_.o sc_.o sort_.o \
-string_.o stub_.o sylk_.o utils_.o window_.o xmalloc_.o xrdb_.o : \
-$(ANSI2KNR)
+graph_.o hash_.o help_.o info_.o init_.o input_.o io-curses_.o \
+io-edit_.o io-term_.o io-utils_.o io-x11_.o ir_.o key_.o line_.o \
+list_.o lists_.o oleofile_.o panic_.o parse_.o posixtm_.o print_.o \
+random_.o ref_.o regions_.o sc_.o sort_.o string_.o stub_.o sylk_.o \
+utils_.o window_.o xmalloc_.o xrdb_.o : $(ANSI2KNR)
 
 tags: TAGS
 

@@ -60,6 +60,7 @@ CPP = @CPP@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
 PACKAGE = @PACKAGE@
+RANLIB = @RANLIB@
 U = @U@
 VERSION = @VERSION@
 YACC = @YACC@
@@ -73,7 +74,7 @@ TEXINFO_TEX = $(srcdir)/texinfo.tex
 INFO_DEPS = oleo.info
 DVIS = oleo.dvi
 TEXINFOS = oleo.texi
-DIST_COMMON =  Makefile.am Makefile.in
+DIST_COMMON =  Makefile.am Makefile.in texinfo.tex
 
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)

@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
-AUTOMAKE_OPTIONS = gnu no-dependencies 1.2
+AUTOMAKE_OPTIONS = gnu 1.2c
 
-SUBDIRS = src doc 
+SUBDIRS = doc lib src
 
 release:
 	$(MAKE) dist distdir=$(PACKAGE)`date +"%y%m%d"`
