@@ -1,5 +1,6 @@
+#define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.46 1999/07/23 16:23:49 danny Exp $
+ *  $Id: io-motif.c,v 1.47 1999/08/28 09:47:22 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.46 1999/07/23 16:23:49 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.47 1999/08/28 09:47:22 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -46,18 +47,18 @@ static char rcsid[] = "$Id: io-motif.c,v 1.46 1999/07/23 16:23:49 danny Exp $";
 #include <Xbae/Matrix.h>
 #include <Xbae/Caption.h>
 
-#if	HAVE_XLT
+#ifdef	HAVE_XLT
 #include <Xlt/SciPlot.h>
 #ifndef HAVE_SciPlot_H
 #define	HAVE_SciPlot_H
 #endif
 #else
-#if	HAVE_SciPlot_H
+#ifdef	HAVE_SciPlot_H
 #include <SciPlot/SciPlot.h>
 #endif
 #endif
 
-#if	HAVE_LIBXPM
+#ifdef	HAVE_LIBXPM
 #include <X11/xpm.h>
 #include	"oleo_icon.xpm"
 #endif
@@ -97,29 +98,13 @@ static char rcsid[] = "$Id: io-motif.c,v 1.46 1999/07/23 16:23:49 danny Exp $";
 #include "basic.h"
 #include "graph.h"
 #include "print.h"
+#include "mdi.h"
 
 #include "io-motif.h"		/* To get warnings when inconsistent */
 
-#if	HAVE_XmHTML_H
+#ifdef	HAVE_XmHTML_H
 #include <XmHTML/XmHTML.h>
 #endif
-
-XtAppContext app;
-Widget	toplevel, splash, SplashShell, plot;
-Widget	mw, mat = NULL, mb, filemenu, editmenu, stylemenu,
-	optionsmenu, helpmenu, graphmenu, dbmenu, testmenu;
-Widget	msgtext = NULL, statustf = NULL, formulatf = NULL;
-Widget	fsd = NULL;
-Widget	hd, html = NULL, gs = NULL;
-Widget	FormatD = NULL;
-Widget	MySQLDialog = NULL;
-Widget	UserPref = NULL;
-Widget	PrintDialog = NULL;
-Widget	DefaultFileDialog, DefaultFileShell = NULL;
-Widget	ConfigureGraphNotebook;
-
-static Widget	XYxAutoToggle, XYxMinText, XYxMaxText, XYyAutoToggle, XYyMinText, XYyMaxText,
-		lineToOffscreen;
 
 Pixmap	oleo_icon_pm = (Pixmap)0;
 
@@ -533,7 +518,7 @@ void CreateGraph(Widget w, XtPointer client, XtPointer call)
 	f = XtVaCreateManagedWidget("form", xmFormWidgetClass, gs,
 		NULL);
 
-#if	HAVE_SciPlot_H
+#ifdef	HAVE_SciPlot_H
 	sw = XtVaCreateManagedWidget("scroll",
 		xmScrolledWindowWidgetClass, f,
 			XmNtopAttachment,	XmATTACH_FORM,
@@ -1688,9 +1673,7 @@ void PrintBrowseFileCBOk(Widget w, XtPointer client, XtPointer call)
 
 void PrintBrowseFileCB(Widget w, XtPointer client, XtPointer call)
 {
-	static Widget	fsd = NULL;
-
-	if (! fsd) {
+	if (! pfsd) {
 		XmString	xms;
 		Arg		al[5];
 		int		ac = 0;
@@ -1699,16 +1682,16 @@ void PrintBrowseFileCB(Widget w, XtPointer client, XtPointer call)
 		XtSetArg(al[ac], XmNpattern, xms); ac++;
 		XtSetArg(al[ac], XmNautoUnmanage, True); ac++;
 
-		fsd = XmCreateFileSelectionDialog(toplevel, "selectfile",
+		pfsd = XmCreateFileSelectionDialog(toplevel, "selectfile",
 			al, ac);
 		XtDestroyWidget(
-			XmFileSelectionBoxGetChild(fsd, XmDIALOG_HELP_BUTTON));
-		XtAddCallback(fsd, XmNokCallback, PrintBrowseFileCBOk, NULL);
+			XmFileSelectionBoxGetChild(pfsd, XmDIALOG_HELP_BUTTON));
+		XtAddCallback(pfsd, XmNokCallback, PrintBrowseFileCBOk, NULL);
 
 		XmStringFree(xms);
 	}
 
-	XtManageChild(fsd);
+	XtManageChild(pfsd);
 }
 
 void CupsSelectPrinter(Widget w, XtPointer client, XtPointer call)
@@ -2324,12 +2307,7 @@ void DrawCell(Widget w, XtPointer client, XtPointer call)
 	XbaeMatrixDrawCellCallbackStruct *cbp =
 		(XbaeMatrixDrawCellCallbackStruct *)call;
 
-#ifdef	VERBOSE
-	Debug(__FILE__, "DrawCell(%d, %d, %s)\n",
-		cbp->row, cbp->column, cbp->string);
-#endif
 	cbp->type = XbaeString;
-
 #if 1
 	cbp->string = cell_value_string(cbp->row + 1, cbp->column + 1,
 		True);
@@ -2341,6 +2319,11 @@ void DrawCell(Widget w, XtPointer client, XtPointer call)
 		cbp->string = print_cell(find_cell(cbp->row + 1,
 			cbp->column + 1));
 	}
+#endif
+
+#ifdef	VERBOSE
+	Debug(__FILE__, "DrawCell(%d, %d, %s)\n",
+		cbp->row, cbp->column, cbp->string);
 #endif
 }
 
@@ -2546,6 +2529,18 @@ void LoadCB(Widget w, XtPointer client, XtPointer call)
 	XtManageChild(fsd);
 }
 
+void OpenCB(Widget w, XtPointer client, XtPointer call)
+{
+	LoadCB(w, client, call);
+}
+
+void CloseCB(Widget w, XtPointer client, XtPointer call)
+{
+	MessageAppend(False, "This should close the current window\n");
+
+	MdiClose();
+}
+
 FILE *OleoOpenForWrite(const char *s)
 {
 	FILE	*fp;
@@ -2665,7 +2660,7 @@ void SaveCB(Widget w, XtPointer client, XtPointer call)
  *		Build Help Widgets				*
  *								*
  ****************************************************************/
-#if	HAVE_XmHTML_H
+#ifdef	HAVE_XmHTML_H
 static void
 anchorCB(Widget widget, XtPointer client, XtPointer call)
 {
@@ -2679,7 +2674,7 @@ anchorCB(Widget widget, XtPointer client, XtPointer call)
 
 	anchor = strchr(cbs->href, '#');
 
-	XmHTMLAnchorScrollToName(html, anchor);
+	XmHTMLAnchorScrollToName(Html, anchor);
 }
 
 static void
@@ -2687,7 +2682,7 @@ HelpBuildWindow(void)
 {
 	Widget	f, sep, ok;
 
-	if (! html) {
+	if (! Html) {
 		hd = XtVaCreatePopupShell("helpShell",
 				topLevelShellWidgetClass,
 				toplevel,
@@ -2723,7 +2718,7 @@ HelpBuildWindow(void)
 				XmNbottomWidget,	ok,
 			NULL);
 
-		html = XtVaCreateManagedWidget("html",
+		Html = XtVaCreateManagedWidget("html",
 			xmHTMLWidgetClass, f,
 				XmNmarginWidth,			20,
 				XmNmarginHeight,		20,
@@ -2742,7 +2737,7 @@ HelpBuildWindow(void)
 				XmNbottomWidget,		sep,
 			NULL);
 
-		XtAddCallback(html, XmNactivateCallback,
+		XtAddCallback(Html, XmNactivateCallback,
 			(XtCallbackProc)anchorCB, NULL);
 	}
 }
@@ -2761,13 +2756,13 @@ HelpBuildWindow(void)
 static void
 HelpLoadFile(char *fn, char *anchor)
 {
-#if	HAVE_XmHTML_H
+#ifdef	HAVE_XmHTML_H
 	char	*buffer = XtMalloc(HELP_FILE_LENGTH);
 	FILE	*fp = fopen("oleo.html", "r");
 	char	*n;
 
 	if (fn == NULL) {
-		XmHTMLTextSetString(html,
+		XmHTMLTextSetString(Html,
 			_("<html><body>"
 			  "Can't find the requested help file\n"
 			  "</body></html>"));
@@ -2796,9 +2791,9 @@ HelpLoadFile(char *fn, char *anchor)
 	if (fp) {
 		fread(buffer, 1, HELP_FILE_LENGTH, fp);
 		fclose(fp);
-		XmHTMLTextSetString(html, buffer);
+		XmHTMLTextSetString(Html, buffer);
 	} else {
-		XmHTMLTextSetString(html,
+		XmHTMLTextSetString(Html,
 			_("<html><body>"
 			  "Can't find the requested help file\n"
 			  "</body></html>"));
@@ -2812,18 +2807,18 @@ HelpLoadFile(char *fn, char *anchor)
 		MessageAppend(False, _("Help requested on using Oleo"));
 
 	if (anchor)
-		XmHTMLAnchorScrollToName(html, anchor);
+		XmHTMLAnchorScrollToName(Html, anchor);
 	XtFree(n);
 #endif
 }
 
 void helpUsingCB(Widget w, XtPointer client, XtPointer call)
 {
-#if	HAVE_XmHTML_H
+#ifdef	HAVE_XmHTML_H
 	HelpBuildWindow();
 	HelpLoadFile("oleo.html", client);
 	XtPopup(hd, XtGrabNone);
-	XtManageChild(XtParent(html));		/* LessTif only, harmless otherwise */
+	XtManageChild(XtParent(Html));		/* LessTif only, harmless otherwise */
 #endif
 }
 
@@ -3566,7 +3561,34 @@ static Widget FindDialog(Widget w)
 void
 UserPreferencesOk(Widget w, XtPointer client, XtPointer call)
 {
+	Widget		mft, ft;
+	char		*mf, f;
+	XmFontList	fl;
+	XmFontListEntry	fle;
+	XFontSet	fs;
+	char		m1[2][80], **missing = (char **)&m1[0];
+	char		m2[80], *def = &m2[0];
+	int		nmissing = 0;
+	Display		*d = XtDisplayOfObject(w);
+
+	mft = XtNameToWidget(UserPref, "*matrixfonttf");
+	ft = XtNameToWidget(UserPref, "*fonttf");
+
+	if (ft == NULL || mft == NULL)
+		return;	/* Huh ?? */
+
+	mf = XmTextFieldGetString(mft);
+
 	/* set preferences now */
+	fs = XCreateFontSet(d, mf, &missing, &nmissing, &def);
+	if (fs != NULL) {
+		fle = XmFontListEntryCreate(XmFONTLIST_DEFAULT_TAG, XmFONT_IS_FONTSET, fs);
+		fl = XmFontListAppendEntry(NULL, fle);
+		XtVaSetValues(mat, XmNfontList, fl, NULL);
+	/* FIX ME potential leak : can we free fl, fle, fs yet ? */
+	}
+
+	XtFree(mf);
 }
 
 void
@@ -3574,17 +3596,54 @@ UserPreferencesReset(Widget w)
 {
 }
 
+#ifdef	HAVE_XLT_FONTCHOOSER
+#include <Xlt/FontChooser.h>
+#endif
+
+static void
+ChooseFont(Widget w, XtPointer client, XtPointer call)
+{
+#ifdef	HAVE_XLT_FONTCHOOSER
+	char	*s;
+	Widget	tf;
+
+	XtVaGetValues(w, XltNfontName, &s, NULL);
+
+	fprintf(stderr, "Selected font '%s'\n", s);
+
+	tf = XtNameToWidget(UserPref, "*matrixfonttf");
+	if (tf)
+		XmTextFieldSetString(tf, s);
+#endif
+}
+
+void
+FontChooserCB(Widget w, XtPointer client, XtPointer call)
+{
+#ifdef	HAVE_XLT_FONTCHOOSER
+	Widget	tf = (Widget)client, fc;
+	Arg	al[5];
+	int	ac;
+
+	ac = 0;
+	fc = XltCreateFontChooserDialog(w, "font chooser", al, ac);
+	XtManageChild(fc);
+
+	XtAddCallback(fc, XmNokCallback, ChooseFont, NULL);
+#endif
+}
+
 void
 CreateUserPreferences(Widget parent)
 {
-	Widget	form, l, t;
+	Widget	form, l, t, b;
 
 	form = XtVaCreateManagedWidget("form", xmFormWidgetClass,
 		parent,
 		NULL);
 	XtManageChild(form);
 
-	l = XtVaCreateManagedWidget("dbhostlabel", xmLabelGadgetClass,
+	l = XtVaCreateManagedWidget("matrixfontlabel", xmLabelGadgetClass,
 		form,
 			XmNtopAttachment,	XmATTACH_FORM,
 			XmNtopOffset,		10,
@@ -3594,19 +3653,67 @@ CreateUserPreferences(Widget parent)
 			XmNbottomAttachment,	XmATTACH_NONE,
 		NULL);
 
-	t = XtVaCreateManagedWidget("dbhosttf", xmTextFieldWidgetClass,
+	t = XtVaCreateManagedWidget("matrixfonttf", xmTextFieldWidgetClass,
 		form,
 			XmNtopAttachment,	XmATTACH_FORM,
 			XmNtopOffset,		10,
 			XmNleftAttachment,	XmATTACH_WIDGET,
 			XmNleftOffset,		10,
 			XmNleftWidget,		l,
+			XmNrightAttachment,	XmATTACH_NONE,
+			XmNbottomAttachment,	XmATTACH_NONE,
+		NULL);
+
+	b = XtVaCreateManagedWidget("matrixfontbutton", xmPushButtonGadgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_FORM,
+			XmNtopOffset,		10,
+			XmNleftAttachment,	XmATTACH_WIDGET,
+			XmNleftOffset,		10,
+			XmNleftWidget,		t,
 			XmNrightAttachment,	XmATTACH_FORM,
+			XmNrightOffset,		10,
+		NULL);
+	XtAddCallback(b, XmNactivateCallback, FontChooserCB, (XtPointer)t);
+
+	l = XtVaCreateManagedWidget("fontlabel", xmLabelGadgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_WIDGET,
+			XmNtopOffset,		10,
+			XmNtopWidget,		t,
+			XmNleftAttachment,	XmATTACH_FORM,
+			XmNleftOffset,		10,
+			XmNrightAttachment,	XmATTACH_WIDGET,
+			XmNrightWidget,		t,
 			XmNrightOffset,		10,
 			XmNbottomAttachment,	XmATTACH_NONE,
 		NULL);
 
-	l = XtVaCreateManagedWidget("dbnamelabel", xmLabelGadgetClass,
+	t = XtVaCreateManagedWidget("fonttf", xmTextFieldWidgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_WIDGET,
+			XmNtopOffset,		10,
+			XmNtopWidget,		t,
+			XmNrightAttachment,	XmATTACH_OPPOSITE_WIDGET,
+			XmNrightWidget,		t,
+			XmNleftAttachment,	XmATTACH_OPPOSITE_WIDGET,
+			XmNleftWidget,		t,
+		NULL);
+
+	b = XtVaCreateManagedWidget("fontbutton", xmPushButtonGadgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_OPPOSITE_WIDGET,
+			XmNtopOffset,		0,
+			XmNtopWidget,		t,
+			XmNleftAttachment,	XmATTACH_WIDGET,
+			XmNleftOffset,		10,
+			XmNleftWidget,		t,
+			XmNrightAttachment,	XmATTACH_FORM,
+			XmNrightOffset,		10,
+		NULL);
+	XtAddCallback(b, XmNactivateCallback, FontChooserCB, (XtPointer)t);
+
+	l = XtVaCreateManagedWidget("label", xmLabelGadgetClass,
 		form,
 			XmNtopAttachment,	XmATTACH_WIDGET,
 			XmNtopOffset,		10,
@@ -3617,41 +3724,16 @@ CreateUserPreferences(Widget parent)
 			XmNbottomAttachment,	XmATTACH_NONE,
 		NULL);
 
-	t = XtVaCreateManagedWidget("dbnametf", xmTextFieldWidgetClass,
+	t = XtVaCreateManagedWidget("tf", xmTextFieldWidgetClass,
 		form,
 			XmNtopAttachment,	XmATTACH_WIDGET,
 			XmNtopOffset,		10,
 			XmNtopWidget,		t,
-			XmNleftAttachment,	XmATTACH_WIDGET,
-			XmNleftOffset,		10,
-			XmNleftWidget,		l,
-			XmNrightAttachment,	XmATTACH_FORM,
-			XmNrightOffset,		10,
 			XmNbottomAttachment,	XmATTACH_NONE,
-		NULL);
-
-	l = XtVaCreateManagedWidget("dbuserlabel", xmLabelGadgetClass,
-		form,
-			XmNtopAttachment,	XmATTACH_WIDGET,
-			XmNtopOffset,		10,
-			XmNtopWidget,		t,
-			XmNleftAttachment,	XmATTACH_FORM,
-			XmNleftOffset,		10,
-			XmNrightAttachment,	XmATTACH_NONE,
-			XmNbottomAttachment,	XmATTACH_NONE,
-		NULL);
-
-	t = XtVaCreateManagedWidget("dbusertf", xmTextFieldWidgetClass,
-		form,
-			XmNtopAttachment,	XmATTACH_WIDGET,
-			XmNtopOffset,		10,
-			XmNtopWidget,		t,
-			XmNleftAttachment,	XmATTACH_WIDGET,
-			XmNleftOffset,		10,
-			XmNleftWidget,		l,
-			XmNrightAttachment,	XmATTACH_FORM,
-			XmNrightOffset,		10,
-			XmNbottomAttachment,	XmATTACH_NONE,
+			XmNrightAttachment,	XmATTACH_OPPOSITE_WIDGET,
+			XmNrightWidget,		t,
+			XmNleftAttachment,	XmATTACH_OPPOSITE_WIDGET,
+			XmNleftWidget,		t,
 		NULL);
 }
 
@@ -3908,7 +3990,7 @@ GscBuildSplash(Widget parent)
 
 	ac = 0;
 
-#if	HAVE_LIBXPM
+#ifdef	HAVE_LIBXPM
 	attrib.valuemask = 0;
 
 	XpmCreatePixmapFromData(XtDisplay(rc),
@@ -3941,7 +4023,7 @@ GscBuildSplash(Widget parent)
 	XtSetArg(al[ac], XmNlabelString,	xms); ac++;
 	XtSetArg(al[ac], XmNlabelType,		XmSTRING); ac++;
 	XtSetArg(al[ac], XmNshadowThickness,	0); ac++;
-#if	HAVE_LIBXPM
+#ifdef	HAVE_LIBXPM
 	XtSetArg(al[ac], XmNleftAttachment,	XmATTACH_WIDGET); ac++;
 	XtSetArg(al[ac], XmNleftWidget,		iconlabel); ac++;
 #else
@@ -3963,6 +4045,13 @@ GscBuildSplash(Widget parent)
 	XtManageChild(form);
 
 	return sh;
+}
+
+void Traverse()
+{
+	if (! XmProcessTraversal(mat, XmTRAVERSE_CURRENT)) {
+		fprintf(stderr, _("XmProcessTraversal failed\n"));
+	}
 }
 
 /*
@@ -4102,7 +4191,7 @@ GscBuildMainWindow(Widget parent)
 	 */
 	w = XtVaCreateManagedWidget("open", xmPushButtonGadgetClass, filemenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, LoadCB, NULL);
+	XtAddCallback(w, XmNactivateCallback, OpenCB, NULL);
 
 	w = XtVaCreateManagedWidget("save", xmPushButtonGadgetClass, filemenu,
 		NULL);
@@ -4114,7 +4203,7 @@ GscBuildMainWindow(Widget parent)
 
 	w = XtVaCreateManagedWidget("close", xmPushButtonGadgetClass, filemenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, CloseCB, NULL);
 
 	w = XtVaCreateManagedWidget("print", xmPushButtonGadgetClass, filemenu,
 		NULL);
@@ -4474,6 +4563,9 @@ GscBuildMainWindow(Widget parent)
 			XmNsubMenuId,	testmenu,
 		NULL);
 
+	w = XtVaCreateManagedWidget("Traverse", xmPushButtonGadgetClass, testmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, Traverse, NULL);
 
 #endif	/* HAVE_TEST */
 
@@ -4755,7 +4847,7 @@ xio_update_status (void)
 	UpdateStatus();
 
 
-#ifdef	VERBOSE
+#ifdef	VERBOSEx
 	Debug(__FILE__, "xio_update_status(%d,%d)...", curow, cucol);
 #endif
 
@@ -4764,7 +4856,7 @@ xio_update_status (void)
 		(void) XtDispatchEvent(&ev);
 	}
 
-#ifdef	VERBOSE
+#ifdef	VERBOSEx
 	Debug(__FILE__, " done\n");
 #endif
 }
@@ -4783,7 +4875,7 @@ xio_get_chr (char *prompt)
 static void
 xio_pr_cell_win (struct window *win, CELLREF r, CELLREF c, CELL *cp)
 {
-#ifdef	VERBOSE
+#ifdef	VERBOSEx
 	Debug(__FILE__, "xio_pr_cell_win\n");
 #endif
 }
@@ -4791,7 +4883,7 @@ xio_pr_cell_win (struct window *win, CELLREF r, CELLREF c, CELL *cp)
 static void
 xio_repaint_win (struct window *win)
 {
-#ifdef	VERBOSE
+#ifdef	VERBOSEx
 	Debug(__FILE__, "xio_repaint_win\n");
 #endif
 }
@@ -4800,7 +4892,7 @@ xio_repaint_win (struct window *win)
 static void
 xio_repaint (void)
 {
-#ifdef	VERBOSE
+#ifdef	VERBOSEx
 	Debug(__FILE__, "xio_repaint\n");
 #endif
 }
@@ -4809,7 +4901,7 @@ xio_repaint (void)
 static void
 xio_hide_cell_cursor (void)
 {
-#ifdef	VERBOSE
+#ifdef	VERBOSEx
 	Debug(__FILE__, "xio_hide_cell_cursor\n");
 #endif
 }
@@ -4817,7 +4909,7 @@ xio_hide_cell_cursor (void)
 static void
 xio_display_cell_cursor (void)
 {
-#ifdef	VERBOSE
+#ifdef	VERBOSEx
 	Debug(__FILE__, "xio_display_cell_cursor\n");
 #endif
 }
@@ -4936,6 +5028,9 @@ void PopDownSplash()
 
 void motif_init(int *argc, char **argv)
 {
+	Global->MotifGlobal = (struct MotifGlobalType *)XtMalloc(sizeof(struct MotifGlobalType));
+	memset(Global->MotifGlobal, 0, sizeof(struct MotifGlobalType));
+
 	io_command_loop = xio_command_loop;
 	io_open_display = xio_open_display;
 	io_redisp = xio_redisp;
@@ -4976,7 +5071,7 @@ void motif_init(int *argc, char **argv)
 #endif
 
 	if (getenv("XAPPLRESDIR") == NULL) {
-#if	HAVE_PUTENV
+#ifdef	HAVE_PUTENV
 		putenv("XAPPLRESDIR=" APPLRESDIR);
 #endif
 	}
@@ -5156,6 +5251,15 @@ void versionCB(Widget w, XtPointer client, XtPointer call)
 
 #ifdef	HAVE_LIBMYSQLCLIENT
 	sprintf(xbae, "\n  MySQL %s", MYSQL_SERVER_VERSION);
+	xms1 = xms;
+	xms2 = XmStringCreateLtoR(xbae, XmFONTLIST_DEFAULT_TAG);
+	xms = XmStringConcat(xms1, xms2);
+	XmStringFree(xms1);
+	XmStringFree(xms2);
+#endif
+
+#ifdef	HAVE_LIBCUPS
+	sprintf(xbae, "\n  CUPS %f", CUPS_VERSION);
 	xms1 = xms;
 	xms2 = XmStringCreateLtoR(xbae, XmFONTLIST_DEFAULT_TAG);
 	xms = XmStringConcat(xms1, xms2);

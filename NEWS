@@ -3,6 +3,9 @@
 Database access (MySQL), internal cleanup of the source code,
 and user interface improvements.
 
+Oleo also works with the new version of Xbae (4.7) which was released
+July 1999.
+
 ===== Oleo 1.99.4 =====
 
 Mostly released for a couple of bugfixes.

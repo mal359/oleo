@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.36 1999/07/23 16:23:47 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.37 1999/08/28 09:47:21 danny Exp $
 #
 localedir = $(prefix)/share/locale
 
@@ -47,11 +47,12 @@ oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
  graph.c plot.c \
  forminfo.c posixtm.y date.c xrdb.c \
  $(GUI) $(XBSRC) $(MYSQL) \
- print.c postscript.c pcl.c epson.c prtext.c
+ print.c postscript.c pcl.c epson.c prtext.c \
+ mdi.c
 
 if UseMotif
-MYLD = @link_motif@ @link_xmhtml@ @link_xbae@ @link_sciplot@
-MYINC = @include_motif@ @include_xbae@ @include_xmhtml@ @include_sciplot@
+MYLD = @link_motif@ @link_xmhtml@ @XBAE_LIBS@ @link_sciplot@ @XLT_LIBS@
+MYINC = @include_motif@ @XBAE_CFLAGS@ @include_xmhtml@ @include_sciplot@ @XLT_CFLAGS@
 MYCFL = ${X_CFLAGS}
 
 gpl.h:	$(top_srcdir)/COPYING $(srcdir)/gpl.sed

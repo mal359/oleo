@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.17 1999/07/23 16:23:48 danny Exp $
+ *  $Id: fallback.c,v 1.18 1999/08/28 09:47:22 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -39,7 +39,7 @@ char *fallback[] = {
 	"*background:			#AAAAAA",
 	"*bae.background:		#CCCCCC",
 //	"*bae.cellShadowType:		shadow_etched_in",
-	"*bae.gridType:			grid_shadow_in",
+	"*bae.gridType:			grid_cell_shadow",
 	"*formula.columns:		80",
 	"*splash*fontList:		-b&h-lucidatypewriter-bold-r-normal-sans-24-*-*-*-*-*-iso8859-1=large,-b&h-lucida-medium-i-normal-sans-18-*-*-*-*-*-iso8859-1=small",
 	"*splash*background:		#AAAAAA",
@@ -58,7 +58,6 @@ char *fallback[] = {
 	"*filecascade.labelString:	File",
 	"*open.labelString:		Open",
 	"*close.labelString:		Close",
-	"*close.sensitive:		no",
 	"*save.labelString:		Save",
 	"*saveas.labelString:		Save As",
 	"*print.labelString:		Print",
@@ -177,6 +176,13 @@ char *fallback[] = {
 	"*versionD_popup.title:		Oleo Version Dialog",
 	"*helpShell.title:		Oleo Help Window",
 	"*UserPreferences_popup.title:	Oleo User Preferences",
+/* User Preferences */
+	"*matrixfontlabel.labelString:		Matrix Font",
+	"*fontlabel.labelString:		General Font",
+	"*matrixfontbutton.labelString:		Select Font ...",
+	"*fontbutton.labelString:		Select Font ...",
+	"*matrixfonttf.columns:			50",
+	"*fonttf.columns:			50",
 /* Help Dialog */
 	"*versionD*Help*labelString:	GPL",
 /* Configuration Dialogs */

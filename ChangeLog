@@ -1,4 +1,25 @@
-$Id: ChangeLog,v 1.99 1999/07/23 16:23:39 danny Exp $
+$Id: ChangeLog,v 1.100 1999/08/28 09:47:02 danny Exp $
+
+	* User Preferences dialog : small implementation to change
+	  the fonts (Motif); uses a new FontChooser widget from
+	  LessTif's Xlt widget set when available.
+	* Converted lots of global variables in io-motif.c to
+	  variables inside the Global area.
+	  Some (simple !) macro tweeking even makes this easy.
+	* Copied ChangeLog to the web directory on www.gnu.org.
+	* Removed ftp.* files from distribution. They're no longer
+	  needed as we can use rcp to distribute stuff to *.gnu.org.
+	* Removed macros to find Xlt and Xbae from the distribution.
+	  You shouldn't need them; the "make dist" process should put
+	  them in the proper places and create a "configure" script
+	  that contains the right stuff. This is something the Oleo
+	  maintainer does, not anyone who just compiles Oleo.
+	* Converted to using the AC_FIND_XLT and AC_FIND_XBAE macros
+	  as they come with Xlt, Xbae.
+	* Add mdi.c, mdi.h files for Multi-Document Interface.
+	  Not entirely sure what the functions in there should do
+	  but it involves creating and destroying the Global
+	  structure.
 
 Fri 23 Jul 18:25:18 1999, Danny Backx
 	* Updated Makefile.am in top directory to use rcp

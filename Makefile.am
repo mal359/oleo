@@ -3,7 +3,7 @@
 #
 # Process this file with automake to produce Makefile.in
 #
-# $Header: /home/matt/cvs/oleo/oleo/Makefile.am,v 1.27 1999/07/23 16:23:41 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/Makefile.am,v 1.28 1999/08/28 09:47:07 danny Exp $
 #
 AUTOMAKE_OPTIONS = gnu 1.4 readme-alpha
 ACLOCAL_AMFLAGS = -I m4
@@ -15,14 +15,13 @@ SUBDIRS = doc lib intl src m4 po Xresources examples
 # Remove this file here (it is created via configure), not from within intl.
 DISTCLEANFILES = intl/libintl.h
 
-EXTRA_DIST = oleobug.in FAQ oleo.spec.in oleo.spec \
-		ftp.gnudist ftp.alpha ftp.dist
+EXTRA_DIST = oleobug.in FAQ oleo.spec.in oleo.spec
 
 #
 # Use this only for real end-user-ready releases of Oleo
 #
 release:	oleo-$(VERSION).tar.gz
-	rcp oleo_web.html gnudist.gnu.org:/home/www/html/software/oleo/oleo.html
+	rcp doc/oleo_web.html gnudist.gnu.org:/home/www/html/software/oleo/oleo.html
 	rcp oleo-$(VERSION).tar.gz gnudist.gnu.org:/home/ftp/gnu/oleo/oleo-$(VERSION).tar.gz
 	rcp ChangeLog gnudist.gnu.org:/home/www/html/software/oleo/ChangeLog
 
@@ -31,7 +30,11 @@ release:	oleo-$(VERSION).tar.gz
 #
 release.alpha:	oleo-$(VERSION).tar.gz
 	rcp oleo-$(VERSION).tar.gz alpha.gnu.org:/fs/share/ftp/gnu/oleo/oleo-$(VERSION).tar.gz
-	rcp oleo_web.html gnudist.gnu.org:/home/www/html/software/oleo/oleo.html
+	rcp doc/oleo_web.html gnudist.gnu.org:/home/www/html/software/oleo/oleo.html
+	rcp ChangeLog gnudist.gnu.org:/home/www/html/software/oleo/ChangeLog
+
+web:
+	rcp doc/oleo_web.html gnudist.gnu.org:/home/www/html/software/oleo/oleo.html
 	rcp ChangeLog gnudist.gnu.org:/home/www/html/software/oleo/ChangeLog
 
 docdir=        $(prefix)/Oleo
