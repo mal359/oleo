@@ -1,10 +1,14 @@
 
-$Id: ChangeLog,v 1.149 2001/03/09 11:33:29 danny Exp $
+$Id: ChangeLog,v 1.150 2001/03/10 14:38:01 danny Exp $
+
+Sat Mar 10 15:39:01 CET 2001, danny
+	* Release oleo 1.99.16
 
 Fri Mar  9 12:33:32 CET 2001, danny
 	* src/io-x11.c : Finally found out what was missing to get real i18n
 	  input. I needed to call XFilterEvent(). Thanks to the i18n checklist
 	  in O'Reilly's documentation.
+	  I believe the raw X mode now does i18n right.
 
 	* src/io-motif.c : Fixes by Robert A. Schmied for running out of colors in
 	  the splash window when Oleo starts (Motif mode), and for passing a NULL
