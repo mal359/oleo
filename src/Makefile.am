@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.52 2000/07/25 12:56:32 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.53 2000/11/25 10:02:04 danny Exp $
 #
 # CPPFLAGS = -Wall
 
@@ -82,7 +82,7 @@ MYINC=
 MYCFL=	${X_CFLAGS}
 endif
 
-oleo_LDADD = ${X_PRE_LIBS} ${MYLD} @INTLLIBS@ ../lib/liboleo.a ${X_LIBS}
+oleo_LDADD = ${X_PRE_LIBS} ${MYLD} @INTLLIBS@ ../lib/liboleo.a ../intl/libintl.a ${X_LIBS}
 INCLUDES = -I.. -I$(srcdir) -I$(top_srcdir)/lib -I../intl ${MYINC}
 CFLAGS = @CFLAGS@ -DLOCALEDIR=\"$(localedir)\" ${MYCFL} \
 	-DBUILD_PREFIX='"'${BUILD_PREFIX}'"'
