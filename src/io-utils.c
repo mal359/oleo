@@ -1,5 +1,5 @@
 /*
- * $Id: io-utils.c,v 1.41 2001/05/12 16:33:18 pw Exp $
+ * $Id: io-utils.c,v 1.42 2001/06/26 00:36:35 pw Exp $
  *
  * Copyright © 1990, 1992, 1993, 2000, 2001 Free Software Foundation, Inc.
  *
@@ -1352,10 +1352,6 @@ write_file_generic_2(FILE *fp, struct rng *rng, char *format)
 		sylk_write_file(fp, rng);
 	} else if (!stricmp ("sc", format)) {
 		sc_write_file(fp, rng);
-#ifdef	HAVE_PANIC_SAVE
-	} else if (!stricmp ("panic", format)) {
-		panic_write_file(fp, rng);
-#endif
 	} else if (!stricmp ("list", format)) {
 		list_write_file(fp, rng);
 	} else {
@@ -1398,10 +1394,6 @@ read_file_generic_2(FILE *fp, int ismerge, char *format, char *name)
 		sylk_read_file(fp, ismerge);
 	} else if (stricmp ("sc", format) == 0) {
 		sc_read_file(fp, ismerge);
-#ifdef	HAVE_PANIC_SAVE
-	} else if (stricmp ("panic", format) == 0) {
-		panic_read_file(fp, ismerge);
-#endif
 	} else if (stricmp ("list", format) == 0) {
 		list_read_file(fp, ismerge);
 	} else if (stricmp("csv", format) == 0) {
@@ -1430,9 +1422,6 @@ static struct file_formats_s {
 	{ "list",	"list" },
 	{ "csv",	"[cC][sS][vV]" },
 	{ "dbf",	"[dD][bB][fF]" },
-#ifdef	HAVE_PANIC_SAVE
-	{ "panic",	"panic" },
-#endif
 	{ "sylk-noa0",	"sylk" },
 	{ NULL,	NULL }
 };

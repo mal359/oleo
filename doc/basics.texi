@@ -619,8 +619,7 @@ spreadsheet first.  This may ask for confirmation.
 
 @item C-x i
 Read in a file and merge its contents into the
-current spreadsheet.  Note that some file-formats, (like
-panic-save) won't work with this command.
+current spreadsheet.
 (@code{merge-spreadsheet})
 @cmindex merge-spreadsheet
 

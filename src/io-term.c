@@ -1,5 +1,5 @@
 /*
- * $Id: io-term.c,v 1.54 2001/05/12 16:33:18 pw Exp $
+ * $Id: io-term.c,v 1.55 2001/06/26 00:36:35 pw Exp $
  *
  * Copyright © 1990, 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 
@@ -20,7 +20,7 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char *rcsid = "$Id: io-term.c,v 1.54 2001/05/12 16:33:18 pw Exp $";
+static char *rcsid = "$Id: io-term.c,v 1.55 2001/06/26 00:36:35 pw Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -81,10 +81,6 @@ static char *rcsid = "$Id: io-term.c,v 1.54 2001/05/12 16:33:18 pw Exp $";
 #include "list.h"
 #include "sc.h"
 #include "sylk.h"
-
-#ifdef	HAVE_PANIC_SAVE
-#include "panic.h"
-#endif
 
 #if	ENABLE_NLS
 extern char *gettext(char *);
@@ -321,15 +317,6 @@ do_set_option (char *ptr)
 	  set_file_opts = sc_set_options;
 	  show_file_opts = sc_show_options;
 	}
-#ifdef	HAVE_PANIC_SAVE
-      else if (!stricmp ("panic", ptr))
-	{
-	  read_file = panic_read_file;
-	  write_file = panic_write_file;
-	  set_file_opts = panic_set_options;
-	  show_file_opts = panic_show_options;
-	}
-#endif
       else if (!stricmp ("list", ptr))
 	{
 	  read_file = list_read_file;

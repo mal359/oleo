@@ -66,10 +66,33 @@ standout mode (reverse video, usually). (@code{Default})
 @vindex  nostandout
         Edges are not drawn in standout mode.
 
-@item list (ch)
+@item list (CH)
 @vindex  list 
-       		Use the character CH to separate the cell values.
-@footnote{example? it it @samp{M-x set-option list ","}?}
+Use the character CH to separate the cell values.  To set
+the separator to, for instance, a comma, enter:
+@example
+M-x set-option RET list ,
+@end example
+To set it to a control character, e.g., @code{^I} (@key{TAB}, the default),
+enter:
+@example
+M-x set-option RET list \11
+@end example
+The number to be used is the octal ASCII value of the desired control
+character.  Note that the separator could also be set to, e.g., the
+letter @code{z}.
+
+To retrieve a file which uses some separator, @code{s}, be sure the filename
+has the suffix @code{.list} on it, start oleo, set the file type to list and
+the separator to @code{s} (@code{M-x set-option RET file list RET}, and then
+@code{M-x set-option RET list s RET}), and then read in the file.  This is what
+would need to be done if, e.g., the letter @code{z} were used as a separator.
+However, there are at least 2 cases where these options don't need to be set:
+if the file uses (1) a comma or (2) a tab as a separator, then if the filename
+has the suffix (1) @code{.csv} or (2) @code{.list}, then it will be read in
+without having to set the options.  Note that if the file is then saved, it
+will be saved in oleo format, so to read it back in properly, the suffix will
+need to be removed or changed to @code{.oleo}.
 
 @end table
 
@@ -214,10 +237,9 @@ initial value is the width of the screen.
 @vindex  file (format-name) 
 @footnote{I don't understand this}
 If -DUSE_DLD was defined, format-name may be any .o file
-that contains definitions for the appropriate functions, or
-'panic', which is the only file format that Oleo will have
-compiled into it.  If -DUSE_DLD was not defined, format-name
-must be one of sylk, sc, panic, or list, and Oleo will have
+that contains definitions for the appropriate functions.
+If -DUSE_DLD was not defined, format-name
+must be one of sylk, sc, or list, and Oleo will have
 to be re-compiled before any other formats may be used.
 
 @item load (file-name) 

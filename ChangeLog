@@ -1,5 +1,13 @@
 
-$Id: ChangeLog,v 1.156 2001/05/13 07:50:01 danny Exp $
+$Id: ChangeLog,v 1.157 2001/06/26 00:36:35 pw Exp $
+
+Mon Jun 25 20:30:43 EDT 2001  Pete Wyckoff  <pw@osc.edu>
+	* doc/options.texi: Document list option per Wes Baldwin email
+	  comments.
+	* FAQ doc/basics.texi src/io-term.c src/io-utils.c: Expunge "panic"
+	  format.
+	* src/panic.c src/panic.h: Remove (panic expunge).
+	* Xresources/Makefile.am: Make likes TABs, not spaces.
 
 Sun May 13 09:49:31 CEST 2001, Danny Backx <danny@gnu.org>
 	* Portability fixes by Alexander Mai.
