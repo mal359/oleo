@@ -1,5 +1,5 @@
 /*
- *  $Id: postscript.c,v 1.1 1999/04/27 18:25:51 danny Exp $
+ *  $Id: postscript.c,v 1.2 1999/04/28 22:43:28 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -28,7 +28,7 @@
  * There shouldn't be much spreadsheet functionality here...
  */
 
-static char rcsid[] = "$Id: postscript.c,v 1.1 1999/04/27 18:25:51 danny Exp $";
+static char rcsid[] = "$Id: postscript.c,v 1.2 1999/04/28 22:43:28 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -47,8 +47,7 @@ static char rcsid[] = "$Id: postscript.c,v 1.1 1999/04/27 18:25:51 danny Exp $";
 /*
  * FIX ME these should be static
  */
-float default_pswid = 8.5 * 72.;
-float default_pshgt = 11. * 72.;
+extern float default_pswid, default_pshgt;
 
 static void 
 put_eps_header (struct display *dpy,
@@ -451,7 +450,7 @@ psprint_set_page_size_cmd (char * whole_str)
       struct page_size * ps;
       while (*end && !isspace(*end))
 	++end;
-      ps = find_size (str, end - str);
+      ps = (struct page_size *)find_size (str, end - str);
       if (ps)
 	{
 	  default_pswid = ps->wid;
@@ -516,11 +515,84 @@ psprint_region_cmd (struct rng *rng, FILE *fp)
   psprint_region (fp, rng, default_pswid, default_pshgt, 0);
 }
 
-void PostScriptInitialize(FILE *fp)
+void PostScriptJobHeader(char *title, int npages, FILE *fp)
 {
+	fprintf(fp, "%%!PS-Adobe-3.0\n");
+	fprintf(fp, "%%%%Creator: %s %s\n", PACKAGE, VERSION);
+	fprintf(fp, "%%%%Pages: %d\n", npages);
+	fprintf(fp, "%%%%PageOrder: Ascend\n");
+	fprintf(fp, "%%%%Title: %s\n", title);
+	fprintf(fp, "%%%%EndComments\n%%%%BeginProlog\n");
+#if 0
+	fprintf(fp, "/FontName where { pop } { /FontName (Palatino-Italic) def } ifelse\n");
+	fprintf(fp, "/FirstSize where { pop } { /FirstSize 8 def } ifelse\n");
+	fprintf(fp, "FontName findfont FirstSize scalefont setfont\n");
+#else
+	fprintf(fp, "/FontName where { pop } { /FontName (Courier) def } ifelse\n");
+	fprintf(fp, "/FirstSize where { pop } { /FirstSize 10 def } ifelse\n");
+	fprintf(fp, "FontName findfont FirstSize scalefont setfont\n");
+#endif
+	fprintf(fp, "%%%%EndProlog\n");
+
+}
+
+void PostScriptJobTrailer(FILE *fp)
+{
+	fprintf(fp, "%%EOF\n");
+}
+
+static float	x, y;
+
+void PostScriptPageHeader(char *str, FILE *fp)
+{
+	fprintf(fp, "%%%%BeginPage %s\n", str);
+	x = 10.0;
+	y = 760.0;
+}
+
+void PostScriptPageFooter(char *str, FILE *fp)
+{
+	fprintf(fp, "showpage\n");
+}
+
+void PostScriptField(char *str, int wid, int rightborder, FILE *fp)
+{
+	float	w = 8 * wid;
+
+	if (strlen(str)) {
+		fprintf(fp, "%3.1f %3.1f moveto ", x, y);
+		put_ps_string(str, fp);
+		fprintf(fp, " show\n");
+	}
+
+	x += w;
+
+	if (rightborder) {
+	}
+}
+
+void PostScriptBorders(FILE *fp)
+{
+}
+
+void PostScriptFont(char *fn, FILE *fp)
+{
+}
+
+void PostScriptNewLine(int ht, FILE *fp)
+{
+	x = 10.0;
+	y -= ht;
 }
 
 struct PrintDriver PostScriptPrintDriver = {
 	"PostScript",
-	&PostScriptInitialize,
+	&PostScriptJobHeader,
+	&PostScriptJobTrailer,
+	&PostScriptPageHeader,
+	&PostScriptPageFooter,
+	&PostScriptField,
+	&PostScriptBorders,
+	&PostScriptFont,
+	&PostScriptNewLine
 };

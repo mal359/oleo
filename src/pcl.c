@@ -1,5 +1,5 @@
 /*
- *  $Id: pcl.c,v 1.1 1999/04/27 18:25:51 danny Exp $
+ *  $Id: pcl.c,v 1.2 1999/04/28 22:43:29 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: pcl.c,v 1.1 1999/04/27 18:25:51 danny Exp $";
+static char rcsid[] = "$Id: pcl.c,v 1.2 1999/04/28 22:43:29 danny Exp $";
 
 #include <stdio.h>
 
@@ -30,11 +30,46 @@ static char rcsid[] = "$Id: pcl.c,v 1.1 1999/04/27 18:25:51 danny Exp $";
 
 #include "print.h"
 
-void PCLInitialize(FILE *fp)
+void PCLJobHeader(char *str, int npages, FILE *fp)
+{
+}
+
+void PCLJobTrailer(FILE *fp)
+{
+}
+
+void PCLPageHeader(char *str, FILE *fp)
+{
+}
+
+void PCLPageFooter(char *str, FILE *fp)
+{
+}
+
+void PCLField(char *str, int wid, int rightborder, FILE *fp)
+{
+}
+
+void PCLBorders(FILE *fp)
+{
+}
+
+void PCLFont(char *fn, FILE *fp)
+{
+}
+
+void PCLNewLine(int ht, FILE *fp)
 {
 }
 
 struct PrintDriver PCLPrintDriver = {
 	"PCL",
-	&PCLInitialize,
+	&PCLJobHeader,
+	&PCLJobTrailer,
+	&PCLPageHeader,
+	&PCLPageFooter,
+	&PCLField,
+	&PCLBorders,
+	&PCLFont,
+	&PCLNewLine
 };

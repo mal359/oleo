@@ -1,18 +1,22 @@
-/*	Copyright (C) 1992, 1993 Free Software Foundation, Inc.
+#undef	OLD_PRINT
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this software; see the file COPYING.  If not, write to
-the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
+/*
+ * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this software; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -26,6 +30,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "cmd.h"
 #include "io-generic.h"
 #include "io-abstract.h"
+#include "io-utils.h"
 
 #include "print.h"
 
@@ -124,13 +129,8 @@ PrintGetType(int i)
 	return Drivers[i]->name;
 }
 
-#if 0
-static float default_pswid = 8.5 * 72.;
-static float default_pshgt = 11. * 72.;
-#else
-extern float default_pswid;
-extern float default_pshgt;
-#endif
+float default_pswid = 8.5 * 72.;
+float default_pshgt = 11. * 72.;
 
 void
 PrintSetPageSize(float wid, float ht)
@@ -164,7 +164,7 @@ PrintSetPage(char *page)
 void
 set_page_size_cmd (char * whole_str)
 {
-#if 1
+#ifdef	OLD_PRINT
 	psprint_set_page_size_cmd(whole_str);
 #else
   char * str = whole_str;
@@ -239,7 +239,63 @@ set_page_size_cmd (char * whole_str)
 }
 
 void 
-print_region_cmd (struct rng *rng, FILE *fp)
+print_region_cmd (struct rng *print, FILE *fp)
 {
-  psprint_region (fp, rng, default_pswid, default_pshgt, 0);
+	CELLREF rr, cc;
+	CELL *cp;
+	char *ptr;
+	int w, j, lenstr;
+	int spaces;
+	CELLREF c_lo, c_hi;
+	int	print_width, print_height, totht, totwid,
+		wid, ht, npages;
+
+#ifdef OLD_PRINT
+	psprint_region (fp, rng, default_pswid, default_pshgt, 0);
+#else
+
+	/* Figure out page width and height */
+	print_width = default_pswid;
+	print_height = default_pshgt;
+
+	/* Figure out #pages */
+		/* Depends on all fonts used, but also on zoom options chosen */
+		/* Sometimes preset (zoom -> 1 page),
+		 * sometimes need to scan the whole range */
+		/* FIX ME */
+	totht = totwid = 0;
+	for (rr = print->lr; rr <= print->hr; rr++) {
+		totht += get_height(rr) * 20;	/* FIX ME font height */
+	}
+	for (cc = print->lc; cc <= print->hc; cc++) {
+		totwid += get_width(cc) * 10;	/* FIX ME font cell width */
+	}
+	npages = ((print_height - 1 + totht) / print_height)
+		* ((print_width - 1 + totwid) / print_width);
+
+	/* Start Printing */
+	CurrentPrintDriver->job_header("title (print_region_cmd)", npages, fp);
+
+	/* Set default font */
+	CurrentPrintDriver->font("Courier-10", fp);
+
+	CurrentPrintDriver->page_header("page 1", fp);
+
+	for (rr = print->lr; rr <= print->hr; rr++) {
+		ht = get_height(rr) * 20;
+
+		for (cc = print->lc; cc <= print->hc; cc++) {
+			wid = get_width(cc);
+			cp = find_cell (rr, cc);
+			ptr = print_cell (cp);
+			lenstr = strlen (ptr);
+			if (lenstr > wid)
+				if (wid > 1) ptr[wid-1] = 0;
+			CurrentPrintDriver->field(ptr, wid, 1, fp);
+		}
+		CurrentPrintDriver->newline(ht, fp);
+	}
+	CurrentPrintDriver->page_footer("end page 1", fp);
+	CurrentPrintDriver->job_trailer(fp);
+#endif
 }

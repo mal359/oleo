@@ -38,7 +38,16 @@ struct page_size
 
 struct PrintDriver {
 	char	*name;
-	void	(*put_header) (/* ... , */ FILE *);
+	void	(*job_header) (char *title, int npages, FILE *fp);
+	void	(*job_trailer) (FILE *);
+
+	void	(*page_header)(char *str, FILE *);
+	void	(*page_footer)(char *str, FILE *);
+
+	void	(*field)(char *str, int wid, int rightborder, FILE *);
+	void	(*borders)(/* ... , */ FILE *);
+	void	(*font)(char *fn, FILE *);
+	void	(*newline)(int ht, FILE *);
 };
 
 char *PrintGetType(int);

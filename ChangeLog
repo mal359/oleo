@@ -1,3 +1,12 @@
+Thu 29 Apr 00:27:02 1999, Danny Backx
+	* print.c changes into a generic print mechanism, the
+	  print specific code is in other files.
+	  These other files define a printer that knows about
+	  printing rows and columns of stuff, top to bottom.
+	  That's all my Epson Stylus Color will do :-)
+	* Print driver files (postscript.c,pcl.c,epson.c,prtext.c,
+	  print.h) define some basic commands.
+
 Tue 27 Apr 21:02:30 1999, Danny Backx
 	* Add src/prtext.c, src/prtext.h, examples/q110399.csv
 

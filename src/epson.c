@@ -1,5 +1,5 @@
 /*
- *  $Id: epson.c,v 1.1 1999/04/27 18:25:50 danny Exp $
+ *  $Id: epson.c,v 1.2 1999/04/28 22:43:30 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: epson.c,v 1.1 1999/04/27 18:25:50 danny Exp $";
+static char rcsid[] = "$Id: epson.c,v 1.2 1999/04/28 22:43:30 danny Exp $";
 
 #include <stdio.h>
 
@@ -29,11 +29,53 @@ static char rcsid[] = "$Id: epson.c,v 1.1 1999/04/27 18:25:50 danny Exp $";
 
 #include "print.h"
 
-void EpsonInitialize(FILE *fp)
+char	*Escape = "\033";
+char	*formfeed = "\f";
+
+void EpsonJobHeader(char *str, int npages, FILE *fp)
 {
+	fprintf(fp, "%s@", Escape);
+}
+
+void EpsonJobTrailer(FILE *fp)
+{
+}
+
+void EpsonPageHeader(char *str, FILE *fp)
+{
+}
+
+void EpsonPageFooter(char *str, FILE *fp)
+{
+	fprintf(fp, "%s", formfeed);
+}
+
+void EpsonField(char *str, int wid, int rightborder, FILE *fp)
+{
+	fprintf(fp, "%s", str);
+}
+
+void EpsonBorders(FILE *fp)
+{
+}
+
+void EpsonFont(char *fn, FILE *fp)
+{
+}
+
+void EpsonNewLine(int ht, FILE *fp)
+{
+	fprintf(fp, "\n");
 }
 
 struct PrintDriver EpsonEscP2PrintDriver = {
 	"Epson ESC/P2",
-	&EpsonInitialize,
+	&EpsonJobHeader,
+	&EpsonJobTrailer,
+	&EpsonPageHeader,
+	&EpsonPageFooter,
+	&EpsonField,
+	&EpsonBorders,
+	&EpsonFont,
+	&EpsonNewLine
 };
