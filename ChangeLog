@@ -1,3 +1,31 @@
+Sun Jun  1 21:26:00 1997  Jeff Bailey  (jbailey@nisa.net)
+
+	* configure.am: create
+        * config.h.in: create
+        * configure.in: redo
+        * Makefile.in: redo
+
+	* utils.c: Update sys_errlist[]'s def'n.
+
+	* utils.c: Reference config.h.
+	* cmd.c: ditto
+	* basic.c: ditto
+	* byte-compile.c: ditto
+	Maybe need to check portability, and check return types.
+
+	* vsprintf.c: Temporarily remove.  This breaks some portability,
+	but dependancies weren't sane.
+	* vfprintf.c: ditto
+	* _doprnt.c: ditto
+	* strftime.c: ditto
+	* alloca.c: ditto
+
+	Update to autoconf 2.12, automake 1.1p.  Prepare to increase 
+	portability to include Gnu Libc 2.  Temporarily require NCurses
+	to function.  Add check for -lm.
+	
+	Add AUTHORS, TODO.  Update INSTALL.
+ 
 Fri Jun  3 22:07:49 1994  Tom Lord  (lord@x1.cygnus.com)
 
 	* ref.c(finish_shift_var): don't leave VAR_DANGLING_RANGE's

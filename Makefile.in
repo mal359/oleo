@@ -1,273 +1,365 @@
-# Copyright (C) 1992, 1993 Free Software Foundation, Inc.
-# This file is part of GNU Oleo.
-# 
-# GNU Oleo is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2, or (at your option)
-# any later version.
-#
-# GNU Oleo is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License
-# along with GNU Oleo; see the file COPYING.  If not, write to
-# the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+# Makefile.in generated automatically by automake 1.1p from Makefile.am
+
+# Copyright (C) 1994, 1995, 1996 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy, distribute and modify it.
+
+
 SHELL = /bin/sh
 
 srcdir = @srcdir@
+top_srcdir = @top_srcdir@
 VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
 
-# Common prefix for machine-independent installed files.
-prefix = /usr/local
-# Common prefix for machine-dependent installed files.
-exec_prefix = $(prefix)
-# Name under which to install GNU Oleo.
-instname = oleo
-# Directory to install `oleo' in.
-bindir = $(exec_prefix)/bin
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
 
-CFLAGS = -g -D_XOPEN_SOURCE
-BISONFLAGS =
-optional_libs = @LIBS@ @wlibs@
-extra_objs =@LIBOBJS@ @ALLOCA@
-xincludedir = @xincludedir@
-xlibdir = @xlibdir@
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
 
-CC = @CC@
-BISON = @YACC@
+top_builddir = .
+
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
+
 INSTALL = @INSTALL@
-INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
-ETAGS = etags -tw
-CTAGS = ctags -tw
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+transform = @program_transform_name@
 
-ALL_CFLAGS = $(CFLAGS) $(xincludedir) $(xlibdir) @DEFS@
-ALL_BISONFLAGS = $(BISONFLAGS) 
+NORMAL_INSTALL = true
+PRE_INSTALL = true
+POST_INSTALL = true
+NORMAL_UNINSTALL = true
+PRE_UNINSTALL = true
+POST_UNINSTALL = true
+CC = @CC@
+LN_S = @LN_S@
+YACC = @YACC@
 
-.c.o:
-	$(CC) -c $(ALL_CFLAGS) $(CPPFLAGS) -I$(srcdir) $<
-
-libs =  $(optional_libs) -lm 
-
-objs = parse.tab.o byte-compile.o eval.o ref.o \
- decompile.o sort.o regions.o utils.o obstack.o lists.o\
- io-term.o getopt.o getopt1.o io-utils.o io-x11.o window.o io-edit.o\
- hash.o panic.o line.o io-curses.o font.o display.o print.o init.o \
- sylk.o oleofile.o sc.o list.o busi.o string.o cells.o ir.o xrdb.o cmd.o \
- basic.o key.o format.o funcs.o args.o stub.o input.o info.o help.o \
- forminfo.o graph.o date.o getdate.o posixtm.o 
-
-all_objs= $(objs) $(extra_objs)
-
-srcs =  parse.y byte-compile.c eval.c ref.c \
+bin_PROGRAMS = oleo
+oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
  decompile.c sort.c regions.c utils.c obstack.c lists.c\
- io-term.c getopt.c getopt1.c  io-utils.c io-x11.c window.c io-edit.c\
- hash.c panic.c line.c  key.c format.c funcs.c \
+ io-term.c getopt.c getopt1.c io-utils.c io-x11.c window.c io-edit.c\
+ hash.c panic.c line.c key.c format.c funcs.c \
  io-curses.c font.c display.c print.c init.c \
  sylk.c oleofile.c sc.c list.c busi.c string.c cells.c \
- random.c vfprintf.c vsprintf.c _doprnt.c alloca.c cmd.c basic.c args.c \
+ random.c cmd.c basic.c args.c \
  stub.c input.c info.c help.c graph.c forminfo.c getdate.y \
- mktime.c posixtm.y date.c strftime.c xmalloc.c
+ mktime.c posixtm.y date.c xmalloc.c
+ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
+mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+CONFIG_HEADER = config.h
+CONFIG_CLEAN_FILES = 
+PROGRAMS =  $(bin_PROGRAMS)
 
-headers = byte-compile.h cell.h cmd.h ir.h display.h errors.h eval.h \
- font.h funcdef.h global.h hash.h init.h io-abstract.h io-edit.h \
- io-generic.h io-term.h io-utils.h line.h list.h \
- lists.h  node.h obstack.h oleofile.h parse.h  \
- proto.h ref.h regions.h sc.h sylk.h sysdef.h \
- utils.h window.h ir.c xrdb.c io-curses.h io-x11.h \
- print.h basic.h getopt.h key.h format.h args.h stub.h decompile.h \
- input.h defun.h defuns.h stubs.h info.h help.h graph.h funcs.h \
- forminfo.h panic.h
 
-dist_files = $(srcs) $(headers) parse.tab.c configure Makefile.in \
-	configure.in ANNOUNCE COPYING USING BUGS ChangeLog NEWS INSTALL.OLEO \
-	README INSTALL irs-1992.oleo KEYS posixtm.c getdate.c EIGHTBIT
+DEFS = @DEFS@ -I. -I$(srcdir) -I.
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+oleo_OBJECTS =  parse.o byte-compile.o eval.o ref.o decompile.o sort.o \
+regions.o utils.o obstack.o lists.o io-term.o getopt.o getopt1.o \
+io-utils.o io-x11.o window.o io-edit.o hash.o panic.o line.o key.o \
+format.o funcs.o io-curses.o font.o display.o print.o init.o sylk.o \
+oleofile.o sc.o list.o busi.o string.o cells.o random.o cmd.o basic.o \
+args.o stub.o input.o info.o help.o graph.o forminfo.o getdate.o \
+mktime.o posixtm.o date.o xmalloc.o
+oleo_LDADD = $(LDADD)
+oleo_LDFLAGS = 
+YLWRAP = $(srcdir)/ylwrap
+CFLAGS = @CFLAGS@
+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
+LINK = $(CC) $(CFLAGS) $(LDFLAGS) -o $@
+DIST_COMMON =  README AUTHORS COPYING ChangeLog INSTALL Makefile.am \
+Makefile.in NEWS TODO aclocal.m4 config.h.in configure configure.in \
+getdate.c install-sh missing mkinstalldirs parse.c posixtm.c stamp-h.in \
+ylwrap
 
-all: oleo
-install: all
-	$(INSTALL_PROGRAM) oleo $(bindir)/oleo
-uninstall:
-	rm $(bindir)/oleo
-Makefile: $(srcdir)/Makefile.in 
-	$(SHELL) config.status
-clean:
-	rm -f $(all_objs) oleo
-distclean: clean
-	rm -f Makefile config.status 
-mostlyclean: clean
-realclean: distclean
-	rm -f  parse.tab.c getdate.c posixtm.c
-TAGS: $(srcs)
-	$(ETAGS) $(srcs)
-tags: $(srcs)
-	$(CTAGS) $(srcs)
-dist.afs: $(dist_files)
-	echo oleo-`sed -e '/version_string/!d' -e 's/[^0-9.]*\([0-9.]*\).*/\1/' -e q io-term.c` > .fname
-	rm -rf `cat .fname`
-	mkdir `cat .fname`
-	cd `cat .fname`; \
-	for file in $(dist_files); do ln -s ../"$$file" .; done; \
-	cd ..
-	tar chf `cat .fname`.tar `cat .fname`
-	gzip `cat .fname`.tar
-	rm -rf `cat .fname` .fname
 
-dist: $(dist_files)
-	echo oleo-`sed -e '/version_string/!d' -e 's/[^0-9.]*\([0-9.]*\).*/\1/' -e q io-term.c` > .fname
-	rm -rf `cat .fname`
-	mkdir `cat .fname`
-	ln $(dist_files) `cat .fname`
-	tar chZf `cat .fname`.tar.Z `cat .fname`
-	rm -rf `cat .fname` .fname
+PACKAGE = @PACKAGE@
+VERSION = @VERSION@
 
-distfiles:
-	echo $(dist_files)
+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
-check:
-	echo check check check
-oleo: $(all_objs)
-	$(CC) $(ALL_CFLAGS) -o oleo $(all_objs) $(libs)
+TAR = tar
+GZIP = --best
+DEP_FILES =  .deps/args.P .deps/basic.P .deps/busi.P \
+.deps/byte-compile.P .deps/cells.P .deps/cmd.P .deps/date.P \
+.deps/decompile.P .deps/display.P .deps/eval.P .deps/font.P \
+.deps/format.P .deps/forminfo.P .deps/funcs.P .deps/getdate.P \
+.deps/getopt.P .deps/getopt1.P .deps/graph.P .deps/hash.P .deps/help.P \
+.deps/info.P .deps/init.P .deps/input.P .deps/io-curses.P \
+.deps/io-edit.P .deps/io-term.P .deps/io-utils.P .deps/io-x11.P \
+.deps/key.P .deps/line.P .deps/list.P .deps/lists.P .deps/mktime.P \
+.deps/obstack.P .deps/oleofile.P .deps/panic.P .deps/parse.P \
+.deps/posixtm.P .deps/print.P .deps/random.P .deps/ref.P \
+.deps/regions.P .deps/sc.P .deps/sort.P .deps/string.P .deps/stub.P \
+.deps/sylk.P .deps/utils.P .deps/window.P .deps/xmalloc.P
+SOURCES = $(oleo_SOURCES)
+OBJECTS = $(oleo_OBJECTS)
 
-parse.tab.c: parse.y
-	$(BISON) $(srcdir)/parse.y
-	-mv y.tab.c parse.tab.c
+default: all
 
-getdate.c: getdate.y parse.tab.c
-	$(BISON) $(srcdir)/getdate.y
-	test ! -f y.tab.c || mv y.tab.c getdate.tab.c
-	sed -e 's/yy/gtd/g' getdate.tab.c > tgetdate.c
-	mv tgetdate.c getdate.c
-	rm -f getdate.tab.c
+.SUFFIXES:
+.SUFFIXES: .c .h .o .y
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu Makefile
 
-posixtm.c: posixtm.y getdate.c parse.tab.c
-	$(BISON) $(srcdir)/posixtm.y
-	test ! -f y.tab.c || mv y.tab.c posixtm.tab.c
-	sed -e 's/yy/psxt/g' posixtm.tab.c > tposixtm.c
-	mv tposixtm.c posixtm.c
-	rm -f posixtm.tab.c
+Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status $(BUILT_SOURCES)
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
-# Prevent GNU make v3 from overflowing arg limit on SysV.
+$(ACLOCAL_M4):  configure.in 
+	cd $(srcdir) && $(ACLOCAL)
+
+config.status: $(srcdir)/configure
+	$(SHELL) ./config.status --recheck
+$(srcdir)/configure: $(srcdir)/configure.in $(ACLOCAL_M4) $(CONFIGURE_DEPENDENCIES)
+	cd $(srcdir) && $(AUTOCONF)
+
+config.h: stamp-h
+stamp-h: $(srcdir)/config.h.in $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES= CONFIG_HEADERS=config.h \
+	     $(SHELL) ./config.status
+	@echo timestamp > stamp-h
+$(srcdir)/config.h.in: $(srcdir)/stamp-h.in
+$(srcdir)/stamp-h.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+	cd $(top_srcdir) && $(AUTOHEADER)
+	echo timestamp > $(srcdir)/stamp-h.in
+
+mostlyclean-hdr:
+
+clean-hdr:
+
+distclean-hdr:
+	rm -f config.h
+
+maintainer-clean-hdr:
+
+mostlyclean-binPROGRAMS:
+
+clean-binPROGRAMS:
+	test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+
+distclean-binPROGRAMS:
+
+maintainer-clean-binPROGRAMS:
+
+install-binPROGRAMS: $(bin_PROGRAMS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(bindir)
+	@list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    echo "  $(INSTALL_PROGRAM) $$p $(bindir)/`echo $$p|sed '$(transform)'`"; \
+	     $(INSTALL_PROGRAM) $$p $(bindir)/`echo $$p|sed '$(transform)'`; \
+	  else :; fi; \
+	done
+
+uninstall-binPROGRAMS:
+	$(NORMAL_UNINSTALL)
+	list='$(bin_PROGRAMS)'; for p in $$list; do \
+	  rm -f $(bindir)/`echo $$p|sed '$(transform)'`; \
+	done
+
+.c.o:
+	$(COMPILE) -c $<
+
+mostlyclean-compile:
+	rm -f *.o core
+
+clean-compile:
+
+distclean-compile:
+	rm -f *.tab.c
+
+maintainer-clean-compile:
+
+oleo: $(oleo_OBJECTS) $(oleo_DEPENDENCIES)
+	@rm -f oleo
+	$(LINK) $(oleo_LDFLAGS) $(oleo_OBJECTS) $(oleo_LDADD) $(LIBS)
+.y.c:
+	$(SHELL) $(YLWRAP) "$(YACC)" $< y.tab.c $*.c y.tab.h $*.h -- $(YFLAGS)
+.y.h:
+	$(SHELL) $(YLWRAP) "$(YACC)" $< y.tab.c $*.h y.tab.h $*.h -- $(YFLAGS)
+
+tags: TAGS
+
+ID: $(HEADERS) $(SOURCES)
+	here=`pwd` && cd $(srcdir) && mkid -f$$here/ID $(SOURCES) $(HEADERS)
+
+TAGS:  $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES)
+	tags=; \
+	here=`pwd`; \
+	test -z "$(ETAGS_ARGS)config.h.in$(SOURCES)$(HEADERS)$$tags" \
+	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags config.h.in $(SOURCES) $(HEADERS) -o $$here/TAGS)
+
+mostlyclean-tags:
+
+clean-tags:
+
+distclean-tags:
+	rm -f TAGS ID
+
+maintainer-clean-tags:
+
+distdir = $(PACKAGE)-$(VERSION)
+top_distdir = $(distdir)
+
+# This target untars the dist file and tries a VPATH configuration.  Then
+# it guarantees that the distribution is self-contained by making another
+# tarfile.
+distcheck: dist
+	rm -rf $(distdir)
+	GZIP=$(GZIP) $(TAR) zxf $(distdir).tar.gz
+	mkdir $(distdir)/=build
+	mkdir $(distdir)/=inst
+	dc_install_base=`cd $(distdir)/=inst && pwd`; \
+	cd $(distdir)/=build \
+	  && ../configure --srcdir=.. --prefix=$$dc_install_base \
+	  && $(MAKE) \
+	  && $(MAKE) dvi \
+	  && $(MAKE) check \
+	  && $(MAKE) install \
+	  && $(MAKE) installcheck \
+	  && $(MAKE) dist
+	rm -rf $(distdir)
+	@echo "========================"; \
+	echo "$(distdir).tar.gz is ready for distribution"; \
+	echo "========================"
+dist: distdir
+	-chmod -R a+r $(distdir)
+	GZIP=$(GZIP) $(TAR) chozf $(distdir).tar.gz $(distdir)
+	rm -rf $(distdir)
+dist-all: distdir
+	-chmod -R a+r $(distdir)
+	GZIP=$(GZIP) $(TAR) chozf $(distdir).tar.gz $(distdir)
+	rm -rf $(distdir)
+distdir: $(DISTFILES)
+	rm -rf $(distdir)
+	mkdir $(distdir)
+	-chmod 777 $(distdir)
+	here=`cd $(top_builddir) && pwd`; \
+	top_distdir=`cd $(top_distdir) && pwd`; \
+	cd $(top_srcdir) \
+	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --gnu Makefile
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  test -f $(distdir)/$$file \
+	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	  || cp -p $$d/$$file $(distdir)/$$file; \
+	done
+
+MKDEP = gcc -M $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
+
+-include .deps/.P
+.deps/.P:
+	test -d .deps || mkdir .deps
+	echo > $@
+
+-include $(DEP_FILES)
+$(DEP_FILES): .deps/.P
+
+mostlyclean-depend:
+
+clean-depend:
+
+distclean-depend:
+
+maintainer-clean-depend:
+	rm -rf .deps
+
+.deps/%.P: %.c
+	@echo "Computing dependencies for $<..."
+	@o='o'; \
+	test -n "$o" && o='$$o'; \
+	$(MKDEP) $< | sed "s,^\(.*\)\.o:,\1.$$o \1.l$$o $@:," > $@
+info:
+dvi:
+check: all
+	$(MAKE)
+installcheck:
+install-exec: install-binPROGRAMS
+	@$(NORMAL_INSTALL)
+
+install-data: 
+	@$(NORMAL_INSTALL)
+
+install: install-exec install-data all
+	@:
+
+uninstall: uninstall-binPROGRAMS
+
+all: Makefile $(PROGRAMS) config.h
+
+install-strip:
+	$(MAKE) INSTALL_PROGRAM='$(INSTALL_PROGRAM) -s' install
+installdirs:
+	$(mkinstalldirs)  $(bindir)
+
+
+mostlyclean-generic:
+	test -z "$(MOSTLYCLEANFILES)" || rm -f $(MOSTLYCLEANFILES)
+
+clean-generic:
+	test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
+
+distclean-generic:
+	rm -f Makefile $(DISTCLEANFILES)
+	rm -f config.cache config.log stamp-h stamp-h[0-9]*
+	test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
+
+maintainer-clean-generic:
+	test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
+	test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
+mostlyclean:  mostlyclean-hdr mostlyclean-binPROGRAMS \
+		mostlyclean-compile mostlyclean-tags mostlyclean-depend \
+		mostlyclean-generic
+
+clean:  clean-hdr clean-binPROGRAMS clean-compile clean-tags \
+		clean-depend clean-generic mostlyclean
+
+distclean:  distclean-hdr distclean-binPROGRAMS distclean-compile \
+		distclean-tags distclean-depend distclean-generic clean
+	rm -f config.status
+
+maintainer-clean:  maintainer-clean-hdr maintainer-clean-binPROGRAMS \
+		maintainer-clean-compile maintainer-clean-tags \
+		maintainer-clean-depend maintainer-clean-generic \
+		distclean
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+	rm -f config.status
+
+.PHONY: default mostlyclean-hdr distclean-hdr clean-hdr \
+maintainer-clean-hdr mostlyclean-binPROGRAMS distclean-binPROGRAMS \
+clean-binPROGRAMS maintainer-clean-binPROGRAMS uninstall-binPROGRAMS \
+install-binPROGRAMS mostlyclean-compile distclean-compile clean-compile \
+maintainer-clean-compile tags mostlyclean-tags distclean-tags \
+clean-tags maintainer-clean-tags distdir mostlyclean-depend \
+distclean-depend clean-depend maintainer-clean-depend info dvi \
+installcheck install-exec install-data install uninstall all \
+installdirs mostlyclean-generic distclean-generic clean-generic \
+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
-
-# ================ automaticly generated ================
-
-_doprnt.o : _doprnt.c 
-alloca.o : alloca.c 
-args.o : args.c global.h sysdef.h utils.h funcdef.h args.h cmd.h obstack.h line.h \
-  key.h funcs.h info.h io-abstract.h window.h cell.h font.h io-generic.h io-edit.h \
-  io-utils.h format.h 
-basic.o : basic.c sysdef.h global.h utils.h funcdef.h basic.h cmd.h obstack.h \
-  line.h key.h args.h funcs.h info.h regions.h window.h cell.h font.h io-term.h \
-  io-generic.h io-abstract.h io-utils.h io-curses.h ref.h format.h lists.h io-edit.h \
-  eval.h byte-compile.h 
-busi.o : busi.c funcdef.h sysdef.h global.h utils.h cell.h font.h line.h eval.h \
-  errors.h 
-byte-compile.o : byte-compile.c funcdef.h obstack.h sysdef.h global.h utils.h \
-  node.h eval.h cell.h font.h line.h hash.h ref.h 
-cells.o : cells.c obstack.h funcdef.h sysdef.h global.h utils.h cell.h font.h \
-  line.h eval.h errors.h lists.h format.h io-abstract.h window.h io-generic.h \
-  io-term.h cmd.h key.h args.h funcs.h info.h 
-cmd.o : cmd.c obstack.h global.h sysdef.h utils.h funcdef.h \
-  cmd.h line.h key.h args.h funcs.h info.h io-term.h io-abstract.h window.h cell.h \
-  font.h io-generic.h io-utils.h io-edit.h stub.h ref.h 
-date.o : date.c funcdef.h sysdef.h global.h utils.h cell.h font.h line.h eval.h \
-  errors.h 
-decompile.o : decompile.c global.h sysdef.h utils.h funcdef.h decompile.h eval.h \
-  cell.h font.h line.h io-utils.h 
-display.o : display.c display.h global.h sysdef.h utils.h funcdef.h font.h line.h \
-  cell.h ir.h proto.h lists.h io-utils.h 
-eval.o : eval.c funcdef.h obstack.h sysdef.h global.h utils.h cell.h font.h \
-  line.h eval.h errors.h 
-font.o : font.c font.h global.h sysdef.h utils.h funcdef.h line.h window.h cell.h \
-  io-abstract.h cmd.h obstack.h key.h args.h funcs.h info.h io-x11.h io-term.h \
-  io-utils.h 
-format.o : format.c global.h sysdef.h utils.h funcdef.h format.h cell.h font.h \
-  line.h cmd.h obstack.h key.h args.h funcs.h info.h io-term.h io-abstract.h window.h \
-  io-generic.h 
-forminfo.o : forminfo.c sysdef.h forminfo.h 
-funcs.o : funcs.c global.h sysdef.h utils.h funcdef.h cmd.h obstack.h line.h \
-  key.h args.h funcs.h info.h io-term.h basic.h format.h cell.h font.h print.h \
-  io-x11.h io-edit.h regions.h help.h window.h graph.h lists.h defuns.h defun.h 
-getdate.o : getdate.c 
-getopt.o : getopt.c getopt.h 
-getopt1.o : getopt1.c getopt.h 
-graph.o : graph.c global.h sysdef.h utils.h funcdef.h graph.h cell.h font.h \
-  line.h cmd.h obstack.h key.h args.h funcs.h info.h io-term.h regions.h ref.h \
-  io-utils.h 
-hash.o : hash.c sysdef.h hash.h 
-help.o : help.c global.h sysdef.h utils.h funcdef.h cmd.h obstack.h line.h key.h \
-  args.h funcs.h info.h forminfo.h help.h io-utils.h cell.h font.h 
-info.o : info.c global.h sysdef.h utils.h funcdef.h info.h hash.h cmd.h obstack.h \
-  line.h key.h args.h funcs.h 
-init.o : init.c proto.h init.h global.h sysdef.h utils.h funcdef.h io-term.h \
-  cmd.h obstack.h line.h key.h args.h funcs.h info.h 
-input.o : input.c global.h sysdef.h utils.h funcdef.h input.h cmd.h obstack.h \
-  line.h key.h args.h funcs.h info.h window.h cell.h font.h io-abstract.h 
-io-curses.o : io-curses.c proto.h funcdef.h sysdef.h global.h utils.h cell.h \
-  font.h line.h cmd.h obstack.h key.h args.h funcs.h info.h io-generic.h io-edit.h \
-  io-term.h io-abstract.h window.h io-utils.h lists.h regions.h input.h 
-io-edit.o : io-edit.c funcdef.h sysdef.h global.h utils.h cell.h font.h line.h \
-  io-utils.h io-edit.h cmd.h obstack.h key.h args.h funcs.h info.h io-abstract.h \
-  window.h io-generic.h format.h lists.h regions.h 
-io-term.o : io-term.c global.h sysdef.h utils.h funcdef.h basic.h cell.h font.h \
-  line.h cmd.h obstack.h key.h args.h funcs.h info.h format.h getopt.h init.h \
-  io-abstract.h window.h io-curses.h io-edit.h io-generic.h io-term.h io-utils.h \
-  io-x11.h lists.h oleofile.h print.h ref.h regions.h graph.h list.h sc.h sylk.h \
-  panic.h 
-io-utils.o : io-utils.c sysdef.h io-utils.h global.h utils.h funcdef.h cell.h \
-  font.h line.h ref.h decompile.h io-generic.h obstack.h io-abstract.h window.h \
-  lists.h io-term.h cmd.h key.h args.h funcs.h info.h 
-io-x11.o : io-x11.c 
-ir.o : ir.c ir.h proto.h 
-key.o : key.c key.h global.h sysdef.h utils.h funcdef.h line.h cmd.h obstack.h \
-  args.h funcs.h info.h io-abstract.h window.h cell.h font.h io-generic.h io-utils.h \
-  io-term.h 
-line.o : line.c global.h sysdef.h utils.h funcdef.h line.h 
-list.o : list.c funcdef.h sysdef.h global.h utils.h cell.h font.h line.h io-generic.h \
-  obstack.h io-abstract.h window.h regions.h io-utils.h cmd.h key.h args.h funcs.h \
-  info.h 
-lists.o : lists.c funcdef.h obstack.h sysdef.h global.h utils.h cell.h font.h \
-  line.h ref.h window.h io-term.h io-abstract.h 
-mktime.o : mktime.c 
-obstack.o : obstack.c obstack.h 
-oleofile.o : oleofile.c funcdef.h sysdef.h io-generic.h global.h utils.h obstack.h \
-  io-abstract.h line.h window.h cell.h font.h io-utils.h io-term.h sylk.h lists.h \
-  ref.h regions.h info.h cmd.h key.h args.h funcs.h 
-panic.o : panic.c funcdef.h sysdef.h global.h utils.h io-generic.h obstack.h \
-  io-abstract.h line.h window.h cell.h font.h info.h cmd.h key.h args.h funcs.h \
-  panic.h 
-parse.tab.o : parse.tab.c funcdef.h obstack.h sysdef.h global.h utils.h errors.h \
-  node.h eval.h cell.h font.h line.h ref.h 
-posixtm.o : posixtm.c 
-print.o : print.c display.h global.h sysdef.h utils.h funcdef.h font.h line.h \
-  cell.h ir.h proto.h cmd.h obstack.h key.h args.h funcs.h info.h io-generic.h \
-  io-abstract.h window.h 
-random.o : random.c 
-ref.o : ref.c funcdef.h sysdef.h global.h utils.h cell.h font.h line.h eval.h \
-  io-abstract.h window.h io-generic.h obstack.h hash.h byte-compile.h parse.h \
-  ref.h cmd.h key.h args.h funcs.h info.h 
-regions.o : regions.c funcdef.h sysdef.h global.h utils.h cell.h font.h line.h \
-  io-generic.h obstack.h io-abstract.h window.h io-utils.h lists.h ref.h regions.h \
-  io-term.h cmd.h key.h args.h funcs.h info.h 
-sc.o : sc.c funcdef.h sysdef.h global.h utils.h cell.h font.h line.h io-generic.h \
-  obstack.h io-abstract.h window.h io-utils.h lists.h ref.h parse.h regions.h \
-  cmd.h key.h args.h funcs.h info.h 
-sort.o : sort.c 
-strftime.o : strftime.c 
-string.o : string.c funcdef.h obstack.h sysdef.h global.h utils.h cell.h font.h \
-  line.h eval.h errors.h 
-stub.o : stub.c global.h sysdef.h utils.h funcdef.h cmd.h obstack.h line.h key.h \
-  args.h funcs.h info.h stub.h stubs.h 
-sylk.o : sylk.c funcdef.h sysdef.h io-generic.h global.h utils.h obstack.h io-abstract.h \
-  line.h window.h cell.h font.h io-term.h lists.h io-utils.h ref.h regions.h info.h \
-  cmd.h key.h args.h funcs.h 
-utils.o : utils.c sysdef.h utils.h funcdef.h global.h 
-vfprintf.o : vfprintf.c sysdef.h 
-vsprintf.o : vsprintf.c sysdef.h 
-window.o : window.c global.h sysdef.h utils.h funcdef.h window.h cell.h font.h \
-  line.h io-generic.h obstack.h io-abstract.h io-utils.h io-term.h cmd.h key.h \
-  args.h funcs.h info.h lists.h regions.h 
-xmalloc.o : xmalloc.c sysdef.h 
-xrdb.o : xrdb.c 

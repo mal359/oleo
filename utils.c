@@ -16,6 +16,10 @@ You should have received a copy of the GNU General Public License
 along with Oleo; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdio.h>
 #include <errno.h>
 #include "sysdef.h"
@@ -68,7 +72,7 @@ extern void *realloc ();
 #endif /* _DEBUG_MALLOC_INC */
 
 extern int sys_nerr;
-extern char *sys_errlist[];
+extern const char *const sys_errlist[];
 
 struct id
   {
