@@ -1,6 +1,10 @@
-$Id: ChangeLog,v 1.123 2000/02/22 23:29:32 danny Exp $
+$Id: ChangeLog,v 1.124 2000/02/23 19:51:54 danny Exp $
 
-Sun 19 Dec 17:40:28 1999, Danny
+Wed 23 Feb 20:51:06 2000, Danny
+	* Correct ChangeLog
+	* small update to graph.[ch]
+
+Tue 22 Feb 23:29:32 2000, Danny
 	* Define a function @button(label, command). Motif should
 	  create a cell widget which is a button displaying "label",
 	  when the user clicks it, it should execute "command".
@@ -17,6 +21,7 @@ Sun 19 Dec 17:40:28 1999, Danny
 	  plotutils 2.2 or older.
 	* Use the new GNU Plotutils SciPlot library which I'm writing.
 	  For now, it'll be bundled with Oleo.
+	  (src/plotter.c, src/legend.c, src/sciplot.h, src/sciplotI.h)
 	* Upgrade doc/texi2html to version 1.60 beta, corresponding
 	  change in doc/Makefile.am.
 	* Explicitly include src/parse.h in distributions.
@@ -28,8 +33,6 @@ Sun 19 Dec 17:40:28 1999, Danny
 	  omitted checks for <config.h>.
 	* Worked around a memory overrun problem in SelectCellCB.
 	  Still need to pinpoint it exactly !
-	* Temporarily add the libsciplot sources to the Oleo tree,
-	  until the libsciplot gets incorporated into GNU plotutils.
 
 Wed  1 Dec 22:10:51 1999, Danny
 	* Release 1.99.8.

@@ -121,6 +121,10 @@ static enum graph_pair_ordering graph_data_order [graph_num_axis];
 /* Automatic axis ? */
 static int graph_auto[2];
 
+/* Numeric values for axis ranges */
+static double	graph_axis_lo[graph_num_axis],
+		graph_axis_hi[graph_num_axis];
+
 enum graph_axis
 chr_to_axis (int c)
 {
@@ -349,6 +353,7 @@ graph_set_axis_lo (int axis_c, char * val)
   enum graph_axis axis = chr_to_axis (axis_c);
   graph_check_range (val);
   set_line (&graph_rng_lo [axis], val);
+  graph_axis_lo[axis] = atof(val);
   graph_axis_symbols [axis].lr = NON_ROW;
 }
 
@@ -359,6 +364,7 @@ graph_set_axis_hi (int axis_c, char * val)
   enum graph_axis axis = chr_to_axis (axis_c);
   graph_check_range (val);
   set_line (&graph_rng_hi [axis], val);
+  graph_axis_hi[axis] = atof(val);
   graph_axis_symbols [axis].lr = NON_ROW;
 }
 
@@ -1060,4 +1066,24 @@ graph_get_axis_auto(int axis)
 
 	io_error_msg("Invalid graph axis %d, must be 0 or 1", axis);
 	return 1;
+}
+
+double
+graph_get_axis_lo(int axis)
+{
+	if (axis < 0 || axis > graph_num_axis) {
+		io_error_msg("graph_get_axis_lo : invalid graph axis %d, must be 0 or 1", axis);
+		return 0.0;
+	}
+	return graph_axis_lo[axis];
+}
+
+double
+graph_get_axis_hi(int axis)
+{
+	if (axis < 0 || axis > graph_num_axis) {
+		io_error_msg("graph_get_axis_hi: invalid graph axis %d, must be 0 or 1", axis);
+		return 0.0;
+	}
+	return graph_axis_hi[axis];
 }
