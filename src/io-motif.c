@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.30 1999/03/06 15:58:20 danny Exp $
+ *  $Id: io-motif.c,v 1.31 1999/03/09 21:29:38 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.30 1999/03/06 15:58:20 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.31 1999/03/09 21:29:38 danny Exp $";
 
 #include "config.h"
 
@@ -1150,6 +1150,8 @@ Widget ConfigureXYChart(Widget parent)
 	form = XtVaCreateManagedWidget("configureXYChartForm", xmFormWidgetClass,
 		frame,
 		NULL);
+
+	/* X Axis */
 	XYxAutoToggle =
 	t = XtVaCreateManagedWidget("xAutoToggle", xmToggleButtonGadgetClass,
 		form,
@@ -1188,6 +1190,8 @@ Widget ConfigureXYChart(Widget parent)
 			XmNleftWidget,		l,
 			XmNleftOffset,		10,
 		NULL);
+
+	/* Y Axis */
 	XYyAutoToggle =
 	t = XtVaCreateManagedWidget("yAutoToggle", xmToggleButtonGadgetClass,
 		form,
@@ -1231,6 +1235,8 @@ Widget ConfigureXYChart(Widget parent)
 			XmNleftWidget,		l,
 			XmNleftOffset,		10,
 		NULL);
+
+	/* Line type */
 
 	return frame;
 }
@@ -1291,7 +1297,7 @@ Widget ConfigurePieChart(Widget parent)
 	form = XtVaCreateManagedWidget("configurePieChartForm", xmFormWidgetClass,
 		frame,
 		NULL);
-	t = XtVaCreateManagedWidget("xAutoToggle", xmToggleButtonGadgetClass,
+	t = XtVaCreateManagedWidget("pie3d", xmToggleButtonGadgetClass,
 		form,
 			XmNtopAttachment,	XmATTACH_FORM,
 			XmNtopOffset,		10,
@@ -1352,6 +1358,7 @@ void ConfigureBarReset(void)
  */
 struct PrintWidgets {
 	Widget	rangeTF, fileTF, printerTF, programTF;
+	Widget	PrinterToggle, FileToggle, ProgramToggle;
 } PrintWidgets;
 
 /*
@@ -1371,15 +1378,43 @@ void ReallyPrintCB(Widget w, XtPointer client, XtPointer call)
 
 	XtUnmanageChild(PrintDialog);
 
-	fn = XmTextFieldGetString(PrintWidgets.fileTF);
+	if (XmToggleButtonGadgetGetState(PrintWidgets.PrinterToggle)) {
+		char	cmd[64], *pr;
 
-	if (fn)
-		fp = fopen(fn, "w");
-	if (! fp) {
-		MessageAppend(True, "Couldn't write to file %s\n", fn);
+		pr = XmTextFieldGetString(PrintWidgets.printerTF);
+		if (strlen(pr)) {
+			sprintf(cmd, "lpr -P%s", pr);
+		} else if (strlen(AppRes.printer)) {
+			sprintf(cmd, "lpr -P%s", AppRes.printer);
+		} else
+			sprintf(cmd, "lpr");
+
+		fp = popen(cmd, "w");
+		if (fp == NULL) {
+			MessageAppend(True, "Couldn't print to printer %s\n", AppRes.printer);
+			return;
+		}
+	} else if (XmToggleButtonGadgetGetState(PrintWidgets.FileToggle)) {
+		fn = XmTextFieldGetString(PrintWidgets.fileTF);
+
+		if (fn)
+			fp = fopen(fn, "w");
+		if (! fp) {
+			MessageAppend(True, "Couldn't write to file %s\n", fn);
 #ifdef	FREE_TF_STRING
-		XtFree(fn);
+			XtFree(fn);
 #endif
+			return;
+		}
+	} else if (XmToggleButtonGadgetGetState(PrintWidgets.ProgramToggle)) {
+		fp = popen(AppRes.program, "w");
+
+		if (fp == NULL) {
+			MessageAppend(True, "Couldn't print to program %s\n", AppRes.program);
+			return;
+		}
+	} else {
+		MessageAppend(True, _("Internal error: can find what to print to\n"));
 		return;
 	}
 
@@ -1397,7 +1432,10 @@ void ReallyPrintCB(Widget w, XtPointer client, XtPointer call)
 #endif
 
 	psprint_region_cmd(&rng, fp);
-	fclose(fp);
+	if (XmToggleButtonGadgetGetState(PrintWidgets.FileToggle))
+		fclose(fp);
+	else
+		pclose(fp);
 
 	MessageAppend(False, "Printed %s to %s\n", range_name(&rng), fn);
 
@@ -1469,6 +1507,7 @@ Widget MotifCreatePrintDialog(Widget s)
 			XmNorientation,		XmHORIZONTAL,
 		NULL);
 
+	PrintWidgets.PrinterToggle =
 	w = XtVaCreateManagedWidget("printer", xmToggleButtonGadgetClass,
 		radio, NULL);
 #ifdef	HAVE_STRCASECMP
@@ -1485,6 +1524,7 @@ Widget MotifCreatePrintDialog(Widget s)
 	/* Filler */ XtVaCreateManagedWidget("", xmLabelGadgetClass, radio,
 		NULL);
 
+	PrintWidgets.FileToggle =
 	w = XtVaCreateManagedWidget("file", xmToggleButtonGadgetClass,
 		radio, NULL);
 #ifdef	HAVE_STRCASECMP
@@ -1498,6 +1538,8 @@ Widget MotifCreatePrintDialog(Widget s)
 			radio, NULL);
 	w = XtVaCreateManagedWidget("fileTFBrowse", xmPushButtonGadgetClass,
 			radio, NULL);
+
+	PrintWidgets.ProgramToggle =
 	w = XtVaCreateManagedWidget("program", xmToggleButtonGadgetClass,
 		radio, NULL);
 #ifdef	HAVE_STRCASECMP
@@ -2763,20 +2805,16 @@ int formats_list[] = {
 	/* 0 */		FMT_DEF,
 	/* 1 */		FMT_HID,
 	/* 2 */		FMT_GPH,
-	/* 3 */		PRC_FLT,
-	/* 4 */		FMT_GEN,
-	/* 5 */		FMT_DOL,
-	/* 6 */		FMT_CMA,
-	/* 7 */		FMT_PCT,
+	/* 3 */		FMT_GEN,
+	/* 4 */		FMT_DOL,
+	/* 5 */		FMT_CMA,
+	/* 6 */		FMT_PCT,
+	/* 7 */		FMT_DEF,
 	/* 8 */		FMT_DEF,
 	/* 9 */		FMT_DEF,
 	/* 10 */	FMT_DEF,
-	/* 11 */	FMT_DEF,
-#ifdef	FMT_DATE
-	/* 12 */	FMT_DATE,
-#else
+	/* 11 */	FMT_DATE,
 	/* 12 */	FMT_DEF,
-#endif
 	/* 13 */	FMT_DEF,
 	/* 14 */	FMT_DEF,
 	/* 15 */	FMT_DEF,
@@ -2847,19 +2885,19 @@ void CreateFormatsDialog(Widget p)
 	x0 = XmStringCreateSimple(_("Default"));	/* FMT_DEF */
 	x1 = XmStringCreateSimple(_("Hidden"));		/* FMT_HID */
 	x2 = XmStringCreateSimple(_("Graph"));		/* FMT_GPH */
-	x3 = XmStringCreateSimple(_("Float"));		/* PRC_FLT */
-	x4 = XmStringCreateSimple(_("General"));	/* FMT_GEN */
-	x5 = XmStringCreateSimple(_("Dollar"));		/* FMT_DOL */
-	x6 = XmStringCreateSimple(_("Comma"));		/* FMT_CMA */
-	x7 = XmStringCreateSimple(_("Percent"));	/* FMT_PCT */
-	x8 = XmStringCreateSimple(_("Integer"));
-	x9 = XmStringCreateSimple(_("Decimal"));
-	x10 = XmStringCreateSimple(_("Fixed"));
-	x11 = XmStringCreateSimple(_("Exponent"));
-	x12 = XmStringCreateSimple(_("Date"));		/* FMT_DATE */
-	x13 = XmStringCreateSimple(_("User-1"));
-	x14 = XmStringCreateSimple(_("User-2"));
-	x15 = XmStringCreateSimple(_("User-3"));
+	x3 = XmStringCreateSimple(_("General"));	/* FMT_GEN */
+	x4 = XmStringCreateSimple(_("Dollar"));		/* FMT_DOL */
+	x5 = XmStringCreateSimple(_("Comma"));		/* FMT_CMA */
+	x6 = XmStringCreateSimple(_("Percent"));	/* FMT_PCT */
+	x7 = XmStringCreateSimple(_("Integer"));
+	x8 = XmStringCreateSimple(_("Decimal"));
+	x9 = XmStringCreateSimple(_("Fixed"));
+	x10 = XmStringCreateSimple(_("Exponent"));
+	x11 = XmStringCreateSimple(_("Date"));		/* FMT_DATE */
+	x12 = XmStringCreateSimple(_("User-1"));
+	x13 = XmStringCreateSimple(_("User-2"));
+	x14 = XmStringCreateSimple(_("User-3"));
+	x15 = XmStringCreateSimple(_("User-4"));
 
 	w = XmVaCreateSimpleOptionMenu(f, "formatsOption",
 		xms, /* mnemonic ? */0, /* initial selection */ 0, 

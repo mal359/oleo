@@ -190,11 +190,12 @@ oleo_read_file (fp, ismerge)
 		    }
 		  if (*ptr == 'F')
 		    {
-/*		      default_fmt += PRC_FLT;	*/
+		      prc = FLOAT_PRECISION;
 		      ptr++;
 		    }
 		  else
-		    default_fmt += astol (&ptr);
+		    prc = astol (&ptr);
+
 		  switch (*ptr++)
 		    {
 		    case 'C':
@@ -271,10 +272,9 @@ oleo_read_file (fp, ismerge)
 		      break;
 		    }
 		  if (*ptr == 'F') {
-/*		      fmt += PRC_FLT;	*/
+		      prc = FLOAT_PRECISION;
 		      ptr++;
 		  } else {
-/*		    fmt += astol (&ptr);	*/
 		    prc = astol(&ptr);
 		  }
 		  switch (*ptr++)
@@ -620,13 +620,14 @@ oleo_fmt_to_str (int f1, int p1)
       p_buf[0] = '*';
       break;
     default:
-      if (p1 == PRC_FLT)
+      if (p1 == FLOAT_PRECISION)
 	{
 	  p_buf[1] = 'F';
 	  p_buf[2] = '\0';
 	}
       else
 	sprintf (&p_buf[1], "%d", p1);
+
       switch (f1)
 	{
 	case FMT_USR:

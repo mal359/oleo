@@ -131,7 +131,7 @@ typedef struct cell CELL;
 #define GET_PRECISION(p)	((p)->cell_flags.cell_precision)
 #define SET_PRECISION(p,x)	((p)->cell_flags.cell_precision = (x))
 
-#define PRC_FLT	0x0F	/* What is this ??? */
+#define FLOAT_PRECISION	15
 
 #define FMT_DEF		0	/* Default */
 #define FMT_HID		1	/* Hidden */

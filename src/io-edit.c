@@ -639,8 +639,7 @@ insert_cell_attr (struct rng * rng, char * attr)
 	set_line (&line, "def");
       else
 	{
-	  int fmt = GET_FORMAT (cp);
-	  set_line (&line, fmt_to_str (fmt));
+	  set_line(&line, cell_format_string(cp));
 	}
     }
   else if (!stricmp (attr, "font"))

@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.6 1999/03/06 15:58:19 danny Exp $
+ *  $Id: fallback.c,v 1.7 1999/03/09 21:29:36 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -38,6 +38,8 @@ char *fallback[] = {
 	"*XmMainWindow.showSeparator:	true",
 	"*background:			#AAAAAA",
 	"*bae.background:		#CCCCCC",
+//	"*bae.cellShadowType:		shadow_etched_in",
+	"*bae.gridType:			grid_shadow_in",
 	"*formula.columns:		80",
 	"*splash*fontList:		-b&h-lucidatypewriter-bold-r-normal-sans-24-*-*-*-*-*-iso8859-1=large,-b&h-lucida-medium-i-normal-sans-18-*-*-*-*-*-iso8859-1=small",
 	"*splash*background:		#AAAAAA",
@@ -232,7 +234,7 @@ char *fallback[] = {
 	"*quitMB*Cancel.labelString:	Don't quit",
 /* XY Chart Dialog */
 	"*datatab.labelString:				General Chart Data",
-
+/* XY Chart Dialog */
 	"*XYTab.labelString:				XY Chart",
 	"*configureXYChartFrameTitle.labelString:	Configure XY Charts",
 	"*xAutoToggle.labelString:			Automatic X Axis",
@@ -241,13 +243,14 @@ char *fallback[] = {
 	"*yAutoToggle.labelString:			Automatic Y Axis",
 	"*yMinLabel.labelString:			Minimum Y :",
 	"*yMaxLabel.labelString:			Maximum Y :",
-
+/* Bar Chart Dialog */
 	"*BarTab.labelString:				Bar Chart",
 	"*configureBarChartFrameTitle.labelString:	Configure Bar Charts",
 	"*stackToggle.labelString:			Stacking Bar Chart",
-
+/* Pie Chart Dialog */
 	"*PieTab.labelString:				Pie Chart",
 	"*configurePieChartFrameTitle.labelString:	Configure Pie Charts",
+	"*pie3d.labelString:				3D Pie Chart",
 /* GNU Plotutils : list of known plotters */
 	"*puPlotters:			PostScript,ps,ps;"
 				"GNU MetaPlot,gmp,meta;"

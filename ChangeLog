@@ -1,5 +1,20 @@
 
-Sat  6 Mar 16:57:25 CET 1999
+Tue  9 Mar 22:24:38 1999, Danny Backx
+	* Oleo 1.6.15
+	* Use XmNgridType as suggested by Andrew Lister (Xbae's maintainer).
+	  Using the value supplied as default now (XmGRID_SHADOW_IN), Oleo
+	  looks even cooler than before :-)
+	* Manually add Art Haas's patches, somewhat modified.
+	  I didn't change the FMT_* numbers in cell.h as this would introduce
+	  incompatibility (new oleo won't read old oleo's files).
+	  Also there were still a couple of cases which I didn't understand
+	  in the file read/write code; they should be better now.
+
+	  By the way: what Art's patch was all about was to further clarify
+	  the separation between precision and format in the Oleo sources.
+	  Before recently, they were always used together. Yuck.
+
+Sat  6 Mar 16:57:25 1999, Danny Backx
 	* Back out Art Haas's patch - it messes up a couple of my files.
 	* Get notebook to display page 1 initially.
 	* Attempt to get some of the XY graph's special config stuff to work.

@@ -21,7 +21,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "global.h"
 #include "cell.h"
 
-extern char * fmt_to_str (int fmt);
+// extern char * fmt_to_str (int fmt);
+extern char *cell_format_string(CELL *cp);
 extern int str_to_fmt (char *ptr);
 extern char * jst_to_str (int jst);
 extern int chr_to_jst (int chr);

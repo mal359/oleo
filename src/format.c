@@ -27,58 +27,77 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "io-abstract.h"
 #include "io-generic.h"
 
-char *
-fmt_to_str (int fmt)
+static char *
+fmt_to_str (int format, int precision)
 {
   char *ptr;
   static char buf[30];
   char nbuf[10];
 
-  if (fmt == FMT_DEF)
-    return "default";
-  if (fmt == FMT_HID)
-    return "hidden";
-  if (fmt == FMT_GPH)
-    return "graph";
-  if ((fmt & PRC_FLT) == PRC_FLT)
-    strcpy (nbuf, "float");
-  else
-    sprintf (nbuf, "%d", (fmt & PRC_FLT));
-  switch (fmt | PRC_FLT)
-    {
+  nbuf[0] = '\0';
+
+  switch (format) {
     case FMT_USR:
       ptr = "user-";
-      sprintf (nbuf, "%d", (fmt & PRC_FLT) + 1);
+      sprintf (nbuf, "%d", precision + 1);
       break;
     case FMT_GEN:
       ptr = "general.";
+      sprintf (nbuf, "%d", precision);
       break;
     case FMT_DOL:
       ptr = "dollar.";
+      sprintf (nbuf, "%d", precision);
       break;
     case FMT_CMA:
       ptr = "comma.";
+      sprintf (nbuf, "%d", precision);
       break;
     case FMT_PCT:
       ptr = "percent.";
+      sprintf (nbuf, "%d", precision);
       break;
     case FMT_FXT:
-      if ((fmt & PRC_FLT) == 0)
+      if (precision == 0)
 	return "integer";
-      if (fmt == FMT_FXT)
-	return "decimal";
+#if 0
+      if (format == FMT_FXT)
+	return "decimal";				/* What's a decimal ? */
+#endif
       ptr = "fixed.";
+      sprintf (nbuf, "%d", precision);
       break;
     case FMT_EXP:
       ptr = "exponent.";
+      sprintf (nbuf, "%d", precision);
       break;
     default:
-      io_error_msg ("Unknown format %d (%x)", fmt, fmt);
+      io_error_msg ("Unknown format %d (%x)", format, format);
       ptr = "UNKNOWN";
       break;
     }
   sprintf (buf, "%s%s", ptr, nbuf);
   return buf;
+}
+
+/*
+ * This is a replacement for fmt_to_str() above which used to have a dirty
+ * interface (mixing format and precision).
+ * Actually it was called in only two places, preceeded in both cases by
+ * GET_FORMAT(cp), so I contracted GET_FORMAT and fmt_to_str.
+ *
+ * This was one of the calls. Nice huh ?
+ * p->String = fmt_to_str ((cell_ptr = find_cell (row, col)) ? GET_FORMAT (cell_ptr) : 0);
+ */
+char *
+cell_format_string(CELL *cp)
+{
+	int	format;
+
+	if (cp == NULL)
+		return fmt_to_str(0, 0);
+
+	
 }
 
 struct fmt
@@ -95,12 +114,14 @@ static char *dec_names[] =	{"decimal", "dec", 0};
 
 static struct fmt simple[] =
 {
-  {FMT_DEF, def_names},
-  {FMT_HID, hid_names},
-  {FMT_GPH, gph_names},
-  {FMT_FXT - PRC_FLT, int_names},
-  {FMT_FXT, dec_names},
-  {0, 0}
+	{FMT_DEF,	def_names},
+	{FMT_HID,	hid_names},
+	{FMT_GPH,	gph_names},
+	{FMT_FXT,	int_names},
+#if 0
+	{FMT_FXT,	dec_names},
+#endif
+	{0, 0}
 };
 
 char *gen_names[] =	{"general.",	"gen.", "G", 0};
@@ -112,13 +133,13 @@ char *exp_names[] =	{"exponent.",	"exp.", "E", 0};
 
 static struct fmt withprec[] =
 {
-  {FMT_GEN - PRC_FLT, gen_names},
-  {FMT_DOL - PRC_FLT, dol_names},
-  {FMT_CMA - PRC_FLT, cma_names},
-  {FMT_PCT - PRC_FLT, pct_names},
-  {FMT_FXT - PRC_FLT, fxt_names},
-  {FMT_EXP - PRC_FLT, exp_names},
-  {0, 0}
+	{FMT_GEN, gen_names},
+	{FMT_DOL, dol_names},
+	{FMT_CMA, cma_names},
+	{FMT_PCT, pct_names},
+	{FMT_FXT, fxt_names},
+	{FMT_EXP, exp_names},
+	{0, 0}
 };
 
 int
@@ -139,7 +160,7 @@ str_to_fmt (char *ptr)
 	  for (p1 = ptr, p2 = *strs; *p1 == *p2 && *p1; p1++, p2++)
 	    ;
 	  if (*p1 == '\0' && *p2 == '\0')
-	    return f->fmt;
+	    return f->fmt;		/* AHAAS had a different version here */
 	}
     }
   if (!strncmp (ptr, "user-", 5))
@@ -148,7 +169,7 @@ str_to_fmt (char *ptr)
       n = astol (&ptr);
       if (*ptr || n < 1 || n > 16)
 	return -1;
-      return n - 1 - PRC_FLT + FMT_USR;
+      return n - 1 - FLOAT_PRECISION + FMT_USR;		/* AHAAS had a different version here */
     }
   for (f = withprec, ret = 0; !ret && f->strs; f++)
     {
@@ -171,7 +192,7 @@ str_to_fmt (char *ptr)
     return -1;
   if (!strcmp (ptr, "float") || !strcmp (ptr, "f"))
     {
-      n = PRC_FLT;
+      n = FLOAT_PRECISION;		/* AHAAS had a different version here */
     }
   else
     {
@@ -179,7 +200,7 @@ str_to_fmt (char *ptr)
       if (*ptr || n < 0 || n > 14)
 	return -1;
     }
-  return ret + n;
+  return ret + n;		/* AHAAS had a different version here */
 }
 
 char *

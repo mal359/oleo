@@ -10,6 +10,8 @@ TODO's:
 
 * Increase "X" friendliness.
  - Make a LessTif/Motif interface
+	(busy) printing
+	(busy) GNU Plotutils dialogs
 
 * Include texi2html in the oleo source, and enhance it so it can
   process all the texinfo commands used in the documentation.
@@ -20,6 +22,7 @@ TODO's:
   In the process, make the plotting user interface more transparent.
 
 * Make io_error_msg work right in Motif.
+	(done)
 
 * Get i18n to work right.
 
