@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.39 1999/09/06 21:33:06 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.40 1999/09/19 09:26:26 danny Exp $
 #
 localedir = $(prefix)/share/locale
 
@@ -61,6 +61,13 @@ else
 # MYLD = @GTK_LIBS@
 # MYINC =
 # MYCFL = @GTK_CFLAGS@
+
+#
+# Allow non-Motif X version to get compiled.
+#
+MYLD=	${X_LIBS}
+MYINC=
+MYCFL=	${X_CFLAGS}
 endif
 
 oleo_LDADD = ${X_PRE_LIBS} ${MYLD} @INTLLIBS@ ../lib/liboleo.a ${X_LIBS}
@@ -80,7 +87,8 @@ noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  sc.h stub.h stubs.h sylk.h \
  sysdef.h utils.h window.h list.h ir.h sort.h \
  io-motif.h appres.h \
- print.h pcl.h postscript.h epson.h prtext.h
+ print.h pcl.h postscript.h epson.h prtext.h \
+ mdi.h
 
 EXTRA_DIST =	gpl.sed
 

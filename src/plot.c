@@ -185,10 +185,10 @@ PuPieChart(char *plotter, FILE *outfile)
 	}
 
 	/* Allocate space for label coordinates */
-	lx = calloc(num, sizeof(double));
+	lx = (double *)calloc(num, sizeof(double));
 	if (lx == NULL)
 		return;
-	ly = calloc(num, sizeof(double));
+	ly = (double *)calloc(num, sizeof(double));
 	if (ly == NULL)
 		return;
 

@@ -338,7 +338,7 @@ xio_redraw_input_cursor (int on)
   int start;
   XTextItem cursor_text;
   int cwid;
-  int ypos = (iv->current_info ? 0 : input);
+  int ypos = (iv->current_info ? 0 : Global->input);
   char * inp;
 
   inp = (iv->input_area
@@ -390,7 +390,7 @@ xio_redraw_input (void)
 {
   {
     struct input_view * iv = &thePort->input_view;
-    int ypos = (iv->current_info ? 0 : input);
+    int ypos = (iv->current_info ? 0 : Global->input);
 
     if (iv->redraw_needed == NO_REDRAW)
       return;
@@ -550,8 +550,8 @@ xio_scan_for_input (int blockp)
     {
       if (resize_pending && !events_pending)
 	{
-	  if (   ((pendingh / height_scale) > 9.)
-	      && ((pendingw / width_scale) > 9.))
+	  if (   ((pendingh / Global->height_scale) > 9.)
+	      && ((pendingw / Global->width_scale) > 9.))
 	      {
 		io_set_scr_size (pendingh, pendingw);
 		resize_pending = 0;
@@ -597,23 +597,23 @@ xio_scan_for_input (int blockp)
                       {
 			jmp_buf tmp_exception;
 
-			bcopy(error_exception, tmp_exception, sizeof(jmp_buf));
+			bcopy(Global->error_exception, tmp_exception, sizeof(jmp_buf));
 		        se_buf[se_chars_buffered] = '\0';
 
-			if (setjmp (error_exception))
+			if (setjmp (Global->error_exception))
 			  {
 			    fprintf(stderr, "Error in send_event command: %s\n", se_buf);
 			    se_buf[0] = '\0';
 			    se_chars_buffered = 0;
 			    set_info (0);
 		            pop_unfinished_command ();
-			    bcopy(tmp_exception, error_exception, sizeof(jmp_buf));
-			    longjmp (error_exception, 1); /**/
+			    bcopy(tmp_exception, Global->error_exception, sizeof(jmp_buf));
+			    longjmp (Global->error_exception, 1); /**/
 			  }
 			else
 			  {
 			    execute_command (se_buf);
-			    bcopy(tmp_exception, error_exception, sizeof(jmp_buf));
+			    bcopy(tmp_exception, Global->error_exception, sizeof(jmp_buf));
 			  }
 		        se_buf[0] = '\0';
 		        se_chars_buffered = 0;
@@ -823,11 +823,11 @@ draw_input (void)
   if (!input_text.chars)
     {
       XFillRectangle (thePort->dpy, thePort->window, thePort->neutral_gc,
-		      input, 0, scr_cols, input_rows);
+		      Global->input, 0, scr_cols, input_rows);
       return;
     }
   input_text.font = thePort->input_font->fid;
-  xdraw_text_item (thePort, 0, input, scr_cols, input_rows, thePort->input_font,
+  xdraw_text_item (thePort, 0, Global->input, scr_cols, input_rows, thePort->input_font,
 		  thePort->input_gc, &input_text, 1);
   if (input_more_mode)
     {
@@ -837,7 +837,7 @@ draw_input (void)
       more_text.nchars = 6;
       more_text.delta = 0;
       more_text.font = thePort->input_font->fid;
-      xdraw_text_item (thePort, scr_cols - mwid, input, mwid, input_rows,
+      xdraw_text_item (thePort, scr_cols - mwid, Global->input, mwid, input_rows,
 		      thePort->input_font, thePort->standout_input_gc,
 		      &more_text, 1);
     }
@@ -850,7 +850,7 @@ draw_input (void)
       cursor_text.chars = input_text.chars + input_cursor;
       cursor_text.nchars = 1;
       cursor_text.font = thePort->input_font->fid;
-      xdraw_text_item (thePort, start, input, cwid, input_rows,
+      xdraw_text_item (thePort, start, Global->input, cwid, input_rows,
 		      thePort->input_font, thePort->standout_input_gc,
 		      &cursor_text, 1);
     }
@@ -861,28 +861,28 @@ static void
 xio_clear_input_before (void)
 {
   textout = 0;
-  if (topclear == 2)
+  if (Global->topclear == 2)
     {
       int x;
       for (x = 0; x < input_text.nchars; ++x)
 	input_text.chars[x] = ' ';
       input_cursor = 0;
       draw_input ();
-      topclear = 0;
+      Global->topclear = 0;
     }
 }
 
 static void
 xio_clear_input_after (void)
 {
-  if (topclear)
+  if (Global->topclear)
     {
       int x;
       for (x = 0; x < input_text.nchars; ++x)
 	input_text.chars[x] = ' ';
       input_cursor = 0;
       draw_input ();
-      topclear = 0;
+      Global->topclear = 0;
     }
 }
 
@@ -912,7 +912,7 @@ xdraw_status (void)
   if (!x11_opened || thePort->input_view.current_info)
     return;
   if (user_status)
-    xdraw_text_item (thePort, 0, status, scr_cols,
+    xdraw_text_item (thePort, 0, Global->status, scr_cols,
 		    status_rows, thePort->status_font,
 		    thePort->status_gc, &status_text, 1);
 }
@@ -1048,7 +1048,7 @@ xio_get_chr (char *prompt)
 {
   int len = strlen (prompt);
   set_input (prompt, len, len);
-  topclear = 2;
+  Global->topclear = 2;
   draw_input ();
   return io_getch ();
 }
@@ -1460,7 +1460,7 @@ record_damage (Xport port, int x, int y, int w, int h)
       xwin = xwin->next;
     }
 
-  if (((input + input_rows) >= y) && (input <= y + h))
+  if (((Global->input + input_rows) >= y) && (Global->input <= y + h))
     port->input_view.redraw_needed = FULL_REDRAW;
 }
 
@@ -1753,7 +1753,7 @@ draw_labels (void)
 	      int hgt = get_scaled_height (cr);
 	      if (hgt)
 		{
-		  if (a0)
+		  if (Global->a0)
 		    sprintf (buf, "%d", cr);
 		  else
 		    sprintf (buf, "R%d", cr);
@@ -1783,7 +1783,7 @@ draw_labels (void)
 		{
 		  int txtwid;
 		  char *ptr;
-		  if (a0)
+		  if (Global->a0)
 		    ptr = col_to_str (cr);
 		  else
 		    {
@@ -2171,8 +2171,8 @@ xio_open_display (void)
   
   {
     struct cell_gc *cgc = cell_gc (thePort, default_font(), 0);
-    height_scale = cgc->font->ascent + cgc->font->descent;
-    width_scale = XTextWidth (cgc->font, "M", 1);
+    Global->height_scale = cgc->font->ascent + cgc->font->descent;
+    Global->width_scale = XTextWidth (cgc->font, "M", 1);
   }
 
   /* Setup the arrow keys.  Modifiers effect the last character
@@ -2328,8 +2328,8 @@ set_x_default_point_size (int l)
       Global->cell_font_point_size = l;
       {
 	struct cell_gc *cgc = cell_gc (thePort, default_font(), 0);
-	height_scale = cgc->font->ascent + cgc->font->descent;
-	width_scale = cgc->font->max_bounds.width;
+	Global->height_scale = cgc->font->ascent + cgc->font->descent;
+	Global->width_scale = cgc->font->max_bounds.width;
       }
       io_set_scr_size (scr_lines, scr_cols);
     }

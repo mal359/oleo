@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.15 1999/09/06 21:33:07 danny Exp $
+ * $Id: print.c,v 1.16 1999/09/19 09:26:30 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,17 @@
  * In this file, all dimensions are to be specified in points,
  * which are a measurement 1/72 of an inch (roughly 1/3 of a
  * millimeter).
+ *
+ * Mainly, this file contains the function print_region_cmd().
+ *
+ * The functionality is :
+ *	figure out total width,height of the region to be printed
+ *	based on the width,height of the cells, not the cell contents
+ *	determine number of pages to print from the total width,height
+ *	run through the whole region (left to right and top to bottom),
+ *		beginning a new page when necessary
+ *	(allow for overlapping cells)
+ *	(use the indicated font)
  */
 
 #ifdef HAVE_CONFIG_H
@@ -345,6 +356,39 @@ print_region_cmd (struct rng *print, FILE *fp)
 				default_font_slant, default_font_size, fp);
 		    }
 
+		/*
+		 * Overlapping cells
+		 * - figure out whether the text fits the current cell
+		 * if not :
+		 * - run over the cells to our immediate right until a non-empty
+		 *	cell is encountered
+		 * - determine the width of the empty area in the process
+		 * - pass this width to the Field()'s second parameter instead
+		 *	of simply the cell width
+		 */
+		ptr = print_cell (cp);
+#if 0
+		if (strlen(ptr) > w) {	/* Is this right ?? what about font size ?? FIX ME */
+#else
+		if (1) {
+#endif
+			int	i, wtot;
+
+			wtot = w;
+			for (i=cc+1; i<c_hi; i++) {
+				struct cell *cp = find_cell (rr, i);
+				if (!cp || GET_FORMAT(cp) == FMT_HID || GET_TYP(cp) == 0)
+					wtot += get_width(i);
+				else
+					break;
+			}
+			fprintf(stderr, "Width for cell %d,%d is %d (own %d)\n", rr, i, wtot, w);
+			w = wtot;
+		}
+
+		/*
+		 * Now just print the damn field
+		 */
 		if (Global->CurrentPrintDriver->printer_justifies()) {
 		    if (!cp || !GET_TYP (cp)) {
 			Global->CurrentPrintDriver->field("", w, 0, 1, fp);

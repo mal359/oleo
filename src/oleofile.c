@@ -308,8 +308,9 @@ oleo_read_file (fp, ismerge)
 		  clo = astol (&ptr);
 		  chi = astol (&ptr);
 		  cwid = astol (&ptr) + 1;
-		  for (; clo <= chi; clo++)
-		    set_width (clo, cwid);
+		  for (; clo <= chi; clo++) {
+			set_width (clo, cwid);
+		    }
 		  break;
 
 		case 'H':	/* JF: extension */

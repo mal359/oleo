@@ -1,5 +1,5 @@
 /*
- *  $Id: postscript.c,v 1.8 1999/09/06 21:33:08 danny Exp $
+ *  $Id: postscript.c,v 1.9 1999/09/19 09:26:31 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -28,7 +28,7 @@
  * There shouldn't be much spreadsheet functionality here...
  */
 
-static char rcsid[] = "$Id: postscript.c,v 1.8 1999/09/06 21:33:08 danny Exp $";
+static char rcsid[] = "$Id: postscript.c,v 1.9 1999/09/19 09:26:31 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -68,12 +68,56 @@ put_ps_string (char *str, FILE *fp)
 
 void PostScriptJobHeader(char *title, int npages, FILE *fp)
 {
+	struct font_names	*fn;
+	struct font_memo	*fm;
+
 	fprintf(fp, "%%!PS-Adobe-3.0\n");
 	fprintf(fp, "%%%%Creator: %s %s\n", PACKAGE, VERSION);
 	fprintf(fp, "%%%%Pages: (atend)\n");
 	fprintf(fp, "%%%%PageOrder: Ascend\n");
+
+	/*
+	 * Print a list of all fonts
+	 */
+	fprintf(fp, "%%%%DocumentFonts:");
+	for (fm = font_list; fm; fm = fm->next) {
+		if ((fn = fm->names) == 0)
+			continue;
+		if (fn->ps_name == 0 || strlen(fn->ps_name) == 0)
+			continue;
+		fprintf(fp, " %sISO", fn->ps_name);
+	}
+	fprintf(fp, "\n");
+
+	/* done */
+
 	fprintf(fp, "%%%%Title: %s\n", title);
 	fprintf(fp, "%%%%EndComments\n%%%%BeginProlog\n");
+
+	/*
+	 * Define a function to reencode all fonts to ISO Latin 1
+	 */
+	fprintf(fp, "/reencodeISO { %%def\n");
+	fprintf(fp, "    findfont dup length dict begin\n");
+	fprintf(fp, "    { 1 index /FID ne { def }{ pop pop } ifelse } forall\n");
+	fprintf(fp, "    /Encoding ISOLatin1Encoding def\n");
+	fprintf(fp, "    currentdict end definefont pop\n");
+	fprintf(fp, "} bind def\n");
+
+	/*
+	 * Remap all used fonts to ISO, give them a new name.
+	 */
+	for (fm = font_list; fm; fm = fm->next) {
+		if ((fn = fm->names) == 0)
+			continue;
+		if (fn->ps_name == 0 || strlen(fn->ps_name) == 0)
+			continue;
+		fprintf(fp, "/%sISO /%s reencodeISO\n", fn->ps_name, fn->ps_name);
+	}
+
+	/*
+	 *
+	 */
 	fprintf(fp, "/FontName where { pop } { /FontName (Courier) def } ifelse\n");
 	fprintf(fp, "/FirstSize where { pop } { /FirstSize 10 def } ifelse\n");
 	fprintf(fp, "%%%%EndProlog\n");
@@ -112,12 +156,24 @@ void PostScriptPageFooter(char *str, FILE *fp)
 	fprintf(fp, "showpage\n");
 }
 
+/*
+ * Justify can have values JST_DEF, JST_LFT, JST_RGT, JST_CNT
+ */
 void PostScriptField(char *str, int wid, int justify, int rightborder, FILE *fp)
 {
 	float	w = MULTIPLY_WIDTH * wid;
 
 	if (strlen(str)) {
-		fprintf(fp, "%3.1f %3.1f moveto ", x, y);
+		float	tw = strlen(str) * MULTIPLY_WIDTH;	/* Font size ?? */
+
+		if (justify == JST_CNT) {
+			fprintf(fp, "%3.1f %3.1f moveto ", x + (w - tw) / 2, y);
+		} else if (justify == JST_RGT) {
+			fprintf(fp, "%3.1f %3.1f moveto ", x + w - tw, y);
+		} else {
+			fprintf(fp, "%3.1f %3.1f moveto ", x, y);
+		}
+
 		put_ps_string(str, fp);
 		fprintf(fp, " show\n");
 	}
@@ -140,7 +196,7 @@ void PostScriptFont(char *family, char *slant, int size, FILE *fp)
 	fprintf(fp, "/FontName where { pop } { /FontName (Courier) def } ifelse\n");
 	fprintf(fp, "/FirstSize where { pop } { /FirstSize 10 def } ifelse\n");
 #endif
-	fprintf(fp, "/%s findfont %d scalefont setfont\n", family, size);
+	fprintf(fp, "/%sISO findfont %d scalefont setfont\n", family, size);
 #if 0
 	fprintf(fp, "FontName findfont FirstSize scalefont setfont\n");
 #endif

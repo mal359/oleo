@@ -1,4 +1,4 @@
-$Id: TODO,v 1.31 1999/08/30 01:39:11 danny Exp $
+$Id: TODO,v 1.32 1999/09/19 09:26:21 danny Exp $
 
 TODO's:
 
@@ -59,6 +59,7 @@ TODO's:
 	(busy) implement PCL printing (see www.wotsit.org)
 	(busy) improve appearance of PostScript prints
 	(todo) fix precision handling in prints
+	(todo) Make Iso Latin 1 be user definable in PostScript.
 
 * Get our stuff together for an upcoming 2.0 release of Oleo.
 

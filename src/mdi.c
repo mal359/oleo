@@ -1,5 +1,5 @@
 /*
- *  $Id: mdi.c,v 1.2 1999/09/02 22:53:48 danny Exp $
+ *  $Id: mdi.c,v 1.3 1999/09/19 09:26:32 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: mdi.c,v 1.2 1999/09/02 22:53:48 danny Exp $";
+static char rcsid[] = "$Id: mdi.c,v 1.3 1999/09/19 09:26:32 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -32,12 +32,36 @@ static char rcsid[] = "$Id: mdi.c,v 1.2 1999/09/02 22:53:48 danny Exp $";
 #include <unistd.h>
 
 #include "global.h"
+
+#ifdef	HAVE_MOTIF
 #include "io-motif.h"
+#endif
+
+#ifndef	False
+#define	False	0
+#endif
+#ifndef	True
+#define	True	1
+#endif
 
 static int nglobals = 0;
 static struct OleoGlobal	*globals = 0;
 
 #define	NGLOBALS_INC	10
+
+/*
+ * Hack.
+ * This file only works well with Motif/LessTif anyway
+ */
+#ifndef	HAVE_MOTIF
+void MotifGlobalInitialize()
+{
+}
+
+void MessageAppend()
+{
+}
+#endif
 
 static void AllocateSubStructures(void)
 {

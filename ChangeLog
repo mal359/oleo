@@ -1,7 +1,15 @@
-$Id: ChangeLog,v 1.104 1999/09/06 21:33:03 danny Exp $
+$Id: ChangeLog,v 1.105 1999/09/19 09:26:17 danny Exp $
 
 	* Changes to get things to compile without mysql
 	  around.
+	* Make sure src/mdi.h gets distributed.
+	* Get a non-motif version to compile after all the
+	  changes with Global.
+	* Added #include <stdlib.h> to font.c; strange things
+	  were sometimes happening. The return value of atof()
+	  should be known to the compiler.
+	* Make the PostScript output IsoLatin1 by default.
+	  This should probably be user-definable.
 
 Fri  3 Sep 00:56:31 1999, Danny Backx
 	* A bugfix prompted by Dag Nygren's report that
