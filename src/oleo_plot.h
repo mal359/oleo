@@ -2,7 +2,7 @@
 #define _OLEO_PLOT_H_
 
 /*
-	$Id: oleo_plot.h,v 1.2 1999/03/16 22:57:25 danny Exp $
+	$Id: oleo_plot.h,v 1.3 1999/04/27 18:28:26 danny Exp $
 
 	Copyright (C) 1998-1999 Free Software Foundation, Inc.
 
@@ -37,5 +37,8 @@ typedef void (*PuFunction)(char *, FILE *);
 void PuPieChart(char *plotter, FILE *outfile);
 void PuBarChart(char *plotter, FILE *outfile);
 void PuXYChart(char *plotter, FILE *outfile);
+
+extern double	XYxMin, XYxMax, XYyMin, XYyMax;
+extern int	XYxAuto, XYyAuto, LineToOffscreen;
 
 #endif  /* _OLEO_PLOT_H_ */

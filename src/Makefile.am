@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.32 1999/04/09 11:46:58 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.33 1999/04/27 18:28:18 danny Exp $
 #
 localedir = $(prefix)/share/locale
 
@@ -23,6 +23,7 @@ endif
 #
 if HaveXbase
 XBSRC=		xbase.cpp oleo_xb.h
+CXXFLAGS=	$(CFLAGS)
 oleo_LINK=	$(CXXLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
 else
 XBSRC=
@@ -33,12 +34,13 @@ oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
  decompile.c sort.c regions.c utils.c lists.c\
  io-term.c io-utils.c io-x11.c window.c io-edit.c\
  panic.c line.c key.c format.c funcs.c \
- hash.c ir.c io-curses.c font.c display.c print.c init.c \
+ hash.c ir.c io-curses.c font.c display.c init.c \
  sylk.c oleofile.c sc.c list.c busi.c string.c cells.c \
  cmd.c basic.c args.c \
  stub.c input.c info.c help.c \
  graph.c plot.c \
- forminfo.c posixtm.y date.c xrdb.c $(GUI) $(XBSRC)
+ forminfo.c posixtm.y date.c xrdb.c $(GUI) $(XBSRC) \
+ print.c postscript.c pcl.c epson.c prtext.c
 
 if UseMotif
 MYLD = @link_motif@ @link_xmhtml@ @link_xbae@ @link_sciplot@
@@ -68,11 +70,12 @@ noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  io-utils.h io-x11.h \
  ir.h key.h line.h lists.h node.h oleofile.h \
  panic.h parse.h \
- graph.h oleo_plot.h print.h \
+ graph.h oleo_plot.h \
  proto.h ref.h regions.h \
  sc.h stub.h stubs.h sylk.h \
  sysdef.h utils.h window.h list.h ir.h sort.h \
- io-motif.h appres.h
+ io-motif.h appres.h \
+ print.h pcl.h postscript.h epson.h prtext.h
 
 EXTRA_DIST =	gpl.sed
 

@@ -22,11 +22,25 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 extern void put_ps_string (char *str, FILE *fp);
 extern void psprint_region (FILE * fp, struct rng * rng, float wid, float hgt, char * font);
 extern void set_page_size_cmd (char * whole_str);
-extern void psprint_region_cmd (struct rng *rng, FILE *fp);
+extern void print_region_cmd (struct rng *rng, FILE *fp);
 
 extern int PrintGetNumPageSizes(void);
 extern char * PrintGetPageName(int index);
 extern void PrintSetPageSize(float wid, float ht);
 extern void PrintSetPage(char *page);
 
+struct page_size 
+{
+    char *name;
+    float wid;
+    float hgt;
+};
+
+struct PrintDriver {
+	char	*name;
+	void	(*put_header) (/* ... , */ FILE *);
+};
+
+char *PrintGetType(int);
+void PrintSetType(char *);
 #endif /* PRINTH */

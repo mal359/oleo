@@ -953,6 +953,42 @@ main (int argc, char **argv)
 #ifdef SIGSEGV
   signal (SIGSEGV, got_sig);
 #endif
+#ifdef	SIGHUP
+  signal(SIGHUP, got_sig);
+#endif
+#ifdef	SIGTRAP
+  signal(SIGTRAP, got_sig);
+#endif
+#ifdef	SIGABRT
+  signal(SIGABRT, got_sig);
+#endif
+#ifdef	SIGFPE
+  signal(SIGFPE, got_sig);
+#endif
+#ifdef	SIGSYS
+  signal(SIGSYS, got_sig);
+#endif
+#ifdef	SIGALRM
+  signal(SIGALRM, got_sig);
+#endif
+#ifdef	SIGTERM
+  signal(SIGTERM, got_sig);
+#endif
+#ifdef	SIGXCPU
+  signal(SIGXCPU, got_sig);
+#endif
+#ifdef	SIGVTALRM
+  signal(SIGVTALRM, got_sig);
+#endif
+#ifdef	SIGPROF
+  signal(SIGPROF, got_sig);
+#endif
+#ifdef	SIGUSR1
+  signal(SIGUSR1, got_sig);
+#endif
+#ifdef	SIGUSR2
+  signal(SIGUSR2, got_sig);
+#endif
   }
 
   /* Read the init file. */

@@ -43,6 +43,7 @@ static char * sylk_to_oleo_functions(char *f);
 
 #define	SYLK_LEN	1024
 
+int	nformat = 0;		/* We've already read this many formats */
 /*
  * These functions read and write Microsoft Multiplan SYLK style files
  * as well as SYLK-NOA0 files.  SYLK-NOA0 is the same as SYLK except that
@@ -72,6 +73,7 @@ sylk_read_file (fp, ismerge)
   long mx_row = MAX_ROW, mx_col = MAX_COL;
   int next_a0;
   int old_a0;
+  int	num;
 
   old_a0 = a0;
   next_a0 = old_a0;
@@ -312,7 +314,12 @@ sylk_read_file (fp, ismerge)
 		  goto bad_field;
 
 		case 'P':	/* FIX ME Excel */
-			while (*ptr && *ptr != ';') ptr++;
+			num = 0;
+			while (*ptr && *ptr != ';') {
+				if (isdigit(*ptr))
+					num = num * 10 + *ptr - '0';	/* ASCII */
+				ptr++;
+			}
 			break;
 
 		case 'M':	/* FIX ME Excel */
@@ -576,6 +583,9 @@ sylk_read_file (fp, ismerge)
 
 	/* First character on the line */
 	case 'P':	/* FIX ME Excel */
+		/* Probably define a format */
+		nformat++;
+		fprintf(stderr, "Format %d is %s\n", nformat, ptr);
 		break;
 	}
     }
@@ -958,8 +968,8 @@ sylk_to_oleo_functions(char *f)
 			*(q++) = *p;
 		*q = '\0';
 	}
-
+#if 0
 	fprintf(stderr, "Sylk2Oleo(%s) -> '%s'\n", f, buf);
-
+#endif
 	return buf;
 }

@@ -672,7 +672,7 @@ err_msg (void)
   else
 	sprintf (buf, "Unknown error code %d (%#x)", n, n);
 #else
-#if 1
+#if HAVE_SYS_ERRLIST
   /* This was #if-fed away. Why ? */
   if (n < sys_nerr);
      return sys_errlist[n];

@@ -1,7 +1,10 @@
 ===== Oleo 1.99.3 =====
 
 Noteworthy changes in Oleo 1.99.3 :
-- SYLK support is much better
+- SYLK support is much better. This means that the example files that
+  I have can be read without error. It does *not* mean that all the
+  contents of the files are treated. E.g. we have no support for cell
+  borders, multiple graphs, fonts, colour-filled cells, ...
 - Oleo now handles noa0 cell addresses of not only its own format
   (such as RC[-2:-3]), but also RC[-2]:RC[-1] - which was needed for
   reading SYLK files.

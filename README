@@ -89,11 +89,10 @@ To build an Oleo with Motif support, try building with the following:
 
   ./configure --with-motif && make
 
-The Motif interface shows where Oleo is headed, but at present a binary
-produced in this way cannot be used in character mode (i.e. by running it
-with the -x or --nw options).  It will run, but many key bindings (like the
-Enter key :) are missing.  To compile with Motif support, you will need the
-following libraries on your system:
+The Motif interface shows where Oleo is headed. A binary produced in this
+way can be used in character mode (i.e. by running it with the -x or --nw
+options) but not in the no-frills X mode. To compile with Motif support,
+you will need the following libraries on your system:
 
 	* Motif or LessTif, Xlt (from LessTif) and Xbae 4.6.2
 	* SciPlot (optional, for charts, if Xlt not used)

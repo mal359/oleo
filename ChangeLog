@@ -1,3 +1,47 @@
+Tue 27 Apr 20:28:18 1999, Danny Backx
+	* README : remove comments about curses mode not working
+	  from a Motif executable until someone can prove it.
+	* /usr/local handler in configure.in should target the
+	  INCLUDES, not the CFLAGS. The latter won't work for
+	  the C++ compiler.
+	* Moved some variables (such as XYxAuto) from io-motif.c
+	  to plot.c - it wasn't possible to compile without Motif
+	  but with plotutils.
+	* Adding another printer type (printer protocol such as
+	  PostScript) needs to be done only in one place, apart
+	  from writing the code : add an #include line to the
+	  top of src/print.c and add one line to the contents
+	  of the Drivers table in the same file.
+	* Add "Epson ESC/P2" (this is the protocol used with the
+	  Stylus Color printers) and "Text" as supported printer
+	  languages.
+	* Version dialog in Motif now lists the versions of all
+	  the libraries we link with (Motif/LessTif, Xbae, XmHTML,
+	  SciPlot) which are so kind as to provide the information.
+	  Xbase and gsl don't seem to bother.
+	* Catch more signals when not in X. In many cases, we weren't
+	  cleaning up when getting a signal. Bad if you run curses.
+	  Pointed out by Klaus Schilling.
+	* Remove from CVS : stamp-h.in, src/posixtm.c, lib/ansi2knr.c,
+	  lib/ansi2knr.1, lib/xmalloc.c, lib/getdate.h
+	* First cut at splitting printing support into two layers,
+	  a general one and (currently) a PostScript layer. Once
+	  separation is good and general enough, PCL (and/or others
+	  should be pluggable).
+	* Add src/postscript.c and src/pcl.c as low-level printer
+	  drivers. src/print.c should be a high level interface.
+
+Wed 21 Apr 1999, Jeff Bailey  <jbailey@nisa.net>
+	* configure.in: Look for sys_errlist and sys_nerr and set
+	  HAVE_SYS_ERRLIST if true.  Thanks to BASH authors, although
+	  theirs doesn't actually work. =)
+	  Only look for Motif if X is available.  HPUX10.20 comes with Motif
+	  but no X libraries.
+	* acheader.h: Add HAVE_SYS_ERRLIST def'n.
+	* src/utils.c: Check for HAVE_SYS_ERRLIST
+
+	With this, it now compiles in curses mode on HPUX10.20, and fails 
+	somewhere else on Cygwin. =)
 
 Mon 12 Apr 15:50:37 1999, Danny Backx
 	* Graph configure window deals better with empty ranges.

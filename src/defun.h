@@ -1743,7 +1743,7 @@ DEFUN ("set-default-ps-font",
 "will be used to print all cells with no explicitly defined font.",
 #endif
 
-DEFUN ("print-region", FDprint_region, FAprint_region, print_region)
+DEFUN ("print-region", FDprint_region, FAprint_region, txt_print_region)
 #ifdef FUNC_ARG_STRINGS
 "rRegion? ",
 "fwPrint to file? ",
@@ -1753,7 +1753,7 @@ DEFUN ("print-region", FDprint_region, FAprint_region, print_region)
 #endif
 
 DEFUN ("psprint-region",
-       FDpsprint_region, FApsprint_region, psprint_region_cmd)
+       FDpsprint_region, FApsprint_region, print_region_cmd)
 #ifdef FUNC_ARG_STRINGS
 "rPrint region? ",
 "fwWrite EPS to file? ",

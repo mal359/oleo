@@ -60,6 +60,9 @@
 /* Define if `struct utimbuf' is declared -- usually in <utime.h>.  */
 #undef HAVE_STRUCT_UTIMBUF
 
+/* Define if `sys_errlist' and `sys_nerr' are declared.  Normally in <errno.h> */
+#undef HAVE_SYS_ERRLIST
+
 /* Define to gnu_mktime if the replacement function should be used.  */
 #undef mktime
 

@@ -148,7 +148,7 @@ precision_region (struct rng *where, int precision)
 unsigned int print_width;
 
 void
-print_region (struct rng *print, FILE *fp)
+txt_print_region (struct rng *print, FILE *fp)
 {
   CELLREF rr, cc;
   CELL *cp;

@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.13 1999/04/09 11:47:00 danny Exp $
+ *  $Id: fallback.c,v 1.14 1999/04/27 18:28:21 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -269,6 +269,7 @@ char *fallback[] = {
 	"*yAutoToggle.labelString:			Automatic Y Axis",
 	"*yMinLabel.labelString:			Minimum Y :",
 	"*yMaxLabel.labelString:			Maximum Y :",
+	"*lineToOffscreen.labelString:			Draw line to offscreen data points",
 /* Bar Chart Dialog */
 	"*BarTab.labelString:				Bar Chart",
 	"*configureBarChartFrameTitle.labelString:	Configure Bar Charts",

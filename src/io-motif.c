@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.40 1999/04/12 13:50:23 danny Exp $
+ *  $Id: io-motif.c,v 1.41 1999/04/27 18:28:22 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,9 +21,11 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.40 1999/04/12 13:50:23 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.41 1999/04/27 18:28:22 danny Exp $";
 
+#ifdef	HAVE_CONFIG_H
 #include "config.h"
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -105,7 +107,8 @@ Widget	PrintDialog = NULL;
 Widget	DefaultFileDialog, DefaultFileShell = NULL;
 Widget	ConfigureGraphNotebook;
 
-static Widget	XYxAutoToggle, XYxMinText, XYxMaxText, XYyAutoToggle, XYyMinText, XYyMaxText;
+static Widget	XYxAutoToggle, XYxMinText, XYxMaxText, XYyAutoToggle, XYyMinText, XYyMaxText,
+		lineToOffscreen;
 
 Pixmap	oleo_icon_pm = (Pixmap)0;
 
@@ -1406,15 +1409,18 @@ Widget ConfigureXYChart(Widget parent)
 
 	/* Line type */
 
+	/* Lines to offscreen data points */
+	lineToOffscreen = XtVaCreateManagedWidget("lineToOffscreen", xmToggleButtonGadgetClass,
+		form,
+			XmNtopAttachment,       XmATTACH_WIDGET,
+			XmNtopWidget,           te,
+			XmNtopOffset,           10,
+			XmNleftAttachment,      XmATTACH_FORM,
+			XmNleftOffset,          10,
+		NULL);
+
 	return frame;
 }
-
-/*
- * This needs to be put into the graph system
- * by using graph_set_*() API's.
- */
-double	XYxMin = 0.0, XYxMax = 100.0, XYyMin = 0.0, XYyMax = 100.0;
-int	XYxAuto = True, XYyAuto = True;
 
 void ConfigureXYOk(void)
 {
@@ -1434,6 +1440,8 @@ void ConfigureXYOk(void)
 	s = XmTextFieldGetString(XYyMaxText);
 	sscanf(s, "%lf", &XYyMax);
 
+	LineToOffscreen = XmToggleButtonGadgetGetState(lineToOffscreen);
+
 #if 0
 	fprintf(stderr, "ConfigureXY: X %s %f %f, Y %s %f %f\n",
 		XYxAuto ? "auto" : "man",
@@ -1443,8 +1451,23 @@ void ConfigureXYOk(void)
 #endif
 }
 
+static void TextFieldSetFloat(Widget w, float f)
+{
+	static char	t[32];
+
+	sprintf(t, "%f", f);
+	XmTextFieldSetString(w, t);
+}
+
 void ConfigureXYReset(void)
 {
+	XmToggleButtonGadgetSetState(XYxAutoToggle, XYxAuto, False);
+	TextFieldSetFloat(XYxMinText, XYxMin);
+	TextFieldSetFloat(XYxMaxText, XYxMax);
+	XmToggleButtonGadgetSetState(XYyAutoToggle, XYyAuto, False);
+	TextFieldSetFloat(XYyMinText, XYyMin);
+	TextFieldSetFloat(XYyMaxText, XYyMax);
+	XmToggleButtonGadgetSetState(lineToOffscreen, LineToOffscreen, False);
 }
 
 Widget ConfigurePieChart(Widget parent)
@@ -1606,7 +1629,7 @@ void ReallyPrintCB(Widget w, XtPointer client, XtPointer call)
 	XtFree(s);
 #endif
 
-	psprint_region_cmd(&rng, fp);
+	print_region_cmd(&rng, fp);
 	if (XmToggleButtonGadgetGetState(PrintWidgets.FileToggle))
 		fclose(fp);
 	else
@@ -1617,6 +1640,14 @@ void ReallyPrintCB(Widget w, XtPointer client, XtPointer call)
 #ifdef	FREE_TF_STRING
 	XtFree(fn);
 #endif
+}
+
+static void MotifSetPrintType(Widget w, XtPointer client, XtPointer call)
+{
+	char	*s = (char *)client;
+
+	MessageAppend(False, "Set printer type to %s\n", s);
+	PrintSetType(s);
 }
 
 static void MotifSetPrintPage(Widget w, XtPointer client, XtPointer call)
@@ -1836,38 +1867,17 @@ Widget MotifCreatePrintDialog(Widget s)
 
 	npages = PrintGetNumPageSizes();
 
+	/* Option menu with printer types (PostScript, PCL, Text, .. ) */
+	for (i=0; PrintGetType(i); i++) {
 		ac = 0;
-		xms = XmStringCreateSimple("PostScript");
+		xms = XmStringCreateSimple(PrintGetType(i));
 		XtSetArg(al[ac], XmNlabelString, xms); ac++;
-		w = XmCreatePushButtonGadget(menu, "PostScript", al, ac);
-#if 0
+		w = XmCreatePushButtonGadget(menu, PrintGetType(i), al, ac);
 		XtAddCallback(w, XmNactivateCallback,
-			MotifSetPrintPage, (XtPointer)i);
-#endif
+			MotifSetPrintType, (XtPointer)PrintGetType(i));
 		XmStringFree(xms);
 		XtManageChild(w);
-
-		ac = 0;
-		xms = XmStringCreateSimple("PCL");
-		XtSetArg(al[ac], XmNlabelString, xms); ac++;
-		w = XmCreatePushButtonGadget(menu, "PCL", al, ac);
-#if 0
-		XtAddCallback(w, XmNactivateCallback,
-			MotifSetPrintPage, (XtPointer)i);
-#endif
-		XmStringFree(xms);
-		XtManageChild(w);
-
-		ac = 0;
-		xms = XmStringCreateSimple("ASCII");
-		XtSetArg(al[ac], XmNlabelString, xms); ac++;
-		w = XmCreatePushButtonGadget(menu, "ASCII", al, ac);
-#if 0
-		XtAddCallback(w, XmNactivateCallback,
-			MotifSetPrintPage, (XtPointer)i);
-#endif
-		XmStringFree(xms);
-		XtManageChild(w);
+	}
 
 	/* Range to print */
 	w = frame;
@@ -4579,11 +4589,51 @@ void versionCB(Widget w, XtPointer client, XtPointer call)
 	XmString	xms, xms1, xms2;
 	Arg		al[2];
 	int		ac;
+	char		xbae[20];
 
 	xms1 = XmStringCreateLtoR(GNU_PACKAGE " " VERSION,
 		XmFONTLIST_DEFAULT_TAG);
 	xms2 = XmStringCreateLtoR(CopyRightString, XmFONTLIST_DEFAULT_TAG);
 	xms = XmStringConcat(xms1, xms2);
+	XmStringFree(xms1);
+	XmStringFree(xms2);
+
+	/* Now add info about libraries used */
+	xms1 = xms;
+	xms2 = XmStringCreateLtoR("\n\nLibraries used :", XmFONTLIST_DEFAULT_TAG);
+	xms = XmStringConcat(xms1, xms2);
+	XmStringFree(xms1);
+	XmStringFree(xms2);
+
+	xms1 = xms;
+	xms2 = XmStringCreateLtoR("\n  " XmVERSION_STRING, XmFONTLIST_DEFAULT_TAG);
+	xms = XmStringConcat(xms1, xms2);
+	XmStringFree(xms1);
+	XmStringFree(xms2);
+
+	sprintf(xbae, "\n  Xbae %d", XbaeVersion);
+	xms1 = xms;
+	xms2 = XmStringCreateLtoR(xbae, XmFONTLIST_DEFAULT_TAG);
+	xms = XmStringConcat(xms1, xms2);
+	XmStringFree(xms1);
+	XmStringFree(xms2);
+
+#if	HAVE_XmHTML_H
+	xms1 = xms;
+	xms2 = XmStringCreateLtoR("\n  " XmHTMLVERSION_STRING, XmFONTLIST_DEFAULT_TAG);
+	xms = XmStringConcat(xms1, xms2);
+	XmStringFree(xms1);
+	XmStringFree(xms2);
+#endif
+
+#if	HAVE_SciPlot_H
+	sprintf(xbae, "\n  SciPlot %f", _SCIPLOT_WIDGET_VERSION);
+	xms1 = xms;
+	xms2 = XmStringCreateLtoR(xbae, XmFONTLIST_DEFAULT_TAG);
+	xms = XmStringConcat(xms1, xms2);
+	XmStringFree(xms1);
+	XmStringFree(xms2);
+#endif
 
 	ac = 0;
 	XtSetArg(al[0], XmNmessageString, xms); ac++;
@@ -4592,8 +4642,6 @@ void versionCB(Widget w, XtPointer client, XtPointer call)
 	XtAddCallback(x, XmNhelpCallback, gplCB, NULL);
 
 	XmStringFree(xms);
-	XmStringFree(xms1);
-	XmStringFree(xms2);
 	XtManageChild(x);
 }
 
