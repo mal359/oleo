@@ -1,5 +1,5 @@
 /*
- *  $Id: prtext.c,v 1.5 1999/05/12 19:48:24 danny Exp $
+ *  $Id: prtext.c,v 1.6 1999/09/21 23:33:34 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: prtext.c,v 1.5 1999/05/12 19:48:24 danny Exp $";
+static char rcsid[] = "$Id: prtext.c,v 1.6 1999/09/21 23:33:34 danny Exp $";
 
 
 #include <stdio.h>
@@ -60,6 +60,7 @@ void TextFont(char *family, char *slant, int size, FILE *fp)
 
 void TextNewLine(int ht, FILE *fp)
 {
+	fprintf(fp, "\n");
 }
 
 int TextPrinterJustifies(void)

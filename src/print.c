@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.16 1999/09/19 09:26:30 danny Exp $
+ * $Id: print.c,v 1.17 1999/09/21 23:33:35 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -274,7 +274,7 @@ print_region_cmd (struct rng *print, FILE *fp)
 	int spaces;
 	CELLREF c_lo, c_hi;
 	int	print_width, print_height, totht, totwid,
-		ht, npages;
+		ht, npages, next;
 	char	pg[32];
 	char	*title = NULL;
 
@@ -337,6 +337,7 @@ print_region_cmd (struct rng *print, FILE *fp)
 		ht = get_height(rr) * default_font_size;
 		spaces = 0;
 		for (cc = c_lo; cc <= c_hi; cc++) {
+		    next = 0;
 		    w = get_width (cc);
 		    if (!w)
 			continue;
@@ -344,16 +345,21 @@ print_region_cmd (struct rng *print, FILE *fp)
 
 		    /* Font */
 		    if (cp && cp->cell_font && cp->cell_font->names) {
-#if 0
-			fprintf(stderr, "Font %s\n",
-				cp->cell_font->names->ps_name);
-#endif
+			int	size = cp->cell_font->scale * default_font_size;
+
+			if (size == 0)
+				size = default_font_size;
+
 			Global->CurrentPrintDriver->font(
 				cp->cell_font->names->ps_name,
-				default_font_slant, default_font_size, fp);
+				default_font_slant,			/* FIX ME */
+				size,
+				fp);
 		    } else {
 			Global->CurrentPrintDriver->font(default_font_family,
-				default_font_slant, default_font_size, fp);
+				default_font_slant,
+				default_font_size,
+				fp);
 		    }
 
 		/*
@@ -368,27 +374,29 @@ print_region_cmd (struct rng *print, FILE *fp)
 		 */
 		ptr = print_cell (cp);
 #if 0
-		if (strlen(ptr) > w) {	/* Is this right ?? what about font size ?? FIX ME */
+		if (strlen(ptr) > w)	/* Is this right ?? what about font size ?? FIX ME */
 #else
-		if (1) {
+		if (1)
 #endif
+		{
 			int	i, wtot;
 
 			wtot = w;
 			for (i=cc+1; i<c_hi; i++) {
 				struct cell *cp = find_cell (rr, i);
-				if (!cp || GET_FORMAT(cp) == FMT_HID || GET_TYP(cp) == 0)
+				if (!cp || GET_FORMAT(cp) == FMT_HID || GET_TYP(cp) == 0) {
 					wtot += get_width(i);
-				else
+					next = i+1;
+				} else
 					break;
 			}
-			fprintf(stderr, "Width for cell %d,%d is %d (own %d)\n", rr, i, wtot, w);
 			w = wtot;
 		}
 
 		/*
 		 * Now just print the damn field
 		 */
+		cp = find_cell (rr, cc);	/* precaution */
 		if (Global->CurrentPrintDriver->printer_justifies()) {
 		    if (!cp || !GET_TYP (cp)) {
 			Global->CurrentPrintDriver->field("", w, 0, 1, fp);
@@ -410,12 +418,16 @@ print_region_cmd (struct rng *print, FILE *fp)
 		} else {
 		    if (!cp || !GET_TYP (cp)) {
 			spaces += w;
+			if (next)
+				cc = next-1;
 			continue;
 		    }
 		    ptr = print_cell (cp);
 		    lenstr = strlen (ptr);
 		    if (lenstr == 0) {
 			spaces += w;
+			if (next)
+				cc = next-1;
 			continue;
 		    }
 		    if (spaces) {
@@ -474,6 +486,9 @@ print_region_cmd (struct rng *print, FILE *fp)
 			}
 		    }
 		}
+
+		if (next)
+			cc = next-1;
 		}
 		Global->CurrentPrintDriver->newline(ht, fp);
 		totht += ht;

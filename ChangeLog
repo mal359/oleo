@@ -1,5 +1,6 @@
-$Id: ChangeLog,v 1.105 1999/09/19 09:26:17 danny Exp $
+$Id: ChangeLog,v 1.106 1999/09/21 23:33:27 danny Exp $
 
+Wed Sep 22 01:37:46 1999, Danny
 	* Changes to get things to compile without mysql
 	  around.
 	* Make sure src/mdi.h gets distributed.
@@ -10,6 +11,7 @@ $Id: ChangeLog,v 1.105 1999/09/19 09:26:17 danny Exp $
 	  should be known to the compiler.
 	* Make the PostScript output IsoLatin1 by default.
 	  This should probably be user-definable.
+	* Print things in the right place (overlapping cells).
 
 Fri  3 Sep 00:56:31 1999, Danny Backx
 	* A bugfix prompted by Dag Nygren's report that
