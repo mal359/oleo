@@ -7,6 +7,7 @@ Short-term TODO's:
 * Increase "X" friendliness. (June 1/97 - JB)
  - Resize NCurses terminal on SIGWINCH
  - Make arrow keys work on Alpha/i386.
+ - Make a LessTif/Motif interface (DB).
 
 * Add Mouse support with Curses/GPM. (June 1/97 - JB)
 
