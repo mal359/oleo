@@ -1,5 +1,6 @@
-$Id: ChangeLog,v 1.92 1999/06/04 08:01:36 danny Exp $
+$Id: ChangeLog,v 1.93 1999/06/04 09:11:41 danny Exp $
 
+Fri  4 Jun 11:13:33 1999, Danny Backx
 	* Release 1.99.4
 	* Document the printer driver API in src/print.h.
 	* Fix bug in formats handling. Setting a default
