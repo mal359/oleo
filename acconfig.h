@@ -171,6 +171,7 @@
 #undef HAVE_XmHTML_H
 #undef HAVE_Xbae
 
+#undef	USE_XBASE
 
 #if ENABLE_NLS
 # include <libintl.h>

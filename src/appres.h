@@ -1,5 +1,5 @@
 /*
- *  $Id: appres.h,v 1.1 1998/08/19 07:45:05 danny Exp $
+ *  $Id: appres.h,v 1.2 1998/10/24 21:55:34 danny Exp $
  *
  *  This file is part of GnuSheet, a free spreadsheet.
  *
@@ -32,6 +32,7 @@ typedef struct GnuSheetAppres {
 	int		rows, columns;
 	XmString	quit_message;
 	String		save_as_title, load_title;
+	int		columnWidth;
 } GnuSheetAppres;
 
 extern XtResource	resources[];

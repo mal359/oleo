@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.14 1998/10/01 22:21:16 danny Exp $
+ *  $Id: io-motif.c,v 1.15 1998/10/24 21:55:34 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.14 1998/10/01 22:21:16 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.15 1998/10/24 21:55:34 danny Exp $";
 
 #include "config.h"
 
@@ -46,6 +46,10 @@ static char rcsid[] = "$Id: io-motif.c,v 1.14 1998/10/01 22:21:16 danny Exp $";
 
 #if	HAVE_SciPlot_H
 #include <SciPlot/SciPlot.h>
+#endif
+
+#if	HAVE_XBASE_H
+#include "oleo_xb.h"
 #endif
 
 #include "global.h"
@@ -774,9 +778,9 @@ void EnterCell(Widget w, XtPointer client, XtPointer call)
 		(XbaeMatrixEnterCellCallbackStruct *)call;
 	char		*dec;
 
-	/* Tell oleo to move */
 	Debug(__FILE__, "EnterCell (%d, %d)\n", cbp->row, cbp->column);
 
+	/* Tell oleo to move */
 	curow = cbp->row + 1;
 	cucol = cbp->column + 1;
 
@@ -791,7 +795,6 @@ void EnterCell(Widget w, XtPointer client, XtPointer call)
 	} else {
 		XmTextFieldSetString(formulatf, "");
 	}
-	
 }
 
 void ModifyVerify(Widget w, XtPointer client, XtPointer call)
@@ -818,15 +821,26 @@ void DrawCell(Widget w, XtPointer client, XtPointer call)
 	/* This needs to be called otherwise WriteCell won't work. */
 	XbaeMatrixDrawCellCallbackStruct *cbp =
 		(XbaeMatrixDrawCellCallbackStruct *)call;
+
 #ifdef	VERBOSE
 	Debug(__FILE__, "DrawCell(%d, %d, %s)\n",
 		cbp->row, cbp->column, cbp->string);
 #endif
 	cbp->type = XbaeString;
+
+	if (curow == cbp->row + 1 && cucol == cbp->column + 1) {
+		cbp->string = cell_value_string(cbp->row + 1, cbp->column + 1,
+			True);
+	} else {
+		cbp->string = print_cell(find_cell(cbp->row + 1,
+			cbp->column + 1));
+	}
+#if 0
 #if 0
 	cbp->string = cell_value_string(cbp->row + 1, cbp->column + 1, True);
 #else
 	cbp->string = print_cell(find_cell(cbp->row + 1, cbp->column + 1));
+#endif
 #endif
 }
 
@@ -1109,7 +1123,7 @@ HelpBuildWindow(void)
 				XmNmarginHeight,		20,
 				XmNwidth,			600,
 				XmNheight,			500,
-				XmNenableBadHTMLWarnings,	False,
+				XmNenableBadHTMLWarnings,	XmHTML_NONE,
 				XmNscrollBarDisplayPolicy,	XmSTATIC,
 				XmNtopAttachment,		XmATTACH_FORM,
 				XmNleftAttachment,		XmATTACH_FORM,
@@ -1245,6 +1259,7 @@ void helpVersionCB(Widget w, XtPointer client, XtPointer call)
  * Row and column labels
  */
 char	**rowlabels, **columnlabels, **columnmaxlengths;
+short	*columnwidths;
 
 void
 SetRowColumnLabels(void)
@@ -1255,6 +1270,7 @@ SetRowColumnLabels(void)
 	rowlabels = (char **)XtCalloc(AppRes.rows, sizeof(char *));
 	columnlabels = (char **)XtCalloc(AppRes.columns, sizeof(char *));
 	columnmaxlengths = (char **)XtCalloc(AppRes.columns, sizeof(char *));
+	columnwidths = (short *)XtCalloc(AppRes.columns, sizeof(short));
 
 	for (i=0; i<AppRes.rows; i++) {
 		sprintf(tmp, a0 ? "%d" : "R%d", i + 1);
@@ -1268,6 +1284,7 @@ SetRowColumnLabels(void)
 			columnlabels[i] = XtNewString(tmp);
 		}
 		columnmaxlengths[i] = "64000";		/* ??? */
+		columnwidths[i] = AppRes.columnWidth;
 	}
 }
 
@@ -1322,6 +1339,32 @@ void ToggleA0(Widget w, XtPointer client, XtPointer call)
 void UndoCB(Widget w, XtPointer client, XtPointer call)
 {
 	none(w, client, call);
+}
+
+void EditInsertCB(Widget w, XtPointer client, XtPointer call)
+{
+	/* FIX ME */
+		/* Need to figure out whether to insert row or column */
+		/* Need to figure out how many rows/columns to treat */
+	insert_row(1);
+		/* Also need to clear the current cell */
+	MotifUpdateDisplay();
+}
+
+void EditDeleteCB(Widget w, XtPointer client, XtPointer call)
+{
+	/* FIX ME */
+		/* Need to figure out whether to delete row or column */
+		/* Need to figure out how many rows/columns to treat */
+	delete_row(1);
+		/* Also need to clear the current cell */
+	MotifUpdateDisplay();
+}
+
+void EditRecalculateCB(Widget w, XtPointer client, XtPointer call)
+{
+	recalculate(1);
+	MotifUpdateDisplay();
 }
 
 /****************************************************************
@@ -1887,6 +1930,7 @@ GscBuildMainWindow(Widget parent)
 	mat = XtVaCreateManagedWidget("bae", xbaeMatrixWidgetClass, mw,
 			XmNrowLabels,		rowlabels,
 			XmNcolumnLabels,	columnlabels,
+			XmNcolumnWidths,	columnwidths,
 			XmNrows,		AppRes.rows,
 			XmNcolumns,		AppRes.columns,
 		NULL);
@@ -2002,12 +2046,12 @@ GscBuildMainWindow(Widget parent)
 	w = XtVaCreateManagedWidget("insert", xmPushButtonGadgetClass,
 		editmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, EditInsertCB, NULL);
 
 	w = XtVaCreateManagedWidget("delete", xmPushButtonGadgetClass,
 		editmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, EditDeleteCB, NULL);
 
 	XtVaCreateManagedWidget("sep4", xmSeparatorGadgetClass, editmenu,
 		NULL);
@@ -2015,7 +2059,7 @@ GscBuildMainWindow(Widget parent)
 	w = XtVaCreateManagedWidget("recalculate", xmPushButtonGadgetClass,
 		editmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, EditRecalculateCB, NULL);
 
 	XtVaCreateManagedWidget("sep5", xmSeparatorGadgetClass, editmenu,
 		NULL);
@@ -2176,6 +2220,12 @@ GscBuildMainWindow(Widget parent)
 		optionsmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	/* FIX ME */
+	w = XtVaCreateManagedWidget("loadxbase", xmPushButtonGadgetClass,
+		optionsmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, ReadXbaseFile, NULL);
 
 	/*
 	 *	Help Menu.
@@ -2775,10 +2825,12 @@ void quitCB(Widget w, XtPointer client, XtPointer call)
 	if (modified) {
 		ac = 0;
 		/* Application resource for message allow i18n */
+#if 0
 		XtSetArg(al[ac], XmNmessageString,
 			_("There are unsaved changes.\n"
 			  "Do you want to quit anyway ?")); ac++;
-		md = XmCreateQuestionDialog(w, "quitMB", al, ac);
+#endif
+		md = XmCreateQuestionDialog(toplevel, "quitMB", al, ac);
 		XtAddCallback(md, XmNokCallback, ReallyQuit, NULL);
 		XtDestroyWidget(XmMessageBoxGetChild(md,
 			XmDIALOG_HELP_BUTTON));

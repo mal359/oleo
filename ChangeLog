@@ -1,3 +1,21 @@
+Sat 24 Oct 23:39:43 1998 Danny Backx (danny@gnu.org)
+	* Added simplistic call to insert a row.
+	* Fixed XmNenableBadHTMLWarnings (XmHTML widget shouldn't generate
+	  warnings about bad HTML) : False is no longer an accepted value.
+	* Tracked a couple of bugs in XmHTML : 1.1.5 still has the problem
+	  described below.
+	* Added Application Resource to specify default Column Width for
+	  cells in the matrix. This is copied to the XmNcolumns on a
+	  XmTextField so it counts in number of characters, not pixels.
+	* Add C++ (!) file to call the free Xbase library.
+	  Find it at http://www.startech.keller.tx.us/xbase/xbase.html .
+	  Not included in the build right now.
+	* Fix a problem in the Motif GUI with strings. Now the current
+	  cell always displays itself slightly differently. A cell with
+	  contents "this is text" (including the quotes) will show itself
+	  including the quotes when it is the current cell, but without
+	  the quotes when another cell is current.
+
 Wed  7 Oct 21:54:38 1998 Danny Backx (danny@gnu.org)
 	* Release version 1.6.8
 	* configure.in, doc/Makefile.am : check whether we have texi2html
