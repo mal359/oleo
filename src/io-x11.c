@@ -2385,7 +2385,8 @@ xio_open_display ()
     XCreateSimpleWindow (thePort->dpy, DefaultRootWindow (thePort->dpy),
 			 geom_x, geom_y, geom_w, geom_h,
 			 1, thePort->fg_color_pixel, thePort->bg_color_pixel);
-  XStoreName (thePort->dpy, thePort->window, oleo_version_string);
+  /* FIXME Version number goes here */
+  XStoreName (thePort->dpy, thePort->window, "Oleo!!");
   wmhints.flags = InputHint;
   wmhints.input = True;
   XSetWMHints(thePort->dpy, thePort->window, &wmhints);

@@ -78,11 +78,6 @@ char *io_name;
 
 
 
-/* This should be updated for every release.
- * The file ANNOUNCE must be udpated as well.
- */
-const char oleo_version_string[] = "Oleo version 1.6";
-
 /* This variable is non-zero if the spreadsheet has been changed in any way */ 
 int modified = 0;
 
@@ -1027,7 +1022,7 @@ main (argc, argv)
 	switch (opt)
 	  {
 	  case 'V':
-	    fprintf  (stdout, "%s\n", oleo_version_string);
+	    fprintf  (stdout, "%s %s\n", GNU_PACKAGE, VERSION);
 	    exit (0);
 	    break;
 	  case 'q':

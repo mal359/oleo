@@ -1,11 +1,13 @@
 Fri Sep 19 23:21:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
 
 	* io-x11.c: Roll back some patches now that I grok the file.
+	Also, remove version number from window title.
 	* src/Makefile.am: add xrdb.c, ir.c, ir.h >duh<
 	* xrdb.c: Take out X11R4 hooks, those variables aren't
 	tested for anymore.
 	* configure.in: Bumped to version 1.6.6
 	* Makefile.am: Stole release target from gtk.
+	* io-term.c: Make display version number correctly in --version
 
 Fri Sep 19 18:48:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
 
