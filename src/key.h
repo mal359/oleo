@@ -1,7 +1,7 @@
 #ifndef KEYH
 #define KEYH
 /*
- * $Id: key.h,v 1.9 2001/02/04 15:54:20 danny Exp $
+ * $Id: key.h,v 1.10 2001/02/07 03:16:44 pw Exp $
  *
  * Copyright © 1993 Free Software Foundation, Inc.
  * 
@@ -32,8 +32,6 @@
  * both vector and code are -1, then the key is unbound.
  */
 
-struct cmd_func;
-
 struct key
 {
   short vector;
@@ -61,19 +59,6 @@ extern struct keymap **the_maps;
 extern char **map_names;
 extern char **map_prompts;
 
-/* String convention conversion. */
-
-#define map_id(NAME)  map_idn(NAME, strlen(NAME))
-
-/*
- * Keymap names.  They can be used as indices into the_maps and map_names.
- */
-#define MAIN_MAP map_id("main")
-#define EDIT_MAP map_id("edit")
-#define DIGIT_MAP map_id("digit")
-#define NAVIGATE_MAP map_id("navigate")
-
-
 extern int search_map_for_cmd (struct line * line, int map, int vec, int code);
 extern void bind_key (char * keymap, char * function, int ch);
 extern void unbind_key (char * keymap, int ch);
@@ -82,7 +67,8 @@ extern void unbind_set (char *keymap, char *keyset);
 extern void bind_all_keys (char * keymap, char * function);
 extern void write_keys_cmd (FILE *fp);
 extern void clear_keymap (struct keymap *m);
-extern int map_idn (char *name, int n);
+extern int map_idn (const char *name, int n);
+extern int map_id(const char *name);
 extern void create_keymap (char * mapname, char * parentname);
 extern void set_map_prompt (char * map, char * str);
 
