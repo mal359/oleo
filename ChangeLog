@@ -1,7 +1,8 @@
-Sat Nov 15 17:03:00 1997  Jeff Bailey  (jbailey@gnu.org)
+Sat Nov 15 17:27:00 1997  Jeff Bailey  (jbailey@gnu.org)
 
 	* THANKS: File added
 	* Makefile.am: Updated to gnits.
+	* TODO: Updated
 
 Wed Nov 5 21:05:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
 

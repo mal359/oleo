@@ -1,5 +1,5 @@
 
-/*  A Bison parser, made from /root/oleo/src/posixtm.y
+/*  A Bison parser, made from /home/jbailey/oleo/src/posixtm.y
  by  GNU Bison version 1.25
   */
 
@@ -7,7 +7,7 @@
 
 #define	DIGIT	258
 
-#line 19 "/root/oleo/src/posixtm.y"
+#line 19 "/home/jbailey/oleo/src/posixtm.y"
 
 #ifdef __GNUC__
 #define alloca __builtin_alloca
@@ -650,7 +650,7 @@ yyreduce:
   switch (yyn) {
 
 case 1:
-#line 62 "/root/oleo/src/posixtm.y"
+#line 62 "/home/jbailey/oleo/src/posixtm.y"
 {
 	         if (yyvsp[-5] >= 1 && yyvsp[-5] <= 12)
 		   t.tm_mon = yyvsp[-5] - 1;
@@ -675,7 +675,7 @@ case 1:
 	       ;
     break;}
 case 2:
-#line 85 "/root/oleo/src/posixtm.y"
+#line 85 "/home/jbailey/oleo/src/posixtm.y"
 {
                    t.tm_year = yyvsp[0];
 		   /* Deduce the century based on the year.
@@ -685,7 +685,7 @@ case 2:
 		 ;
     break;}
 case 3:
-#line 92 "/root/oleo/src/posixtm.y"
+#line 92 "/home/jbailey/oleo/src/posixtm.y"
 {
                             t.tm_year = yyvsp[-1] * 100 + yyvsp[0];
 			    if (t.tm_year < 1900) {
@@ -695,7 +695,7 @@ case 3:
 			  ;
     break;}
 case 4:
-#line 99 "/root/oleo/src/posixtm.y"
+#line 99 "/home/jbailey/oleo/src/posixtm.y"
 {
                     time_t now;
 		    struct tm *tmp;
@@ -707,13 +707,13 @@ case 4:
 		  ;
     break;}
 case 5:
-#line 110 "/root/oleo/src/posixtm.y"
+#line 110 "/home/jbailey/oleo/src/posixtm.y"
 {
                         t.tm_sec = 0;
 		      ;
     break;}
 case 6:
-#line 113 "/root/oleo/src/posixtm.y"
+#line 113 "/home/jbailey/oleo/src/posixtm.y"
 {
 	                  if (yyvsp[0] >= 0 && yyvsp[0] <= 61)
 			    t.tm_sec = yyvsp[0];
@@ -723,7 +723,7 @@ case 6:
 			;
     break;}
 case 7:
-#line 122 "/root/oleo/src/posixtm.y"
+#line 122 "/home/jbailey/oleo/src/posixtm.y"
 {
                           yyval = yyvsp[-1] * 10 + yyvsp[0];
 			;
@@ -926,7 +926,7 @@ yyerrhandle:
   yystate = yyn;
   goto yynewstate;
 }
-#line 126 "/root/oleo/src/posixtm.y"
+#line 126 "/home/jbailey/oleo/src/posixtm.y"
 
 static int
 yylex ()
