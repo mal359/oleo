@@ -1,5 +1,13 @@
 
-$Id: ChangeLog,v 1.152 2001/04/16 00:16:21 pw Exp $
+$Id: ChangeLog,v 1.153 2001/04/16 23:50:07 pw Exp $
+
+Mon Apr 16 19:47:08 EDT 2001  Pete Wyckoff  <pw@osc.edu>
+	* doc/print-plot.texi: Remove latex printing documentation, add
+	  print-zoom.
+	* src/defun.h: Add print-zoom command, matching motif use.
+	* src/init.c: Bind print-zoom to psprint-commands.
+	* src/print.c src/print.h: Implement print_zoom_cmd().
+	* src/stubs.h: Add a stub for single float argument.
 
 Sun Apr 15 18:34:44 EDT 2001  Pete Wyckoff  <pw@osc.edu>
 	* doc/cell-refs.texi: Clarify noa0 mode range explanation.
