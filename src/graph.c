@@ -18,7 +18,7 @@
  */
 
 /*
- * $Id: graph.c,v 1.20 2000/11/22 19:33:01 danny Exp $
+ * $Id: graph.c,v 1.21 2001/02/05 00:13:28 pw Exp $
  *
  * This file contains the functions to maintain the internal graphing
  * data structures in Oleo.
@@ -253,13 +253,15 @@ graph_check_style (char * name)
 void
 graph_set_style(int data_set, char * style)
 {
-  int x = graph_check_style (style);
   if ((data_set < 0) || (data_set >= NUM_DATASETS))
     io_error_msg
       ("set-graph-style -- data-set out of range: %d (should be in [0..%d])",
        data_set, NUM_DATASETS);
 #if 0
+  {
+  int x = graph_check_style (style);
   set_line (&Global->PlotGlobal->graph_style[data_set], graph_plot_styles [x]);
+  }
 #endif
 }
 
