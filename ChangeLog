@@ -1,5 +1,6 @@
-$Id: ChangeLog,v 1.111 1999/10/23 13:40:04 danny Exp $
+$Id: ChangeLog,v 1.112 1999/10/23 13:40:53 danny Exp $
 
+Sat 23 Oct 15:41:08 1999, Danny
 	* Right align requires knowledge of the font metrics, unless
 	  we'd use PostScript magic. The printer driver shouldn't
 	  be doing this if we want to print on non-PostScript,
