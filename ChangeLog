@@ -1,4 +1,13 @@
 
+Fri  2 Apr 09:27:04 CEST 1999, Danny Backx
+	* Range selection reimplemented for Motif. Click on a range
+	  textfield in a dialog to indicate that this one will get the
+	  range info, then just drag the pointer over the matrix,
+	  while pressing button 1 on the mouse.
+	* Fix ftp stuff in Makefile.am. The 1.99.1 developer's release
+	  was on gnudist.gnu.org by accident. Only lasted a couple of
+	  minutes.
+
 Wed 31 Mar 00:01:52 1999, Danny Backx
 	* Release 1.99.1.
 	* Add lots of stuff to TODO.

@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.37 1999/03/30 22:17:09 danny Exp $
+ *  $Id: io-motif.c,v 1.38 1999/04/02 07:27:00 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.37 1999/03/30 22:17:09 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.38 1999/04/02 07:27:00 danny Exp $";
 
 #include "config.h"
 
@@ -281,15 +281,31 @@ void SelectCellCB(Widget w, XtPointer client, XtPointer call)
 	char	*s;
 	XbaeMatrixSelectCellCallbackStruct *cbp =
 		(XbaeMatrixSelectCellCallbackStruct *)call;
+	static Boolean **selectedcells = NULL;
+	int		i, j;
 
 #if 0
 	fprintf(stderr, "SelectCell(%s, %d %d)\n",
 		cbp->params[0], cbp->row, cbp->column);
 #endif
 
+	if (selectedcells == NULL) {
+		selectedcells = (Boolean **)XtMalloc(AppRes.rows *
+				sizeof(Boolean *));
+		for (i=0; i<AppRes.rows; i++)
+			selectedcells[i] = (Boolean *)
+				XtCalloc(AppRes.columns, sizeof(Boolean));
+	}
+
 	if (cbp->num_params >= 1 && strcmp(cbp->params[0], "start") == 0) {
 		selection_range.lr = cbp->row + 1;
 		selection_range.lc = cbp->column + 1;
+
+		for (i=0; i<AppRes.rows; i++)
+		    for (j=0; j<=AppRes.columns; j++)
+			selectedcells[i][j] = False;
+
+		XtVaSetValues(mat, XmNselectedCells, selectedcells, NULL);
 	} else if (cbp->num_params >= 1 && strcmp(cbp->params[0], "end") == 0) {
 		selection_range.hr = cbp->row + 1;
 		selection_range.hc = cbp->column + 1;
@@ -299,7 +315,24 @@ void SelectCellCB(Widget w, XtPointer client, XtPointer call)
 			s = range_name(&selection_range);
 			XmTextFieldSetString(ActiveRangeSelectionWidget, s);
 		}
-	}
+	} else if (cbp->num_params >= 1 && strcmp(cbp->params[0], "move") == 0) {
+		/* Motion : change selected area */
+
+		selection_range.hr = cbp->row + 1;
+		selection_range.hc = cbp->column + 1;
+
+		for (i=selection_range.lr-1; i<=cbp->row; i++)
+		    for (j=selection_range.lc-1; j<=cbp->column; j++)
+			selectedcells[i][j] = True;
+
+		XtVaSetValues(mat, XmNselectedCells, selectedcells, NULL);
+
+		if (ActiveRangeSelectionWidget &&
+				XmIsTextField(ActiveRangeSelectionWidget)) {
+			s = range_name(&selection_range);
+			XmTextFieldSetString(ActiveRangeSelectionWidget, s);
+		}
+	} 
 }
 
 void RegisterRangeSelector(Widget w)
@@ -544,6 +577,105 @@ void PrintGraph(Widget w, XtPointer client, XtPointer call)
 	ReallyPrintGraph(w, client, call);
 }
 #endif
+
+/*
+ * Show panel of print options
+ */
+void PrintOptionsOk(Widget w, XtPointer client, XtPointer call)
+{
+}
+
+void PrintOptionsReset(Widget w)
+{
+}
+
+void PrintOptionsCB(Widget w, XtPointer client, XtPointer call)
+{
+	Widget		ok, cancel, help, t, rc, nb, b, cb, menu;
+	XmString	xms;
+	static Widget	options = NULL;
+	Arg		al[5];
+	int		ac;
+
+	if (! options) {
+		options = XmCreateTemplateDialog(mw, "configureGraph",
+			NULL, 0);
+
+		nb = XmCreateNotebook(options,
+			"printOptionsNotebook",
+			NULL, 0);
+		XtManageChild(nb);
+
+		/* What to show */
+		rc = XtVaCreateManagedWidget("showRC", xmRowColumnWidgetClass,
+			nb, NULL);
+
+		t = XtVaCreateManagedWidget("showLabels", xmToggleButtonGadgetClass,
+				rc,
+			NULL);
+		t = XtVaCreateManagedWidget("showBorders", xmToggleButtonGadgetClass,
+				rc,
+			NULL);
+		t = XtVaCreateManagedWidget("showRaster", xmToggleButtonGadgetClass,
+				rc,
+			NULL);
+
+		(void)XtVaCreateManagedWidget("showLabel", xmPushButtonWidgetClass,
+				nb,
+				XmNnotebookChildType, XmMAJOR_TAB,
+			NULL);
+
+		/* Choose a scale for the print */
+		rc = XtVaCreateManagedWidget("scaleRC", xmRowColumnWidgetClass,
+			nb, NULL);
+
+		menu = XmCreatePulldownMenu(rc, "optionMenu", NULL, 0);
+		ac = 0;
+		XtSetArg(al[ac], XmNsubMenuId, menu); ac++;
+		xms = XmStringCreateSimple(_("Fit Print Area"));
+		XtSetArg(al[ac], XmNlabelString, xms); ac++;
+		cb = XmCreateOptionMenu(rc, "optionCB", al, ac);
+		XtManageChild(cb);
+		XmStringFree(xms);
+
+		b = XtVaCreateManagedWidget("PrintScaleAsIs", xmPushButtonGadgetClass,
+			menu,
+			NULL);
+		b = XtVaCreateManagedWidget("PrintScaleColumnsOnOne", xmPushButtonGadgetClass,
+			menu,
+			NULL);
+		b = XtVaCreateManagedWidget("PrintScaleRowsOnOne", xmPushButtonGadgetClass,
+			menu,
+			NULL);
+		b = XtVaCreateManagedWidget("PrintScaleAllOnOne", xmPushButtonGadgetClass,
+			menu,
+			NULL);
+
+		(void)XtVaCreateManagedWidget("scaleLabel", xmPushButtonWidgetClass,
+				nb,
+				XmNnotebookChildType, XmMAJOR_TAB,
+			NULL);
+
+
+		/* Buttons */
+		ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass,
+			options,
+			NULL);
+		cancel = XtVaCreateManagedWidget("cancel",
+			xmPushButtonGadgetClass, options,
+			NULL);
+		help = XtVaCreateManagedWidget("help", xmPushButtonGadgetClass,
+			options,
+			NULL);
+
+		XtAddCallback(ok, XmNactivateCallback, PrintOptionsOk, options);
+
+		/* FIX ME need something to call the help system */
+	}
+
+	PrintOptionsReset(options);
+	XtManageChild(options);
+}
 
 /*
  * Create a widget tree to configure a graph with.
@@ -1507,7 +1639,7 @@ void PrintBrowseFileCB(Widget w, XtPointer client, XtPointer call)
  */
 Widget MotifCreatePrintDialog(Widget s)
 {
-	Widget		form, menu, cb, w, frame, radio;
+	Widget		form, menu, cb, w, frame, radio, form2, cb1;
 	int		npages, i, ac;
 	Arg		al[5];
 	XmString	xms;
@@ -1620,18 +1752,22 @@ Widget MotifCreatePrintDialog(Widget s)
 			XmNrightOffset,		10,
 		NULL);
 
+	form2 = XtVaCreateManagedWidget("printPaperForm",
+				xmFormWidgetClass, frame,
+		NULL);
+
 	w = XtVaCreateManagedWidget("printPaperFrameTitle",
-			xmLabelGadgetClass,		frame,
+			xmLabelGadgetClass,		form2,
 			XmNchildType,			XmFRAME_TITLE_CHILD,
 			XmNchildVerticalAlignment,	XmALIGNMENT_CENTER,
 		NULL);
 
-	menu = XmCreatePulldownMenu(frame, "optionMenu", NULL, 0);
+	menu = XmCreatePulldownMenu(form2, "optionMenu", NULL, 0);
 	ac = 0;
 	XtSetArg(al[ac], XmNsubMenuId, menu); ac++;
-	xms = XmStringCreateSimple(_("File Format"));
+	xms = XmStringCreateSimple(_("Paper Format"));
 	XtSetArg(al[ac], XmNlabelString, xms); ac++;
-	cb = XmCreateOptionMenu(frame, "optionCB", al, ac);
+	cb1 = cb = XmCreateOptionMenu(form2, "optionCB", al, ac);
 	XtManageChild(cb);
 	XmStringFree(xms);
 
@@ -1649,6 +1785,54 @@ Widget MotifCreatePrintDialog(Widget s)
 		XmStringFree(xms);
 		XtManageChild(w);
 	}
+
+	/* Print format */
+	menu = XmCreatePulldownMenu(form2, "optionMenu", NULL, 0);
+	ac = 0;
+	XtSetArg(al[ac], XmNsubMenuId, menu); ac++;
+	xms = XmStringCreateSimple(_("Printer Language"));
+	XtSetArg(al[ac], XmNlabelString, xms); ac++;
+	XtSetArg(al[ac], XmNleftAttachment, XmATTACH_WIDGET); ac++;
+	XtSetArg(al[ac], XmNleftWidget, cb1); ac++;
+	XtSetArg(al[ac], XmNleftOffset, 10); ac++;
+	cb = XmCreateOptionMenu(form2, "optionCB", al, ac);
+	XtManageChild(cb);
+	XmStringFree(xms);
+
+	npages = PrintGetNumPageSizes();
+
+		ac = 0;
+		xms = XmStringCreateSimple("PostScript");
+		XtSetArg(al[ac], XmNlabelString, xms); ac++;
+		w = XmCreatePushButtonGadget(menu, "PostScript", al, ac);
+#if 0
+		XtAddCallback(w, XmNactivateCallback,
+			MotifSetPrintPage, (XtPointer)i);
+#endif
+		XmStringFree(xms);
+		XtManageChild(w);
+
+		ac = 0;
+		xms = XmStringCreateSimple("PCL");
+		XtSetArg(al[ac], XmNlabelString, xms); ac++;
+		w = XmCreatePushButtonGadget(menu, "PCL", al, ac);
+#if 0
+		XtAddCallback(w, XmNactivateCallback,
+			MotifSetPrintPage, (XtPointer)i);
+#endif
+		XmStringFree(xms);
+		XtManageChild(w);
+
+		ac = 0;
+		xms = XmStringCreateSimple("ASCII");
+		XtSetArg(al[ac], XmNlabelString, xms); ac++;
+		w = XmCreatePushButtonGadget(menu, "ASCII", al, ac);
+#if 0
+		XtAddCallback(w, XmNactivateCallback,
+			MotifSetPrintPage, (XtPointer)i);
+#endif
+		XmStringFree(xms);
+		XtManageChild(w);
 
 	/* Range to print */
 	w = frame;
@@ -3674,7 +3858,7 @@ GscBuildMainWindow(Widget parent)
 	w = XtVaCreateManagedWidget("printoptions", xmPushButtonGadgetClass,
 		optionsmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, PrintOptionsCB, NULL);
 
 	w = XtVaCreateManagedWidget("defaultfileformat",
 		xmPushButtonGadgetClass, optionsmenu,

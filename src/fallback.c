@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.11 1999/03/21 16:19:35 danny Exp $
+ *  $Id: fallback.c,v 1.12 1999/04/02 07:26:59 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -44,7 +44,15 @@ char *fallback[] = {
 	"*splash*fontList:		-b&h-lucidatypewriter-bold-r-normal-sans-24-*-*-*-*-*-iso8859-1=large,-b&h-lucida-medium-i-normal-sans-18-*-*-*-*-*-iso8859-1=small",
 	"*splash*background:		#AAAAAA",
 	"*splash*foreground:		red",
-	"*messagesSW.height:		70",		/* FIX ME */
+//	"*messagesSW.height:		70",
+/* BaeMatrix */
+	"*bae.allowColumnResize:	True",
+	"*bae.columnLabelColor:		dark slate blue",
+	"*bae.rowLabelColor:		dark slate blue",
+	"*bae.translations:	#override\\n"
+		"<Btn1Down>:			SelectCell(start)\\n"
+		"<Btn1Down>:			SelectCell(end)\\n"	/* Needed ? */
+		"<Btn1Motion>:			SelectCell(move)\\n",
 /* Menu System */
 /* File */
 	"*filecascade.labelString:	File",
@@ -148,13 +156,6 @@ char *fallback[] = {
 	"*selectfile_popup.title:	Select a file to load or save",
 	"*versionD_popup.title:		Oleo Version Dialog",
 	"*helpShell.title:		Oleo Help Window",
-/* BaeMatrix */
-	"*bae.allowColumnResize:	True",
-	"*bae.columnLabelColor:		dark slate blue",
-	"*bae.rowLabelColor:		dark slate blue",
-	"*bae.translations:	#override\\n"
-		"Shift<Btn1Down>:		SelectCell(start)\\n"
-		"Ctrl<Btn1Down>:		SelectCell(end)\\n",
 /* Help Dialog */
 	"*versionD*Help*labelString:	GPL",
 /* Configuration Dialogs */
@@ -249,6 +250,10 @@ char *fallback[] = {
 	"*formatsFrameTitle.labelString:	Cell Format",
 	"*formatsFrame*formatsL.labelString:	Cell Range",
 	"*formatsFrame*precisionL.labelString:	Precision",
+/* Print Options Dialog */
+	"*showLabels.labelString:		Show Labels",
+	"*showBorders.labelString:		Show Border",
+	"*showRaster.labelString:		Show Raster",
 /* Quit Dialog */
 	"*quitMB_popup.title:			Quit Oleo ?",
 	"*quitMB*OK.labelString:		Quit",
