@@ -1,10 +1,10 @@
 dnl
 dnl
-dnl ICE_FIND_Xbae
+dnl AC_FIND_XBAE
 dnl
 dnl Adapted from a macro by Andreas Zeller.
 dnl
-AC_DEFUN(ICE_FIND_Xbae,
+AC_DEFUN(AC_FIND_XBAE,
 [
 AC_REQUIRE([AC_PATH_XTRA])
 xbae_includes=
@@ -163,10 +163,10 @@ else
 # basic environment, and do some discrete tests to set up the environment.
 #
 # First, let's set with_xbae to "yes" (don't know of this is really
-# necessary, but we'll be conservative here).  We also send HAVE_Xbae
+# necessary, but we'll be conservative here).  We also send HAVE_XBAE
 # to config.h and the cache file.
 #
-	AC_DEFINE(HAVE_Xbae)
+	AC_DEFINE(HAVE_XBAE)
         with_xbae="yes"
 #
 # Then let's see if the includes were NOT in the default path (if they were,
