@@ -271,6 +271,9 @@ struct OleoGlobal {
 /* window.c */
 	struct mouse_event		*current_mouse, *free_mouse;
 	int				mouse_id;
+
+/* new stuff */
+	char				*encoding;
 };
 
 extern struct OleoGlobal *Global;

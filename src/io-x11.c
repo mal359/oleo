@@ -1,3 +1,4 @@
+#undef	I18N_VERBOSE
 /*
  *	Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  * 	
@@ -85,8 +86,8 @@ static Display * theDisplay;
 static struct sXport *thePort;
 
 /* i18n */
-static XIC	xic;
-static XIM	xim;
+static XIC	xic = 0;
+static XIM	xim = 0;
 
 static char * rdb_class_name = "Oleo";
 static char * rdb_name = "oleo";
@@ -251,11 +252,19 @@ struct sXport
 static void
 GetXIC(Display *theDisplay)
 {
-	XIM		xim = 0;                    /* the input method */
 	XIMStyles	*xim_styles;
 	XIMStyle	input_style = 0;
 	char		*p, *buf, *b, *k;
 	int		i, j, found = 0;
+#if 0
+	XVaNestedList	list;
+	XFontSet	fontset;
+	char		**missing_charsets;
+	int		num_missing_charsets = 0;
+	char		*default_string;
+	long		mask;
+#endif
+
 	static char	*styles[] =
 	{
 		"OverTheSpot",
@@ -274,29 +283,45 @@ GetXIC(Display *theDisplay)
 	/* Not really root */	XIMPreeditNone | XIMStatusNone
 	};
 
-	setlocale(LC_ALL, "");
-	if ((p = XSetLocaleModifiers("@im=none")) != NULL) {
+//	setlocale(LC_ALL, "");
+	if (!XSupportsLocale()) {
+#ifdef	I18N_VERBOSE
+		fprintf(stderr, "X doesn't support this locale\n");
+#endif
+	}
+
+	if (xim == NULL && (p = XSetLocaleModifiers("@im=none")) != NULL) {
 		xim = XOpenIM(theDisplay, NULL, NULL, NULL);
+#ifdef	I18N_VERBOSE
 		if (xim) fprintf(stderr, "XOpenIM with @im=none succeeded\n");
+#endif
 	}
 	if (xim == NULL && (p = XSetLocaleModifiers("")) != NULL) {
 		xim = XOpenIM(theDisplay, NULL, NULL, NULL);
+#ifdef	I18N_VERBOSE
 		if (xim) fprintf(stderr, "XOpenIM with '' succeeded\n");
+#endif
 	}
 	if (!xim) {
+#ifdef	I18N_VERBOSE
 		fprintf(stderr, "Failed to open input method\n");
+#endif
 		return;
 	}
 
 	if (XGetIMValues(xim, XNQueryInputStyle, &xim_styles, NULL) || xim_styles == NULL) {
+#ifdef	I18N_VERBOSE
 		fprintf(stderr, "Input method doesn't support any style\n");
+#endif
 		XCloseIM(xim);
 		return;
 	}
 
-	/* FIXME : match input styles */
+	/* Match input styles between X server + input method and ourselves */
 	for (i = 0, found = False; styles[i] && !found; i++) {
-//		fprintf(stderr, "Trying %s (0x%X)\n", styles[i], style_bits[i]);
+#ifdef	I18N_VERBOSE
+		fprintf(stderr, "Trying %s (0x%X)\n", styles[i], style_bits[i]);
+#endif
 
 		if (strstr(preeditTypes, styles[i]) == 0) {
 			continue;
@@ -310,23 +335,64 @@ GetXIC(Display *theDisplay)
 		}
 	}
 
+#if 0
+	fontset = XCreateFontSet(theDisplay,
+		"-adobe-helvetica-*-r-*-*-*-120-*-*-*-*-*-*,\
+		-misc-fixed-*-r-*-*-*-130-*-*-*-*-*-*",
+		&missing_charsets, &num_missing_charsets, &default_string);
+
+	if (num_missing_charsets > 0) {
+		fprintf(stderr, PACKAGE " : the %d missing charsets\n", num_missing_charsets);
+		for (i=0; i<num_missing_charsets; i++)
+			fprintf(stderr, "\t%d - %s\n", i, missing_charsets[i]);
+	}
+
+	list = XVaCreateNestedList(0,XNFontSet,fontset,NULL);
+#endif
+
 	xic = XCreateIC(xim,
-			XNInputStyle, input_style,
-			XNClientWindow, thePort->window,
-			XNFocusWindow, thePort->window,
+			XNInputStyle,		input_style,
+			XNClientWindow,		thePort->window,
+			XNFocusWindow,		thePort->window,
+#if 0
+			XNPreeditAttributes,	list,
+			XNStatusAttributes,	list,
+#endif
 		NULL);
 
+#if 0
+	XFree(list);
+#endif
+
+#ifdef	I18N_VERBOSE
 	if (xic)
 		fprintf(stderr, "We have an IC\n");
 	else
 		fprintf(stderr, "No IC\n");
+#endif
+
+#if 0
+	/* UGLY HACK !!! */
+
+	XGetICValues(xic, XNFilterEvents, &mask, NULL);
+#ifdef	I18N_VERBOSE
+	fprintf(stderr, "Mask is 0x%X\n", mask);
+#endif
+
+	XSelectInput(theDisplay, thePort->window,
+		ExposureMask | KeyPressMask | StructureNotifyMask | mask);
+
+	XSetICFocus(xic);
+#endif
 }
 
 static void
 xi18nGetFocus()
 {
 	if (xic) {
-//		fprintf(stderr, "Get Focus\n");
+#ifdef	I18N_VERBOSE
+		fprintf(stderr, "Get Focus\n");
+#endif
 		XSetICFocus(xic);
 	}
 }
@@ -335,7 +401,9 @@ static void
 xi18nLoseFocus()
 {
 	if (xic) {
-//		fprintf(stderr, "Lose Focus\n");
+#ifdef	I18N_VERBOSE
+		fprintf(stderr, "Lose Focus\n");
+#endif
 		XUnsetICFocus(xic);
 	}
 }
@@ -352,7 +420,9 @@ xi18nlookup(XEvent *evp, char *buf, int nbytes, KeySym *keysym, Status *status)
 		i = XLookupString(evp, buf, nbytes, keysym, &s);
 	}
 
-	fprintf(stderr, "xi18nlookup: %d %c\t", buf[0], buf[0]);
+#ifdef	I18N_VERBOSE
+	fprintf(stderr, "xi18nlookup (%d bytes): %d %c\t", i,
+			buf[0], isprint(buf[0]) ? buf[0] : '.');
 	fprintf(stderr, "status %s",
 		(s == XLookupKeySym) ? "XLookupKeySym" : 
 		(s == XLookupNone) ? "XLookupNone" : 
@@ -360,6 +430,7 @@ xi18nlookup(XEvent *evp, char *buf, int nbytes, KeySym *keysym, Status *status)
 		(s == XBufferOverflow) ? "XBufferOverflow" : 
 		(s == XLookupChars) ? "XLookupChars" : "");
 	fprintf(stderr, "\n");
+#endif
 
 	if (status)	*status = s;
 	return i;

@@ -78,13 +78,16 @@ int
 pr_display_cell (struct display *disp, CELLREF r, CELLREF c, CELL *cp)
 {
   int cols = disp->range.hc - disp->range.lc + 1;
-  struct cell_display *cd =
-  &disp->cells[cols * (r - disp->range.lr) + (c - disp->range.lc)];
-  xx_IntRectangle ir = &cd->layout;
+  struct cell_display *cd = cell_display_of (disp, r, c);
+  xx_IntRectangle ir;
   struct font_memo * new_font = 0;
   char * new_unclipped = 0;
   int new_type = 0;
   int new_jst = 0;
+
+  if (!cd)	/* Nowhere to show this */
+	return 0;
+  ir = &cd->layout;
 
   if (cp && disp->widths[c - disp->range.lc]
       && disp->heights[r - disp->range.lr])

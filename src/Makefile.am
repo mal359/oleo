@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.45 1999/11/04 12:51:19 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.46 1999/11/27 18:56:52 danny Exp $
 #
 # CPPFLAGS = -Wall
 
@@ -19,7 +19,7 @@ else
 GUI =
 endif
 
-MYSQL = mysql.c oleosql.h
+MYSQL = mysql.c oleosql.h mysql.h
 
 #
 # Xbase support

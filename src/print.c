@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.23 1999/11/10 00:22:53 danny Exp $
+ * $Id: print.c,v 1.24 1999/11/27 18:57:04 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -272,13 +272,15 @@ print_region_cmd (struct rng *print, FILE *fp)
 	char	pg[32];
 	char	*title = NULL;
 
+	/* Font heights */
+	int	*heights = NULL, i;
+
 	/* Figure out page width and height */
 	print_width = default_pswid;
 	print_height = default_pshgt;
 
 	/* Set default font */
 	AfmSetFont(default_font_family, default_font_slant, default_font_size);
-	AfmSetEncoding("ISOLatin1");
 
 	/* Figure out #pages */
 		/* Depends on all fonts used, but also on zoom options chosen */
@@ -286,9 +288,27 @@ print_region_cmd (struct rng *print, FILE *fp)
 		 * sometimes need to scan the whole range */
 		/* FIX ME */
 	totht = totwid = 0;
-	for (rr = print->lr; rr <= print->hr; rr++) {
-		totht += get_height(rr) * AfmFontHeight();
-		totht += Global->interline;
+
+	heights = calloc(print->hr - print->lr + 1, sizeof(int));
+
+	for (rr = print->lr, i=0; rr <= print->hr; rr++, i++) {
+		/* Find largest font on the row */
+		current_size = 0;
+		for (cc = print->lc; cc <= print->hc; cc++) {
+			cp = find_cell(rr, cc);
+
+			if (cp && cp->cell_font && cp->cell_font->names) {
+				if (current_size < cp->cell_font->scale * default_font_size) {
+					current_size = cp->cell_font->scale * default_font_size;
+
+					AfmSetFont(cp->cell_font->names->ps_name,
+						default_font_slant,
+						current_size);
+				}
+			}
+		}
+		heights[i] += get_height(rr) * AfmFontHeight();
+		totht += heights[i] + Global->interline;
 	}
 	for (cc = print->lc; cc <= print->hc; cc++) {
 		totwid += get_width(cc) * AfmFontWidth();;
@@ -347,7 +367,13 @@ print_region_cmd (struct rng *print, FILE *fp)
 			xpoints = xspaces = 0;	/* FIX ME */
 			xpointsafter = 0;
 
-			ht = get_height(rr) * AfmFontHeight();
+			/* Add height of next line, not this line */
+			if (rr != print->hr) {
+				ht = heights[rr - print->lr];
+			} else {
+				;	/* Don't pass array boundary */
+			}
+
 			spaces = 0;
 			for (cc = c_lo; cc <= c_hi; cc++) {
 				next = 0;
@@ -499,12 +525,14 @@ print_region_cmd (struct rng *print, FILE *fp)
 	    Global->CurrentPrintDriver->page_footer(pg, fp);
 	}
 	Global->CurrentPrintDriver->job_trailer(npages-1, fp);
+
+	free(heights);
 }
 
 void
 PrintInit(void)
 {
-	Global->interline = 2;
+	Global->interline = 4;
 	Global->TopBorderHeight = 0;
 	Global->BottomBorderHeight = 0;
 	Global->LeftBorderWidth = 0;

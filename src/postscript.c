@@ -1,5 +1,5 @@
 /*
- *  $Id: postscript.c,v 1.12 1999/11/10 00:22:52 danny Exp $
+ *  $Id: postscript.c,v 1.13 1999/11/27 18:57:04 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -28,7 +28,7 @@
  * There shouldn't be much spreadsheet functionality here...
  */
 
-static char rcsid[] = "$Id: postscript.c,v 1.12 1999/11/10 00:22:52 danny Exp $";
+static char rcsid[] = "$Id: postscript.c,v 1.13 1999/11/27 18:57:04 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -68,10 +68,18 @@ put_ps_string (char *str, FILE *fp)
   fputc (')', fp);
 }
 
+static char	**KnownFonts = NULL;
+static int	nfonts = 0;
+
+void FontCacheRestart(void)
+{
+	free(KnownFonts);
+	KnownFonts = 0;
+	nfonts = 0;
+}
+
 void ReencodeFont(char *fn, FILE *fp)
 {
-	static char	**KnownFonts = NULL;
-	static int	nfonts = 0;
 	int		i;
 
 	for (i=0; i<nfonts; i++)
@@ -90,6 +98,8 @@ void PostScriptJobHeader(char *title, int npages, FILE *fp)
 {
 	struct font_names	*fn;
 	struct font_memo	*fm;
+
+	FontCacheRestart();
 
 	fprintf(fp, "%%!PS-Adobe-3.0\n");
 	fprintf(fp, "%%%%Creator: %s %s\n", PACKAGE, VERSION);
@@ -120,7 +130,8 @@ void PostScriptJobHeader(char *title, int npages, FILE *fp)
 	fprintf(fp, "/reencodeISO { %%def\n");
 	fprintf(fp, "    findfont dup length dict begin\n");
 	fprintf(fp, "    { 1 index /FID ne { def }{ pop pop } ifelse } forall\n");
-	fprintf(fp, "    /Encoding ISOLatin1Encoding def\n");
+	fprintf(fp, "    /Encoding %sEncoding def\n",
+		OleoGetEncoding() ? OleoGetEncoding() : "ISOLatin1");
 	fprintf(fp, "    currentdict end definefont pop\n");
 	fprintf(fp, "} bind def\n");
 

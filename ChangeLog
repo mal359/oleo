@@ -1,4 +1,23 @@
-$Id: ChangeLog,v 1.117 1999/11/10 00:22:44 danny Exp $
+$Id: ChangeLog,v 1.118 1999/11/27 18:56:44 danny Exp $
+
+
+Sat 27 Nov 19:55:41 1999, Danny
+	* Update the TODO file.
+	* Add stuff (variable, field in UserPreferences dialog, code
+	  to initialize, ...) to handle the character encoding. Default
+	  is set to ISOLatin1. This should, but currently doesn't,
+	  alter X's fonts. It does do things for PostScript.
+	* Conditionally remove (#ifdef VERBOSE) fprintf statements in
+	  src/io-x11.c. The i18n stuff still won't work I'm afraid.
+	* Fix a few cases of including io-motif.h unconditionally.
+	* Add mysql.h to the list of files to be distributed.
+	* Get bugfix from Dag Nygren for a crash in display.c.
+	* src/print.c : when moving to a new line, need to do this based
+	  on the font size of the next line, not the one just printed.
+	* src/io-term.c : changed the years that Oleo was worked on.
+	  Run oleo --version to check.
+	* src/io-motif.c : OK button on configure graph dialog should
+	  pop down the dialog.
 
 Wed 10 Nov 01:18:09 1999, Danny
 	* Fix a couple of printing bugs.

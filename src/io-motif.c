@@ -1,6 +1,6 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.53 1999/11/04 12:51:23 danny Exp $
+ *  $Id: io-motif.c,v 1.54 1999/11/27 18:56:57 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -22,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.53 1999/11/04 12:51:23 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.54 1999/11/27 18:56:57 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -859,6 +859,7 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 	int			r;
 
 	MotifSelectGlobal(w);
+	XtUnmanageChild(configureGraph);
 
 	XtVaGetValues(f, XmNuserData, &cw, NULL);
 
@@ -3806,7 +3807,7 @@ static Widget FindDialog(Widget w)
 void
 UserPreferencesOk(Widget w, XtPointer client, XtPointer call)
 {
-	Widget		mft, ft;
+	Widget		mft, ft, etf;
 	char		*mf, f;
 	XmFontList	fl;
 	XmFontListEntry	fle;
@@ -3822,8 +3823,9 @@ UserPreferencesOk(Widget w, XtPointer client, XtPointer call)
 
 	mft = XtNameToWidget(UserPref, "*matrixfonttf");
 	ft = XtNameToWidget(UserPref, "*fonttf");
+	etf = XtNameToWidget(UserPref, "*encodingTf");
 
-	if (ft == NULL || mft == NULL)
+	if (ft == NULL || mft == NULL || etf == NULL)
 		return;	/* Huh ?? */
 
 	mf = XmTextFieldGetString(mft);
@@ -3835,6 +3837,8 @@ UserPreferencesOk(Widget w, XtPointer client, XtPointer call)
 		fl = XmFontListAppendEntry(NULL, fle);
 		XtVaSetValues(mat, XmNfontList, fl, NULL);
 	/* FIX ME potential leak : can we free fl, fle, fs yet ? */
+
+		OleoSetEncoding(XmTextFieldGetString(etf));
 	}
 
 	XtFree(mf);
@@ -3843,6 +3847,9 @@ UserPreferencesOk(Widget w, XtPointer client, XtPointer call)
 void
 UserPreferencesReset(Widget w)
 {
+	Widget	e = XtNameToWidget(w, "*encodingTf");
+
+	if (e) XmTextFieldSetString(e, OleoGetEncoding());
 }
 
 #ifdef	HAVE_XLT_FONTCHOOSER
@@ -3966,18 +3973,20 @@ CreateUserPreferences(Widget parent)
 		NULL);
 	XtAddCallback(b, XmNactivateCallback, FontChooserCB, (XtPointer)t);
 
-	l = XtVaCreateManagedWidget("label", xmLabelGadgetClass,
+	l = XtVaCreateManagedWidget("encodingLabel", xmLabelGadgetClass,
 		form,
 			XmNtopAttachment,	XmATTACH_WIDGET,
 			XmNtopOffset,		10,
 			XmNtopWidget,		t,
 			XmNleftAttachment,	XmATTACH_FORM,
 			XmNleftOffset,		10,
-			XmNrightAttachment,	XmATTACH_NONE,
+			XmNrightAttachment,	XmATTACH_WIDGET,
+			XmNrightWidget,		t,
+			XmNrightOffset,		10,
 			XmNbottomAttachment,	XmATTACH_NONE,
 		NULL);
 
-	t = XtVaCreateManagedWidget("tf", xmTextFieldWidgetClass,
+	t = XtVaCreateManagedWidget("encodingTf", xmTextFieldWidgetClass,
 		form,
 			XmNtopAttachment,	XmATTACH_WIDGET,
 			XmNtopOffset,		10,

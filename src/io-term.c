@@ -61,12 +61,9 @@
 #include "postscript.h"
 
 #include "userpref.h"
-
 #include "mysql.h"
-
 #ifdef	HAVE_MOTIF
 #include "io-motif.h"
-#include <Xm/Xm.h>
 #endif
 
 #ifdef HAVE_LIBGTK
@@ -184,6 +181,7 @@ struct UserPreferences UserPreferences;
  * Set "write" to 1 if this needs to be saved in .oleorc.
  *	Even then, only saved to file if integer has the "value" from the table,
  *	or if the string is non-empty.
+ * Set cont to 1 if processing in do_set_option is to continue.
  */
 static struct pref {
 	char	*name;
@@ -192,11 +190,13 @@ static struct pref {
 	void	(*trigger)(char *);
 	int	copynext;
 	int	write;
+	int	cont;
 } Preferences [] = {
-	{ "a0",		&UserPreferences.a0,		1,	NULL,	0, 1 },
-	{ "noa0",	&UserPreferences.a0,		0,	NULL,	0, 1 },
-	{ "bgcolor",	&UserPreferences.bgcolor,	0,	NULL,	1, 0 },
-	{ "file",	&UserPreferences.file_type,	0,	NULL,	1, 1 },
+	{ "a0",		&UserPreferences.a0,		1,	NULL,	0, 1, 1},
+	{ "noa0",	&UserPreferences.a0,		0,	NULL,	0, 1, 1},
+	{ "bgcolor",	&UserPreferences.bgcolor,	0,	NULL,	1, 0, 1},
+	{ "file",	&UserPreferences.file_type,	0,	NULL,	1, 1, 1},
+	{ "encoding",	&UserPreferences.encoding,	0,	OleoUserPrefEncoding,	1, 1, 0},
 	{ NULL,	0 }
 };
 
@@ -206,13 +206,16 @@ static int
 do_set_option (char *ptr)
 {
   int	set_opt = 1;
-  int	i;
+  int	i, l;
+  char	*p;
 
   while (*ptr == ' ')
     ptr++;
 
+  for (l=0,p=ptr; *p && !isspace(*p); p++) l++;
+ 
   for (i=0; Preferences[i].name; i++)
-	if (strcmp(ptr, Preferences[i].name) == 0) {
+	if (strncmp(ptr, Preferences[i].name, l) == 0) {
 		if (Preferences[i].trigger != NULL)
 			(Preferences[i].trigger)(ptr);
 
@@ -222,6 +225,8 @@ do_set_option (char *ptr)
 		} else if (Preferences[i].var)
 			*((int *)Preferences[i].var) = Preferences[i].value;
 
+		if (Preferences[i].cont == 0)
+			return;
 		break;
 	}
 
@@ -915,7 +920,7 @@ main (int argc, char **argv)
 	  {
 	  case 'V':
 	    printf(_("%s %s\n"), GNU_PACKAGE, VERSION);
-            printf(_("Copyright (C) 1997-1998 Free Software Foundation, Inc.\n"));
+            printf(_("Copyright (C) 1992-1999 Free Software Foundation, Inc.\n"));
             printf(_("%s comes with ABSOLUTELY NO WARRANTY.\n"), GNU_PACKAGE);
             printf(_("You may redistribute copies of %s\n"), PACKAGE);
             printf(_("under the terms of the GNU General Public License.\n"));
@@ -1059,6 +1064,7 @@ main (int argc, char **argv)
 
   init_graphing ();
   PrintInit();
+  OleoSetEncoding(OLEO_DEFAULT_ENCODING);
 
   if (setjmp (Global->error_exception))
   {

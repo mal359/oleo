@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.20 1999/08/31 08:45:02 danny Exp $
+ *  $Id: fallback.c,v 1.21 1999/11/27 18:56:55 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -179,12 +179,17 @@ char *fallback[] = {
 	"*helpShell.title:		Oleo Help Window",
 	"*UserPreferences_popup.title:	Oleo User Preferences",
 /* User Preferences */
-	"*matrixfontlabel.labelString:		Matrix Font",
+	"*matrixfontlabel.labelString:		Matrix Font           ",
 	"*fontlabel.labelString:		General Font",
 	"*matrixfontbutton.labelString:		Select Font ...",
 	"*fontbutton.labelString:		Select Font ...",
 	"*matrixfonttf.columns:			50",
 	"*fonttf.columns:			50",
+	"*encodingLabel.labelString:		Character encoding",
+	"*encodingTf.columns:			50",
+	"*matrixfontlabel.alignment:		alignment_beginning",
+	"*fontlabel.alignment:			alignment_beginning",
+	"*encodingLabel.alignment:		alignment_beginning",
 /* Help Dialog */
 	"*versionD*Help*labelString:	GPL",
 /* Configuration Dialogs */

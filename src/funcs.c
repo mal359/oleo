@@ -1,20 +1,20 @@
-/*	Copyright (C) 1993 Free Software Foundation, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this software; see the file COPYING.  If not, write to
-the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-
-
+/*
+ * Copyright (C) 1993 Free Software Foundation, Inc.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this software; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
 /* 
  * This file contains descriptions of all the interactive functions 
@@ -52,17 +52,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
  * The output parameters can be NULL.
  */
 
-#ifdef __STDC__
-int
-find_function (int * vec_out, struct cmd_func ** cmd_out, char * name, int len)
-#else
-int
-find_function (vec_out, cmd_out, name, len)
-     int * vec_out;
-     struct cmd_func ** cmd_out;
-     char * name;
-     int len;
-#endif
+int find_function (int * vec_out, struct cmd_func ** cmd_out, char * name, int len)
 {
   int vector;
   struct cmd_func * cmd;
@@ -79,20 +69,11 @@ find_function (vec_out, cmd_out, name, len)
   return 1;
 }  
 
-
-
-
 static struct cmd_func * named_macro_strings = 0;
 static int num_named_macro_strings = 0;
 static int named_macro_vec;
 
-#ifdef __STDC__
-void
-init_named_macro_strings (void)
-#else
-void
-init_named_macro_strings ()
-#endif
+void init_named_macro_strings (void)
 {
   named_macro_strings =
     (struct cmd_func *) ck_malloc (sizeof (struct cmd_func));
@@ -101,15 +82,7 @@ init_named_macro_strings ()
 }
 
 
-#ifdef __STDC__
-void 
-name_macro_string (char * name, char * str)
-#else
-void 
-name_macro_string (name, str)
-     char * name;
-     char * str;
-#endif
+void name_macro_string (char * name, char * str)
 {
   int i = num_named_macro_strings;
   ++num_named_macro_strings;

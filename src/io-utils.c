@@ -33,7 +33,9 @@
 #include "io-term.h"
 #include "cmd.h"
 #include "sylk.h"
+#ifdef	HAVE_MOTIF
 #include "io-motif.h"
+#endif
 #include "basic.h"
 #include "oleofile.h"
 #include "sc.h"
@@ -1508,4 +1510,26 @@ void FileCloseCurrentFile(void)
 	if (using_motif)
 		MotifSetWindowName("");
 #endif
+}
+
+void OleoSetEncoding(char *s)
+{
+	if (Global && Global->encoding)
+		free(Global->encoding);
+	Global->encoding = strdup(s);
+
+	AfmSetEncoding(s);
+}
+
+char *OleoGetEncoding(void)
+{
+	return Global->encoding;
+}
+
+void OleoUserPrefEncoding(char *s)
+{
+	char	*p = s + 9;	/* Get past "encoding" */
+
+	for (; *p && isspace(*p); p++) ;
+	OleoSetEncoding(p);
 }

@@ -23,7 +23,10 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "global.h"
 #include "lists.h"
 #include "funcdef.h"
+
+#ifdef	HAVE_MOTIF
 #include "io-motif.h"
+#endif
 
 #include "sysdef.h"
 #ifndef _DEBUG_MALLOC_INC

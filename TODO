@@ -1,6 +1,10 @@
-$Id: TODO,v 1.32 1999/09/19 09:26:21 danny Exp $
+$Id: TODO,v 1.33 1999/11/27 18:56:42 danny Exp $
 
 TODO's:
+
+* Internationalisation
+	(busy) get i18n for X11 input (src/io-x11.c) to work.
+	(????) Get i18n for labels etc in Motif to work right.
 
 * Multiple Document Interface
 	(done) implement framework for putting global variables into so they're
@@ -14,7 +18,7 @@ TODO's:
 	(todo) connect the plot.c functionality (GNU Plotutils) to graph.c
 	(todo) make sure all the variables can get saved
 	(todo) make sure all flags can be controlled through GUI
-	(todo) put Plotutils graph in Motif XmScrolledWindow
+	(done) put Plotutils graph in Motif XmScrolledWindow
 
 * Sorting
 	(todo) implement an interface that'll allow us to call external
@@ -54,12 +58,10 @@ TODO's:
 * Printing
 	(todo) parameterize printing
 	(busy) make printing more intelligent
-	(todo) printing large region shows a scaling bug.
-	       Try printing A1:AZ255.
 	(busy) implement PCL printing (see www.wotsit.org)
 	(busy) improve appearance of PostScript prints
-	(todo) fix precision handling in prints
-	(todo) Make Iso Latin 1 be user definable in PostScript.
+	(done) fix precision handling in prints
+	(done) Make Iso Latin 1 be user definable in PostScript.
 
 * Get our stuff together for an upcoming 2.0 release of Oleo.
 
@@ -123,8 +125,6 @@ TODO's:
 
 * Make io_error_msg work right in Motif.
 	(done)
-
-* Get i18n to work right.
 
 * Figure out why having kinput2 present kills oleo.
 
