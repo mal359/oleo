@@ -1,5 +1,10 @@
 
-$Id: ChangeLog,v 1.154 2001/04/19 00:05:27 pw Exp $
+$Id: ChangeLog,v 1.155 2001/05/12 16:33:29 pw Exp $
+
+Sat May 12 12:29:22 EDT 2001  Pete Wyckoff  <pw@osc.edu>
+	* src/Makefile.am: Add dependency to parse.h.
+	* src/io-term.c src/io-utils.c: Fix bugs with file preferences
+	  setting found by Harold W. Baldwin.
 
 Wed Apr 18 20:01:21 EDT 2001  Pete Wyckoff  <pw@osc.edu>
 	* doc/oleo.texi: Add INFO-DIR-ENTRY.
