@@ -1,9 +1,10 @@
 /*
- *  $Id: io-motif.c,v 1.2 1998/08/27 21:15:39 danny Exp $
+ *  $Id: io-motif.c,v 1.3 1998/08/27 22:29:23 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
- *  Copyright (C) 1998 by Danny Backx <danny.backx@advalvas.be>.
+ *  Copyright (C) 1998 by the Free Software Foundation, Inc.
+ *  Written by Danny Backx <danny@gnu.org>.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.2 1998/08/27 21:15:39 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.3 1998/08/27 22:29:23 danny Exp $";
 
 #include "config.h"
 
@@ -114,7 +115,7 @@ void Debug(char *src, char *fmt, ...)
 	}
 }
 
-void MessageAppend(char *s)
+void MessageAppend(char *s, Boolean beep)
 {
 	XmTextPosition	pos;
 	int		i;
@@ -133,7 +134,9 @@ void MessageAppend(char *s)
 	}
 
 	XmTextShowPosition(msgtext, XmTextGetLastPosition(msgtext));
-	XBell(XtDisplay(msgtext), 30);
+
+	if (beep)
+		XBell(XtDisplay(msgtext), 30);
 }
 
 void PrintDebug(Widget w, XtPointer client, XtPointer call)
@@ -266,7 +269,7 @@ void DoGraph(Widget w, XtPointer client, XtPointer call)
 		_("Plotting X in %d [%d.%d], A in %d [%d.%d]\n"),
 		rngx.lc, rngx.lr, rngx.hr,
 		rnga.lc, rnga.lr, rnga.hr);
-	MessageAppend(t);
+	MessageAppend(t, False);
 
 	sprintf(t,
 		_("Graph X [%s] A [%s]\n"),
@@ -348,7 +351,7 @@ void ConversionError(char *s, char *t)
 	sprintf(r,
 		_("Conversion error: cannot convert '%s' to a %s\n"),
 		s, t);
-	MessageAppend(r);
+	MessageAppend(r, True);
 	XtFree(r);
 }
 
@@ -365,11 +368,11 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 	XtVaGetValues(f, XmNuserData, &cw, NULL);
 
 	if (cw == NULL) {
-		MessageAppend(_("Cannot find XmNuserData\n"));
+		MessageAppend(_("Cannot find XmNuserData\n"), True);
 		return;
 	}
 
-	MessageAppend("ConfigureGraphOk\n");
+	MessageAppend("ConfigureGraphOk\n", False);
 
 	s = XmTextFieldGetString(cw->x);
 	if (get_abs_rng(&s, &rngx) == 0) {	/* 0 is success */
@@ -403,19 +406,19 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 #endif
 
 	s = XmTextFieldGetString(cw->b);
-	MessageAppend(s);
+	MessageAppend(s, False);
 #ifdef	FREE_TF_STRING
 	XtFree(s);
 #endif
 
 	s = XmTextFieldGetString(cw->c);
-	MessageAppend(s);
+	MessageAppend(s, False);
 #ifdef	FREE_TF_STRING
 	XtFree(s);
 #endif
 
 	s = XmTextFieldGetString(cw->d);
-	MessageAppend(s);
+	MessageAppend(s, False);
 #ifdef	FREE_TF_STRING
 	XtFree(s);
 #endif
@@ -436,10 +439,10 @@ void ConfigureGraphReset(Widget f)
 	XtVaGetValues(f, XmNuserData, &cw, NULL);
 
 	if (cw == NULL) {
-		MessageAppend(_("Cannot find XmNuserData\n"));
+		MessageAppend(_("Cannot find XmNuserData\n"), True);
 		return;
 	}
-	MessageAppend("ConfigureGraphReset\n");
+	MessageAppend("ConfigureGraphReset\n", False);
 
 	r = graph_get_data(0);
 	s = range_name(&r);
@@ -519,7 +522,7 @@ void LeaveCell(Widget w, XtPointer client, XtPointer call)
 	 */
 	r = new_value(cbp->row + 1, cbp->column + 1, cbp->value);
 	if (r) {
-		MessageAppend(r);
+		MessageAppend(r, True);
 		cbp->doit = False;	/* veto */
 	} else {
 		modified = 1;
@@ -602,7 +605,7 @@ void FormulaCB(Widget w, XtPointer client, XtPointer call)
 
 	r = new_value(curow, cucol, s);
 	if (r) {
-		MessageAppend(r);
+		MessageAppend(r, True);
 	} else
 		modified = 1;
 
@@ -673,7 +676,7 @@ void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 	XtVaSetValues(toplevel, XmNiconName, t, NULL);
 
 	sprintf(t, _("Read file '%s'\n"), s);
-	MessageAppend(t);
+	MessageAppend(t, False);
 
 	XtFree(s);
 	XtFree(t);
@@ -735,7 +738,7 @@ void ReallySaveCB(Widget w, XtPointer client, XtPointer call)
 
 	t = XtMalloc(strlen(s) + 32);
 	sprintf(t, _("Saved file '%s'\n"), s);
-	MessageAppend(t);
+	MessageAppend(t, False);
 	XtFree(t);
 	XtFree(s);
 }
@@ -973,27 +976,43 @@ void ToggleA0(Widget w, XtPointer client, XtPointer call)
 
 /****************************************************************
  *								*
- *		Copy/Paste stuff				*
+ *		Edit Menu					*
  *								*
  ****************************************************************/
 void UndoCB(Widget w, XtPointer client, XtPointer call)
 {
-	MessageAppend("Not implemented\n");
+	MessageAppend("Not implemented\n", True);
 }
 
+/****************************************************************
+ *								*
+ *		Copy/Paste stuff				*
+ *								*
+ ****************************************************************/
+/*
+ * This, and the other copy/paste functions, must act as follows :
+ * - a region is assumed to be selected in the spreadsheet
+ * - the region is converted into more than one selections (only on
+ *	request though) : text, value/formula group, ...
+ * - copying to/from the X selection mechanism
+ * - conversion in the other way (preferably the value/formula group,
+ *	otherwise text, which can come from other sources as well... )
+ *
+ * Note that this bypasses the existing oleo copy/paste mechanism.
+ */
 void CopyCB(Widget w, XtPointer client, XtPointer call)
 {
-	MessageAppend("Not implemented\n");
+	MessageAppend("Not implemented\n", True);
 }
 
 void CutCB(Widget w, XtPointer client, XtPointer call)
 {
-	MessageAppend("Not implemented\n");
+	MessageAppend("Not implemented\n", True);
 }
 
 void PasteCB(Widget w, XtPointer client, XtPointer call)
 {
-	MessageAppend("Not implemented\n");
+	MessageAppend("Not implemented\n", True);
 }
 
 /****************************************************************
@@ -1538,7 +1557,7 @@ xio_get_chr (char *prompt)
 	Debug(__FILE__, "xio_get_chr(%s)\n", prompt);
 #endif
 
-	MessageAppend(prompt);
+	MessageAppend(prompt, True);
 	return io_getch ();
 }
 
@@ -1647,7 +1666,7 @@ motif_error_msg(char *fmt, ...)
 	vsprintf(ErrorBuffer, fmt, ap);
 	va_end(ap);
 
-	MessageAppend(ErrorBuffer);
+	MessageAppend(ErrorBuffer, True);
 }
 
 int

@@ -67,6 +67,8 @@ that Oleo depends on :
 @item Motif or LessTif
 @url{http://www.opengroup.org}
 @url{http://www.lesstif.org}
+@item GNU gettext
+@url{http://www.gnu.org}
 @end itemize
 
 @node Alternatives, Using the mouse, What you need, Motif
