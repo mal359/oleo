@@ -1,8 +1,17 @@
+Wed Dec  2 20:47:49 1998 Danny Backx (danny@gnu.org)
+	* Release oleo 1.6.11 so Tom can test and use the list file stuff.
+	* Oleo now recognizes file name extensions at startup. This means
+	  it'll understand that "oleo x.list" needs to read a file of
+	  format list, not native oleo format.
+	  This required command line options
+		-s (--separator) with an argument to specify the separator
+		--space to specify space is the separator
+	  The latter seems to be necessary because a space doesn't get through.
 	* Allow setting of separator in "list" file type.
 	* Fix file loading for different file types.
 	* Release 1.6.10 (sorry about this; it's to avoid misunderstandings
 	  about versions).
-	* Implement range selection. A user should use Shift-Button1
+	* Partially implement range selection. A user should use Shift-Button1
 	  to select one and Ctrl-Button1 to select the other end of a range.
 	  You need to have a range widget selected for this to make sense.
 	  They're currently in the Define Graph dialog and in the Print

@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Oleo; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -58,6 +58,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "graph.h"
 
 #ifdef	HAVE_MOTIF
+#include "io-motif.h"
 #include <Xm/Xm.h>
 #endif
 
@@ -86,9 +87,6 @@ char *io_name;
 #include "panic.h"
 #endif
 
-
-
-
 /* This variable is non-zero if the spreadsheet has been changed in any way */ 
 int modified = 0;
 
@@ -113,28 +111,25 @@ jmp_buf error_exception;
 char * current_filename = 0;
 
 /* These are the hooks used to do file-io. */
-#ifdef __STDC__
 void (*read_file) (FILE *, int) = oleo_read_file;
 void (*write_file) (FILE *, struct rng *) = oleo_write_file;
 int (*set_file_opts) (int, char *) = oleo_set_options;
 void (*show_file_opts) () = oleo_show_options;
-#else
-void (*read_file) () = oleo_read_file;
-void (*write_file) () = oleo_write_file;
-int (*set_file_opts) () = oleo_set_options;
-void (*show_file_opts) () = oleo_show_options;
-#endif
 
-static char short_options[] = "Vqfxth";
+static int	option_separator = '\t';
+
+static char short_options[] = "Vqfxths";
 static struct option long_options[] =
 {
-  {"version", 0, NULL, 'V'},
-  {"quiet", 0, NULL, 'q'},
-  {"ignore-init-file", 0, NULL, 'f'},
-  {"nw", 0, NULL, 'x'},
-  {"no-toolkit", 0, NULL, 't'},
-  {"help", 0, NULL, 'h'},
-  {NULL, 0, NULL, 0}
+	{"version",		0,	NULL,			'V'},
+	{"quiet",		0,	NULL,			'q'},
+	{"ignore-init-file",	0,	NULL,			'f'},
+	{"nw",			0,	NULL,			'x'},
+	{"no-toolkit",		0,	NULL,			't'},
+	{"help",		0,	NULL,			'h'},
+	{"separator",		1,	&option_separator,	's'},
+	{"space",		0,	NULL,			'S'},
+	{NULL,			0,	NULL,			0}
 };
 
 /* Avoid needless messages to stdout. */
@@ -180,8 +175,6 @@ static RETSIGTYPE
 got_sig (int sig)
 {
 }
-
-
 
 /* An parser for the language grokked by option setting commands. */
 
@@ -633,8 +626,6 @@ read_mp_options (char *str)
 }
 
 
-
-
 /* Commands related to variables. */
 
 void
@@ -820,8 +811,6 @@ read_variables (FILE * fp)
     }
 }
 
-
-
 void
 init_maps (void)
 {
@@ -883,6 +872,7 @@ Usage: %s [OPTION]... [FILE]...\n\
   -f, --ignore-init-file   ignore settings defined in init file\n\
   -t, --no-toolkit         disable X toolkit\n\
   -x, --nw                 disable graphics and fallback to curses\n\
+  -s x			   set separator for 'list' file type to x\n\
 \n\
 Report bugs to <bug-oleo@gnu.org>.\n\
 "));
@@ -924,10 +914,12 @@ main (int argc, char **argv)
 
   {
     int opt;
-    for (opt = getopt_long (argc, argv, short_options, long_options, (int *)0);
-	 opt != EOF;
-	 opt = getopt_long (argc, argv, short_options, long_options, (int *)0))
-      {
+
+    while (1) {
+	opt = getopt_long (argc, argv, short_options, long_options, (int *)0);
+	if (opt == EOF)
+		break;
+
 	switch (opt)
 	  {
 	  case 'V':
@@ -957,9 +949,18 @@ main (int argc, char **argv)
 	    show_usage ();
 	    exit (0);
 	    break;
+	  case 's':
+	    optind++;
+	    list_set_separator(option_separator);
+	    break;
+	  case 'S':
+	    option_separator = ' ';
+	    list_set_separator(option_separator);
+	    break;
 	  }
       }
   }
+
   if (argc - optind > 1)
     {
       if (no_motif)
@@ -968,6 +969,7 @@ main (int argc, char **argv)
         exit (1);
       }
     }
+
   init_infinity ();
   init_mem ();
   init_eval ();
@@ -1036,7 +1038,7 @@ main (int argc, char **argv)
 #ifdef HAVE_MOTIF
    if ((!no_motif)&&(!no_x)) {
 
-	motif_init(&argc, &argv);
+	motif_init(&argc, argv);
 
 	using_gtk = FALSE;
 	using_motif = TRUE;
@@ -1136,18 +1138,20 @@ main (int argc, char **argv)
     {
       FILE * fp;
       /* fixme: record file name */
-      ++optind;
-      if ((fp = fopen (argv[1], "r")))
+
+      if ((fp = fopen (argv[optind], "r")))
 	{
 	  if (setjmp (error_exception))
-	    fprintf (stderr, "  error occured reading %s", argv[1]);
+	    fprintf (stderr, "  error occured reading %s", argv[optind]);
 	  else
-	    read_file_and_run_hooks (fp, 0, argv[1]);
+	    read_file_and_run_hooks (fp, 0, argv[optind]);
 	  fclose (fp);
 	  command_line_file = 1;
 	}
       else
-	fprintf (stderr, "Can't open %s: %s", argv[1], err_msg ());
+	fprintf (stderr, "Can't open %s: %s", argv[optind], err_msg ());
+
+      optind++;
     }
   /* Force the command frame to be rebuilt now that the keymaps exist. */
   {

@@ -1,12 +1,12 @@
 dnl
 dnl This is the configuration file for GNU oleo.
-dnl $Id: configure.in,v 1.30 1998/11/29 12:48:45 danny Exp $
+dnl $Id: configure.in,v 1.31 1998/12/02 20:10:13 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
 AC_INIT(src/init.c)
 
-AM_INIT_AUTOMAKE([oleo], [1.6.10])
+AM_INIT_AUTOMAKE([oleo], [1.6.11])
 GNU_PACKAGE="GNU $PACKAGE"
 AC_DEFINE_UNQUOTED(GNU_PACKAGE, "$GNU_PACKAGE")
 

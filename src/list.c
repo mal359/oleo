@@ -189,6 +189,11 @@ list_set_options (set_opt, option)
   return -1;
 }
 
+void list_set_separator(char sep)
+{
+      sl_sep = sep;
+}
+
 void
 list_show_options ()
 {

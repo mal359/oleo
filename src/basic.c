@@ -1321,6 +1321,10 @@ read_cmds_cmd (FILE *fp)
 int run_load_hooks = 1;
 static char load_hooks_string[] = "load_hooks";
 
+/*
+ * Extended this to detect the extension of a file and have the right
+ * read function process this.
+ */
 void
 read_file_and_run_hooks (FILE * fp, int ismerge, char * name)
 {
@@ -1330,7 +1334,20 @@ read_file_and_run_hooks (FILE * fp, int ismerge, char * name)
 	free (current_filename);
       current_filename = name ? ck_savestr (name) : 0;
     }
+#if 1
+  {
+	char	*ext = NULL;
+	ext = strrchr(name, '.');
+	if (! ext) {
+		(*read_file)(fp, ismerge);
+	} else {
+		ext++;
+		read_file_generic(fp, ismerge, ext);
+	}
+  }
+#else
   (*read_file)(fp, ismerge);
+#endif
   if (run_load_hooks)
     {
       struct var * v;

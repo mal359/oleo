@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.h,v 1.1 1998/08/19 07:45:07 danny Exp $
+ *  $Id: io-motif.h,v 1.2 1998/12/02 20:10:24 danny Exp $
  *
  *  This file is part of GnuSheet, a free spreadsheet.
  *
@@ -33,3 +33,4 @@ extern Widget   fsd;
 
 extern void versionCB(Widget, XtPointer, XtPointer);
 extern void quitCB(Widget, XtPointer, XtPointer);
+extern void motif_init(int *argc, char **argv);

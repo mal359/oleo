@@ -15,7 +15,7 @@
    You should have received a copy of the GNU General Public License along with
    Oleo; see the file COPYING.  If not, write to the Free Software Foundation, 675
    Mass Ave, Cambridge, MA 02139, USA.  */
-
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -39,7 +39,6 @@
 struct user_fmt;
 static char *pr_flt (double, struct user_fmt *, int);
 static char *pr_int (long, struct user_fmt *, int);
-
 
 /* Constants */
 char *bname[] =
@@ -1253,9 +1252,6 @@ says_default (char *str)
 void
 write_file_generic(FILE *fp, struct rng *rng, char *format)
 {
-#if 1
-	fprintf(stderr, PACKAGE " write_file_generic : format %s\n", format);
-#endif
 	if (!stricmp ("oleo", format)) {
 		oleo_write_file(fp, rng);
 	} else if (!stricmp ("sylk", format)) {
