@@ -1,5 +1,5 @@
 /*
- *  $Id: postscript.c,v 1.17 2000/08/10 21:02:51 danny Exp $
+ *  $Id: postscript.c,v 1.18 2000/12/20 20:00:39 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -28,7 +28,7 @@
  * There shouldn't be much spreadsheet functionality here...
  */
 
-static char rcsid[] = "$Id: postscript.c,v 1.17 2000/08/10 21:02:51 danny Exp $";
+static char rcsid[] = "$Id: postscript.c,v 1.18 2000/12/20 20:00:39 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -40,6 +40,8 @@ static char rcsid[] = "$Id: postscript.c,v 1.17 2000/08/10 21:02:51 danny Exp $"
 
 #include <stdio.h>
 #include <ctype.h>
+#include <locale.h>
+
 #include "display.h"
 #include "font.h"
 #include "global.h"
@@ -111,6 +113,9 @@ void PostScriptJobHeader(char *title, int npages, FILE *fp)
 	struct font_names	*fn;
 	struct font_memo	*fm;
 
+	if (! Global->oldLocale)
+		Global->oldLocale = setlocale(LC_ALL, NULL);
+
 	FontCacheRestart();
 
 	fprintf(fp, "%%!PS-Adobe-3.0\n");
@@ -175,6 +180,8 @@ void PostScriptJobTrailer(int npages, FILE *fp)
 {
 	fprintf(fp, "%%Pages: %d\n", npages);
 	fprintf(fp, "%%EOF\n");
+
+	setlocale(LC_ALL, Global->oldLocale);
 }
 
 /*

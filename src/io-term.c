@@ -1,5 +1,5 @@
 /*
- * $Id: io-term.c,v 1.45 2000/11/22 19:33:01 danny Exp $
+ * $Id: io-term.c,v 1.46 2000/12/20 20:00:39 danny Exp $
  *
  * Copyright © 1990, 1992, 1993, 1999, 2000 Free Software Foundation, Inc.
  * 
@@ -20,7 +20,7 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char *rcsid = "$Id: io-term.c,v 1.45 2000/11/22 19:33:01 danny Exp $";
+static char *rcsid = "$Id: io-term.c,v 1.46 2000/12/20 20:00:39 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -884,6 +884,8 @@ void InitializeGlobals(void)
   Global->zoom = 1.0;
 
   Global->mouse_id = 0;
+
+  Global->oldLocale = NULL;
 
   UserPreferences.run_load_hooks = 1;
   /* End initialize */
