@@ -21,7 +21,7 @@
 
 #line 1 "/home/jbailey/oleo/src/getdate.y"
 
-/* $Revision: 1.2 $
+/* $Revision: 1.3 $
 **
 **  Originally written by Steven M. Bellovin <smb@research.att.com> while
 **  at the University of North Carolina at Chapel Hill.  Later tweaked by
@@ -118,12 +118,6 @@ extern struct tm	*localtime();
 #define yylex getdate_yylex
 #define yyerror getdate_yyerror
 
-#if	!defined(lint) && !defined(SABER)
-static char RCS[] =
-	"$Header: /home/matt/cvs/oleo/oleo/src/Attic/getdate.c,v 1.2 1997/09/15 16:21:01 jbailey Exp $";
-#endif	/* !defined(lint) && !defined(SABER) */
-
-
 #define EPOCH		1970
 #define HOUR(x)		((time_t)(x) * 60)
 #define SECSPERDAY	(24L * 60L * 60L)
@@ -181,7 +175,7 @@ static time_t	yyRelMonth;
 static time_t	yyRelSeconds;
 
 
-#line 163 "/home/jbailey/oleo/src/getdate.y"
+#line 157 "/home/jbailey/oleo/src/getdate.y"
 typedef union {
     time_t		Number;
     enum _MERIDIAN	Meridian;
@@ -259,10 +253,10 @@ static const short yyrhs[] = {    -1,
 
 #if YYDEBUG != 0
 static const short yyrline[] = { 0,
-   177,   178,   181,   184,   187,   190,   193,   196,   199,   205,
-   211,   218,   224,   234,   238,   242,   249,   253,   257,   263,
-   267,   272,   278,   282,   287,   291,   298,   302,   305,   308,
-   311,   314,   317,   320,   323,   326,   329,   334,   362,   365
+   171,   172,   175,   178,   181,   184,   187,   190,   193,   199,
+   205,   212,   218,   228,   232,   236,   243,   247,   251,   257,
+   261,   266,   272,   276,   281,   285,   292,   296,   299,   302,
+   305,   308,   311,   314,   317,   320,   323,   328,   356,   359
 };
 #endif
 
@@ -834,37 +828,37 @@ yyreduce:
   switch (yyn) {
 
 case 3:
-#line 181 "/home/jbailey/oleo/src/getdate.y"
+#line 175 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyHaveTime++;
 	;
     break;}
 case 4:
-#line 184 "/home/jbailey/oleo/src/getdate.y"
+#line 178 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyHaveZone++;
 	;
     break;}
 case 5:
-#line 187 "/home/jbailey/oleo/src/getdate.y"
+#line 181 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyHaveDate++;
 	;
     break;}
 case 6:
-#line 190 "/home/jbailey/oleo/src/getdate.y"
+#line 184 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyHaveDay++;
 	;
     break;}
 case 7:
-#line 193 "/home/jbailey/oleo/src/getdate.y"
+#line 187 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyHaveRel++;
 	;
     break;}
 case 9:
-#line 199 "/home/jbailey/oleo/src/getdate.y"
+#line 193 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyHour = yyvsp[-1].Number;
 	    yyMinutes = 0;
@@ -873,7 +867,7 @@ case 9:
 	;
     break;}
 case 10:
-#line 205 "/home/jbailey/oleo/src/getdate.y"
+#line 199 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyHour = yyvsp[-3].Number;
 	    yyMinutes = yyvsp[-1].Number;
@@ -882,7 +876,7 @@ case 10:
 	;
     break;}
 case 11:
-#line 211 "/home/jbailey/oleo/src/getdate.y"
+#line 205 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyHour = yyvsp[-3].Number;
 	    yyMinutes = yyvsp[-1].Number;
@@ -892,7 +886,7 @@ case 11:
 	;
     break;}
 case 12:
-#line 218 "/home/jbailey/oleo/src/getdate.y"
+#line 212 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyHour = yyvsp[-5].Number;
 	    yyMinutes = yyvsp[-3].Number;
@@ -901,7 +895,7 @@ case 12:
 	;
     break;}
 case 13:
-#line 224 "/home/jbailey/oleo/src/getdate.y"
+#line 218 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyHour = yyvsp[-5].Number;
 	    yyMinutes = yyvsp[-3].Number;
@@ -912,56 +906,56 @@ case 13:
 	;
     break;}
 case 14:
-#line 234 "/home/jbailey/oleo/src/getdate.y"
+#line 228 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyTimezone = yyvsp[0].Number;
 	    yyDSTmode = DSToff;
 	;
     break;}
 case 15:
-#line 238 "/home/jbailey/oleo/src/getdate.y"
+#line 232 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyTimezone = yyvsp[0].Number;
 	    yyDSTmode = DSTon;
 	;
     break;}
 case 16:
-#line 243 "/home/jbailey/oleo/src/getdate.y"
+#line 237 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyTimezone = yyvsp[-1].Number;
 	    yyDSTmode = DSTon;
 	;
     break;}
 case 17:
-#line 249 "/home/jbailey/oleo/src/getdate.y"
+#line 243 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyDayOrdinal = 1;
 	    yyDayNumber = yyvsp[0].Number;
 	;
     break;}
 case 18:
-#line 253 "/home/jbailey/oleo/src/getdate.y"
+#line 247 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyDayOrdinal = 1;
 	    yyDayNumber = yyvsp[-1].Number;
 	;
     break;}
 case 19:
-#line 257 "/home/jbailey/oleo/src/getdate.y"
+#line 251 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyDayOrdinal = yyvsp[-1].Number;
 	    yyDayNumber = yyvsp[0].Number;
 	;
     break;}
 case 20:
-#line 263 "/home/jbailey/oleo/src/getdate.y"
+#line 257 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyMonth = yyvsp[-2].Number;
 	    yyDay = yyvsp[0].Number;
 	;
     break;}
 case 21:
-#line 267 "/home/jbailey/oleo/src/getdate.y"
+#line 261 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyMonth = yyvsp[-4].Number;
 	    yyDay = yyvsp[-2].Number;
@@ -969,7 +963,7 @@ case 21:
 	;
     break;}
 case 22:
-#line 272 "/home/jbailey/oleo/src/getdate.y"
+#line 266 "/home/jbailey/oleo/src/getdate.y"
 {
 	    /* ISO 8601 format.  yyyy-mm-dd.  */
 	    yyYear = yyvsp[-2].Number;
@@ -978,14 +972,14 @@ case 22:
 	;
     break;}
 case 23:
-#line 278 "/home/jbailey/oleo/src/getdate.y"
+#line 272 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyMonth = yyvsp[-1].Number;
 	    yyDay = yyvsp[0].Number;
 	;
     break;}
 case 24:
-#line 282 "/home/jbailey/oleo/src/getdate.y"
+#line 276 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyMonth = yyvsp[-3].Number;
 	    yyDay = yyvsp[-2].Number;
@@ -993,14 +987,14 @@ case 24:
 	;
     break;}
 case 25:
-#line 287 "/home/jbailey/oleo/src/getdate.y"
+#line 281 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyMonth = yyvsp[0].Number;
 	    yyDay = yyvsp[-1].Number;
 	;
     break;}
 case 26:
-#line 291 "/home/jbailey/oleo/src/getdate.y"
+#line 285 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyMonth = yyvsp[-1].Number;
 	    yyDay = yyvsp[-2].Number;
@@ -1008,68 +1002,68 @@ case 26:
 	;
     break;}
 case 27:
-#line 298 "/home/jbailey/oleo/src/getdate.y"
+#line 292 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyRelSeconds = -yyRelSeconds;
 	    yyRelMonth = -yyRelMonth;
 	;
     break;}
 case 29:
-#line 305 "/home/jbailey/oleo/src/getdate.y"
+#line 299 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyRelSeconds += yyvsp[-1].Number * yyvsp[0].Number * 60L;
 	;
     break;}
 case 30:
-#line 308 "/home/jbailey/oleo/src/getdate.y"
+#line 302 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyRelSeconds += yyvsp[-1].Number * yyvsp[0].Number * 60L;
 	;
     break;}
 case 31:
-#line 311 "/home/jbailey/oleo/src/getdate.y"
+#line 305 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyRelSeconds += yyvsp[0].Number * 60L;
 	;
     break;}
 case 32:
-#line 314 "/home/jbailey/oleo/src/getdate.y"
+#line 308 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyRelSeconds += yyvsp[-1].Number;
 	;
     break;}
 case 33:
-#line 317 "/home/jbailey/oleo/src/getdate.y"
+#line 311 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyRelSeconds += yyvsp[-1].Number;
 	;
     break;}
 case 34:
-#line 320 "/home/jbailey/oleo/src/getdate.y"
+#line 314 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyRelSeconds++;
 	;
     break;}
 case 35:
-#line 323 "/home/jbailey/oleo/src/getdate.y"
+#line 317 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyRelMonth += yyvsp[-1].Number * yyvsp[0].Number;
 	;
     break;}
 case 36:
-#line 326 "/home/jbailey/oleo/src/getdate.y"
+#line 320 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyRelMonth += yyvsp[-1].Number * yyvsp[0].Number;
 	;
     break;}
 case 37:
-#line 329 "/home/jbailey/oleo/src/getdate.y"
+#line 323 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyRelMonth += yyvsp[0].Number;
 	;
     break;}
 case 38:
-#line 334 "/home/jbailey/oleo/src/getdate.y"
+#line 328 "/home/jbailey/oleo/src/getdate.y"
 {
 	    if (yyHaveTime && yyHaveDate && !yyHaveRel)
 		yyYear = yyvsp[0].Number;
@@ -1098,13 +1092,13 @@ case 38:
 	;
     break;}
 case 39:
-#line 362 "/home/jbailey/oleo/src/getdate.y"
+#line 356 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyval.Meridian = MER24;
 	;
     break;}
 case 40:
-#line 365 "/home/jbailey/oleo/src/getdate.y"
+#line 359 "/home/jbailey/oleo/src/getdate.y"
 {
 	    yyval.Meridian = yyvsp[0].Meridian;
 	;
@@ -1307,7 +1301,7 @@ yyerrhandle:
   yystate = yyn;
   goto yynewstate;
 }
-#line 370 "/home/jbailey/oleo/src/getdate.y"
+#line 364 "/home/jbailey/oleo/src/getdate.y"
 
 
 /* Month and day table. */
@@ -1498,7 +1492,7 @@ static TABLE const MilitaryTable[] = {
 
 
 /* ARGSUSED */
-static int
+int
 yyerror(s)
     char	*s;
 {
@@ -1739,7 +1733,7 @@ LookupWord(buff)
 }
 
 
-static int
+int
 yylex()
 {
     register char	c;

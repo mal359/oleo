@@ -1,5 +1,5 @@
 %{
-/* $Revision: 1.1 $
+/* $Revision: 1.2 $
 **
 **  Originally written by Steven M. Bellovin <smb@research.att.com> while
 **  at the University of North Carolina at Chapel Hill.  Later tweaked by
@@ -95,12 +95,6 @@ extern struct tm	*localtime();
 #define yyparse getdate_yyparse
 #define yylex getdate_yylex
 #define yyerror getdate_yyerror
-
-#if	!defined(lint) && !defined(SABER)
-static char RCS[] =
-	"$Header: /home/matt/cvs/oleo/oleo/src/Attic/getdate.y,v 1.1 1997/09/13 16:43:04 jbailey Exp $";
-#endif	/* !defined(lint) && !defined(SABER) */
-
 
 #define EPOCH		1970
 #define HOUR(x)		((time_t)(x) * 60)
@@ -557,7 +551,7 @@ static TABLE const MilitaryTable[] = {
 
 
 /* ARGSUSED */
-static int
+int
 yyerror(s)
     char	*s;
 {
@@ -798,7 +792,7 @@ LookupWord(buff)
 }
 
 
-static int
+int
 yylex()
 {
     register char	c;

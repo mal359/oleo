@@ -29,6 +29,9 @@ AC_CHECK_LIB(m, main)
 dnl Checks for X11
 AC_PATH_XTRA
 
+CFLAGS="$CFLAGS $X_CFLAGS"
+LIBS="$LIBS $X_LIBS"
+
 dnl Checks for X11 Libraries
 AC_CHECK_LIB(X11, main)
 

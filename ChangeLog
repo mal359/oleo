@@ -1,3 +1,10 @@
+Fri Sep 26 22:44:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
+
+	* getdate.y: Fix declarations, remove RCS references
+	* configure.in, src/Makefile.am: Finally figure out
+	a way to vary the libraries based on whether X is enabled
+	or not.
+	
 Thu Sep 25 22:05:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
 
 	* Update to Automake-1.2b to try and fix library problem.

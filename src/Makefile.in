@@ -56,6 +56,7 @@ NORMAL_UNINSTALL = true
 PRE_UNINSTALL = true
 POST_UNINSTALL = true
 CC = @CC@
+CPP = @CPP@
 LN_S = @LN_S@
 MAKEINFO = @MAKEINFO@
 PACKAGE = @PACKAGE@
@@ -75,7 +76,7 @@ oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
  stub.c input.c info.c help.c graph.c forminfo.c getdate.y \
  posixtm.y date.c xmalloc.c xrdb.c
 
-EXTRA_oleo_SOURCES = mktime.c obstack.c
+# EXTRA_oleo_SOURCES = mktime.c obstack.c
 
 noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  defun.h defuns.h display.h errors.h eval.h font.h format.h forminfo.h \
@@ -85,7 +86,9 @@ noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  panic.h parse.h print.h proto.h ref.h regions.h sc.h stub.h stubs.h sylk.h \
  sysdef.h utils.h window.h list.h ir.h 
 
-oleo_LDADD = $(X_PRE_LIBS) $(X_LIBS) -lX11
+# oleo_LDADD = $(X_PRE_LIBS) $(X_LIBS) -lX11
+#oleo_LDADD = $(X_PRE_LIBS) $(X_LIBS)
+# oleo_LDADD = @LIBOBJS@
 
 INCLUDES = $(X_CFLAGS)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -109,6 +112,7 @@ funcs.o ir.o io-curses.o font.o display.o print.o init.o sylk.o \
 oleofile.o sc.o list.o busi.o string.o cells.o random.o cmd.o basic.o \
 args.o stub.o input.o info.o help.o graph.o forminfo.o getdate.o \
 posixtm.o date.o xmalloc.o xrdb.o
+oleo_LDADD = $(LDADD)
 oleo_DEPENDENCIES = 
 oleo_LDFLAGS = 
 YLWRAP = $(srcdir)/ylwrap
@@ -133,11 +137,11 @@ DEP_FILES =  .deps/args.P .deps/basic.P .deps/busi.P \
 .deps/info.P .deps/init.P .deps/input.P .deps/io-curses.P \
 .deps/io-edit.P .deps/io-term.P .deps/io-utils.P .deps/io-x11.P \
 .deps/ir.P .deps/key.P .deps/line.P .deps/list.P .deps/lists.P \
-.deps/mktime.P .deps/obstack.P .deps/oleofile.P .deps/panic.P \
-.deps/parse.P .deps/posixtm.P .deps/print.P .deps/random.P .deps/ref.P \
-.deps/regions.P .deps/sc.P .deps/sort.P .deps/string.P .deps/stub.P \
-.deps/sylk.P .deps/utils.P .deps/window.P .deps/xmalloc.P .deps/xrdb.P
-SOURCES = $(oleo_SOURCES) $(EXTRA_oleo_SOURCES)
+.deps/oleofile.P .deps/panic.P .deps/parse.P .deps/posixtm.P \
+.deps/print.P .deps/random.P .deps/ref.P .deps/regions.P .deps/sc.P \
+.deps/sort.P .deps/string.P .deps/stub.P .deps/sylk.P .deps/utils.P \
+.deps/window.P .deps/xmalloc.P .deps/xrdb.P
+SOURCES = $(oleo_SOURCES)
 OBJECTS = $(oleo_OBJECTS)
 
 default: all

@@ -10,7 +10,7 @@ oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
  stub.c input.c info.c help.c graph.c forminfo.c getdate.y \
  posixtm.y date.c xmalloc.c xrdb.c
 
-EXTRA_oleo_SOURCES = mktime.c obstack.c
+# EXTRA_oleo_SOURCES = mktime.c obstack.c
 
 noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  defun.h defuns.h display.h errors.h eval.h font.h format.h forminfo.h \
@@ -20,7 +20,9 @@ noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  panic.h parse.h print.h proto.h ref.h regions.h sc.h stub.h stubs.h sylk.h \
  sysdef.h utils.h window.h list.h ir.h 
 
-oleo_LDADD = $(X_PRE_LIBS) $(X_LIBS) -lX11
+# oleo_LDADD = $(X_PRE_LIBS) $(X_LIBS) -lX11
+#oleo_LDADD = $(X_PRE_LIBS) $(X_LIBS)
+# oleo_LDADD = @LIBOBJS@
 
 INCLUDES = $(X_CFLAGS)
 
