@@ -3,3 +3,4 @@ Makefile.in
 libintl.a
 *.o
 po2tbl.sed
+.deps
