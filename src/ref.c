@@ -1,5 +1,5 @@
 /*
- * $Id: ref.c,v 1.13 2000/08/10 21:02:51 danny Exp $
+ * $Id: ref.c,v 1.14 2001/02/06 02:40:07 pw Exp $
  *
  * Copyright © 1990, 1992, 1993 Free Software Foundation, Inc.
  * 
@@ -1216,6 +1216,7 @@ dbg_print_ref_fm (rf)
 {
   int nr;
   char *bufp;
+  extern char *print_buf;
 
   if (rf)
     {
@@ -1386,6 +1387,7 @@ dbg_print_ref_to (rt, form)
 {
   int nr;
   char *bufp;
+  extern char *print_buf;
 
   if (rt)
     {
@@ -2223,16 +2225,14 @@ push_refs (struct ref_fm *ref)
   n = ref->refs_used;
   while (n--)
     {
-#ifdef TEST
+#if 0
       CELL *cp;
 
-      if (debug & 04)
-	io_error_msg ("Push %s", cell_name (ref->fm_refs[n].ref_row, ref->fm_refs[n].ref_col));
+      fprintf (stderr, "Push %s\n", cell_name (ref->fm_refs[n].ref_row, ref->fm_refs[n].ref_col));
       cp = find_cell (ref->fm_refs[n].ref_row, ref->fm_refs[n].ref_col);
       if (cp->cell_cycle == current_cycle)
 	{
-	  if (debug & 01)
-	    io_error_msg ("Cycle detected from %s to %s",
+	  fprintf (stderr, "Cycle detected from %s to %s\n",
 			  cell_name (cur_row, cur_col),
 	      cell_name (ref->fm_refs[n].ref_row, ref->fm_refs[n].ref_col));
 	  push_cell (ref->fm_refs[n].ref_row,
@@ -2251,6 +2251,8 @@ push_refs (struct ref_fm *ref)
    intersecting branches in the dependency tree, however, it's close enough
    for most people.
  */
+static void cell_buffer_contents (FILE *fp);
+
 void
 push_cell (CELLREF row, CELLREF col)
 {
@@ -2258,6 +2260,7 @@ push_cell (CELLREF row, CELLREF col)
   CELL *cp;
   struct ref_fm *rf;
 
+  /* printf("push_cell entry %d %d\n", row, col); cell_buffer_contents(stdout); */
   if (cell_buffer.push_to_here + 1 == cell_buffer.pop_frm_here
      || (cell_buffer.pop_frm_here == cell_buffer.buf
          && cell_buffer.push_to_here == cell_buffer.buf + (cell_buffer.size - 1)))
@@ -2347,6 +2350,7 @@ push_cell (CELLREF row, CELLREF col)
   cell_buffer.push_to_here++;
   if (cell_buffer.push_to_here == cell_buffer.buf + cell_buffer.size)
     cell_buffer.push_to_here = cell_buffer.buf;
+  /* printf("push_cell exit %d %d\n", row, col); cell_buffer_contents(stdout); */
 }
 
 /* Pop a cell off CELL_BUFFER, and evaluate it, displaying the result. . .
@@ -2364,48 +2368,54 @@ eval_next_cell (void)
 
   cur_row = cell_buffer.pop_frm_here->row;
   cur_col = cell_buffer.pop_frm_here->col;
+  /* printf("eval_next_cell %d %d\n", cur_row, cur_col); */
   cell_buffer.pop_frm_here++;
   if (cell_buffer.pop_frm_here == cell_buffer.buf + cell_buffer.size)
     cell_buffer.pop_frm_here = cell_buffer.buf;
 
-#if 0
-  fprintf(stderr, "eval_next_cell: %d.%d\n", cur_row, cur_col);
-#endif
-
-  cp = find_cell (cur_row, cur_col);
-  if (cp)
-    {
-      if (cp->cell_cycle == current_cycle)
-	--loop_counter;
-      else
-	loop_counter = 40;
-      update_cell (cp);
-      io_pr_cell (cur_row, cur_col, cp);
-      return loop_counter;
-    }
-  else
+  if (!(cp = find_cell(cur_row, cur_col)))
     return 0;
+
+  if (cp->cell_cycle == current_cycle)
+    --loop_counter;
+  else
+    loop_counter = 40;
+
+#if 0
+fprintf(stderr, "eval_next_cell:  cp->cell_cycle = %d, current_cycle = %d, loop_counter = %d\n", cp->cell_cycle, current_cycle, loop_counter);
+  cell_buffer_contents(stderr);
+#endif
+  update_cell (cp);
+  io_pr_cell (cur_row, cur_col, cp);
+#if 0
+  if (!loop_counter)
+    printf("eval_next_cell: returning 0 due to loop_counter\n");
+#endif
+  return loop_counter;
 }
 
-#ifdef TEST
-void
-cell_buffer_contents ()
+#if 1
+static void
+cell_buffer_contents (FILE *fp)
 {
   struct pos *ptr;
 
+  if (!fp)
+    fp = stdout;
   if (cell_buffer.pop_frm_here != cell_buffer.push_to_here)
     {
       ptr = cell_buffer.pop_frm_here;
       for (;;)
 	{
-	  printf ("Ref to %s\r\n", cell_name (ptr->row, ptr->col));
+	  /* fprintf (fp, "Ref to %s\r\n", cell_name (ptr->row, ptr->col)); */
+	  fprintf (fp, " -> %d %d\n", ptr->row, ptr->col);
 	  if (++ptr == cell_buffer.buf + cell_buffer.size)
 	    ptr = cell_buffer.buf;
 	  if (ptr == cell_buffer.push_to_here)
 	    break;
 	}
     }
-  printf ("End of buffer\r\n");
+  /* fprintf (fp, "End of buffer\r\n"); */
 }
 
 #endif
