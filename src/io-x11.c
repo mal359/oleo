@@ -1,7 +1,7 @@
-#undef	I18N_VERBOSE
+#define	I18N_VERBOSE
 #define	X_I18N
 /*
- * $Id: io-x11.c,v 1.29 2001/02/14 19:22:57 danny Exp $
+ * $Id: io-x11.c,v 1.30 2001/02/14 20:54:50 danny Exp $
  *
  *	Copyright © 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 	
@@ -279,6 +279,7 @@ GetXIC(Display *theDisplay)
 		"OffTheSpot",
 		"Root",
 		"Root",
+		"Root",		/* Actually rxvt based */
 		NULL
 	};
 	static char *preeditTypes = "OffTheSpot,OverTheSpot,Root";
@@ -288,7 +289,8 @@ GetXIC(Display *theDisplay)
 	/* OverTheSpot */	XIMPreeditPosition | XIMStatusArea,
 	/* OffTheSpot */	XIMPreeditArea | XIMStatusArea,
 	/* Root */		XIMPreeditNothing | XIMStatusNothing,
-	/* Not really root */	XIMPreeditNone | XIMStatusNone
+	/* Not really root */	XIMPreeditNone | XIMStatusNone,
+	/* See rxvt */		XIMPreeditPosition | XIMStatusNothing,
 	};
 
 	if (!XSupportsLocale()) {
@@ -376,20 +378,6 @@ GetXIC(Display *theDisplay)
 		fprintf(stderr, "We have an IC\n");
 	else
 		fprintf(stderr, "No IC\n");
-#endif
-
-#if 0
-	/* UGLY HACK !!! */
-
-	XGetICValues(xic, XNFilterEvents, &mask, NULL);
-#ifdef	I18N_VERBOSE
-	fprintf(stderr, "Mask is 0x%X\n", mask);
-#endif
-
-	XSelectInput(theDisplay, thePort->window,
-		ExposureMask | KeyPressMask | StructureNotifyMask | mask);
-
-	XSetICFocus(xic);
 #endif
 }
 

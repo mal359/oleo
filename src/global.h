@@ -1,7 +1,7 @@
 #ifndef GLOBALH
 #define GLOBALH
 /*
- * $Id: global.h,v 1.19 2001/02/13 23:38:05 danny Exp $
+ * $Id: global.h,v 1.20 2001/02/14 20:54:50 danny Exp $
  *
  * Copyright © 1990, 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 
@@ -365,8 +365,8 @@ extern struct OleoGlobal *Global;
 /*
  * Hopefully 8-bit clean version
  */
-#ifndef CTRL
-#define CTRL(x)		((x)&037)
+#ifndef CTRL_CHAR
+#define CTRL_CHAR(x)		((x)&037)
 #endif
 
 #define	META_BIT	0x8000			/* Must be power of 2 */
@@ -380,8 +380,8 @@ extern struct OleoGlobal *Global;
 #else
 /* 8-bit diry version !! */
 
-#ifndef CTRL
-#define CTRL(x) (x&037)
+#ifndef CTRL_CHAR
+#define CTRL_CHAR(x) (x&037)
 #endif
 #ifndef META
 #define META(X) ((X)|0200)

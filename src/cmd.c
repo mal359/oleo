@@ -1,5 +1,5 @@
 /*
- * $Id: cmd.c,v 1.26 2001/02/14 19:22:57 danny Exp $
+ * $Id: cmd.c,v 1.27 2001/02/14 20:54:50 danny Exp $
  *
  * Copyright © 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  *
@@ -541,7 +541,7 @@ fini:
 		default:
 			saved_char = ch;
 			have_saved_char = 1;
-			ch = CTRL ('[');
+			ch = CTRL_CHAR ('[');
 	}
   }
 

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU oleo 1.6.7\n"
-"POT-Creation-Date: 2001-02-04 11:03+0100\n"
+"POT-Creation-Date: 2001-02-14 00:44+0100\n"
 "PO-Revision-Date: 1998-08-27 17:50+0200\n"
 "Last-Translator: Danny Backx <danny@gnu.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: ENCODING\n"
 
-#: src/io-term.c:811
+#: src/io-term.c:815
 #, c-format
 msgid ""
 "This is %s %s\n"
@@ -22,12 +22,12 @@ msgid ""
 msgstr ""
 
 # , c-format
-#: src/io-term.c:813
+#: src/io-term.c:817
 #, c-format
 msgid "Usage: %s [OPTION]... [FILE]...\n"
 msgstr "Usage: %s [OPTION]... [FILE]...\n"
 
-#: src/io-term.c:816
+#: src/io-term.c:820
 msgid ""
 "\n"
 "  -h, --help               display this help and exit\n"
@@ -45,54 +45,54 @@ msgid ""
 msgstr ""
 
 # , c-format
-#: src/io-term.c:1021
+#: src/io-term.c:1025
 #, c-format
 msgid "%s %s\n"
 msgstr ""
 
-#: src/io-term.c:1022
+#: src/io-term.c:1026
 msgid "Copyright © 1992-2000 Free Software Foundation, Inc.\n"
 msgstr ""
 
 # , c-format
-#: src/io-term.c:1023
+#: src/io-term.c:1027
 #, c-format
 msgid "%s comes with ABSOLUTELY NO WARRANTY.\n"
 msgstr ""
 
 # , c-format
-#: src/io-term.c:1024
+#: src/io-term.c:1028
 #, c-format
 msgid "You may redistribute copies of %s\n"
 msgstr ""
 
-#: src/io-term.c:1025
+#: src/io-term.c:1029
 msgid "under the terms of the GNU General Public License.\n"
 msgstr ""
 
-#: src/io-term.c:1026
+#: src/io-term.c:1030
 msgid "For more information about these matters, "
 msgstr ""
 
-#: src/io-term.c:1027
+#: src/io-term.c:1031
 msgid "see the files named COPYING.\n"
 msgstr ""
 
-#: src/io-term.c:1170
+#: src/io-term.c:1174
 msgid "Error in the builtin init scripts (a bug!).\n"
 msgstr ""
 
-#: src/io-term.c:1190 src/io-term.c:1192
+#: src/io-term.c:1194 src/io-term.c:1196
 #, c-format
 msgid "   error occured in init file %s near line %d."
 msgstr ""
 
-#: src/io-term.c:1211 src/io-term.c:1212
+#: src/io-term.c:1215 src/io-term.c:1216
 #, c-format
 msgid ", error occured reading '%s'\n"
 msgstr ""
 
-#: src/io-term.c:1219 src/io-term.c:1220
+#: src/io-term.c:1223 src/io-term.c:1224
 #, c-format
 msgid "Can't open %s: %s\n"
 msgstr ""
