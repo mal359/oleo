@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.53 1999/03/25 23:31:02 danny Exp $
+dnl $Id: configure.in,v 1.54 1999/03/30 22:17:01 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -207,12 +207,16 @@ dnl	You'll need to uncomment the lines below for Xbase support,
 dnl	as is indicated in the FAQ.
 dnl
 dnl AC_PROG_CXX
-dnl AC_CHECK_LIB(xbase, main)
+AC_PROG_CXX_NONFATAL
 dnl
 dnl End Xbase support lines
 dnl
-
-AM_CONDITIONAL(HaveXbase, test x$ac_cv_lib_xbase_main = xyes)
+if test "$CXX" != "no"; then
+  AC_CHECK_LIB(xbase, main)
+  AM_CONDITIONAL(HaveXbase, test x$ac_cv_lib_xbase_main = xyes)
+else
+  AM_CONDITIONAL(HaveXbase, false)
+fi
 
 dnl
 dnl Checks for typedefs, structures, and compiler characteristics.

@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.36 1999/03/21 16:19:36 danny Exp $
+ *  $Id: io-motif.c,v 1.37 1999/03/30 22:17:09 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.36 1999/03/21 16:19:36 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.37 1999/03/30 22:17:09 danny Exp $";
 
 #include "config.h"
 
@@ -2356,6 +2356,33 @@ HelpBuildWindow(void)
 		f = XtVaCreateManagedWidget("form", xmFormWidgetClass, hd,
 			NULL);
 
+		ok = XtVaCreateManagedWidget("ok",
+			xmPushButtonGadgetClass, f,
+				XmNtopAttachment,	XmATTACH_NONE,
+				XmNtopOffset,		10,
+				XmNtopWidget,		sep,
+				XmNleftAttachment,	XmATTACH_FORM,
+				XmNrightAttachment,	XmATTACH_FORM,
+				XmNleftOffset,		10,
+				XmNrightOffset,		10,
+				XmNbottomAttachment,	XmATTACH_FORM,
+				XmNbottomOffset,	10,
+			NULL);
+		XtAddCallback(ok, XmNactivateCallback, PopDownHelpCB, hd);
+
+		sep = XtVaCreateManagedWidget("separator",
+			xmSeparatorGadgetClass, f,
+				XmNorientation,		XmHORIZONTAL,
+				XmNtopWidget,		html,
+				XmNleftAttachment,	XmATTACH_FORM,
+				XmNrightAttachment,	XmATTACH_FORM,
+				XmNleftOffset,		10,
+				XmNrightOffset,		10,
+				XmNbottomAttachment,	XmATTACH_WIDGET,
+				XmNbottomOffset,	10,
+				XmNbottomWidget,	ok,
+			NULL);
+
 		html = XtVaCreateManagedWidget("html",
 			xmHTMLWidgetClass, f,
 				XmNmarginWidth,			20,
@@ -2370,31 +2397,10 @@ HelpBuildWindow(void)
 				XmNleftOffset,			10,
 				XmNrightOffset,			10,
 				XmNtopOffset,			10,
+				XmNbottomAttachment,		XmATTACH_WIDGET,
+				XmNbottomOffset,		10,
+				XmNbottomWidget,		sep,
 			NULL);
-
-		sep = XtVaCreateManagedWidget("separator",
-			xmSeparatorGadgetClass, f,
-				XmNorientation,		XmHORIZONTAL,
-				XmNtopAttachment,	XmATTACH_WIDGET,
-				XmNtopOffset,		10,
-				XmNtopWidget,		html,
-				XmNleftAttachment,	XmATTACH_FORM,
-				XmNrightAttachment,	XmATTACH_FORM,
-				XmNleftOffset,		10,
-				XmNrightOffset,		10,
-			NULL);
-
-		ok = XtVaCreateManagedWidget("ok",
-			xmPushButtonGadgetClass, f,
-				XmNtopAttachment,	XmATTACH_WIDGET,
-				XmNtopOffset,		10,
-				XmNtopWidget,		sep,
-				XmNleftAttachment,	XmATTACH_FORM,
-				XmNrightAttachment,	XmATTACH_FORM,
-				XmNleftOffset,		10,
-				XmNrightOffset,		10,
-			NULL);
-		XtAddCallback(ok, XmNactivateCallback, PopDownHelpCB, hd);
 
 		XtAddCallback(html, XmNactivateCallback,
 			(XtCallbackProc)anchorCB, NULL);

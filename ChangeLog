@@ -1,3 +1,21 @@
+
+Wed 31 Mar 00:01:52 1999, Danny Backx
+	* Release 1.99.1.
+	* Add lots of stuff to TODO.
+	* Add some more fine-tuned dependencies on config.h to the
+	  src/Makefile.am so it recompiles what's needed after
+	  configure is rerun.
+	* Fix "Line ..." stuff in several read functions.
+	* I'm starting to feel like a jojo. It *is* possible to get
+	  the auto-tools to work right w.r.t. optionally compiling
+	  a C++ source, with a little help.
+	  The problem is solved by some automake definitions in
+	  src/Makefile.am (overriding the link command conditionally),
+	  and (for not aborting when no usable C++ compiler is found),
+	  copying and tweaking some autoconf macros in m4/cxx.m4.
+	* Adapt FAQ to reflect Xbase status.
+	* Change form attachments; help window resizes better now.
+
 Wed, 24 Mar 1999 14:02:54, Jeff Bailey
 	* Fix typo in configure.in .
 

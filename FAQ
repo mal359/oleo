@@ -199,22 +199,23 @@ Answers
 
 23. How can I build Oleo with Xbase support ?
 
-	You'll need a C++ compiler, and recent versions of GNU automake
-	and GNU autoconf.
+	You'll need a C++ compiler. The Oleo sources contain one C++
+	source file (all the rest is plain C). We need this because
+	the Xbase library is C++.
 
-	Then you'll need to modify the Oleo configure.in file, and the
-	src/Makefile.am, as is indicated in the comments in those files.
+	We did some configuration fine-tuning, and eventually got to
+	a point where we have an Oleo source which builds with or
+	without a C++ compiler.
 
-	Then run
-		autoheader
-		automake -i
-		autoconf
-		rm config.cache
-		./configure
-		make clean
-		make
+	So if you have a C++ compiler and you've installed Xbase on
+	your system, then the configure program should find the C++
+	compiler. When that happens it'll look for Xbase as well.
+	If that goes well, it'll compile the relevant source.
 
 	Then you should have a version of Oleo that can deal with .DBF files.
+
+	If anything fails then Oleo will complain when you try to load
+	an Xbase (*.dbf) file.
 
 24. I have plotutils installed yet Oleo doesn't use it. Why ?
 

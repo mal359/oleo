@@ -77,8 +77,10 @@ sylk_read_file (fp, ismerge)
   while (fgets (cbuf, sizeof (cbuf), fp))
     {
       lineno++;
+#if 0
       if (lineno % 50 == 0)
 	io_info_msg ("Line %d", lineno);
+#endif
       if ((ptr = (char *)index (cbuf, '\n')))
 	*ptr = '\0';
       ptr = cbuf;

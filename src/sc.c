@@ -87,8 +87,10 @@ sc_read_file (fp,ismerge)
 		clear_spreadsheet();
 	while(fgets(buf,sizeof(buf),fp)) {
 		lineno++;
+#if 0
 		if(lineno%50==0)
 			io_info_msg("Line %d",lineno);
+#endif
 		if(buf[0]=='#' || buf[0]=='\n')
 			continue;
 		if(!strncmp(buf,"set ",4)) {

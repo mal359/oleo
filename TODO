@@ -1,4 +1,4 @@
-$Id: TODO,v 1.21 1999/03/25 23:28:12 danny Exp $
+$Id: TODO,v 1.22 1999/03/30 22:16:59 danny Exp $
 
 TODO's:
 
@@ -6,7 +6,12 @@ TODO's:
  	(done) fail on funky options --with-motif --without-Xbae
 	(done) make sure C++ stuff doesn't break non-Xbase compiles
 		Unfortunately: can't get this to work. Hence :
-	(todo) Once automake supports it, use Xbase by default.
+	(done) Once automake supports it, use Xbase by default.
+
+* Printing
+	(todo) implement PCL printing (see www.wotsit.org)
+	(todo) improve appearance of PostScript prints
+	(todo) fix precision handling in prints
 
 * Get our stuff together for an upcoming 2.0 release of Oleo.
 
@@ -37,6 +42,12 @@ TODO's:
   In the process, make the plotting user interface more transparent.
 	(todo) allow an empty range to be input without warnings
 	(todo) port the plotutils user interface to curses (long term ?)
+	(todo) Allow manual setting of axis ranges in various plots.
+	(todo) 3D pie
+	(todo) exploding pie
+	(todo) implement plotutils in XmScrolledWindow
+	(todo) ticks on axes in several plot types
+	(todo) figure out how to print on monochrome printers
 
 * Integrate GSL (Gnu Scientific Library).
   The GSL is a collection of routines for numerical analysis,

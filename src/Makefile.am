@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.30 1999/03/25 23:28:28 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.31 1999/03/30 22:17:09 danny Exp $
 #
 localedir = $(prefix)/share/locale
 
@@ -15,16 +15,18 @@ else
 GUI =
 endif
 
+#
+# Xbase support
+#	Thanks to comments from Tom Tromey this works now.
+#	Need to specify the link command depending on whether we have
+#	a C++ compiler or not.
+#
 if HaveXbase
-#
-#	Xbase support
-#		Uncomment the line containing xbase.cpp to use Xbase.
-#
-XBSRC=
-# XBSRC=	xbase.cpp oleo_xb.h
-#
+XBSRC=		xbase.cpp oleo_xb.h
+oleo_LINK=	$(CXXLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
 else
 XBSRC=
+oleo_LINK=	$(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
 endif
 
 oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
@@ -46,7 +48,7 @@ MYCFL = ${X_CFLAGS}
 gpl.h:	$(top_srcdir)/COPYING $(srcdir)/gpl.sed
 	sed -f $(srcdir)/gpl.sed <$(top_srcdir)/COPYING >gpl.h
 
-io-motif.o:	gpl.h $(top_srcdir)/configure oleo_icon.xpm
+io-motif.o:	$(srcdir)/gpl.h $(top_srcdir)/configure $(srcdir)/oleo_icon.xpm ../config.h
 
 else
 # MYLD = @GTK_LIBS@
@@ -74,5 +76,11 @@ noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
 
 EXTRA_DIST =	gpl.sed
 
-io-term.o:	../configure
-utils.o:	../configure
+io-term.o:	$(top_srcdir)/configure
+utils.o:	$(top_srcdir)/configure
+io-utils.o:	../config.h
+plot.o:		../config.h
+io-term.o:	../config.h
+cmd.o:		../config.h
+io-x11.o:	../config.h
+lists.o:	../config.h
