@@ -1,5 +1,5 @@
 /*
- * $Id: date.c,v 1.5 2000/07/22 06:13:15 danny Exp $
+ * $Id: date.c,v 1.6 2001/02/05 00:12:55 pw Exp $
  *
  * Copyright (C) 1990, 1992, 1993 Free Software Foundation, Inc.
  * 
@@ -310,7 +310,7 @@ struct function date_funs[] =
   {C_FN1, X_A1, "S", do_get_date, "get_date"},			/* 27 */
   {C_FN1, X_A1, "S", do_posix_date, "posix_date"},		/* 28 */
   {C_FN2, X_A2, "SI", do_strftime, "strftime"},			/* 29 */
-  {0, 0, 0, 0}
+  {0, 0, "", 0, 0}
 };
 
 int init_date_function_count(void)
