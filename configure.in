@@ -1,6 +1,6 @@
 dnl
 dnl This is the configuration file for GNU oleo.
-dnl $Id: configure.in,v 1.39 1999/02/04 22:32:47 danny Exp $
+dnl $Id: configure.in,v 1.40 1999/02/10 02:04:25 bennett Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -84,6 +84,9 @@ AC_CHECK_LIB(m, main)
 
 dnl Checks for X11
 AC_PATH_XTRA
+
+dnl Add link to X11
+AC_LINK_X
 
 dnl
 dnl Motif (LessTif)
