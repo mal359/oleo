@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.h,v 1.3 1998/08/28 15:30:42 danny Exp $
+ *  $Id: fallback.h,v 1.4 1998/09/02 22:42:44 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -62,6 +62,8 @@ char *fallback[] = {
 	"*insert.labelString:		Insert",
 	"*delete.labelString:		Delete",
 	"*move.labelString:		Move",
+	"*copyregion.labelString:	Copy Region",
+	"*copyvalues.labelString:	Copy Values",
 	"*recalculate.labelString:	Recalculate",
 	"*setregion.labelString:	Set Region",
 	"*setmark.labelString:		Set Mark",
@@ -129,6 +131,9 @@ char *fallback[] = {
 	"*configureGraph*ok.labelString:		OK",
 	"*configureGraph*cancel.labelString:		Cancel",
 	"*configureGraph*help.labelString:		Help",
+/* Copy dialog */
+	"*copyDialog*cap1.labelString:		From :",
+	"*copyDialog*cap2.labelString:		To :",
 /* Mnemonics */
 	"*filecascade.mnemonic:		F",
 	"*open.mnemonic:		O",

@@ -1,12 +1,12 @@
 dnl
 dnl This is the configuration file for GNU oleo.
-dnl $Id: configure.in,v 1.23 1998/08/27 21:15:26 danny Exp $
+dnl $Id: configure.in,v 1.24 1998/09/02 22:42:37 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
 AC_INIT(src/init.c)
 
-AM_INIT_AUTOMAKE([oleo], [1.6.7])
+AM_INIT_AUTOMAKE([oleo], [1.6.8])
 GNU_PACKAGE="GNU $PACKAGE"
 AC_DEFINE_UNQUOTED(GNU_PACKAGE, "$GNU_PACKAGE")
 
@@ -139,6 +139,7 @@ AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(ftime gethostname gettimeofday mktime select strdup strstr)
+AC_CHECK_FUNCS(putenv)
 AM_FUNC_MKTIME
 AM_FUNC_OBSTACK
 
@@ -160,4 +161,4 @@ AC_SUBST(link_sciplot)
 
 dnl AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile m4/Makefile po/Makefile])
 
-AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile m4/Makefile po/Makefile.in], [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])
+AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile m4/Makefile po/Makefile.in Xresources/Makefile], [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])

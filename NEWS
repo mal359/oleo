@@ -1,6 +1,39 @@
-Oleo 1.6.6
+===== Oleo 1.6.7 =====
 
-Blah blah blah..  Release files!
+It's been a loooong time since the latest release of GNU Oleo : version
+1.6 dates from June 1994, it's late August 1998 when I'm writing this.
+
+IMPORTANT NOTE : this release is a teaser.
+
+Oleo is not quite ready for a new release now, as a couple of things are
+work in progress. This release is made to :
+* get the word out to people that something's happening, 
+* have people build this release and ensure it works for them.
+
+Since 1994, several people have picked up oleo and modernised it.
+Their names are in the AUTHORS file.
+
+Here's a (horribly incomplete) list of improvements :
+- build support with automake, autoconf
+- Motif interface (LessTif works too)
+- i18n (internationalisation)
+
+Important note when building : if "aclocal" complains about duplicates,
+then this probably means you have GNU gettext installed (this is good !),
+but aclocal can't handle macros in two places. You should just remove
+three files from oleo's m4 directory (gettext.m4, lcmessage.m4, progtest.m4).
+
+We should probably remove them and the intl/ directory from GNU Oleo.
+
+If you want to build the Motif interface, you need :
+- Xbae widgets (http://xbae.syd.net.au)
+
+You probably better also have :
+- XmHTML widget if you want help (http://www.xs4all.nl/~ripley/XmHTML)
+- SciPlot widget if you want graphics
+	(http://www.ae.utexas.edu/~rwmcm/SciPlot.html)
+- GNU gettext (http://www.gnu.org)
+
 ===== Oleo 1.6 =====
 
 Many patches from volunteers have been applied.  See the ChangeLog to

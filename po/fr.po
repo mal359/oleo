@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU oleo 1.6.7\n"
-"POT-Creation-Date: 1998-08-27 17:18+0200\n"
+"POT-Creation-Date: 1998-08-30 17:17+0200\n"
 "PO-Revision-Date: 1998-08-27 17:50+0200\n"
 "Last-Translator: Danny Backx <danny@gnu.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,12 +14,12 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: ENCODING\n"
 
-#: src/io-term.c:872
+#: src/io-term.c:875
 #, c-format
 msgid "Usage: %s [OPTION]... [FILE]...\n"
 msgstr "Utilisage: %s [OPTION]... [FILE]...\n"
 
-#: src/io-term.c:875
+#: src/io-term.c:878
 msgid ""
 "\n"
 "  -h, --help               display this help and exit\n"
@@ -41,46 +41,98 @@ msgstr ""
 "\n"
 "Veuillez rapporter des erreurs dans oleo à <bug-oleo@gnu.org>.\n"
 
-#: src/io-motif.c:266
+#: src/io-motif.c:296
 #, c-format
 msgid "Plotting X in %d [%d.%d], A in %d [%d.%d]\n"
 msgstr "Plotting X in %d [%d.%d], A in %d [%d.%d]\n"
 
-#: src/io-motif.c:272
+#: src/io-motif.c:302
 #, c-format
 msgid "Graph X [%s] A [%s]\n"
 msgstr "Graph X [%s] A [%s]\n"
 
-#: src/io-motif.c:349
+#: src/io-motif.c:379
 #, c-format
 msgid "Conversion error: cannot convert '%s' to a %s\n"
 msgstr "Conversion error: cannot convert '%s' to a %s\n"
 
-#: src/io-motif.c:368 src/io-motif.c:439
+#: src/io-motif.c:399 src/io-motif.c:497
 msgid "Cannot find XmNuserData\n"
 msgstr "Internal error: Cannot find XmNuserData\n"
 
-#: src/io-motif.c:384 src/io-motif.c:399
+#: src/io-motif.c:407 src/io-motif.c:436
 msgid "range"
 msgstr "range"
 
 #. Set window title
 #. enough
-#: src/io-motif.c:671
+#: src/io-motif.c:748
 #, c-format
 msgid "[Oleo: %s]"
 msgstr "[Oleo: %s]"
 
-#: src/io-motif.c:675
+#: src/io-motif.c:752
 #, c-format
 msgid "Read file '%s'\n"
 msgstr "Read file '%s'\n"
 
-#: src/io-motif.c:737
+#: src/io-motif.c:768
+msgid "*.oleo"
+msgstr ""
+
+#: src/io-motif.c:781
+msgid "File Format"
+msgstr ""
+
+#: src/io-motif.c:825
+msgid "Choose a file to load"
+msgstr ""
+
+#: src/io-motif.c:857
 #, c-format
 msgid "Saved file '%s'\n"
 msgstr "Saved file '%s'\n"
 
-#: src/io-motif.c:1748
+#: src/io-motif.c:879
+msgid "Choose a file to save in"
+msgstr ""
+
+#: src/io-motif.c:991 src/io-motif.c:1022
+msgid ""
+"<html><body>Can't find the requested help file\n"
+"</body></html>"
+msgstr ""
+
+#: src/io-motif.c:1030
+#, c-format
+msgid "Help requested on '%s'"
+msgstr ""
+
+#: src/io-motif.c:1032
+msgid "Help requested on using Oleo"
+msgstr ""
+
+#.
+#. * Do not change the string below,
+#. * it's in two places and changing it in one will screw
+#. * up the translation.
+#.
+#: src/io-motif.c:1232 src/io-motif.c:2273
+msgid ""
+"\n"
+"GNU Oleo is free software, you are welcome to\n"
+"distribute copies of it. See the file COPYING for the\n"
+"conditions.\n"
+"\n"
+"GNU Oleo comes with ABSOLUTELY NO WARRANTY."
+msgstr ""
+
+#: src/io-motif.c:2197
 msgid "XmProcessTraversal failed\n"
 msgstr "Internal error: XmProcessTraversal failed\n"
+
+#: src/io-motif.c:2217
+msgid ""
+"There are unsaved changes.\n"
+"Do you want to quit anyway ?"
+msgstr ""

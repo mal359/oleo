@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.6 1998/08/29 23:59:16 danny Exp $
+ *  $Id: io-motif.c,v 1.7 1998/09/02 22:42:45 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.6 1998/08/29 23:59:16 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.7 1998/09/02 22:42:45 danny Exp $";
 
 #include "config.h"
 
@@ -822,7 +822,7 @@ void LoadCB(Widget w, XtPointer client, XtPointer call)
 	XtAddCallback(fsd, XmNokCallback, ReallyLoadCB, NULL);
 
 	ac = 0;
-	XtSetArg(al[ac], XmNtitle, AppRes.load_title); ac++;
+	XtSetArg(al[ac], XmNtitle, _("Choose a file to load")); ac++;
 	XtSetValues(fsd, al, ac);
 	XtManageChild(fsd);
 }
@@ -876,7 +876,7 @@ void SaveAsCB(Widget w, XtPointer client, XtPointer call)
 	XtAddCallback(fsd, XmNokCallback, ReallySaveCB, NULL);
 
 	ac = 0;
-	XtSetArg(al[ac], XmNtitle, AppRes.save_as_title); ac++;
+	XtSetArg(al[ac], XmNtitle, _("Choose a file to save in")); ac++;
 	XtSetValues(fsd, al, ac);
 	XtManageChild(fsd);
 }
@@ -1026,7 +1026,10 @@ HelpLoadFile(char *fn, char *anchor)
 	}
 	XtFree(buffer);
 
-	MessageAppend(False, "Help requested on '%s'", anchor);
+	if (anchor)
+		MessageAppend(False, _("Help requested on '%s'"), anchor);
+	else
+		MessageAppend(False, _("Help requested on using Oleo"));
 
 	if (anchor)
 		XmHTMLAnchorScrollToName(html, anchor);
@@ -1167,6 +1170,105 @@ void PasteCB(Widget w, XtPointer client, XtPointer call)
 
 /****************************************************************
  *								*
+ *		Oleo move/copy functionality			*
+ *								*
+ ****************************************************************/
+static Widget	copyDialog = NULL, copyShell;
+
+void CreateCopyDialog(char *t, void (*cb)(Widget, XtPointer, XtPointer))
+{
+	Widget	w, rc, cap;
+
+	if (copyDialog == NULL) {
+		copyDialog = XmCreatePromptDialog(toplevel, "copyDialog",
+			NULL, 0);
+		rc = XtVaCreateManagedWidget("rc", xmRowColumnWidgetClass,
+			copyDialog,
+			NULL);
+
+		cap = XtVaCreateManagedWidget("cap1", xbaeCaptionWidgetClass,
+			rc,
+			NULL);
+		w = XtVaCreateManagedWidget("r1", xmTextFieldWidgetClass, cap,
+			NULL);
+		cap = XtVaCreateManagedWidget("cap2", xbaeCaptionWidgetClass,
+			rc,
+			NULL);
+		w = XtVaCreateManagedWidget("r2", xmTextFieldWidgetClass, cap,
+			NULL);
+		XtDestroyWidget(XmSelectionBoxGetChild(copyDialog,
+			XmDIALOG_SELECTION_LABEL));
+		XtDestroyWidget(XmSelectionBoxGetChild(copyDialog,
+			XmDIALOG_TEXT));
+	}
+
+	XtRemoveAllCallbacks(copyDialog, XmNokCallback);
+	XtAddCallback(copyDialog, XmNokCallback, cb, NULL);
+
+	XtVaSetValues(XtParent(copyDialog), XmNtitle, t, NULL);
+}
+
+void MoveCB(Widget w, XtPointer client, XtPointer call)
+{
+	none(w, client, call);
+}
+
+void ReallyCopyRegionCB(Widget w, XtPointer client, XtPointer call)
+{
+	Widget		ft, tt;
+	char		*f, *t, *p;
+	struct rng	from, to;
+	int		r;
+
+	ft = XtNameToWidget(copyDialog, "*r1");
+	tt = XtNameToWidget(copyDialog, "*r2");
+
+	f = XmTextFieldGetString(ft);
+	t = XmTextFieldGetString(tt);
+
+	MessageAppend(False, "ReallyCopyRegionCB (%s -> %s)!!\n", f, t);
+
+	p = f;
+	if ((r = parse_cell_or_range(&p, &from)) == 0)
+		ConversionError(f, _("range"));
+	else if ((r & RANGE) == 0) {
+		/* It's a cell address, not a range */
+		from.hr = from.lr;
+		from.hc = from.lc;
+	}
+
+	p = t;
+	if ((r = parse_cell_or_range(&p, &to)) == 0)
+		ConversionError(t, _("range"));
+	else if ((r & RANGE) == 0) {
+		/* It's a cell address, not a range */
+		to.hr = to.lr;
+		to.hc = to.lc;
+	}
+
+	copy_region(&from, &to);
+	modified = 1;
+
+	recalculate(1);
+	XbaeMatrixRefresh(mat);
+
+	XtFree(f);
+	XtFree(t);
+}
+
+void CopyRegionCB(Widget w, XtPointer client, XtPointer call)
+{
+	CreateCopyDialog("Copy a region", ReallyCopyRegionCB);
+	XtManageChild(copyDialog);
+}
+
+void CopyValuesCB(Widget w, XtPointer client, XtPointer call)
+{
+	none(w, client, call);
+}
+
+/****************************************************************
+ *								*
  *		Build Motif GUI					*
  *								*
  ****************************************************************/
@@ -1221,11 +1323,15 @@ GscBuildSplash(Widget parent)
 	x1 = XmStringCreateLtoR(GNU_PACKAGE " " VERSION "\n",
 		"large");
 	x2 = XmStringCreateLtoR(
-		_( "\n" GNU_PACKAGE
-		" is free software, you are welcome to\n"
+		/*
+		 * Do not change the string below,
+		 * it's in two places and changing it in one will screw
+		 * up the translation.
+		 */
+		_( "\nGNU Oleo is free software, you are welcome to\n"
 		"distribute copies of it. See the file COPYING for the\n"
 		"conditions.\n\n"
-		GNU_PACKAGE " comes with ABSOLUTELY NO WARRANTY."),
+		"GNU Oleo comes with ABSOLUTELY NO WARRANTY."),
 		"small");
 	xms = XmStringConcat(x1, x2);
 	XtSetArg(al[ac], XmNlabelString, xms); ac++;
@@ -1413,7 +1519,17 @@ GscBuildMainWindow(Widget parent)
 	w = XtVaCreateManagedWidget("copyvalues", xmPushButtonGadgetClass,
 		editmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, CopyValuesCB, NULL);
+
+	w = XtVaCreateManagedWidget("copyregion", xmPushButtonGadgetClass,
+		editmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, CopyRegionCB, NULL);
+
+	w = XtVaCreateManagedWidget("move", xmPushButtonGadgetClass,
+		editmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, MoveCB, NULL);
 
 	XtVaCreateManagedWidget("sep3", xmSeparatorGadgetClass, editmenu,
 		NULL);
@@ -1424,11 +1540,6 @@ GscBuildMainWindow(Widget parent)
 	XtAddCallback(w, XmNactivateCallback, none, NULL);
 
 	w = XtVaCreateManagedWidget("delete", xmPushButtonGadgetClass,
-		editmenu,
-		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
-
-	w = XtVaCreateManagedWidget("move", xmPushButtonGadgetClass,
 		editmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, none, NULL);
@@ -2138,6 +2249,25 @@ void motif_init(int *argc, char **argv)
 	io_cellize_cursor = xio_cellize_cursor;
 	io_inputize_cursor = xio_inputize_cursor;
 
+	/*
+	 * XAPPLRESDIR is a variable that can be set to determine
+	 *	where to find an application resource file.
+	 * If it isn't defined yet, let's define one so the odds are
+	 *	good for finding our (i18n) application resources.
+	 */
+#ifndef	APPLRESDIR
+#define	APPLRESDIR	HTMLDIR
+#endif
+
+	if (getenv("XAPPLRESDIR") == NULL) {
+#if	HAVE_PUTENV
+		putenv("XAPPLRESDIR=" APPLRESDIR);
+#endif
+	}
+
+	/*
+	 * Open a connection to the display and create a toplevel shell widget.
+	 */
 	toplevel = XtVaAppInitialize(&app, "Oleo", NULL, 0,
 		argc, argv, fallback,
 		NULL);
@@ -2187,7 +2317,9 @@ void quitCB(Widget w, XtPointer client, XtPointer call)
 	if (modified) {
 		ac = 0;
 		/* Application resource for message allow i18n */
-		XtSetArg(al[ac], XmNmessageString, AppRes.quit_message); ac++;
+		XtSetArg(al[ac], XmNmessageString,
+			_("There are unsaved changes.\n"
+			  "Do you want to quit anyway ?")); ac++;
 		md = XmCreateQuestionDialog(w, "quitMB", al, ac);
 		XtAddCallback(md, XmNokCallback, ReallyQuit, NULL);
 		XtDestroyWidget(XmMessageBoxGetChild(md,
@@ -2230,24 +2362,35 @@ void gplCB(Widget w, XtPointer client, XtPointer call)
 void versionCB(Widget w, XtPointer client, XtPointer call)
 {
 	Widget		x;
-	XmString	xms;
+	XmString	xms, xms1, xms2;
 	Arg		al[2];
 	int		ac;
 
-	xms = XmStringCreateLtoR(
-		_(GNU_PACKAGE " "VERSION
-		" is free software, you are welcome to\n"
+	xms1 = XmStringCreateLtoR(GNU_PACKAGE " " VERSION,
+		XmFONTLIST_DEFAULT_TAG);
+	xms2 = XmStringCreateLtoR(
+		/*
+		 * Do not change the string below,
+		 * it's in two places and changing it in one will screw
+		 * up the translation.
+		 */
+		_( "\nGNU Oleo is free software, you are welcome to\n"
 		"distribute copies of it. See the file COPYING for the\n"
-		"conditions. " GNU_PACKAGE " comes with no ABSOLUTELY NO WARRANTY"),
+		"conditions.\n\n"
+		"GNU Oleo comes with ABSOLUTELY NO WARRANTY."),
 		XmFONTLIST_DEFAULT_TAG
 		);
+	xms = XmStringConcat(xms1, xms2);
 
 	ac = 0;
 	XtSetArg(al[0], XmNmessageString, xms); ac++;
 	x = XmCreateMessageDialog(w, "versionD", al, ac);
 
 	XtAddCallback(x, XmNhelpCallback, gplCB, NULL);
+
 	XmStringFree(xms);
+	XmStringFree(xms1);
+	XmStringFree(xms2);
 	XtManageChild(x);
 }
 

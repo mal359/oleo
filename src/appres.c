@@ -1,5 +1,5 @@
 /*
- *  $Id: appres.c,v 1.2 1998/08/28 15:30:39 danny Exp $
+ *  $Id: appres.c,v 1.3 1998/09/02 22:42:43 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: appres.c,v 1.2 1998/08/28 15:30:39 danny Exp $";
+static char rcsid[] = "$Id: appres.c,v 1.3 1998/09/02 22:42:43 danny Exp $";
 
 #include <X11/Intrinsic.h>
 #include <X11/StringDefs.h>
@@ -43,15 +43,6 @@ XtResource resources[] = {
 	XtOffsetOf(GnuSheetAppres, rows), XtRImmediate, (XtPointer)255 },
     {	"columns", "columns", XtRInt, sizeof(int),
 	XtOffsetOf(GnuSheetAppres, columns), XtRImmediate, (XtPointer)255 },
-    {	"quitMessage", "QuitMessage", XmRXmString, sizeof(XmString),
-	XtOffsetOf(GnuSheetAppres, quit_message), XtRString,
-	(XtPointer)"There are unsaved changes.\nDo you want to quit anyway ?" },
-    {	"saveAsTitle", "SaveAsTitle", XtRString, sizeof(String),
-	XtOffsetOf(GnuSheetAppres, save_as_title), XtRString,
-	(XtPointer)"Choose a file to save in" },
-    {	"loadTitle", "LoadTitle", XtRString, sizeof(String),
-	XtOffsetOf(GnuSheetAppres, load_title), XtRString,
-	(XtPointer)"Choose a file to load" },
 };
 
 int num_resources = XtNumber(resources);

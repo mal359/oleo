@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1998-08-29 19:54+0200\n"
+"POT-Creation-Date: 1998-09-03 00:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,58 +32,99 @@ msgid ""
 "Report bugs to <bug-oleo@gnu.org>.\n"
 msgstr ""
 
-#: src/io-motif.c:292
+#: src/io-motif.c:296
 #, c-format
 msgid "Plotting X in %d [%d.%d], A in %d [%d.%d]\n"
 msgstr ""
 
-#: src/io-motif.c:298
+#: src/io-motif.c:302
 #, c-format
 msgid "Graph X [%s] A [%s]\n"
 msgstr ""
 
-#: src/io-motif.c:375
+#: src/io-motif.c:379
 #, c-format
 msgid "Conversion error: cannot convert '%s' to a %s\n"
 msgstr ""
 
-#: src/io-motif.c:395 src/io-motif.c:493
+#: src/io-motif.c:399 src/io-motif.c:497
 msgid "Cannot find XmNuserData\n"
 msgstr ""
 
-#: src/io-motif.c:403 src/io-motif.c:432
+#: src/io-motif.c:407 src/io-motif.c:436 src/io-motif.c:1233
+#: src/io-motif.c:1242
 msgid "range"
 msgstr ""
 
 #. Set window title
 #. enough
-#: src/io-motif.c:736
+#: src/io-motif.c:748
 #, c-format
 msgid "[Oleo: %s]"
 msgstr ""
 
-#: src/io-motif.c:740
+#: src/io-motif.c:752
 #, c-format
 msgid "Read file '%s'\n"
 msgstr ""
 
-#: src/io-motif.c:756
+#: src/io-motif.c:768
 msgid "*.oleo"
 msgstr ""
 
-#: src/io-motif.c:769
+#: src/io-motif.c:781
 msgid "File Format"
 msgstr ""
 
-#: src/io-motif.c:845
+#: src/io-motif.c:825
+msgid "Choose a file to load"
+msgstr ""
+
+#: src/io-motif.c:857
 #, c-format
 msgid "Saved file '%s'\n"
 msgstr ""
 
-#: src/io-motif.c:1166
-msgid "\n"
+#: src/io-motif.c:879
+msgid "Choose a file to save in"
 msgstr ""
 
-#: src/io-motif.c:2110
+#: src/io-motif.c:991 src/io-motif.c:1022
+msgid ""
+"<html><body>Can't find the requested help file\n"
+"</body></html>"
+msgstr ""
+
+#: src/io-motif.c:1030
+#, c-format
+msgid "Help requested on '%s'"
+msgstr ""
+
+#: src/io-motif.c:1032
+msgid "Help requested on using Oleo"
+msgstr ""
+
+#.
+#. * Do not change the string below,
+#. * it's in two places and changing it in one will screw
+#. * up the translation.
+#.
+#: src/io-motif.c:1331 src/io-motif.c:2377
+msgid ""
+"\n"
+"GNU Oleo is free software, you are welcome to\n"
+"distribute copies of it. See the file COPYING for the\n"
+"conditions.\n"
+"\n"
+"GNU Oleo comes with ABSOLUTELY NO WARRANTY."
+msgstr ""
+
+#: src/io-motif.c:2301
 msgid "XmProcessTraversal failed\n"
+msgstr ""
+
+#: src/io-motif.c:2321
+msgid ""
+"There are unsaved changes.\n"
+"Do you want to quit anyway ?"
 msgstr ""
