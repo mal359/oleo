@@ -1,6 +1,6 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.67 2001/04/19 22:37:07 danny Exp $
+ *  $Id: io-motif.c,v 1.68 2001/09/25 21:39:32 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -22,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.67 2001/04/19 22:37:07 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.68 2001/09/25 21:39:32 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -42,7 +42,10 @@ static char rcsid[] = "$Id: io-motif.c,v 1.67 2001/04/19 22:37:07 danny Exp $";
 #ifdef	HAVE_LOCALE_H
 #include <locale.h>
 #endif
+
+#ifdef HAVE_LIBINTL_H
 #include <libintl.h>
+#endif
 
 #include <X11/Intrinsic.h>
 #include <X11/Shell.h>
