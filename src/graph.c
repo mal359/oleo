@@ -1,6 +1,6 @@
 #define	GRAPH_VERBOSE
 /*
- * Copyright © 1993, 1999, 2000 Free Software Foundation, Inc.
+ * Copyright © 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * $Id: graph.c,v 1.21 2001/02/05 00:13:28 pw Exp $
+ * $Id: graph.c,v 1.22 2001/02/13 23:38:05 danny Exp $
  *
  * This file contains the functions to maintain the internal graphing
  * data structures in Oleo.

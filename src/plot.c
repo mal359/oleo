@@ -1,7 +1,7 @@
 /*
- * $Id: plot.c,v 1.27 2001/02/05 00:15:15 pw Exp $
+ * $Id: plot.c,v 1.28 2001/02/13 23:38:06 danny Exp $
  *
- * Copyright © 1998-2000 Free Software Foundation, Inc.
+ * Copyright © 1998, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  */
 
 /*
- * $Id: plot.c,v 1.27 2001/02/05 00:15:15 pw Exp $
+ * $Id: plot.c,v 1.28 2001/02/13 23:38:06 danny Exp $
  *
  * This file contains the code to draw plots from the Oleo data
  * layered on top of the libsciplot functions.

@@ -1,7 +1,7 @@
 /*
- * $Id: busi.c,v 1.7 2001/02/03 23:58:27 pw Exp $
+ * $Id: busi.c,v 1.8 2001/02/13 23:38:05 danny Exp $
  *
- * Copyright © 1990, 1992, 1993, 2000 Free Software Foundation, Inc.
+ * Copyright © 1990, 1992, 1993, 2000, 2001 Free Software Foundation, Inc.
  * 
  * This file is part of Oleo, the GNU Spreadsheet.
  * 

@@ -1,5 +1,10 @@
 
-$Id: ChangeLog,v 1.144 2001/02/08 00:30:01 pw Exp $
+$Id: ChangeLog,v 1.145 2001/02/13 23:38:05 danny Exp $
+
+Wed Feb 14 00:34:54 CET 2001, Danny
+	* Merge my stuff with Pete's before I lose track :-)
+	  I'm still debugging this.
+	* Add 2001 to some headers.
 
 Wed Feb  7 19:20:13 EST 2001  Pete Wyckoff  (pw@osc.edu)
 	* Clean up everything not in the CVS tree with maintainer-clean.

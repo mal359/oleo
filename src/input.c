@@ -1,7 +1,7 @@
 /*
- * $Id: input.c,v 1.10 2001/01/10 20:16:32 danny Exp $
+ * $Id: input.c,v 1.11 2001/02/13 23:38:06 danny Exp $
  * 
- * Copyright © 1993 Free Software Foundation, Inc.
+ * Copyright © 1993, 2001 Free Software Foundation, Inc.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -1,7 +1,7 @@
 /*
- * $Id: init.c,v 1.8 2001/02/07 03:15:44 pw Exp $
+ * $Id: init.c,v 1.9 2001/02/13 23:38:06 danny Exp $
  *
- * Copyright © 1993, 2000 Free Software Foundation, Inc.
+ * Copyright © 1993, 2000, 2001 Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ static char *init_cmds[] =
   "",
   "# This is the generic top-level keymap.   It should contain bindings that",
   "# apply at the top level keymap regardless of what mode the editor is in.",
-  "# All keymaps that are used at the top level should inerit from this.",
+  "# All keymaps that are used at the top level should inherit from this.",
   "create-keymap generic-main universal",
   "",
   "# This is the keymap in force at the top level when no command arguments are",
@@ -268,6 +268,7 @@ static char *init_cmds[] =
   "bind-set main goto-edit-cell a-z",
   "bind-set main goto-edit-cell A-Z",
   "bind-set main goto-edit-cell 0-9",
+  "bind-set main goto-edit-cell ¡-ÿ",
   "bind-key main goto-edit-cell \\",
   "bind-key main goto-edit-cell +",
   "bind-key main goto-edit-cell -",
@@ -680,13 +681,8 @@ static char *init_cmds[] =
 
 };
 
-#ifdef __STDC__
 void 
 run_init_cmds (void)
-#else
-void 
-run_init_cmds ()
-#endif
 {
   char **p = init_cmds;
   while (*p)

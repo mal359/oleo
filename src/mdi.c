@@ -1,9 +1,9 @@
 /*
- *  $Id: mdi.c,v 1.9 2001/02/05 00:14:56 pw Exp $
+ *  $Id: mdi.c,v 1.10 2001/02/13 23:38:06 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
- *  Copyright © 1999 by the Free Software Foundation, Inc.
+ *  Copyright © 1999, 2000, 2001 by the Free Software Foundation, Inc.
  *  Written by Danny Backx <danny@gnu.org>.
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: mdi.c,v 1.9 2001/02/05 00:14:56 pw Exp $";
+static char rcsid[] = "$Id: mdi.c,v 1.10 2001/02/13 23:38:06 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"

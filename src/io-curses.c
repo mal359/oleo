@@ -1,7 +1,7 @@
 /*
- * $Id: io-curses.c,v 1.19 2001/02/06 02:38:54 pw Exp $
+ * $Id: io-curses.c,v 1.20 2001/02/13 23:38:06 danny Exp $
  *
- * Copyright © 1992, 1993, 1999 Free Software Foundation, Inc.
+ * Copyright © 1992, 1993, 1999, 2001 Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

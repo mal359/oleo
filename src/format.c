@@ -1,7 +1,7 @@
 /*
- * $Id: format.c,v 1.13 2001/02/03 23:59:45 pw Exp $
+ * $Id: format.c,v 1.14 2001/02/13 23:38:05 danny Exp $
  *
- * Copyright © 1993 Free Software Foundation, Inc.
+ * Copyright © 1993, 2001 Free Software Foundation, Inc.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -1,5 +1,5 @@
 /*
- * $Id: utils.c,v 1.19 2001/02/04 16:11:33 danny Exp $
+ * $Id: utils.c,v 1.20 2001/02/13 23:38:06 danny Exp $
  *
  * Copyright © 1990, 1992, 1993, 2001 Free Software Foundation, Inc.
  * 
@@ -799,7 +799,7 @@ string_to_char (char ** ptr)
       if (str[1] == '\\')
 	++str;
       if (str[1] == '?')
-	i += MASK_META_BIT;
+	i += BACKSPACE;
       else if (str[1] >= '@' && str[1] <= '_')
 	i |= str[1] - '@';
       else if (str[1] >= 'a' && str[1] <= 'z')
@@ -816,6 +816,9 @@ string_to_char (char ** ptr)
       str++;
     }
   *ptr = str;
+/* Hack */
+  if (i < 0)
+     i += 256;
   return i;
 }
 

@@ -1,7 +1,7 @@
 /*
- * $Id: cmd.c,v 1.24 2001/02/06 02:37:47 pw Exp $
+ * $Id: cmd.c,v 1.25 2001/02/13 23:38:05 danny Exp $
  *
- * Copyright © 1993, 1999, 2000 Free Software Foundation, Inc.
+ * Copyright © 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

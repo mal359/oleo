@@ -1,7 +1,7 @@
 #ifndef GLOBALH
 #define GLOBALH
 /*
- * $Id: global.h,v 1.18 2001/02/04 16:11:33 danny Exp $
+ * $Id: global.h,v 1.19 2001/02/13 23:38:05 danny Exp $
  *
  * Copyright © 1990, 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 
@@ -361,7 +361,7 @@ extern struct OleoGlobal *Global;
  */
 #define	BACKSPACE	0x7f
 
-#if 0
+#if 1
 /*
  * Hopefully 8-bit clean version
  */

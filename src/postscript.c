@@ -1,9 +1,9 @@
 /*
- *  $Id: postscript.c,v 1.19 2001/02/05 00:15:23 pw Exp $
+ *  $Id: postscript.c,v 1.20 2001/02/13 23:38:06 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
- *  Copyright © 1999 by the Free Software Foundation, Inc.
+ *  Copyright © 1999, 2000, 2001 by the Free Software Foundation, Inc.
  *  Written by Danny Backx <danny@gnu.org>.
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@
  * There shouldn't be much spreadsheet functionality here...
  */
 
-static char rcsid[] = "$Id: postscript.c,v 1.19 2001/02/05 00:15:23 pw Exp $";
+static char rcsid[] = "$Id: postscript.c,v 1.20 2001/02/13 23:38:06 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

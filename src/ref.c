@@ -1,7 +1,7 @@
 /*
- * $Id: ref.c,v 1.14 2001/02/06 02:40:07 pw Exp $
+ * $Id: ref.c,v 1.15 2001/02/13 23:38:06 danny Exp $
  *
- * Copyright © 1990, 1992, 1993 Free Software Foundation, Inc.
+ * Copyright © 1990, 1992, 1993, 2001 Free Software Foundation, Inc.
  * 
  * This file is part of Oleo, the GNU Spreadsheet.
  * 

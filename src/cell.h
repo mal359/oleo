@@ -2,9 +2,9 @@
 #define CELLH
 
 /*
- * $Id: cell.h,v 1.13 2001/02/06 02:32:42 pw Exp $
+ * $Id: cell.h,v 1.14 2001/02/13 23:38:05 danny Exp $
  *
- * Copyright © 1990-1999, Free Software Foundation, Inc.
+ * Copyright © 1990-1999, 2001, Free Software Foundation, Inc.
  * 
  * This file is part of Oleo, the GNU Spreadsheet.
  * 

@@ -1,7 +1,7 @@
 /*
- * Copyright © 1992, 1993, 1999, 2000 Free Software Foundation, Inc.
+ * Copyright © 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.32 2001/02/05 00:15:42 pw Exp $
+ * $Id: print.c,v 1.33 2001/02/13 23:38:06 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

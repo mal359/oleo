@@ -1,7 +1,7 @@
 /*
- * $Id: hash.c,v 1.6 2001/02/04 00:00:43 pw Exp $
+ * $Id: hash.c,v 1.7 2001/02/13 23:38:06 danny Exp $
  *
- * hash.c - hash table lookup strings - Copyright © 1987, 1992, 1993 Free Software
+ * hash.c - hash table lookup strings - Copyright © 1987, 1992, 1993, 2001 Free Software
  * Foundation, Inc.
  *
  * This file is part of GAS, the GNU Assembler.

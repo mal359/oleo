@@ -1,7 +1,7 @@
 /*
- * $Id: io-utils.c,v 1.38 2001/02/05 00:14:08 pw Exp $
+ * $Id: io-utils.c,v 1.39 2001/02/13 23:38:06 danny Exp $
  *
- * Copyright © 1990, 1992, 1993, 2000 Free Software Foundation, Inc.
+ * Copyright © 1990, 1992, 1993, 2000, 2001 Free Software Foundation, Inc.
  *
  * This file is part of Oleo, the GNU Spreadsheet.
  *

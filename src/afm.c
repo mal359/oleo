@@ -1,7 +1,7 @@
 /*
- * Copyright © 1999 Free Software Foundation, Inc.
+ * Copyright © 1999, 2001 Free Software Foundation, Inc.
  *
- * $Id: afm.c,v 1.9 2001/02/05 00:12:26 pw Exp $
+ * $Id: afm.c,v 1.10 2001/02/13 23:38:05 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -1,7 +1,7 @@
 /*
- * $Id: io-term.c,v 1.50 2001/02/07 03:16:10 pw Exp $
+ * $Id: io-term.c,v 1.51 2001/02/13 23:38:06 danny Exp $
  *
- * Copyright © 1990, 1992, 1993, 1999, 2000 Free Software Foundation, Inc.
+ * Copyright © 1990, 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 
  * This file is part of Oleo, the GNU Spreadsheet.
  * 
@@ -20,7 +20,7 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char *rcsid = "$Id: io-term.c,v 1.50 2001/02/07 03:16:10 pw Exp $";
+static char *rcsid = "$Id: io-term.c,v 1.51 2001/02/13 23:38:06 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"

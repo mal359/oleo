@@ -1,7 +1,7 @@
 /*
- * $Id: display.c,v 1.8 2001/02/05 00:13:06 pw Exp $
+ * $Id: display.c,v 1.9 2001/02/13 23:38:05 danny Exp $
  *
- * Copyright © 1992, 1993 Free Software Foundation, Inc.
+ * Copyright © 1992, 1993, 2001 Free Software Foundation, Inc.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

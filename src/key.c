@@ -1,7 +1,7 @@
 /*
- * $Id: key.c,v 1.7 2001/02/07 03:17:36 pw Exp $
+ * $Id: key.c,v 1.8 2001/02/13 23:38:06 danny Exp $
  *
- * Copyright © 1993 Free Software Foundation, Inc.
+ * Copyright © 1993, 2001 Free Software Foundation, Inc.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
