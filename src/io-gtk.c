@@ -38,6 +38,8 @@ static char *input_font_name = "8x13";
 static char *status_font_name = "6x10";
 static char *text_line_font_name = "8x13";
 static char *label_font_name = "5x8";
+static char *default_bg_color_name = "black";
+static char *default_fg_color_name = "white";
 
 
 static GdkPixmap *pixmap = NULL;

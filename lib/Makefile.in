@@ -1,6 +1,6 @@
-# Makefile.in generated automatically by automake 1.2d from Makefile.am
+# Makefile.in generated automatically by automake 1.2f from Makefile.am
 
-# Copyright (C) 1994, 1995, 1996, 1997 Free Software Foundation, Inc.
+# Copyright (C) 1994, 1995, 1996, 1997, 1998 Free Software Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
@@ -89,7 +89,7 @@ noinst_LIBRARIES = liboleo.a
 liboleo_a_SOURCES = getdate.y getopt.c getopt1.c xmalloc.c error.c \
 	random.c
 
-noinst_HEADERS = getopt.h error.h
+noinst_HEADERS = getopt.h error.h getdate.h
 
 liboleo_a_LIBADD = 
 liboleo_a_DEPENDENCIES = $(libfu_a_LIBADD)
@@ -130,7 +130,7 @@ OBJECTS = $(liboleo_a_OBJECTS)
 default: all
 
 .SUFFIXES:
-.SUFFIXES: .S .c .h .o .s .y
+.SUFFIXES: .S .c .o .s .y
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu lib/Makefile
 
@@ -148,9 +148,6 @@ distclean-noinstLIBRARIES:
 
 maintainer-clean-noinstLIBRARIES:
 
-.c.o:
-	$(COMPILE) -c $<
-
 .s.o:
 	$(COMPILE) -c $<
 
@@ -158,7 +155,7 @@ maintainer-clean-noinstLIBRARIES:
 	$(COMPILE) -c $<
 
 mostlyclean-compile:
-	-rm -f *.o core
+	-rm -f *.o core *.core
 
 clean-compile:
 
@@ -176,11 +173,8 @@ liboleo.a: $(liboleo_a_OBJECTS) $(liboleo_a_DEPENDENCIES)
 	if test -f y.tab.h; then \
 	if cmp -s y.tab.h $*.h; then rm -f y.tab.h; else mv y.tab.h $*.h; fi; \
 	else :; fi
-.y.h:
-	$(YACC) $(YFLAGS) $< && mv y.tab.c $*.c
-	if test -f y.tab.h; then \
-	if cmp -s y.tab.h $*.h; then rm -f y.tab.h; else mv y.tab.h $*.h; fi; \
-	else :; fi
+getdate.h: getdate.c
+
 
 tags: TAGS
 
@@ -191,8 +185,12 @@ ID: $(HEADERS) $(SOURCES) $(LISP)
 TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
 	tags=; \
 	here=`pwd`; \
-	test -z "$(ETAGS_ARGS)$(SOURCES)$(HEADERS)$(LISP)$$tags" \
-	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags  $(SOURCES) $(HEADERS) $(LISP) -o $$here/TAGS)
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags  $$unique $(LISP) -o $$here/TAGS)
 
 mostlyclean-tags:
 
@@ -220,12 +218,7 @@ distdir: $(DISTFILES)
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
 
-MKDEP = $(CC) -M $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
-
 DEPS_MAGIC := $(shell mkdir .deps > /dev/null 2>&1 || :)
--include .deps/.P
-.deps/.P: $(BUILT_SOURCES)
-	echo > $@
 
 -include $(DEP_FILES)
 
@@ -238,13 +231,16 @@ distclean-depend:
 maintainer-clean-depend:
 	-rm -rf .deps
 
-.deps/%.P: %.c
-	@echo "Computing dependencies for $<..."
-	@o='o'; \
-	test -n "$o" && o='$$o'; \
-	$(MKDEP) $< >$@.tmp \
-	  && sed "s,^\(.*\)\.o:,\1.$$o \1.l$$o $@:," < $@.tmp > $@ \
-	  && rm -f $@.tmp
+%.o: %.c
+	@echo '$(COMPILE) -c $<'; \
+	$(COMPILE) -Wp,-MD,.deps/$(*F).P -c $<
+
+%.lo: %.c
+	@echo '$(LTCOMPILE) -c $<'; \
+	$(LTCOMPILE) -Wp,-MD,.deps/$(*F).p -c $<
+	@-sed -e 's/^\([^:]*\)\.o:/\1.lo \1.o:/' \
+	  < .deps/$(*F).p > .deps/$(*F).P
+	@-rm -f .deps/$(*F).p
 info:
 dvi:
 check: all
