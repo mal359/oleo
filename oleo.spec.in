@@ -1,0 +1,55 @@
+Summary         : the GNU spreadsheet for X11 and terminals
+Name            : oleo
+Version         : @VERSION@
+Release         : 1
+Group           : Office/Spreadsheet
+Copyright       : GPL
+Packager        : Marc.Zonzon@univ-rennes1.fr
+Icon            : src/oleo_icon.xpm
+BuildRoot       : /tmp/oleo-@VERSION@
+Source          : ftp://alpha.gnu.org/gnu/oleo/oleo-@VERSION@.tar.gz
+#Patch		: oleo-1.6.patch
+
+%description
+...
+
+%prep
+%setup
+#%patch -p1
+
+%build
+#automake
+#autoconf
+./configure --prefix=/usr  --without-motif --with-x
+make MYCFL="$RPM_OPT_FLAGS" MYLD=-lncurses
+
+
+%install
+DESTDIR=$RPM_BUILD_ROOT; export DESTDIR
+[ -n "`echo $DESTDIR | sed -n 's:^/tmp/[^.].*$:OK:p'`" ] && rm -rf $DESTDIR ||
+(echo "Invalid BuildRoot: '$DESTDIR'! Check this .spec ..."; exit 1) || exit 1
+
+make install DESTDIR="$DESTDIR" datadir="$DESTDIR/usr/share" gnulocaledir="$DESTDIR/usr/share/locale" xdefaultsdir="$DESTDIR/usr/share/oleo"
+
+gzip $DESTDIR/usr/info/*
+
+%clean
+DESTDIR=$RPM_BUILD_ROOT;export DESTDIR;[ -n "$UID" ]&&[ "$UID" -gt 0 ]&&exit 0
+[ -n "`echo $DESTDIR | sed -n 's:^/tmp/[^.].*$:OK:p'`" ] && rm -rf $DESTDIR ||
+(echo "Invalid BuildRoot: '$DESTDIR'! Check this .spec ..."; exit 1) || exit 1
+
+
+%files
+%doc AUTHORS COPYING ChangeLog FAQ NEWS README THANKS TODO doc/oleo.html
+/usr/bin/oleo
+/usr/share/locale/en/LC_MESSAGES/oleo.mo
+/usr/share/locale/fr/LC_MESSAGES/oleo.mo
+/usr/share/locale/nl/LC_MESSAGES/oleo.mo
+/usr/share/oleo/Oleo
+/usr/share/oleo/fr/Oleo
+/usr/share/oleo/nl/Oleo
+/usr/info/oleo.info.gz
+/usr/info/oleo.info-1.gz
+/usr/info/oleo.info-2.gz
+/usr/info/oleo.info-3.gz
+
