@@ -1,5 +1,5 @@
 /*
- *  $Id: postscript.c,v 1.14 1999/12/01 21:12:45 danny Exp $
+ *  $Id: postscript.c,v 1.15 2000/02/22 23:29:33 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -28,10 +28,14 @@
  * There shouldn't be much spreadsheet functionality here...
  */
 
-static char rcsid[] = "$Id: postscript.c,v 1.14 1999/12/01 21:12:45 danny Exp $";
+static char rcsid[] = "$Id: postscript.c,v 1.15 2000/02/22 23:29:33 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+#endif
+
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
 #endif
 
 #include <stdio.h>

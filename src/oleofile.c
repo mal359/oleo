@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1990-1999 Free Software Foundation, Inc.
+ * Copyright (C) 1990-2000 Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,10 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+#endif
+
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
 #endif
 
 #include "funcdef.h"
@@ -561,6 +565,12 @@ oleo_read_file (fp, ismerge)
 	  case 'D':	/* Axis title : GDxtitle */
 	    graph_set_axis_title(cbuf[2], cbuf+3);
 	    break;
+	  case 't':	/* Graph data title : Gtxtitle */
+	    graph_set_data_title(cbuf[2] - '0', cbuf+3);
+	    break;
+	  case 'a':	/* Automatic axis setting : Gax0 or Gax1 */
+	    graph_set_axis_auto(cbuf[2] - '0', cbuf[3] == '1');
+	    break;
 	  case 'L':	/* Axis logness GLx0 or GLx1 */
 	    graph_set_logness(cbuf[2], 1, cbuf[3] == '1');
 	    break;
@@ -977,6 +987,14 @@ oleo_write_file (fp, rng)
     fprintf(fp, "GDy%s\n", s);
   }
 
+  for (i=0; i<NUM_DATASETS; i++) {
+	if (graph_get_data_title(i))
+		fprintf(fp, "Gt%c%s\n", i + '0', graph_get_data_title(i));
+  }
+
+  /* Automatic axis setting : Gax0 or Gax1 */
+  fprintf(fp, "Ga0%c\n", '0' + graph_get_axis_auto(0));	/* X axis */
+  fprintf(fp, "Ga1%c\n", '0' + graph_get_axis_auto(1));	/* Y axis */
 
   /* End of writing */
   (void) fprintf (fp, "E\n");

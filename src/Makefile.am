@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.46 1999/11/27 18:56:52 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.47 2000/02/22 23:29:33 danny Exp $
 #
 # CPPFLAGS = -Wall
 
@@ -7,7 +7,7 @@ localedir = $(prefix)/share/locale
 
 AUTOMAKE_OPTIONS = ../lib/ansi2knr dejagnu
 
-EXTRA_DIST=	xbase.cpp oleo_xb.h mysql.c
+EXTRA_DIST=	xbase.cpp oleo_xb.h mysql.c parse.h
 
 YFLAGS = -d
 
@@ -18,6 +18,12 @@ GUI = io-motif.c appres.c fallback.c oleo_icon.xpm
 else
 GUI =
 endif
+
+#
+# Temporary presence of GNU Plotutils Sciplot here.
+# (until it gets released as part of plotutils)
+#
+SCIPLOT_SRC=	plotter.c sciplot.h sciplotI.h legend.c
 
 MYSQL = mysql.c oleosql.h mysql.h
 
@@ -48,7 +54,8 @@ oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
  forminfo.c posixtm.y date.c xrdb.c \
  $(GUI) $(XBSRC) $(MYSQL) \
  print.c postscript.c pcl.c epson.c prtext.c afm.c \
- mdi.c
+ mdi.c \
+ ${SCIPLOT_SRC}
 
 if UseMotif
 MYLD = @link_motif@ @link_xmhtml@ @XBAE_LIBS@ @link_sciplot@ @XLT_LIBS@
@@ -76,7 +83,8 @@ endif
 
 oleo_LDADD = ${X_PRE_LIBS} ${MYLD} @INTLLIBS@ ../lib/liboleo.a ${X_LIBS}
 INCLUDES = -I.. -I$(srcdir) -I$(top_srcdir)/lib -I../intl ${MYINC}
-CFLAGS = @CFLAGS@ -DLOCALEDIR=\"$(localedir)\" ${MYCFL} -DBUILD_PREFIX='"'${BUILD_PREFIX}'"'
+CFLAGS = @CFLAGS@ -DLOCALEDIR=\"$(localedir)\" ${MYCFL} \
+	-DBUILD_PREFIX='"'${BUILD_PREFIX}'"'
 
 noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  defun.h defuns.h display.h errors.h eval.h font.h format.h forminfo.h \

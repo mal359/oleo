@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/doc/Makefile.am,v 1.11 1999/10/15 23:52:23 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/doc/Makefile.am,v 1.12 2000/02/22 23:29:32 danny Exp $
 #
 # Process this file with automake to produce Makefile.in
 #
@@ -16,12 +16,11 @@ noinst_DATA =	oleo_web.html $(TEXIS)
 
 oleo.info:	oleo.texi $(TEXIS)
 
-if HaveTexi2Html
+if HavePerl
 
 htmldir=	$(prefix)/share/oleo
 html_DATA=	oleo.html
 
-oleo.html:	$(srcdir)/oleo.texi ${TEXIS}
-		texi2html -monolithic $(srcdir)/oleo.texi
-
+oleo.html:	$(srcdir)/oleo.texi ${TEXIS} $(srcdir)/texi2html
+		@HAVE_PERL@ $(srcdir)/texi2html $(srcdir)/oleo.texi
 endif

@@ -1,29 +1,49 @@
-/*	Copyright (C) 1990, 1992, 1993 Free Software Foundation, Inc.
-
-This file is part of Oleo, the GNU Spreadsheet.
-
-Oleo is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
-
-Oleo is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Oleo; see the file COPYING.  If not, write to
-the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
+/*
+ * Copyright (C) 1990, 1992, 1993 Free Software Foundation, Inc.
+ *
+ * This file is part of Oleo, the GNU Spreadsheet.
+ *
+ * Oleo is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * Oleo is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Oleo; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ * $Header: /home/matt/cvs/oleo/oleo/src/eval.c,v 1.8 2000/02/22 23:29:33 danny Exp $
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+#endif
+
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
 #endif
 
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef	HAVE_MATH_H
+#include <math.h>
+#else
+/*
+ * Non-standard platform.
+ */
+#ifdef	M_PI
+#undef M_PI
+#endif
+#define M_PI (3.1415926535897932384626433832795028841971693993751)
+#endif
 
 #ifdef __TURBOC__
 #define SMALLEVAL
@@ -79,9 +99,6 @@ struct value
 #define Int	x.c_l
 #define Value	x.c_i
 #define Rng	x.c_r
-
-#undef PI
-#define PI (3.14159265358979326848)
 
 static struct value *stack;
 static int stackmax;
@@ -634,7 +651,7 @@ eval_expression (expr)
 
 	case F_PI:
 	  p->type = TYP_FLT;
-	  p->Float = PI;
+	  p->Float = M_PI;
 	  break;
 
 	case F_ROW:
@@ -1400,13 +1417,13 @@ add_int (value)
 double
 dtr (double x)
 {
-  return x * (PI / (double) 180.0);
+  return x * (M_PI / (double) 180.0);
 }
 
 double
 rtd (double x)
 {
-  return x * (180.0 / (double) PI);
+  return x * (180.0 / (double) M_PI);
 }
 
 double

@@ -20,6 +20,10 @@
 #include "config.h"
 #endif
 
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
+#endif
+
 #include <ctype.h>
 #include "global.h"
 #define DEFINE_STYLES	1

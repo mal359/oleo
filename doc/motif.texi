@@ -59,12 +59,12 @@ Someone who's building Oleo from sources will need several packages
 that Oleo depends on :
 @itemize @bullet
 @item Xbae widgets
-@url{http://xbae.syd.net.au}
-@url{ftp://ftp.x.org/contrib/widgets/motif/Xbae-4.6.2.tar.gz}
+@url{http://www.lesstif.org}
+@url{ftp://ftp.lesstif.org/pub/hungry/lesstif/srcdist}
 @item XmHTML
 @url{http://www.xs4all.nl/~ripley/XmHTML}
 @item GNU plotutils
-@url{http://www.gnu.org}
+@url{http://www.gnu.org/software/plotutils/plotutils.html}
 @item Motif or LessTif
 @url{http://www.opengroup.org}
 @url{http://www.lesstif.org}

@@ -20,6 +20,10 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "config.h"
 #endif
 
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
+#endif
+
 #include "funcdef.h"
 #include <stdio.h>
 #include <ctype.h>

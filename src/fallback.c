@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.22 1999/12/19 16:42:39 danny Exp $
+ *  $Id: fallback.c,v 1.23 2000/02/22 23:29:33 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -20,6 +20,15 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
+#endif
+
 #include <stdio.h>
 #include <Xm/Xm.h>
 

@@ -22,6 +22,10 @@
 #include "config.h"
 #endif
 
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
+#endif
+
 #include <stdio.h>
 #include <errno.h>
 #include "sysdef.h"
@@ -57,15 +61,8 @@
 #define _IOSTRG 0
 #endif
 
-#ifndef _DEBUG_MALLOC_INC
-extern void abort (void);
-extern void *malloc (size_t);
-extern void *calloc (size_t, size_t);
-extern void *realloc (void *, size_t);
-#endif /* _DEBUG_MALLOC_INC */
-
 extern int sys_nerr;
-
+
 struct id
   {
     int flag;

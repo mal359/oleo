@@ -21,6 +21,10 @@
 #include "config.h"
 #endif
 
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
+#endif
+
 #include "proto.h"
 #include "funcdef.h"
 #include <stdio.h>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1993, 1999 Free Software Foundation, Inc.
+ * Copyright (C) 1993, 1999, 2000 Free Software Foundation, Inc.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,10 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+#endif
+
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
 #endif
 
 #include <ctype.h>
@@ -114,6 +118,8 @@ static struct line graph_title [NUM_DATASETS];
 static struct rng graph_data [NUM_DATASETS];
 static enum graph_pair_ordering graph_data_order [graph_num_axis];
 
+/* Automatic axis ? */
+static int graph_auto[2];
 
 enum graph_axis
 chr_to_axis (int c)
@@ -510,6 +516,9 @@ init_graphing (void)
     rm_program = "/bin/rm";
   graph_presets ();
   graph_clear_datasets ();
+
+  graph_auto[0] = 1;
+  graph_auto[1] = 1;
 }
 
 
@@ -1031,4 +1040,24 @@ char *
 graph_get_title(void)
 {
 	return	graph_plot_title;
+}
+
+void
+graph_set_axis_auto(int axis, int set)
+{
+	if (axis == 0 || axis == 1)
+		graph_auto[axis] = set;
+	else {
+		io_error_msg("Invalid graph axis %d, must be 0 or 1", axis);
+	}
+}
+
+int
+graph_get_axis_auto(int axis)
+{
+	if (axis == 0 || axis == 1)
+		return graph_auto[axis];
+
+	io_error_msg("Invalid graph axis %d, must be 0 or 1", axis);
+	return 1;
 }

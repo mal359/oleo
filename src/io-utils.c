@@ -20,6 +20,10 @@
 #include "config.h"
 #endif
 
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
+#endif
+
 #include <stdio.h>
 #include <ctype.h>
 #include "sysdef.h"

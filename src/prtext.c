@@ -1,5 +1,5 @@
 /*
- *  $Id: prtext.c,v 1.8 1999/12/01 21:12:48 danny Exp $
+ *  $Id: prtext.c,v 1.9 2000/02/22 23:29:33 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,8 +21,15 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: prtext.c,v 1.8 1999/12/01 21:12:48 danny Exp $";
+static char rcsid[] = "$Id: prtext.c,v 1.9 2000/02/22 23:29:33 danny Exp $";
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
+#endif
 
 #include <stdio.h>
 

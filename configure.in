@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.73 1999/12/19 16:42:35 danny Exp $
+dnl $Id: configure.in,v 1.74 2000/02/22 23:29:32 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -20,7 +20,11 @@ dnl
 dnl Use of this macro will keep unexpected things from happening if
 dnl you're not familiar with automake.
 dnl
-dnl AM_MAINTAINER_MODE
+dnl    if test -z "$enable_maintainer_mode"
+dnl    then
+dnl        enable_maintainer_mode=yes
+dnl    fi
+AM_MAINTAINER_MODE
 
 dnl Define available languages
 ALL_LINGUAS="en nl fr"
@@ -43,6 +47,12 @@ AC_CYGWIN
 AC_EXEEXT
 
 dnl
+dnl Dmalloc is a library to debug memory allocation.
+dnl Get it from www.dmalloc.com
+dnl
+AM_WITH_DMALLOC
+
+dnl
 dnl Now at last we can do checks for programs.
 dnl
 AC_PROG_YACC
@@ -52,6 +62,14 @@ AC_PROG_RANLIB
 
 AC_CHECK_PROG(HAVE_TEXI2HTML, texi2html, yes)
 AM_CONDITIONAL(HaveTexi2Html, test x$HAVE_TEXI2HTML = xyes)
+
+dnl
+dnl Get perl's location for texi2html
+dnl
+AC_PATH_PROG(HAVE_PERL, perl)
+AC_SUBST(HAVE_PERL)
+AM_CONDITIONAL(HavePerl, test x$HAVE_PERL != x)
+
 
 dnl
 dnl Dirty trick
@@ -187,13 +205,14 @@ dnl	This needs to be done after the X and Motif tests, because
 dnl	the libplot from GNU plotutils sometimes requires linking the
 dnl	X and Motif libraries
 dnl
-AC_CHECK_LIB(plot, openpl,
+AC_CHECK_LIB(plot, pl_openpl_r,
 	AC_DEFINE(HAVE_LIBPLOT)
-	LIBS="$LIBS -lplot",
-	AC_CHECK_LIB(plot, pl_openpl,
-		AC_DEFINE(HAVE_LIBPLOT)
-		LIBS="$LIBS -lplot"
-		AC_DEFINE(HAVE_LIBPLOT_2_2)))
+	LIBS="$LIBS -lplot")
+
+AC_CHECK_LIB(sciplot, sp_begin_plot)
+if test x$ac_cv_lib_sciplot_sp_begin_plot = xyes; then
+	AC_DEFINE(HAVE_LIBSCIPLOT)
+fi
 
 dnl Checks for Guile
 dnl AC_CHECK_LIB(guile, scm_boot_guile)
@@ -223,7 +242,7 @@ dnl
 AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_CHECK_HEADERS(fcntl.h limits.h malloc.h strings.h sys/time.h unistd.h)
-AC_CHECK_HEADERS(locale.h time.h)
+AC_CHECK_HEADERS(locale.h time.h math.h)
 
 dnl
 dnl
@@ -323,4 +342,4 @@ AC_SUBST(link_xmhtml)
 AC_SUBST(include_sciplot)
 AC_SUBST(link_sciplot)
 
-AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile m4/Makefile po/Makefile.in Xresources/Makefile examples/Makefile oleo.spec afm/Makefile],[sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])
+AC_OUTPUT([Makefile oleobug doc/Makefile doc/texi2html lib/Makefile src/Makefile intl/Makefile m4/Makefile po/Makefile.in Xresources/Makefile examples/Makefile oleo.spec afm/Makefile],[sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])

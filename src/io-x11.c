@@ -22,6 +22,10 @@
 #include "config.h"
 #endif
 
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
+#endif
+
 #ifndef	HAVE_MOTIF
 #ifndef X_DISPLAY_MISSING
 

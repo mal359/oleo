@@ -118,12 +118,14 @@ of char[size].  Free(address) frees same.  */
 #include "config.h"
 #endif
 
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
+#endif
+
 #include <stdio.h>
 #ifndef VOIDSTAR
 #define VOIDSTAR void *
 #endif
-VOIDSTAR malloc ();
-void free ();
 
 #undef TRUE
 #define TRUE           (1)

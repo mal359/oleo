@@ -180,6 +180,7 @@
 /* GNU Plotutils */
 #undef	HAVE_LIBPLOT
 #undef	HAVE_LIBPLOT_2_2
+#undef	HAVE_LIBSCIPLOT
 
 #if ENABLE_NLS
 # define _(Text) gettext (Text)

@@ -1,5 +1,5 @@
 /*
- *  $Id: mdi.c,v 1.6 1999/12/19 16:42:44 danny Exp $
+ *  $Id: mdi.c,v 1.7 2000/02/22 23:29:33 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,10 +21,14 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: mdi.c,v 1.6 1999/12/19 16:42:44 danny Exp $";
+static char rcsid[] = "$Id: mdi.c,v 1.7 2000/02/22 23:29:33 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
+#endif
+
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
 #endif
 
 #include <stdio.h>
@@ -153,8 +157,12 @@ MdiClose()
 	 * We've close the last open window/file, therefore the
 	 *	application must end.
 	 */
-	if (nglobals <= 0)
+	if (nglobals <= 0) {
+#ifdef	WITH_DMALLOC
+		dmalloc_shutdown();
+#endif
 		exit(0);
+	}
 }
 
 void

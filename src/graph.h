@@ -2,7 +2,7 @@
 #define GRAPHH
 
 /*
-	$Id: graph.h,v 1.3 1999/01/21 23:28:17 danny Exp $
+	$Id: graph.h,v 1.4 2000/02/22 23:29:33 danny Exp $
 
 	Copyright (C) 1993-1998 Free Software Foundation, Inc.
 
@@ -138,5 +138,8 @@ extern char *graph_get_title(void);
 extern int graph_get_logness(int axis_c);
 extern char *graph_get_data_title (int data_set);
 extern struct rng graph_get_data(int data_set);
+
+void graph_set_axis_auto(int axis, int set);
+int graph_get_axis_auto(int axis);
 
 #endif  /* GRAPHH */

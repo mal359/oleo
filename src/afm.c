@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Free Software Foundation, Inc.
  *
- * $Id: afm.c,v 1.5 1999/12/19 16:42:44 danny Exp $
+ * $Id: afm.c,v 1.6 2000/02/22 23:29:33 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,10 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+#endif
+
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
 #endif
 
 #include <stdio.h>

@@ -21,6 +21,10 @@
 #include "config.h"
 #endif
 
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
+#endif
+
 #include <libintl.h>
 #include <locale.h>
 
@@ -920,7 +924,7 @@ main (int argc, char **argv)
 	  {
 	  case 'V':
 	    printf(_("%s %s\n"), GNU_PACKAGE, VERSION);
-            printf(_("Copyright (C) 1992-1999 Free Software Foundation, Inc.\n"));
+            printf(_("Copyright (C) 1992-2000 Free Software Foundation, Inc.\n"));
             printf(_("%s comes with ABSOLUTELY NO WARRANTY.\n"), GNU_PACKAGE);
             printf(_("You may redistribute copies of %s\n"), PACKAGE);
             printf(_("under the terms of the GNU General Public License.\n"));

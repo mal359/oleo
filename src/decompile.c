@@ -22,6 +22,10 @@
 #include "config.h"
 #endif
 
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
+#endif
+
 #include <stdarg.h>
 #include <ctype.h>
 #include "global.h"

@@ -1,6 +1,6 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.55 1999/12/19 16:42:41 danny Exp $
+ *  $Id: io-motif.c,v 1.56 2000/02/22 23:29:33 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -22,10 +22,14 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.55 1999/12/19 16:42:41 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.56 2000/02/22 23:29:33 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
+#endif
+
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
 #endif
 
 #include <stdio.h>
@@ -283,11 +287,15 @@ void SelectCellCB(Widget w, XtPointer client, XtPointer call)
 #endif
 
 	if (Global->MotifGlobal->selectedcells == NULL) {
+		/*
+		 * There's a memory overrun here somewhere.
+		 * Working around it by allocating a couple of extra bytes.
+		 */
 		Global->MotifGlobal->selectedcells = (Boolean **)XtMalloc(AppRes.rows *
 				sizeof(Boolean *));
 		for (i=0; i<AppRes.rows; i++)
 			Global->MotifGlobal->selectedcells[i] = (Boolean *)
-				XtCalloc(AppRes.columns, sizeof(Boolean));
+				XtCalloc(10 + AppRes.columns, sizeof(Boolean));
 	}
 
 	if (cbp->num_params >= 1 && strcmp(cbp->params[0], "start") == 0) {
@@ -350,7 +358,7 @@ void SelectCellCB(Widget w, XtPointer client, XtPointer call)
 		}
 
 		Global->MotifGlobal->newcall = False;
-	} 
+	}
 }
 
 void RegisterRangeSelector(Widget w)
@@ -373,14 +381,14 @@ PopDownHelpCB(Widget widget, XtPointer client, XtPointer call)
 void MotifUpdateDisplay()
 {
         XbaeMatrixRefresh(mat); /* refresh */
- 
+
 	FixA0();
 
         /*
          * Apparently the refresh above doesn't refresh the cell whose
          * formula we just changed, and which therefore almost certainly
          * needs an update. XbaeMatrixRefreshCell also doesn't work.
-         * This does :  
+         * This does :
          */
         XbaeMatrixSetCell(mat, curow - 1, cucol - 1,
                 cell_value_string(curow, cucol, True));
@@ -807,7 +815,7 @@ Widget CreateConfigureGraph(Widget parent)
 		NULL);
 	cw->te = XtVaCreateManagedWidget("t5", xmTextFieldWidgetClass, rc,
 		NULL);
-	
+
 	frame = XtVaCreateManagedWidget("dataFrame",
 		xmFrameWidgetClass, toprc,
 		NULL);
@@ -891,6 +899,12 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 #endif
 	graph_set_logness('y', 1, XmToggleButtonGadgetGetState(cw->ylog));
 
+	s = XmTextFieldGetString(cw->ta);
+	graph_set_data_title(0, s);
+#ifdef	FREE_TF_STRING
+	XtFree(s);
+#endif
+
 /* Data 1 */
 	p = s = XmTextFieldGetString(cw->x);
 	if (strlen(s)) {
@@ -909,7 +923,7 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 	}
 
 	s = XmTextFieldGetString(cw->tb);
-	graph_set_data_title(0, s);
+	graph_set_data_title(1, s);
 #ifdef	FREE_TF_STRING
 	XtFree(s);
 #endif
@@ -931,6 +945,12 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 #endif
 	}
 
+	s = XmTextFieldGetString(cw->tc);
+	graph_set_data_title(2, s);
+#ifdef	FREE_TF_STRING
+	XtFree(s);
+#endif
+
 /* Data 3 */
 	p = s = XmTextFieldGetString(cw->b);
 	if (strlen(s)) {
@@ -947,6 +967,12 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 		XtFree(s);
 #endif
 	}
+
+	s = XmTextFieldGetString(cw->td);
+	graph_set_data_title(3, s);
+#ifdef	FREE_TF_STRING
+	XtFree(s);
+#endif
 
 	p = s = XmTextFieldGetString(cw->c);
 	if (strlen(s)) {
@@ -1039,6 +1065,17 @@ void ConfigureGraphReset(Widget f)
 
 	s = graph_get_axis_title('y');
 	XmTextFieldSetString(cw->ytitle, s);
+
+	s = graph_get_data_title(0);
+	XmTextFieldSetString(cw->ta, s);
+	s = graph_get_data_title(1);
+	XmTextFieldSetString(cw->tb, s);
+	s = graph_get_data_title(2);
+	XmTextFieldSetString(cw->tc, s);
+	s = graph_get_data_title(3);
+	XmTextFieldSetString(cw->td, s);
+	s = graph_get_data_title(4);
+	XmTextFieldSetString(cw->te, s);
 
 	ConfigureXYReset();
 	ConfigurePieReset();
@@ -1178,15 +1215,17 @@ void PuShowChart(Widget w, XtPointer client, XtPointer call)
 
 	MotifSelectGlobal(w);
 
-	PlotInit();
-
 	ac = 0;
 	XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
 	dlg = XmCreateTemplateDialog(w, "printDialog", al, ac);
-	
+
 	ac = 0;
+#if 0
 	XtSetArg(al[ac], XmNwidth, 500); ac++;
 	XtSetArg(al[ac], XmNheight, 500); ac++;
+#endif
+	XtSetArg(al[ac], XmNwidth, Global->PlotGlobal->img_width + 100); ac++;
+	XtSetArg(al[ac], XmNheight, Global->PlotGlobal->img_height + 100); ac++;
 	XtSetArg(al[ac], XmNscrollingPolicy, XmAUTOMATIC); ac++;
 	sw = XmCreateScrolledWindow(dlg, "scroll", al, ac);
 	XtManageChild(sw);
@@ -1207,6 +1246,9 @@ void PuShowChart(Widget w, XtPointer client, XtPointer call)
 		return;
 	}
 
+	PuX(XtDisplayOfObject(w), window);
+	PlotInit();
+
 	cancel = XtVaCreateManagedWidget("dismiss", xmPushButtonGadgetClass, dlg, NULL);
 	XtAddCallback(cancel, XmNactivateCallback, DestroyTemplate, dlg);
 
@@ -1215,13 +1257,11 @@ void PuShowChart(Widget w, XtPointer client, XtPointer call)
 	XtAddCallback(help, XmNactivateCallback, helpUsingCB,
 		(XtPointer)"#HelpPlotting");
 
-	pl_parampl("XDRAWABLE_DISPLAY", XtDisplayOfObject(w));
-	pl_parampl("XDRAWABLE_DRAWABLE1", &window);
 	(*f)("Xdrawable", stdout);
 #else
 	NoPlotutils(w, client, call);
 #endif
-}               
+}
 
 /*
  * Printing
@@ -1846,7 +1886,7 @@ Widget MotifCreatePrintDialog(Widget s)
 		MessageAppend(True, _("Value of defaultPrintTo resource is invalid, "
 			"should be one of %s, %s, or %s\n"),
 			"printer", "file", "program");
-			
+
 	}
 
 	/* Destination */
@@ -1884,7 +1924,7 @@ Widget MotifCreatePrintDialog(Widget s)
 #endif
 		XmToggleButtonGadgetSetState(w, True, False);
 
-	PrintWidgets.printerTF = 
+	PrintWidgets.printerTF =
 	w = XtVaCreateManagedWidget("printerTF", xmTextFieldWidgetClass,
 			radio, NULL);
 	XmTextFieldSetString(w, AppRes.printer);
@@ -1937,7 +1977,7 @@ Widget MotifCreatePrintDialog(Widget s)
 	if (strcmp(AppRes.defaultPrintTo, "file") == 0)
 #endif
 		XmToggleButtonGadgetSetState(w, True, False);
-	PrintWidgets.fileTF = 
+	PrintWidgets.fileTF =
 	w = XtVaCreateManagedWidget("fileTF", xmTextFieldWidgetClass,
 			radio, NULL);
 	w = XtVaCreateManagedWidget("fileTFBrowse", xmPushButtonGadgetClass,
@@ -1953,7 +1993,7 @@ Widget MotifCreatePrintDialog(Widget s)
 	if (strcmp(AppRes.defaultPrintTo, "program") == 0)
 #endif
 		XmToggleButtonGadgetSetState(w, True, False);
-	PrintWidgets.programTF = 
+	PrintWidgets.programTF =
 	w = XtVaCreateManagedWidget("programTF", xmTextFieldWidgetClass,
 			radio, NULL);
 	XmTextFieldSetString(w, AppRes.program);
@@ -2051,7 +2091,7 @@ Widget MotifCreatePrintDialog(Widget s)
 			XmNchildVerticalAlignment,	XmALIGNMENT_CENTER,
 		NULL);
 
-	PrintWidgets.rangeTF = 
+	PrintWidgets.rangeTF =
 	w = XtVaCreateManagedWidget("printRangeTF", xmTextFieldWidgetClass,
 		frame,
 		NULL);
@@ -2196,7 +2236,7 @@ Widget CreateFileFormatOption(Widget parent, XtCallbackProc f)
 		ff = file_get_format(i);
 		if (ff == NULL)
 			break;
-		
+
 		b = XtVaCreateManagedWidget(ff, xmPushButtonGadgetClass,
 			menu,
 			NULL);
@@ -2359,7 +2399,7 @@ void LeaveCell(Widget w, XtPointer client, XtPointer call)
 
 		recalculate(1);
 
-		if (! cp) 
+		if (! cp)
 		    cp = find_cell (curow, cucol);
 		if (cp && cp->cell_formula) {
 			UpdateStatus();
@@ -3065,7 +3105,7 @@ HelpLoadFile(char *fn, char *anchor)
 			_("<html><body>"
 			  "Can't find the requested help file\n"
 			  "</body></html>"));
-                return; 
+                return;
 	}
 	XtFree(buffer);
 
@@ -3633,7 +3673,7 @@ void CreateFormatsDialog(Widget p)
 	x15 = XmStringCreateSimple(_("User-4"));
 
 	w = XmVaCreateSimpleOptionMenu(f, "formatsOption",
-		xms, /* mnemonic ? */0, /* initial selection */ 0, 
+		xms, /* mnemonic ? */0, /* initial selection */ 0,
 		/* callback */ Yeah,
 		/* Type, LabelString, Mnemonic, Accelerator, AcceleratorText */
 		XmVaPUSHBUTTON, x0, 'D', NULL, NULL,
@@ -5117,7 +5157,7 @@ xio_insert (int len)
 	Debug(__FILE__, "xio_insert\n");
 #endif
 }
-	   
+
 static void
 xio_over (char * str, int len)
 {
@@ -5353,7 +5393,7 @@ xio_bell (void)
 #endif
 }
 
-extern void 
+extern void
 xio_open_display (void)
 {
 #ifdef	VERBOSE

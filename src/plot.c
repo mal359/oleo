@@ -20,6 +20,10 @@
 #include "config.h"
 #endif
 
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
+#endif
+
 #include <ctype.h>
 #include "global.h"
 #include "graph.h"
@@ -61,41 +65,25 @@ PlotInit(void)
  */
 #ifdef	HAVE_LIBPLOT
 
-
 #include <plot.h>
 #include <oleo_plot.h>
 
-static int handle;
+#ifdef	HAVE_LIBSCIPLOT
+#include <sciplot/sciplot.h>
+#else
+#include <sciplot.h>
+#endif
+
+static plPlotter *handle;
 
 static char	*defaultcolor = "black";
 static char	*colors[] = { "yellow", "green", "blue", "red",
 				"magenta", "beige", "orange", "pink"};
 static int	ncolors = sizeof(colors) / sizeof(char *);
 
-/*
- * The API changed from version 2.2 of GNU plotutils.
- * Cope with that.
- */
-#if !defined(HAVE_LIBPLOT_2_2)
-#define pl_newpl		newpl
-#define pl_openpl		openpl
-#define pl_selectpl		selectpl
-#define pl_filltype		filltype
-#define pl_joinmod		joinmod
-#define pl_flinewidth		flinewidth
-#define pl_fline		fline
-#define pl_pencolorname		pencolorname
-#define pl_deletepl		deletepl
-#define pl_fspace		fspace
-#define pl_fmove		fmove
-#define pl_fcont		fcont
-#define pl_farc			farc
-#define pl_endpath		endpath
-#define pl_alabel		alabel
-#define pl_box			box
-#define pl_fbox			fbox
-#define pl_fmarker		fmarker
-#define	pl_fillcolorname	fillcolorname
+#ifdef	HAVE_MOTIF
+static Display	*Sdpy;
+static Window	window;
 #endif
 
 /*
@@ -105,24 +93,43 @@ static void
 PuOpen(const char *plotter, FILE *outfile)
 {
 	int	r;
+	plPlotterParams	*plotter_params;
 
-	handle = pl_newpl(plotter, NULL, outfile, stderr);
-	pl_selectpl(handle);
-	r = pl_openpl();
+	plotter_params = pl_newplparams();
 
-	pl_filltype(1);
-	pl_joinmod("round");
-	pl_flinewidth(2);
-	pl_pencolorname(defaultcolor);
+#ifdef	HAVE_MOTIF
+	/* This would crash plots into a file */
+	if (strcmp(plotter, "Xdrawable") == 0) {
+		pl_setplparam(plotter_params, "XDRAWABLE_DISPLAY", Sdpy);
+		pl_setplparam(plotter_params, "XDRAWABLE_DRAWABLE1", &window);
+	}
+#endif
+
+	handle = pl_newpl_r(plotter, NULL, outfile, stderr, plotter_params);
+	r = pl_openpl_r(handle);
+	pl_deleteplparams(plotter_params);
+
+	pl_filltype_r(handle, 1);
+	pl_joinmod_r(handle, "round");
+	pl_flinewidth_r(handle, 2);
+	pl_pencolorname_r(handle, defaultcolor);
 
 	PlotInit();
+}
+
+void
+PuX(Display *dpy, Window w)
+{
+#ifdef	HAVE_MOTIF
+	Sdpy = dpy;
+	window = w;
+#endif
 }
 
 static void
 PuClose()
 {
-	pl_selectpl(0);
-	pl_deletepl(handle);
+	pl_deletepl_r(handle);
 }
 
 /*
@@ -162,132 +169,53 @@ void
 PuPieChart(char *plotter, FILE *outfile)
 {
 	int	i, num, c;
-	char	*s;
-	double	total = 0., curr, incr, r = 7, f,	/* FIX ME */
-		*lx, *ly, la;
+	char	*s, **labels;
+	double	curr, incr, r;
 	CELL	*cp;
 	struct rng	rngx;
+	Point	p;
 
+	Multigrapher	*mg;
 
-#define	X(r,a)	(cos(a)*(r))
-#define	Y(r,a)	(sin(a)*(r))
-#define	RAD(a)	((a)/180.*M_PI)
-#define	XY(r,a)	X((r),RAD(a)),Y((r),RAD(a))
-
-	rngx = graph_get_data(0);
 	PuOpen(plotter, outfile);
-	pl_fspace(-10., -10., 10., 10.);			/* FIX ME */
-
-	/* Compute total */
-	num = 0;
-	make_cells_in_range(&rngx);
-	while ((cp = next_cell_in_range())) {
-		total += float_cell(cp);
-		num++;
-	}
-
-	/* Allocate space for label coordinates */
-	lx = (double *)calloc(num, sizeof(double));
-	if (lx == NULL)
-		return;
-	ly = (double *)calloc(num, sizeof(double));
-	if (ly == NULL)
-		return;
-
-	incr = curr = 0.0;
-	c = 0; i = 0;
-	make_cells_in_range(&rngx);
-	while ((cp = next_cell_in_range())) {
-		f = float_cell(cp);
-		incr = f/total*360.;
-
-		pl_fmove(0.0,0.0);
-		pl_fillcolorname(colors[c]);
-		pl_fcont(XY(r,curr));
-		if (incr > 179) {
-			pl_farc(0.0,0.0,XY(r,curr),XY(r,curr+179.));
-			curr += 179.;
-			incr -= 179;
-		}
-		pl_farc(0.0,0.0,XY(r,curr),XY(r,incr+curr));
-		pl_fcont(0.0,0.0);
-		pl_endpath();
-
-		la = curr + incr / 2.0;
-		lx[i] = X(8.0, RAD(la));
-		ly[i] = Y(8.0, RAD(la));
-
-		curr += incr;
-		c = (c+1) % ncolors;
-		i++;
-	}
+	mg = sp_create_plot(handle, SP_PLOT_PIE);
+	sp_begin_plot(mg, 1.0, 0.0, 0.0);
 
 	/* Title */
 	s = graph_get_title();
-	pl_fmove(0.,-9.);					/* FIX ME */
-	pl_alabel(1, 1, s);
+	sp_set_title(mg, s);
 
-	/* Place labels */
-	i=0;
-	rngx = graph_get_data(1);
+	memset(&p, 0, sizeof(Point));
+
+	/* Get the data labels */
+	rngx = graph_get_data(0);
+	num = 0;
+	make_cells_in_range(&rngx);
+	while ((cp = next_cell_in_range()))
+		num++;
+	labels = (char **)calloc(num, sizeof(char *));
+
+	rngx = graph_get_data(0);
+	i = 0;
 	make_cells_in_range(&rngx);
 	while ((cp = next_cell_in_range())) {
-		pl_fmove(lx[i], ly[i]);
-		if (GET_TYP (cp) == TYP_STR) {
-		    pl_alabel(1, 1, cp->cell_str);
-		}
+		if (GET_TYP(cp) == TYP_STR)
+			labels[i] = strdup(cp->cell_str);
+		else if (GET_TYP(cp) == TYP_FLT)
+			labels[i] = strdup(flt_to_str(cp->cell_flt));
+		else
+			labels[i] = NULL;
 		i++;
 	}
 
-	free(lx);
-	free(ly);
-
-	PuClose();
-
-#undef	X(r,a)
-#undef	Y(r,a)
-#undef	RAD(a)
-#undef	XY(r,a)
-}
-
-/*
- * Stacked and unstacked bar charts
- */
-void
-PuBarChart(char *plotter, FILE *outfile)
-{
-	int		i, num, r, nsets, dsvalid[NUM_DATASETS + 1];
-	double		x, y, y1, y2, ymin, ymax, *ys;
-	struct rng	rngx;
-	CELL		*cp;
-
-	int		stacked = 1;				/* FIX ME only stacked for now */
-
-	PuOpen(plotter, outfile);
-
-	/* How many items ? */
-	nsets = num = 0;
-	for (r = 1; r < NUM_DATASETS; r++) {
-		dsvalid[r] = 0;
-		rngx = graph_get_data(r);
-
-		if (rngx.lr == 0 && rngx.lc == 0 && rngx.hr == 0 && rngx.hc == 0)
-			continue;
-
-		dsvalid[r] = 1;
-		nsets++;
-
-		make_cells_in_range(&rngx);
-		i = 0;
-		while ((cp = next_cell_in_range()))
-			i++;
-		if (num < i)
-			num = i;
-	}
-
-	ys = (double *)calloc(NUM_DATASETS * num, sizeof(double));
-#define	YS(a,b)	ys[NUM_DATASETS * (a-1) + b]
-
+	/*
+	 * Get the data points
+	 *
+	 * Do note that we're picking up all ranges of data points here,
+	 * even if doing so doesn't really make sense.
+	 */
+	incr = curr = 0.0;
+	c = 0;
 	for (r = 1; r < NUM_DATASETS; r++) {
 		rngx = graph_get_data(r);
 
@@ -297,112 +225,74 @@ PuBarChart(char *plotter, FILE *outfile)
 		make_cells_in_range(&rngx);
 		i = 0;
 		while ((cp = next_cell_in_range())) {
-			YS(r,i) = float_cell(cp);
+
+			p.label = labels[i];
+			p.x = float_cell(cp);
+
+			sp_plot_point(mg, &p);
+
 			i++;
 		}
 	}
 
-#if 0
-	fprintf(stderr, "PuBarChart: num %d, nsets %d\n", num, nsets);
-	for (r = 1; r < NUM_DATASETS; r++) {
-		fprintf(stderr, "Data Set %d :\t", r);
-		if (! dsvalid[r]) {
-			fprintf(stderr, "invalid\n");
-			continue;
-		}
-		for (i=0; i<num; i++)
-			fprintf(stderr, "%f\t", YS(r,i));
-		fprintf(stderr, "\n");
-	}
-#endif
+	for (i=0; i<num; i++)
+		if (labels[i])
+			free(labels[i]);
+	free(labels);
 
-	/* Find Y boundaries */
-	if (stacked) {
-		ymin = ymax = 0.0;
-		for (i=0; i<num; i++) {
-			y = 0.0;
-			for (r = 1; r < NUM_DATASETS; r++)
-				if (dsvalid[r])
-					y += YS(r,i);
-			if (ymax < y) ymax = y;
-			if (ymin > y) ymin = y;
-		}
-	} else {
-		/* FIX ME */
-		for (r = 1; r < NUM_DATASETS; r++) {
-			rngx = graph_get_data(r);
-
-		    if (rngx.lr == 0 && rngx.lc == 0 && rngx.hr == 0 && rngx.hc == 0)
-			continue;
-
-		/* Find Y boundaries */
-			make_cells_in_range(&rngx);
-			num = 0;
-			while ((cp = next_cell_in_range())) {
-				y = float_cell(cp);
-				if (num == 0) y1 = y2 = y;
-				if (y < y1) y1 = y;
-				if (y > y2) y2 = y;
-				num++;
-			}
-		}
-	}
-
-	pl_fspace(-1., -1., 11., 11.);			/* FIX ME */
-	pl_pencolorname(defaultcolor);
-	pl_fline(0., 0., 0., 10.);
-	pl_fline(0., 0., 10., 0.);
-
-	for (i=0; i<num; i++) {
-		for (r = 1; r < NUM_DATASETS; r++) {
-			pl_fillcolorname(colors[r % ncolors]);
-#define	TO_X(ii)	(1.5 + 10.0 * ((double)ii) / ((double)num))
-			x = TO_X(i);
-			if (ymax) {
-				if (r > 1) {
-					int ii;
-					double	s = 0.0;
-
-					for (ii=1; ii<r; ii++)
-						s += YS(ii,i);
-						
-					pl_fbox(TO_X(i - 0.6), s / ymax * 10., TO_X(i), (s + YS(r,i)) / ymax * 10.);
-				} else
-					pl_fbox(TO_X(i - 0.6), 0.0, TO_X(i), YS(r,i) / ymax * 10.);
-			}
-		}
-	}
-
-	/* General Title */
-	pl_fmove(5.0, -0.75);
-	pl_alabel(1, 1, graph_get_title());
-
-	/* X Axis Labels */
-	rngx = graph_get_data(0);
-	make_cells_in_range(&rngx);
-	i = 1;
-	while ((cp = next_cell_in_range())) {
-		x = TO_X(i - 0.6);
-		if (GET_TYP(cp) == TYP_STR)
-			if (cp->cell_str) {
-				pl_fmove(x, -0.3);
-				pl_alabel(1, 1, cp->cell_str);
-			}
-		else
-			/* ??? */ ;
-
-		i++;
-	}
-	
-
-	/* Data titles */
-	pl_fmove(10.0, -0.75);
-	pl_alabel(1, 1, graph_get_axis_title('x'));
-	pl_fmove(0.0, 10.5);
-	pl_alabel(1, 1, graph_get_axis_title('y'));
+	sp_end_plot(mg);
+	sp_destroy_plot(mg);
 
 	PuClose();
-	free(ys);
+}
+
+/*
+ * Stacked and unstacked bar charts
+ */
+void
+PuBarChart(char *plotter, FILE *outfile)
+{
+	int		i, r;
+	struct rng	rngx;
+	CELL		*cp;
+	Multigrapher	*mg;
+
+	PuOpen(plotter, outfile);
+
+	mg = sp_create_plot(handle, SP_PLOT_BAR);
+
+	sp_set_title(mg, graph_get_title());
+	sp_set_axis_title(mg, X_AXIS, graph_get_axis_title('x'));
+	sp_set_axis_title(mg, Y_AXIS, graph_get_axis_title('y'));
+
+	sp_begin_plot(mg, 1.0, 0.0, 0.0);
+
+#if 0
+	for (i=0; i<4; i++)
+		fprintf(stderr, "Oleo data label %d - %s\n", i, graph_get_data_title(i));
+#endif
+
+	sp_first_dataset(mg);
+	for (r = 1; r < NUM_DATASETS; r++) {
+		rngx = graph_get_data(r);
+
+		if (rngx.lr == 0 && rngx.lc == 0 && rngx.hr == 0 && rngx.hc == 0)
+			continue;
+
+		sp_legend_label(mg, r, graph_get_data_title(r));
+
+		make_cells_in_range(&rngx);
+		i = 0;
+		while ((cp = next_cell_in_range())) {
+			sp_plot_point_simple(mg, 0, 0.0, float_cell(cp));
+			i++;
+		}
+		sp_next_dataset(mg);
+	}
+
+	sp_legend_draw(mg);
+	sp_end_plot(mg);
+	PuClose();
 }
 
 /*
@@ -411,39 +301,36 @@ PuBarChart(char *plotter, FILE *outfile)
 void
 PuXYChart(char *plotter, FILE *outfile)
 {
-	int		i, r, num;
+	int		i, r, num, nalloc;
 	double		x, y, xmin, xmax, delta, *xes, ymax, ymin, oldx, oldy;
 	struct rng	rngx;
 	CELL		*cp;
+	Multigrapher	*mg;
 
 	PuOpen(plotter, outfile);
-	pl_fspace(-1., -1., 11., 11.);			/* FIX ME */
-
-	pl_pencolorname(defaultcolor);
-
-	pl_fline(0., 0., 0., 10.);
-	pl_fline(0., 0., 10., 0.);
 
 	/* Figure out X axis borders */
 	rngx = graph_get_data(0);
 	make_cells_in_range(&rngx);
 	cp = next_cell_in_range();
 	xmin = xmax = float_cell(cp);
-	num = 0;
+	nalloc = 0;
 	while ((cp = next_cell_in_range())) {
 		    y = float_cell(cp);
-		    num++;
+		    nalloc++;
 		    if (y < xmin)
 			xmin = y;
 		    else if (y > xmax)
 			xmax = y;
 	}
 
-	xes = (double *)calloc(num, sizeof(double));
+	xes = (double *)calloc(nalloc + 1, sizeof(double));
 	make_cells_in_range(&rngx);
 	i = 0;
 	while ((cp = next_cell_in_range())) {
-		    xes[i++] = float_cell(cp);
+		if (i > nalloc)
+			abort();
+		xes[i++] = float_cell(cp);
 	}
 
 	if (XYxAuto) {
@@ -455,8 +342,49 @@ PuXYChart(char *plotter, FILE *outfile)
 		xmax = XYxMax;
 	}
 
+	if (XYyAuto) {
+	    for (r = 1; r < NUM_DATASETS; r++) {
+		rngx = graph_get_data(r);
+
+		if (rngx.lr == 0 && rngx.lc == 0 && rngx.hr == 0 && rngx.hc == 0)
+		    continue;
+
+		    make_cells_in_range(&rngx);
+		while ((cp = next_cell_in_range())) {
+		    y = float_cell(cp);
+		    num++;
+		    if (y < ymin)
+			ymin = y;
+		    else if (y > ymax)
+			ymax = y;
+		}
+	    }
+	} else {
+		ymin = XYyMin;	/* FIX ME */
+		ymax = XYyMax;
+	}
+
 #if 0
-	fprintf(stderr, "X range should be %f to %f\n", xmin, xmax);
+	fprintf(stderr, "Axis ranges - X [%f..%f], Y [%f..%f]\n",
+		xmin, xmax, ymin, ymax);
+#endif
+
+	mg = sp_create_plot(handle, SP_PLOT_XY);
+
+	sp_set_title(mg, graph_get_title());
+	sp_set_axis_title(mg, X_AXIS, graph_get_axis_title('x'));
+	sp_set_axis_title(mg, Y_AXIS, graph_get_axis_title('y'));
+
+	sp_begin_plot(mg, 1.0, 0.0, 0.0);
+
+	sp_set_axis_range(mg, X_AXIS, xmin, xmax, 0.0, 0);
+	sp_set_axis_range(mg, Y_AXIS, ymin, ymax, 0.0, 0);
+
+	sp_draw_frame(mg, 1);
+
+#if 0
+	for (i=0; i<4; i++)
+		fprintf(stderr, "Oleo data label %d - %s\n", i, graph_get_data_title(i));
 #endif
 
 	for (r = 1; r < NUM_DATASETS; r++) {
@@ -465,6 +393,7 @@ PuXYChart(char *plotter, FILE *outfile)
 	    if (rngx.lr == 0 && rngx.lc == 0 && rngx.hr == 0 && rngx.hc == 0)
 		continue;
 
+#if 0
 	    make_cells_in_range(&rngx);
 	    while ((cp = next_cell_in_range())) {
 		    y = float_cell(cp);
@@ -474,20 +403,26 @@ PuXYChart(char *plotter, FILE *outfile)
 		    else if (y > ymax)
 			ymax = y;
 	    }
+#endif
 
-	if (! XYyAuto) {
+	    sp_legend_label(mg, r, graph_get_data_title(r));
+
+	    if (! XYyAuto) {
 		ymin = XYyMin;	/* FIX ME */
 		ymax = XYyMax;
-	}
+	    }
 
-	    pl_pencolorname(colors[r % ncolors]);
-
+//	    sp_setcolor(mg, defaultcolor);
+	
 	    make_cells_in_range(&rngx);
 	    i = 0;
 	    while ((cp = next_cell_in_range())) {
+		    if (i > nalloc) {
+			abort();
+		    }
 		    x = xes[i];
 		    y = float_cell(cp);
-#if 1
+
 		    if (i > 0) {
 			double	x1, x2, y1, y2;
 			int	out1 = 0, out2 = 0;
@@ -502,47 +437,33 @@ PuXYChart(char *plotter, FILE *outfile)
 			if (x2 < 0.0 || x2 > 10.0 || y2 < 0.0 || y2 > 10.0)
 				out2 = 1;
 
+			sp_plot_point_simple(mg, 0, oldx, oldy);
+			sp_plot_point_simple(mg, 1, x, y);
+
 			if (LineToOffscreen) {	/* Always draw */
-				pl_fline(x1, y1, x2, y2);
-				pl_fmove(x2, y2);
+//				pl_fline_r(handle, x1, y1, x2, y2);
+//				pl_fmove_r(handle, x2, y2);
 			} else {
-				if (out1 == 0 && out2 == 0)
-					pl_fline(x1, y1, x2, y2);
-				pl_fmove(x2, y2);
+				if (out1 == 0 && out2 == 0) {
+//					pl_fline_r(handle, x1, y1, x2, y2);
+				}
+//				pl_fmove_r(handle, x2, y2);
 			}
 		    }
-#else
-			pl_fmarker(10.0 * (x - xmin) / (xmax - xmin),
-				10.0 * (y - ymin) / (ymax - ymin),
-				2 /* + marker */,
-				0.2);
-#endif
-#if 0
-			{ char txt[30];
-			sprintf(txt, " (%1.1f,%1.1f)", x, y);
-			pl_alabel('l', 'c', txt);
-			}
-#endif
 
 		    oldx = x;
 		    oldy = y;
 
 		    i++;
 	    }
-#if 1
-	    pl_endpath();
-#endif
+
+	    sp_next_dataset(mg);
 	}
 
-	/* Title */
-	pl_fmove(5.0, -0.5);
-	pl_alabel(1, 1, graph_get_title());
+	sp_legend_draw(mg);
 
-	/* Data titles */
-	pl_fmove(10.0, -0.5);
-	pl_alabel(1, 1, graph_get_axis_title('x'));
-	pl_fmove(0.0, 10.5);
-	pl_alabel(1, 1, graph_get_axis_title('y'));
+	sp_end_plot(mg);
+	sp_destroy_plot(mg);
 
 	PuClose();
 	free((void *)xes);

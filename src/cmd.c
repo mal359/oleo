@@ -20,6 +20,10 @@
 #include "config.h"
 #endif
 
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
+#endif
+
 #include <ctype.h>
 #include <errno.h>
 #include <stdarg.h>

@@ -157,10 +157,6 @@ extern int ioerror;
 extern int errno;
 extern const char oleo_version_string[];
 
-#ifndef _DEBUG_MALLOC_INC
-extern void free();
-#endif /* _DEBUG_MALLOC_INC */
-
 extern double astof (char **);
 extern long astol (char **);
 extern void panic (const char *, ...);

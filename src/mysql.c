@@ -1,5 +1,5 @@
 /*
- *  $Id: mysql.c,v 1.7 1999/10/24 12:19:50 danny Exp $
+ *  $Id: mysql.c,v 1.8 2000/02/22 23:29:33 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,11 +21,18 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: mysql.c,v 1.7 1999/10/24 12:19:50 danny Exp $";
+static char rcsid[] = "$Id: mysql.c,v 1.8 2000/02/22 23:29:33 danny Exp $";
 
 #ifndef	TEST
 
+#ifdef	HAVE_CONFIG_H
 #include "config.h"
+#endif
+
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
+#endif
+
 #include "global.h"
 #include "oleosql.h"
 #include "cmd.h"

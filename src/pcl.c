@@ -1,5 +1,5 @@
 /*
- *  $Id: pcl.c,v 1.12 1999/12/19 16:42:43 danny Exp $
+ *  $Id: pcl.c,v 1.13 2000/02/22 23:29:33 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,12 +21,19 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: pcl.c,v 1.12 1999/12/19 16:42:43 danny Exp $";
+static char rcsid[] = "$Id: pcl.c,v 1.13 2000/02/22 23:29:33 danny Exp $";
 
 #include <stdio.h>
 
 #ifndef	TEST
+#ifdef	HAVE_CONFIG_H
 #include "config.h"
+#endif
+
+#ifdef	WITH_DMALLOC
+#include <dmalloc.h>
+#endif
+
 #include "afm.h"
 #endif
 
