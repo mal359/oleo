@@ -34,44 +34,18 @@
 /* Revision number of the currently used .mo (binary) file format.  */
 #define MO_REVISION_NUMBER 0
 
-/* The following contortions are an attempt to use the C preprocessor
-   to determine an unsigned integral type that is 32 bits wide.  An
-   alternative approach is to use autoconf's AC_CHECK_SIZEOF macro, but
-   doing that would require that the configure script compile and *run*
-   the resulting executable.  Locally running cross-compiled executables
-   is usually not possible.  */
-
-#if __STDC__
-# define UINT_MAX_32_BITS 4294967295U
-#else
-# define UINT_MAX_32_BITS 0xFFFFFFFF
-#endif
-
-/* If UINT_MAX isn't defined, assume it's a 32-bit type.
-   This should be valid for all systems GNU cares about because
-   that doesn't include 16-bit systems, and only modern systems
-   (that certainly have <limits.h>) have 64+-bit integral types.  */
-
-#ifndef UINT_MAX
-# define UINT_MAX UINT_MAX_32_BITS
-#endif
-
-#if UINT_MAX == UINT_MAX_32_BITS
-typedef unsigned nls_uint32;
-#else
-# if USHRT_MAX == UINT_MAX_32_BITS
+/*
+ * The autoconf way ... look for a 32-bit (or more) data type.
+ */
+#if SIZEOF_SHORT > 3
 typedef unsigned short nls_uint32;
-# else
-#  if ULONG_MAX == UINT_MAX_32_BITS
+#elif SIZEOF_INT > 3
+typedef unsigned int nls_uint32;
+#elif SIZEOF_LONG > 3
 typedef unsigned long nls_uint32;
-#  else
-  /* The following line is intended to throw an error.  Using #error is
-     not portable enough.  */
-  "Cannot determine unsigned 32-bit data type."
-#  endif
-# endif
+#else
+#error "Cannot find a 32-bit data type"
 #endif
-
 
 /* Header for binary .mo file format.  */
 struct mo_file_header

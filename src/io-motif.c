@@ -1,6 +1,6 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.57 2000/03/03 07:52:40 danny Exp $
+ *  $Id: io-motif.c,v 1.58 2000/04/08 12:20:05 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -22,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.57 2000/03/03 07:52:40 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.58 2000/04/08 12:20:05 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -2528,6 +2528,18 @@ void FormulaCB(Widget w, XtPointer client, XtPointer call)
 	MotifUpdateDisplay();	/* refresh */
 }
 
+#ifdef	XmNresizeRowCallback
+void ResizeRowCB(Widget w, XtPointer client, XtPointer call)
+{
+	XbaeMatrixResizeRowCallbackStruct *cbp =
+		(XbaeMatrixResizeRowCallbackStruct *)call;
+
+	fprintf(stderr, "Resize row %d to height %d\n",
+		cbp->which,
+		cbp->row_heights[cbp->which]);
+}
+#endif
+
 void ResizeColumnCB(Widget w, XtPointer client, XtPointer call)
 {
 	XbaeMatrixResizeColumnCallbackStruct *cbp =
@@ -4574,6 +4586,9 @@ GscBuildMainWindow(Widget parent)
 	XtAddCallback(mat, XmNwriteCellCallback, WriteCell, NULL);
 	XtAddCallback(mat, XmNselectCellCallback, SelectCellCB, NULL);
 	XtAddCallback(mat, XmNresizeColumnCallback, ResizeColumnCB, NULL);
+#ifdef	XmNresizeRowCallback
+	XtAddCallback(mat, XmNresizeRowCallback, ResizeRowCB, NULL);
+#endif
 
 	/*
 	 * We're building a small combo of two widgets which will represent

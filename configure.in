@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.75 2000/03/03 07:52:40 danny Exp $
+dnl $Id: configure.in,v 1.76 2000/04/08 12:20:05 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -33,18 +33,21 @@ AC_ARG_PROGRAM
 AM_CONFIG_HEADER(config.h)
 
 dnl
-dnl Find a C compiler before even detecting systems
+dnl Find a C compiler, detect strange systems.
+dnl The order is important here.
 dnl
 AC_PROG_CC
-
-dnl
-dnl Detect strange environments
-dnl	This needs to be just about the first thing done.
-dnl
 AC_AIX
 AC_ISC_POSIX
 AC_CYGWIN
 AC_EXEEXT
+
+dnl
+dnl for intl/
+dnl
+AC_CHECK_SIZEOF(short, 2)
+AC_CHECK_SIZEOF(int, 4)
+AC_CHECK_SIZEOF(long, 4)
 
 dnl
 dnl Dmalloc is a library to debug memory allocation.
@@ -294,7 +297,7 @@ AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(ftime gethostname gettimeofday mktime select strdup strstr)
-AC_CHECK_FUNCS(putenv strcasecmp strerror getcwd)
+AC_CHECK_FUNCS(putenv strcasecmp strerror getcwd rename)
 AM_FUNC_MKTIME
 AM_FUNC_OBSTACK
 

@@ -1,5 +1,5 @@
 /*
- * $Header: /home/matt/cvs/oleo/oleo/src/legend.c,v 1.2 2000/03/03 07:52:40 danny Exp $
+ * $Header: /home/matt/cvs/oleo/oleo/src/legend.c,v 1.3 2000/04/08 12:20:05 danny Exp $
  *
  * This file is part of libsciplot, one of the libraries in the GNU PlotUtils package.
  *
@@ -95,7 +95,7 @@ void sp_legend_label(Multigrapher *mg, int i, char *s)
 {
 	int	j;
 
-//	fprintf(stderr, "sp_legend_label(%d,%s)\n", i, s);
+/*	fprintf(stderr, "sp_legend_label(%d,%s)\n", i, s);	*/
 
 	if (i < 0)
 		return;

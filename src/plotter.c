@@ -12,7 +12,7 @@
 #include <limits.h>
 #include "graph.h"
 
-// #include "sys-defines.h"
+/* #include "sys-defines.h"	*/
 #include "plot.h"
 
 /* FIX ME */
@@ -2811,6 +2811,9 @@ sp_create_plot(plPlotter *plotter, const SpPlotType plot_type)
 	multigrapher->plotter = plotter;
 	multigrapher->bg_color = "white";
 
+	multigrapher->x_axis.tick_type = SP_TICK_DEFAULT;
+	multigrapher->y_axis.tick_type = SP_TICK_DEFAULT;
+
 	/*
 	 * FIX ME
 	 * We should use the same coordinates for all plot types.
@@ -2854,7 +2857,7 @@ sp_create_plot(plPlotter *plotter, const SpPlotType plot_type)
 void
 sp_destroy_plot(Multigrapher *mg)
 {
-//	(void) delete_multigrapher(mg);
+/*	(void) delete_multigrapher(mg);	*/
 	free(mg);
 }
 
@@ -3164,8 +3167,9 @@ sp_bar_end_graph(Multigrapher *mg)
 	nsets = mg->datasetnum;
 	dsvalid = (int *)calloc(nsets, sizeof(int));
 
-//	fprintf(stderr, "sp_bar_end_graph() : %d datasets, overall %d points\n",
-//		mg->datasetnum, mg->npoints);
+/*	fprintf(stderr, "sp_bar_end_graph() : %d datasets, overall %d points\n",
+		mg->datasetnum, mg->npoints);
+*/
 
 	for (r = 0; r < nsets; r++)
 		dsvalid[r] = 0;
@@ -3190,7 +3194,7 @@ sp_bar_end_graph(Multigrapher *mg)
 			Y_VALUE(r,n) = 0.0;
 		else
 			Y_VALUE(r,n) = mg->data[i].y;
-//		fprintf(stderr, "Data[%d,%d] = %f\n", r, n, mg->data[i].y);
+/*		fprintf(stderr, "Data[%d,%d] = %f\n", r, n, mg->data[i].y);	*/
 		dsvalid[r]++;
 	}
 
@@ -3402,7 +3406,7 @@ sp_pie_end_graph(Multigrapher *mg)
 	for (i=0; i<mg->npoints; i++) {
 		pl_fmove_r(mg->plotter, lx[i], ly[i]);
 		if (mg->data[i].label) {
-//		    fprintf(stderr, "Label %s for point %d\n", mg->data[i].label, i);
+/*		    fprintf(stderr, "Label %s for point %d\n", mg->data[i].label, i);	*/
 		    pl_alabel_r(mg->plotter, 1, 1, mg->data[i].label);
 		}
 	}
@@ -3425,6 +3429,36 @@ sp_set_axis_label_font_size(Multigrapher *mg, int axis, double s)
 	if (axis & Y_AXIS) {
 		mg->y_axis.font_size = s;
 	}
+}
+
+/*
+ * sp_set_axis_ticktype()
+ *
+ * Use this function to indicate what to translate the axis values into.
+ * E.g. if the axis value really represents a date, then you can specify
+ * the value to round to (e.g. the representation of one month), the value
+ * to increment with (e.g. the representation of three months), and a
+ * function which is called to translate the value into a text string that
+ * will be shown (e.g. "January\n2000").
+ */
+void
+sp_set_axis_ticktype(Multigrapher *mg, int axis,
+	double round_to, double incr, axis_xlate_tick xlate_tick)
+{
+}
+
+/*
+ * sp_set_axis_ticktype_date()
+ *
+ * This is a special case of sp_set_axis_ticktype(), where the function
+ * called is strftime(), a standard function to convert time/date into
+ * text format.
+ * The parameter format_string is the format parameter to strftime.
+ */
+void
+sp_set_axis_ticktype_date(Multigrapher *mg, int axis,
+	double round_to, double incr, char *format_string)
+{
 }
 
 /*

@@ -1,5 +1,5 @@
 /*
- * $Header: /home/matt/cvs/oleo/oleo/src/sciplot.h,v 1.2 2000/03/03 07:52:40 danny Exp $
+ * $Header: /home/matt/cvs/oleo/oleo/src/sciplot.h,v 1.3 2000/04/08 12:20:05 danny Exp $
  *
  * This file is part of GNU plotutils.
  *
@@ -127,6 +127,21 @@ void sp_legend_draw(Multigrapher *mg);
 void sp_legend_label(Multigrapher *mg, int i, char *s);
 
 /*
+ * Ticks on axes
+ */
+
+typedef enum {
+	SP_TICK_DEFAULT = 0,
+	SP_TICK_PRINTF,
+	SP_TICK_STRFTIME,
+	SP_TICK_CUSTOM
+} tick_type_e;
+
+typedef char *(*axis_xlate_tick)(double value);
+void sp_set_axis_ticktype(Multigrapher *mg, int axis,
+	double round_to, double incr, axis_xlate_tick xlate_tick);
+
+/*
  * Historic functions
  */
 void begin_graph(Multigrapher *multigrapher, double scale, double trans_x, double trans_y);
@@ -158,4 +173,5 @@ void end_polyline_and_flush(Multigrapher *multigrapher);
 void sp_set_axis_label_font_size(Multigrapher *mg, int axis, double s);
 
 /* Don't add anything after this */
+
 #endif	/* __SCIPLOT_H__ */

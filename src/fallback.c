@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.23 2000/02/22 23:29:33 danny Exp $
+ *  $Id: fallback.c,v 1.24 2000/04/08 12:20:05 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -48,7 +48,7 @@ char *fallback[] = {
 	"*XmMainWindow.showSeparator:	true",
 	"*background:			#AAAAAA",
 	"*bae.background:		#CCCCCC",
-//	"*bae.cellShadowType:		shadow_etched_in",
+/*	"*bae.cellShadowType:		shadow_etched_in",	*/
 	"*bae.gridType:			grid_cell_shadow",
 	"*formula.columns:		80",
 	"*splash*fontList:		-b&h-lucidatypewriter-bold-r-normal-sans-24-*-*-*-*-*-iso8859-1=large,-b&h-lucida-medium-i-normal-sans-18-*-*-*-*-*-iso8859-1=small",
@@ -60,7 +60,7 @@ char *fallback[] = {
 	"*bae.columnLabelColor:		dark slate blue",
 	"*bae.rowLabelColor:		dark slate blue",
 	"*bae.translations:	#override\\n"
-//		"<Btn1Down>:			SelectCell(start)\\n"
+/*		"<Btn1Down>:			SelectCell(start)\\n"	*/
 		"<Btn1Up>:			SelectCell(end)\\n"
 		"<Btn1Motion>:			SelectCell(move)",
 /* Menu System */

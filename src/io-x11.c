@@ -289,7 +289,6 @@ GetXIC(Display *theDisplay)
 	/* Not really root */	XIMPreeditNone | XIMStatusNone
 	};
 
-//	setlocale(LC_ALL, "");
 	if (!XSupportsLocale()) {
 #ifdef	I18N_VERBOSE
 		fprintf(stderr, "X doesn't support this locale\n");

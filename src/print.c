@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.28 2000/02/22 23:29:33 danny Exp $
+ * $Id: print.c,v 1.29 2000/04/08 12:20:05 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -452,7 +452,7 @@ print_region_cmd (struct rng *print, FILE *fp)
 							next = i+1;
 						} else {
 							i = c_hi;
-							// break;
+							/* break;	*/
 						}
 					}
 					w = wtot;

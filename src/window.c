@@ -1037,7 +1037,7 @@ io_write_window_config (struct line * out)
   sprint_line (out, "O;status %d\n", user_status);
   if (nwin > 1)
     {
-      /* ... *//* fixme ? */
+      /* ... */ /* fixme ? */
     }
   for (n = 0; n < nwin; n++)
     {

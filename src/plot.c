@@ -412,7 +412,7 @@ PuXYChart(char *plotter, FILE *outfile)
 		ymax = XYyMax;
 	    }
 
-//	    sp_setcolor(mg, defaultcolor);
+/*	    sp_setcolor(mg, defaultcolor);	*/
 	
 	    make_cells_in_range(&rngx);
 	    i = 0;
@@ -437,18 +437,12 @@ PuXYChart(char *plotter, FILE *outfile)
 			if (x2 < 0.0 || x2 > 10.0 || y2 < 0.0 || y2 > 10.0)
 				out2 = 1;
 
-			sp_plot_point_simple(mg, 0, oldx, oldy);
-			sp_plot_point_simple(mg, 1, x, y);
-
-			if (Global->PlotGlobal->LineToOffscreen) {	/* Always draw */
-//				pl_fline_r(handle, x1, y1, x2, y2);
-//				pl_fmove_r(handle, x2, y2);
-			} else {
-				if (out1 == 0 && out2 == 0) {
-//					pl_fline_r(handle, x1, y1, x2, y2);
-				}
-//				pl_fmove_r(handle, x2, y2);
+			if (Global->PlotGlobal->LineToOffscreen	/* Always draw */
+					|| (out1 == 0 && out2 == 0)) {
+				sp_plot_point_simple(mg, 0, oldx, oldy);
+				sp_plot_point_simple(mg, 1, x, y);
 			}
+
 		    }
 
 		    oldx = x;

@@ -1,5 +1,12 @@
-$Id: ChangeLog,v 1.125 2000/03/03 07:52:40 danny Exp $
+$Id: ChangeLog,v 1.126 2000/04/08 12:20:04 danny Exp $
 
+Sat  8 Apr 14:21:36 2000, Danny
+	* doc/oleo_web.html now points to ChangeLog in CVSWEB as well,
+	  with a remark saying you need to know the version number
+	  of the latest version...
+	* Detect rename() system call.
+	* intl/ : use autoconf to figure out which data type is nls_uint32.
+	* Upgraded doc/texi2html to version 1.61.
 
 Fri  3 Mar 08:48:49 2000, Danny
 	* Oleo sources are now in CVS at subversions.gnu.org,

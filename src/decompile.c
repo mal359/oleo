@@ -667,7 +667,6 @@ backslash_a_string (char *string, int add_quote)
 {
 	char		*pf, *pt;
 	unsigned char	ch;
-//	int		ch;
 	int		size, len;
 	static char	*cbuf;
 	static int	s_cbuf;

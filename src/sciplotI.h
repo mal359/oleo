@@ -1,5 +1,5 @@
 /*
- * $Header: /home/matt/cvs/oleo/oleo/src/sciplotI.h,v 1.1 2000/02/22 23:34:14 danny Exp $
+ * $Header: /home/matt/cvs/oleo/oleo/src/sciplotI.h,v 1.2 2000/04/08 12:20:05 danny Exp $
  *
  * This file is part of GNU plotutils.
  *
@@ -152,6 +152,13 @@ typedef struct
 				   (we update this during plotting, so we
 				   can advise the user to specify a tick
 				   spacing by hand if labelled_ticks <= 2) */
+
+  /*
+   * Custom ticks
+   */
+  tick_type_e		tick_type;
+  axis_xlate_tick	xlate_tick;
+  char			*tick_format;
 } Axis;
 
 
