@@ -1,5 +1,5 @@
 /*
- * $Id: init.c,v 1.7 2000/08/10 21:02:50 danny Exp $
+ * $Id: init.c,v 1.8 2001/02/07 03:15:44 pw Exp $
  *
  * Copyright © 1993, 2000 Free Software Foundation, Inc.
  *
@@ -37,7 +37,7 @@
  * should not do any kind of io or cause errors.  If they do, you
  * will experience core dumps.
  */
-char *init_cmds[] =
+static char *init_cmds[] =
 {
   "",
   "# The keymap tree.",
