@@ -3,7 +3,7 @@
 #
 # Process this file with automake to produce Makefile.in
 #
-# $Header: /home/matt/cvs/oleo/oleo/Makefile.am,v 1.18 1999/02/10 22:23:04 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/Makefile.am,v 1.19 1999/02/11 23:09:18 danny Exp $
 #
 AUTOMAKE_OPTIONS = gnu 1.4 readme-alpha
 ACLOCAL_AMFLAGS = -I m4
@@ -17,3 +17,6 @@ EXTRA_DIST = oleobug.in
 
 release:
 	$(MAKE) dist distdir=$(PACKAGE)`date +"%y%m%d"`
+
+docdir=        $(exec_prefix)/Oleo
+doc_DATA=	AUTHORS FAQ

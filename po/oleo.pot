@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Date: 1999-02-10 21:33:26+0100\n"
+"Date: 1999-02-11 00:27:21+0100\n"
 "From: Danny Backx <danny@dell.roesel.skynet.be>\n"
 "Content-Type: text/plain; charset=\n"
 "Xgettext-Options: --default-domain=oleo --directory=.. --add-comments --keyword=_ --keyword=N_ --files-from=./POTFILES.in\n"
@@ -63,7 +63,7 @@ msgstr ""
 msgid "Cannot find XmNuserData\n"
 msgstr ""
 
-#: src/io-motif.c:684 src/io-motif.c:704 src/io-motif.c:871 src/io-motif.c:2068 src/io-motif.c:2077 src/io-motif.c:2113 src/io-motif.c:2122 src/io-motif.c:2157 src/io-motif.c:2166 src/io-motif.c:2389
+#: src/io-motif.c:684 src/io-motif.c:704 src/io-motif.c:871 src/io-motif.c:2068 src/io-motif.c:2077 src/io-motif.c:2113 src/io-motif.c:2122 src/io-motif.c:2157 src/io-motif.c:2166 src/io-motif.c:2393
 msgid "range"
 msgstr ""
 
@@ -150,84 +150,84 @@ msgstr ""
 msgid "Move"
 msgstr ""
 
-#: src/io-motif.c:2277
+#: src/io-motif.c:2281
 msgid "Formats :"
 msgstr ""
 
-#: src/io-motif.c:2279
+#: src/io-motif.c:2283
 msgid "Default"
 msgstr ""
 
-#. FMT_DEF
-#: src/io-motif.c:2280
+#: src/io-motif.c:2284
 msgid "Hidden"
 msgstr ""
 
-#: src/io-motif.c:2281
+#. FMT_HID
+#: src/io-motif.c:2285
 msgid "Graph"
 msgstr ""
 
 #. FMT_GPH
-#: src/io-motif.c:2282
+#: src/io-motif.c:2286
 msgid "Float"
 msgstr ""
 
-#. PRC_FLT
-#: src/io-motif.c:2283
+#: src/io-motif.c:2287
 msgid "General"
 msgstr ""
 
-#: src/io-motif.c:2284
+#. FMT_GEN
+#: src/io-motif.c:2288
 msgid "Dollar"
 msgstr ""
 
 #. FMT_DOL
-#: src/io-motif.c:2285
+#: src/io-motif.c:2289
 msgid "Comma"
 msgstr ""
 
-#. FMT_CMA
-#: src/io-motif.c:2286
+#: src/io-motif.c:2290
 msgid "Percent"
 msgstr ""
 
-#: src/io-motif.c:2287
+#. FMT_PCT
+#: src/io-motif.c:2291
 msgid "Integer"
 msgstr ""
 
-#: src/io-motif.c:2288
+#: src/io-motif.c:2292
 msgid "Decimal"
 msgstr ""
 
-#: src/io-motif.c:2289
+#: src/io-motif.c:2293
 msgid "Fixed"
 msgstr ""
 
-#: src/io-motif.c:2290
+#: src/io-motif.c:2294
 msgid "Exponent"
 msgstr ""
 
-#: src/io-motif.c:2291
+#: src/io-motif.c:2295
+msgid "Date"
+msgstr ""
+
+#: src/io-motif.c:2296
 msgid "User-1"
 msgstr ""
 
-#: src/io-motif.c:2292
+#: src/io-motif.c:2297
 msgid "User-2"
 msgstr ""
 
-#: src/io-motif.c:2293
+#: src/io-motif.c:2298
 msgid "User-3"
 msgstr ""
 
-#: src/io-motif.c:2294
-msgid "User-4"
-msgstr ""
-
-#: src/io-motif.c:3533
+#: src/io-motif.c:3539
 msgid "XmProcessTraversal failed\n"
 msgstr ""
 
-#: src/io-motif.c:3551
+#: src/io-motif.c:3557
 msgid ""
 "There are unsaved changes.\n"
 "Do you want to quit anyway ?"

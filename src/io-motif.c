@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.23 1999/02/10 22:23:17 danny Exp $
+ *  $Id: io-motif.c,v 1.24 1999/02/11 23:09:26 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.23 1999/02/10 22:23:17 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.24 1999/02/11 23:09:26 danny Exp $";
 
 #include "config.h"
 
@@ -2218,10 +2218,14 @@ int formats_list[] = {
 	/* 9 */		FMT_DEF,
 	/* 10 */	FMT_DEF,
 	/* 11 */	FMT_DEF,
+#ifdef	FMT_DATE
+	/* 12 */	FMT_DATE,
+#else
 	/* 12 */	FMT_DEF,
+#endif
 	/* 13 */	FMT_DEF,
-	/* 14 */	FMT_USR | 4,
-	/* 15 */	FMT_USR | 15,
+	/* 14 */	FMT_DEF,
+	/* 15 */	FMT_DEF,
 	/* 16 */	FMT_DEF
 };
 
@@ -2288,10 +2292,10 @@ void CreateFormatsDialog(Widget p)
 	x9 = XmStringCreateSimple(_("Decimal"));
 	x10 = XmStringCreateSimple(_("Fixed"));
 	x11 = XmStringCreateSimple(_("Exponent"));
-	x12 = XmStringCreateSimple(_("User-1"));
-	x13 = XmStringCreateSimple(_("User-2"));
-	x14 = XmStringCreateSimple(_("User-3"));
-	x15 = XmStringCreateSimple(_("User-4"));
+	x12 = XmStringCreateSimple(_("Date"));		/* FMT_DATE */
+	x13 = XmStringCreateSimple(_("User-1"));
+	x14 = XmStringCreateSimple(_("User-2"));
+	x15 = XmStringCreateSimple(_("User-3"));
 
 	w = XmVaCreateSimpleOptionMenu(f, "formatsOption",
 		xms, /* mnemonic ? */0, /* initial selection */ 0, 
@@ -2406,6 +2410,7 @@ void FormatsDialogOk(Widget w, XtPointer client, XtPointer call)
 #else
 			format_region(&rng, fmt, -1);
 #endif
+			precision_region(&rng, precision);
 			recalculate(1);
 			MotifUpdateDisplay();
 		} else {
@@ -2427,6 +2432,7 @@ void FormatsDialogOk(Widget w, XtPointer client, XtPointer call)
 #else
 			format_region(&rng, fmt, -1);
 #endif
+			precision_region(&rng, precision);
 			recalculate(1);
 			MotifUpdateDisplay();
 		}

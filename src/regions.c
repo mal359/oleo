@@ -121,13 +121,25 @@ format_region (struct rng *where, int fmt, int just)
   while ((cp = next_row_col_in_range (&rr, &cc)))
     {
       if (fmt != -1)
-#ifdef	NEW_CELL_FLAGS
 	SET_FORMAT (cp, fmt);	/* Only the format, not the precision !! */
-#else
-	SET_FMT (cp, fmt);	/* Format *and* precision */
-#endif
       if (just != -1)
 	SET_JST (cp, just);
+      io_pr_cell (rr, cc, cp);
+    }
+}
+
+void
+precision_region (struct rng *where, int precision)
+{
+  CELL *cp;
+  CELLREF rr, cc;
+
+  modified = 1;
+  make_cells_in_range (where);
+  while ((cp = next_row_col_in_range (&rr, &cc)))
+    {
+      if (precision != -1)
+	SET_PRECISION (cp, precision);
       io_pr_cell (rr, cc, cp);
     }
 }
@@ -223,17 +235,10 @@ print_region (struct rng *print, FILE *fp)
 		      if (++ccc > c_hi)
 			break;
 		      ccp = find_cell (rr, ccc);
-#ifdef	NEW_CELL_FLAGS
 		      if (!ccp || !GET_TYP (ccp) || GET_FORMAT (ccp) == FMT_HID)
 			continue;
 		      if (GET_FORMAT (ccp) == FMT_DEF && default_fmt == FMT_HID)
 			continue;
-#else
-		      if (!ccp || !GET_TYP (ccp) || GET_FMT (ccp) == FMT_HID)
-			continue;
-		      if (GET_FMT (ccp) == FMT_DEF && default_fmt == FMT_HID)
-			continue;
-#endif
 		      break;
 		    }
 		  if (lenstr > w - 1)
@@ -595,7 +600,6 @@ move_region (struct rng *fm, struct rng *to)
 	  cur_row = rt;
 	  cur_col = ct;
 	  my_cell = find_cell (cur_row, cur_col);
-#ifdef	NEW_CELL_FLAGS
 	  if ((!cpf || (!cpf->cell_font &&
 		((cpf->cell_flags.cell_format == 0)
 		&& (cpf->cell_flags.cell_precision == 0)
@@ -605,13 +609,6 @@ move_region (struct rng *fm, struct rng *to)
 		&& !cpf->cell_formula))
 	      && !my_cell)
 	    continue;
-#else
-	  if ((!cpf || (!cpf->cell_font &&
-		!cpf->cell_flags
-		&& !cpf->cell_formula))
-	      && !my_cell)
-	    continue;
-#endif
 
 	  if (!cpf)
 	    {

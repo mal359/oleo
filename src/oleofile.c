@@ -59,7 +59,7 @@ oleo_read_file (fp, ismerge)
   char *cexp, *cval;
   CELL *cp;
   struct rng rng;
-  int fmt = 0;
+  int fmt = 0, prc = 0;
   int jst = 0;
   struct font_memo * fnt = 0;
   struct font_memo ** fnt_map = 0;
@@ -151,32 +151,35 @@ oleo_read_file (fp, ismerge)
 		  switch (*ptr++)
 		    {
 		    case 'G':
-		      default_fmt = FMT_GEN - PRC_FLT;
+		      default_fmt = FMT_GEN;
 		      break;
 		    case 'E':
-		      default_fmt = FMT_EXP - PRC_FLT;
+		      default_fmt = FMT_EXP;
 		      break;
 		    case 'F':
-		      default_fmt = FMT_FXT - PRC_FLT;
+		      default_fmt = FMT_FXT;
 		      break;
 		    case '$':
-		      default_fmt = FMT_DOL - PRC_FLT;
+		      default_fmt = FMT_DOL;
 		      break;
 		    case '*':	/* * format implemented as +- format */
 		      default_fmt = FMT_GPH;
 		      break;
 		    case ',':	/* JF */
-		      default_fmt = FMT_CMA - PRC_FLT;
+		      default_fmt = FMT_CMA;
 		      break;
 		    case 'U':
-		      default_fmt = FMT_USR - PRC_FLT;
+		      default_fmt = FMT_USR;
 		      break;
 		    case '%':
-		      default_fmt = FMT_PCT - PRC_FLT;
+		      default_fmt = FMT_PCT;
 		      break;
 		    case 'H':
 		      default_fmt = FMT_HID;
 		      break;
+		    case 'd':	/* Date */
+			default_fmt = FMT_DATE;
+			break;
 		      /* End of JF */
 		    default:
 		      io_error_msg ("Line %d: format %c not supported", lineno, ptr[-1]);
@@ -184,7 +187,7 @@ oleo_read_file (fp, ismerge)
 		    }
 		  if (*ptr == 'F')
 		    {
-		      default_fmt += PRC_FLT;
+/*		      default_fmt += PRC_FLT;	*/
 		      ptr++;
 		    }
 		  else
@@ -229,45 +232,48 @@ oleo_read_file (fp, ismerge)
 		      fmt = FMT_DEF;
 		      break;
 		    case 'G':
-		      fmt = FMT_GEN - PRC_FLT;
+		      fmt = FMT_GEN;
 		      break;
 		    case 'E':
-		      fmt = FMT_EXP - PRC_FLT;
+		      fmt = FMT_EXP;
 		      break;
 		    case 'F':
-		      fmt = FMT_FXT - PRC_FLT;
+		      fmt = FMT_FXT;
 		      break;
 		    case '$':
-		      fmt = FMT_DOL - PRC_FLT;
+		      fmt = FMT_DOL;
 		      break;
 		    case '*':	/* JF implemented as +- format */
 		      fmt = FMT_GPH;
 		      break;
 		    case ',':	/* JF */
-		      fmt = FMT_CMA - PRC_FLT;
+		      fmt = FMT_CMA;
 		      break;
 		    case 'U':
-		      fmt = FMT_USR - PRC_FLT;
+		      fmt = FMT_USR;
 		      break;
 		    case '%':
-		      fmt = FMT_PCT - PRC_FLT;
+		      fmt = FMT_PCT;
 		      break;
 		    case 'H':
 		      fmt = FMT_HID;
 		      break;	/* END of JF */
+		    case 'd':
+			fmt = FMT_DATE;
+			break;
 		    case 'C':
 		    default:
 		      io_error_msg ("Line %d: format %c not supported", lineno, ptr[-1]);
 		      fmt = FMT_DEF;
 		      break;
 		    }
-		  if (*ptr == 'F')
-		    {
-		      fmt += PRC_FLT;
+		  if (*ptr == 'F') {
+/*		      fmt += PRC_FLT;	*/
 		      ptr++;
-		    }
-		  else
-		    fmt += astol (&ptr);
+		  } else {
+/*		    fmt += astol (&ptr);	*/
+		    prc = astol(&ptr);
+		  }
 		  switch (*ptr++)
 		    {
 		    case 'C':
@@ -324,11 +330,8 @@ oleo_read_file (fp, ismerge)
 	    {
 	    case 1:
 	      cp = find_or_make_cell (crow, ccol);
-#ifdef	NEW_CELL_FLAGS
 	      SET_FORMAT (cp, fmt);
-#else
-	      SET_FMT (cp, fmt);
-#endif
+		  SET_PRECISION(cp, prc);
 	      SET_JST (cp, jst);
 	      if (font_spec_in_format)
 		cp->cell_font = fnt;
@@ -341,11 +344,8 @@ oleo_read_file (fp, ismerge)
 	      make_cells_in_range (&rng);
 	      while ((cp = next_cell_in_range ()))
 		{
-#ifdef	NEW_CELL_FLAGS
 		  SET_FORMAT (cp, fmt);
-#else
-		  SET_FMT (cp, fmt);
-#endif
+		  SET_PRECISION(cp, prc);
 		  SET_JST (cp, jst);
 		  if (font_spec_in_format)
 		    cp->cell_font = fnt;
@@ -359,11 +359,7 @@ oleo_read_file (fp, ismerge)
 	      make_cells_in_range (&rng);
 	      while ((cp = next_cell_in_range ()))
 		{
-#ifdef	NEW_CELL_FLAGS
 		  SET_FORMAT (cp, fmt);
-#else
-		  SET_FMT (cp, fmt);
-#endif
 		  SET_JST (cp, jst);
 		  if (font_spec_in_format)
 		    cp->cell_font = fnt;
@@ -603,18 +599,10 @@ oleo_read_file (fp, ismerge)
   io_recenter_all_win ();
 }
 
-#ifdef	NEW_CELL_FLAGS
 static char *
 oleo_fmt_to_str (int f1, int p1)
-#else
-static char *
-oleo_fmt_to_str (int f1)
-#endif
 {
   static char p_buf[40];
-#ifndef	NEW_CELL_FLAGS
-  int p1;
-#endif
 
   p_buf[1] = '\0';
   switch (f1)
@@ -629,9 +617,6 @@ oleo_fmt_to_str (int f1)
       p_buf[0] = '*';
       break;
     default:
-#ifndef	NEW_CELL_FLAGS
-      p1 = GET_PRC (f1);
-#endif
       if (p1 == PRC_FLT)
 	{
 	  p_buf[1] = 'F';
@@ -639,7 +624,7 @@ oleo_fmt_to_str (int f1)
 	}
       else
 	sprintf (&p_buf[1], "%d", p1);
-      switch (f1 | PRC_FLT)
+      switch (f1)
 	{
 	case FMT_USR:
 	  p_buf[0] = 'U';
@@ -661,6 +646,9 @@ oleo_fmt_to_str (int f1)
 	  break;
 	case FMT_EXP:
 	  p_buf[0] = 'E';
+	  break;
+	case FMT_DATE:
+	  p_buf[0] = 'd';
 	  break;
 	default:
 	  p_buf[0] = '?';
@@ -766,15 +754,10 @@ oleo_write_file (fp, rng)
 
       rng = &all_rng;
 
-#ifdef	NEW_CELL_FLAGS
       (void) fprintf (fp, "F;D%s%c%u\n",
 		oleo_fmt_to_str (default_fmt, default_prc),
 		jst_to_chr (default_jst),
 		default_width);
-#else
-      (void) fprintf (fp, "F;D%s%c%u\n",
-		oleo_fmt_to_str (default_fmt), jst_to_chr (default_jst), default_width);
-#endif
 
       fmts = usr_set_fmts ();
       for (n = 0; n < 16; n++)
@@ -853,11 +836,7 @@ oleo_write_file (fp, rng)
       int f1, j1;
       char p_buf[40];
 
-#ifdef	NEW_CELL_FLAGS
       f1 = GET_FORMAT (cp);
-#else
-      f1 = GET_FMT (cp);
-#endif
       j1 = GET_JST (cp);
       if (f1 != FMT_DEF || j1 != JST_DEF || cp->cell_font)
 	{
@@ -885,13 +864,8 @@ oleo_write_file (fp, rng)
 	    }
 	  if (cp->cell_font)
 	    (void) fprintf (fp, "f%d;", cp->cell_font->id_memo);
-#ifdef	NEW_CELL_FLAGS
 	    (void) fprintf (fp, "F%s%c\n",
 			  oleo_fmt_to_str (f1, GET_PRECISION(cp)), jst_to_chr (j1));
-#else
-	    (void) fprintf (fp, "F%s%c\n",
-			  oleo_fmt_to_str (f1), jst_to_chr (j1));
-#endif
 	}
 
       if (!GET_TYP (cp) && !cp->cell_formula)

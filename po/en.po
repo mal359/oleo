@@ -15,12 +15,12 @@ msgstr ""
 "Content-Transfer-Encoding: ENCODING\n"
 
 # , c-format
-#: src/io-term.c:690
+#: src/io-term.c:691
 msgid "Usage: %s [OPTION]... [FILE]...\n"
 msgstr "Usage: %s [OPTION]... [FILE]...\n"
 
 # , fuzzy
-#: src/io-term.c:693
+#: src/io-term.c:694
 msgid ""
 "\n"
 "  -h, --help               display this help and exit\n"
@@ -47,33 +47,33 @@ msgstr ""
 "Report bugs to <bug-oleo@gnu.org>.\n"
 
 # , c-format
-#: src/io-term.c:762
+#: src/io-term.c:763
 msgid "%s %s\n"
 msgstr ""
 
-#: src/io-term.c:763
+#: src/io-term.c:764
 msgid "Copyright (C) 1997-1998 Free Software Foundation, Inc.\n"
 msgstr ""
 
 # , c-format
-#: src/io-term.c:764
+#: src/io-term.c:765
 msgid "%s comes with ABSOLUTELY NO WARRANTY.\n"
 msgstr ""
 
 # , c-format
-#: src/io-term.c:765
+#: src/io-term.c:766
 msgid "You may redistribute copies of %s\n"
 msgstr ""
 
-#: src/io-term.c:766
+#: src/io-term.c:767
 msgid "under the terms of the GNU General Public License.\n"
 msgstr ""
 
-#: src/io-term.c:767
+#: src/io-term.c:768
 msgid "For more information about these matters, "
 msgstr ""
 
-#: src/io-term.c:768
+#: src/io-term.c:769
 msgid "see the files named COPYING.\n"
 msgstr ""
 

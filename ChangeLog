@@ -1,4 +1,7 @@
 
+Thu 11 Feb 23:59:41 1999, Danny Backx (danny@gnu.org)
+	* Fix oleo file read/write for new data structure.
+
 Wed 10 Feb 21:40:43 1999, Danny Backx
 	* Experimentally change cell.h data structures so the cell_flags
 	  becomes a bitfield in C, not a kludge of macros.

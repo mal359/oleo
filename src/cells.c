@@ -132,11 +132,7 @@ cell (row, col, dowhat, p)
       break;
     case 7:
     case 8:
-#ifdef	NEW_CELL_FLAGS
       p->String = fmt_to_str ((cell_ptr = find_cell (row, col)) ? GET_FORMAT (cell_ptr) : 0);
-#else
-      p->String = fmt_to_str ((cell_ptr = find_cell (row, col)) ? GET_FMT (cell_ptr) : 0);
-#endif
       break;
     case 9:
       cell_ptr = find_cell (row, col);

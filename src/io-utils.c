@@ -1,4 +1,3 @@
-#define	DATE_AS_USER
 /*      Copyright (C) 1990, 1992, 1993 Free Software Foundation, Inc.
 
    This file is part of Oleo, the GNU Spreadsheet.
@@ -192,22 +191,14 @@ flt_to_str (double val)
 char *
 flt_to_str_fmt (CELL *cp)
 {
-#ifdef	NEW_CELL_FLAGS
   int j = GET_FORMAT(cp);	/* Only format, not precision */
-#else
-  int j = GET_FMT(cp);
-#endif
   int p;
   double f;
 
   if (j == FMT_DEF)
     j = default_fmt;
 
-#ifdef	NEW_CELL_FLAGS
   p = GET_PRECISION(cp);
-#else
-  p = GET_PRC (j);
-#endif
 
   if (cp->cell_flt == __plinf)
     return iname;
@@ -251,22 +242,12 @@ print_cell (CELL * cp)
   if (!cp)
     return "";
 
-#ifdef	NEW_CELL_FLAGS
   j = GET_FORMAT (cp);
-#else
-  j = GET_FMT (cp);
-#endif
 
-#ifdef	NEW_CELL_FLAGS
   p = GET_PRECISION (cp);
-#else
-  p = GET_PRC (j);
-#endif
   if (j == FMT_DEF) {
     j = default_fmt;
-#ifdef	NEW_CELL_FLAGS
     p = default_prc;
-#endif
   }
   if (j == FMT_HID || GET_TYP (cp) == 0)
     return "";
@@ -291,11 +272,7 @@ print_cell (CELL * cp)
     }
   if (GET_TYP (cp) == TYP_FLT)
     {
-#ifdef	NEW_CELL_FLAGS
       switch (j)
-#else
-      switch (j | PRC_FLT)
-#endif
 	{
 	case FMT_GPH:
 	  if (cp->cell_flt < 0)
@@ -370,16 +347,8 @@ print_cell (CELL * cp)
 
   if (GET_TYP (cp) == TYP_INT)
     {
-#ifdef	NEW_CELL_FLAGS
       p = GET_PRECISION (cp);
-#else
-      p = GET_PRC (j);
-#endif
-#ifdef	NEW_CELL_FLAGS
       switch (j)
-#else
-      switch (j | PRC_FLT)
-#endif
 	{
 	case FMT_GPH:
 	  if (cp->cell_int < 0)
@@ -399,18 +368,43 @@ print_cell (CELL * cp)
 	    }
 	  goto graph;
 
-	case FMT_USR:
-#ifdef	DATE_AS_USER
-		if (p > 3) {	/* Represent as a date */
+#ifdef	FMT_DATE	/* Still depends on new style cell_flags */
+	case FMT_DATE:
+		{
 		    time_t t = cp->cell_int;
+		    int	f = GET_PRECISION(cp);		/* Determines date format */
 		    struct tm *tmp = localtime(&t);
-		    sprintf(print_buf, "%4d-%02d-%02d",
+
+		    static char *date_formats[] = {
+			"%Y/%m/%d",			/* YYYY/MM/DD */
+			"%Y-%m-%d",			/* YYYY-MM-DD */
+			"%d/%m/%Y",			/* European style */
+			"%m/%d/%Y",			/* American style */
+			"%d/%m",
+			"%Y%m",
+			"%m%Y",
+			"%B %d, %Y",			/* Month, day, year */
+			"%d %B %Y",			/* Day, month, year */
+			"%b %d, %Y",			/* Mon, day, year */
+			"%d %b %Y",			/* Day, mon, year */
+			NULL
+		    };
+
+#ifdef	HAVE_STRFTIME
+		    (void)strftime(print_buf, sizeof(print_buf),
+			date_formats[f], tmp);
+#else
+		    sprintf(print_buf,
+			"%04d/%02d/%02d",
 			tmp->tm_year + 1900,
 			tmp->tm_mon + 1,
 			tmp->tm_mday);
+#endif
 		    return print_buf;
 		}
 #endif
+
+	case FMT_USR:
 	  return pr_int (cp->cell_int, &u[p], u[p].prec);
 
 	case FMT_GEN:
@@ -733,18 +727,10 @@ adjust_prc (char *oldp, CELL * cp, int width, int smallwid, int just)
   char *eptr;
   int len;
 
-#ifdef	NEW_CELL_FLAGS
   fmt = GET_FORMAT (cp);
-#else
-  fmt = GET_FMT (cp);
-#endif
   if (fmt == FMT_DEF)
     fmt = default_fmt;
-#ifdef	NEW_CELL_FLAGS
   prc = GET_PRECISION (cp);
-#else
-  prc = GET_PRC (fmt);
-#endif
   switch (fmt | PRC_FLT)
     {
     case FMT_GPH:

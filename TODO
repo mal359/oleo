@@ -1,5 +1,12 @@
 TODO's:
 
+* Add "date" and "time" formats, allow them to be input and allow
+  for arithmetic with them.
+	(done) Clean up cell.h's junk.
+	(done) Add FMT_DATE
+	(todo) check file I/O stuff against new date format
+	(todo) document FMT_DATE, the various date representations
+
 * Increase "X" friendliness.
  - Make a LessTif/Motif interface
 
@@ -8,16 +15,24 @@ TODO's:
   Currently @findex isn't supported, and @html is poorly supported.
 
 * Use GNU PlotUtils instead of GnuPlot.
+  This is being worked on : simple bar, pie, and XY charts are available.
   In the process, make the plotting user interface more transparent.
 
-* Add "date" and "time" formats, allow them to be input and allow
-  for arithmetic with them.
+* Make io_error_msg work right in Motif.
 
-Longer term TODO's :
+* Make 3 / 3 work right. Now it says it's infinity, not 1.
+
+
+
+
+
+
+
+Longer term or obsolete TODO's :
 
 * Import/Export Filters. (June 1/97 - JB)
  - Sylk may need fixing.
- - CSV would be nice
+ - CSV would be nice (update DB 10/2/1999: LIST format can do this)
  - DBII or DBIII is useful.
  - Fixed width.
 

@@ -1,8 +1,6 @@
 #ifndef CELLH
 #define CELLH
 
-#define	NEW_CELL_FLAGS
-
 /*	Copyright (C) 1990-1999, Free Software Foundation, Inc.
 
 This file is part of Oleo, the GNU Spreadsheet.
@@ -44,7 +42,6 @@ union vals
 struct cell
   {
     /* char *cell_string; */
-#ifdef	NEW_CELL_FLAGS
     struct cell_flags {
 	unsigned int	cell_unused:	1;	/* Was 2 */
 	unsigned int	cell_lock:	2;
@@ -53,13 +50,6 @@ struct cell
 	unsigned int	cell_format:	4;	/* Was 3 */
 	unsigned int	cell_precision:	4;
     } cell_flags;
-#else
-/* cell_flags is a 16bit value.  These bits have the following values
-15   14   13   12 . 11   10    9    8  . 7    6    5    4  . 3    2    1    0 .
- Unused | --Lock- | ----Type---- | Justify  | - Format --  | --- Precision ---
- */
-    short cell_flags;
-#endif
     struct font_memo * cell_font;
     struct ref_fm *cell_refs_from;
     struct ref_to *cell_refs_to;
@@ -102,8 +92,6 @@ typedef struct cell CELL;
 #define cell_bol	c_z.c_i
 #define cell_err	c_z.c_i
 
-#ifdef	NEW_CELL_FLAGS
-
 #define	GET_LCK(p)	((p)->cell_flags.cell_lock)
 #define SET_LCK(p,x)	((p)->cell_flags.cell_lock = (x))
 
@@ -141,79 +129,23 @@ typedef struct cell CELL;
 // #define SET_FMT(p,x)	((p)->cell_flags &= ~0x007F,(p)->cell_flags|=(x))
 
 #define GET_PRECISION(p)	((p)->cell_flags.cell_precision)
+#define SET_PRECISION(p,x)	((p)->cell_flags.cell_precision = (x))
 
 #define PRC_FLT	0x0F	/* What is this ??? */
 
-#define FMT_DEF 0	/* Default */
-#define FMT_HID 1	/* Hidden */
-#define FMT_GPH 2	/* Graph */
-#define FMT_DOL 3	/* Dollar */
-#define FMT_CMA 4	/* Comma */
-#define FMT_PCT 5	/* Percent */
-#define FMT_USR 6	/* User defined */
-#define FMT_FXT 7
-#define FMT_EXP 8
-#define FMT_GEN 9
+#define FMT_DEF		0	/* Default */
+#define FMT_HID		1	/* Hidden */
+#define FMT_GPH		2	/* Graph */
+#define FMT_DOL		3	/* Dollar */
+#define FMT_CMA		4	/* Comma */
+#define FMT_PCT		5	/* Percent */
+#define FMT_USR		6	/* User defined */
+#define FMT_FXT		7
+#define FMT_EXP		8
+#define FMT_GEN		9
+#define	FMT_DATE	10	/* Date */
 
 #define FMT_MAX 15
-
-#else	/* NEW_CELL_FLAGS */
-/* cell_flags is a 16bit value.  These bits have the following values
-15   14   13   12 . 11   10    9    8  . 7    6    5    4  . 3    2    1    0 .
- Unused | --Lock- | ----Type---- | Justify  | - Format --  | --- Precision ---
- */
-
-#define GET_LCK(p)	((p)->cell_flags & 0x3000)
-#define SET_LCK(p,x)	(((p)->cell_flags &= ~0x3000),(p)->cell_flags |= x)
-
-#define LCK_DEF		(0x0000)
-#define LCK_UNL		(0x1000)
-#define LCK_LCK		(0x2000)
-
-/* The type of a cell, or of a eval_expression() value */
-#define GET_TYP(p)	((p)->cell_flags & 0x0E00)
-#define SET_TYP(p,x)	((p)->cell_flags &= ~0x0E00,(p)->cell_flags|=(x))
-
-#define TYP_FLT		0x0200	/* Float */
-#define TYP_INT		0x0400	/* Integer */
-#define TYP_STR		0x0600	/* String */
-#define TYP_BOL		0x0800	/* Boolean */
-#define TYP_ERR		0x0A00	/* Error */
-
-#define	TYP_DATE	0x0C00	/* Date/time, experimental */
-
-#define TYP_RNG 0x0E00 /* This for the expression evaluator:
-			  NO cell should be this type */
-
-#define GET_JST(p)	((p)->cell_flags & 0x0180)
-#define SET_JST(p,x)	((p)->cell_flags &= ~0x0180,(p)->cell_flags|=(x))
-#define JST_DEF	0x0000
-#define JST_LFT 0x0100
-#define JST_RGT 0x0080
-#define JST_CNT 0x0180
-
-/*
- * Actually get/set both Format *and* precision
- */
-#define GET_FMT(p)	((p)->cell_flags & 0x007F)
-#define SET_FMT(p,x)	((p)->cell_flags &= ~0x007F,(p)->cell_flags|=(x))
-#define GET_PRC(p)	((p)&0x0F)
-#define PRC_FLT	0x0F
-
-#define FMT_DEF 0x0000	/* Default */
-#define FMT_HID 0x000E	/* Hidden */
-#define FMT_GPH 0x000F	/* Graph */
-#define FMT_DOL 0x001F	/* Dollar */
-#define FMT_CMA 0x002F	/* Comma */
-#define FMT_PCT 0x003F	/* Percent */
-#define FMT_USR 0x004F	/* User defined */
-#define FMT_FXT 0x005F
-#define FMT_EXP 0x006F
-#define FMT_GEN 0x007F
-
-#define FMT_MAX 0x007F
-
-#endif	/* NEW_CELL_FLAGS */
 
 /* README README README
  *

@@ -261,7 +261,7 @@ dnl
 dnl The link_x variable should be fit to put on the application's
 dnl link line in the Makefile.
 dnl
-dnl Oleo CVS $Id: aclocal.m4,v 1.26 1999/02/10 22:23:04 danny Exp $
+dnl Oleo CVS $Id: aclocal.m4,v 1.27 1999/02/11 23:09:18 danny Exp $
 dnl
 AC_DEFUN(AC_LINK_X,
 [if test "$with_x" = "yes"; then
@@ -285,7 +285,7 @@ dnl
 dnl The link_motif and include_motif variables should be fit to put on
 dnl your application's link line in your Makefile.
 dnl
-dnl Oleo CVS $Id: aclocal.m4,v 1.26 1999/02/10 22:23:04 danny Exp $
+dnl Oleo CVS $Id: aclocal.m4,v 1.27 1999/02/11 23:09:18 danny Exp $
 dnl
 AC_DEFUN(AC_FIND_MOTIF,
 [

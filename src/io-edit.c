@@ -15,8 +15,6 @@ along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 
-
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -41,7 +39,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "lists.h"
 #include "regions.h"
 
-
 /* Shorthand */
 
 #define the_cursor		the_cmd_arg.cursor
@@ -49,8 +46,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #define the_do_prompt		the_cmd_arg.do_prompt
 #define the_is_set		the_cmd_arg.is_set
 #define the_overwrite		the_cmd_arg.overwrite
-
-
 
 /* Editting primitives
  * 
@@ -404,8 +399,6 @@ put_string (char * str, int len)
   (the_overwrite ? over_string : insert_string) (str, len);
 }
 
-
-
 /* Higher Level editting commands. */
 
 void
@@ -544,7 +537,6 @@ insert_rel_ref(void)
 		  break;
 		}
 	    }
-	  
 	  else
 	    {
 	      switch (((curow == setrow) << 1) + (cucol == setcol))
@@ -647,11 +639,7 @@ insert_cell_attr (struct rng * rng, char * attr)
 	set_line (&line, "def");
       else
 	{
-#ifdef	NEW_CELL_FLAGS
 	  int fmt = GET_FORMAT (cp);
-#else
-	  int fmt = GET_FMT (cp);
-#endif
 	  set_line (&line, fmt_to_str (fmt));
 	}
     }
