@@ -2231,7 +2231,9 @@ push_cell (CELLREF row, CELLREF col)
   CELL *cp;
   struct ref_fm *rf;
 
-  if (cell_buffer.push_to_here + 1 == cell_buffer.pop_frm_here || (cell_buffer.pop_frm_here == cell_buffer.buf && cell_buffer.push_to_here == cell_buffer.buf + (cell_buffer.size - 1)))
+  if (cell_buffer.push_to_here + 1 == cell_buffer.pop_frm_here
+     || (cell_buffer.pop_frm_here == cell_buffer.buf
+         && cell_buffer.push_to_here == cell_buffer.buf + (cell_buffer.size - 1)))
     {
       int f, t, from_num;
 
@@ -2240,7 +2242,8 @@ push_cell (CELLREF row, CELLREF col)
       from_num = cell_buffer.size - f;
 
       cell_buffer.size FIFO_INC;
-      cell_buffer.buf = (struct pos *) ck_realloc ((VOIDSTAR) cell_buffer.buf, cell_buffer.size * sizeof (struct pos));
+      cell_buffer.buf = (struct pos *) ck_realloc((VOIDSTAR) cell_buffer.buf,
+					cell_buffer.size * sizeof (struct pos));
       if (t == 0)
 	{
 	  cell_buffer.push_to_here = cell_buffer.buf + f + from_num;
@@ -2337,6 +2340,10 @@ eval_next_cell (void)
   cell_buffer.pop_frm_here++;
   if (cell_buffer.pop_frm_here == cell_buffer.buf + cell_buffer.size)
     cell_buffer.pop_frm_here = cell_buffer.buf;
+
+#if 0
+  fprintf(stderr, "eval_next_cell: %d.%d\n", cur_row, cur_col);
+#endif
 
   cp = find_cell (cur_row, cur_col);
   if (cp)

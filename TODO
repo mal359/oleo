@@ -6,6 +6,7 @@ TODO's:
 	(done) Add FMT_DATE
 	(done) check file I/O stuff against new date format
 	(todo) document FMT_DATE, the various date representations
+	(todo) allow for date input
 
 * Increase "X" friendliness.
  - Make a LessTif/Motif interface

@@ -14,7 +14,6 @@ You should have received a copy of the GNU General Public License
 along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -63,8 +62,6 @@ int n_bound_macros;
 struct rng *bound_macros;
 int bound_macro_vec;
 
-
-
 /* Flow of control centers around a select loop.  These are the 
  * fd's selected on.
  */
@@ -90,8 +87,6 @@ int ioerror = 0;
 /* The current stream from which commands are being read. */
 struct input_stream * the_input_stream = 0;
 
-
-
 
 static struct input_stream *
 default_input_stream (void)
@@ -185,7 +180,6 @@ pop_input_stream (void)
       return;
     }
 }
-
 
 /* Macros 
  * These are the commands the user has to interact with macros.
@@ -329,8 +323,6 @@ store_last_macro (struct rng * rng)
   z.c_s = (char *)last_macro;
   set_new_value (rng->lr, rng->lc, TYP_STR, &z);
 }
-
-
 
 /* Scheduling 
  *
@@ -573,8 +565,6 @@ fini:
   return ch;
 }
 
-
-
 
 /*****************************************************************
  * 
@@ -832,8 +822,6 @@ recover_from_error (void)
     }
 }
 
-
-
 /* When we begin editting a new argument, this function sets up the
  * appropriate keymap, and then resets the state of the editting commands.
  *
@@ -930,8 +918,6 @@ exit_minibuffer (void)
 }
 
 
-
-
 void
 setn_arg_text (struct command_arg * arg, char * text, int len)
 {
@@ -1002,7 +988,6 @@ command_loop (int prefix, int iscmd)
       /* Reset the keystate. */
       cur_keymap = the_cmd_frame->top_keymap;
 
-
       /* Some commands are prefix commands: they effect the 
        * user's state without beginnging a new command cyle.
        * Those commands return here:
@@ -1183,7 +1168,6 @@ command_loop (int prefix, int iscmd)
 	    }
 	}
 
-
       /* Now the next command to begin has been read from a macro
        * or the keyboard.
        */
@@ -1267,8 +1251,6 @@ command_loop (int prefix, int iscmd)
 	  goto new_cycle;
 	}
       
-
-
       /* The next step is to gather the arguments with which to call
        * the function interactively.
        */
@@ -1770,7 +1752,7 @@ command_loop (int prefix, int iscmd)
       for (cur_arg = 0; cur_arg < cmd_argc; ++cur_arg)
 	if (the_cmd_arg.do_prompt && !the_cmd_arg.is_set)
 	  goto resume_getting_arguments;
-
+
       /* If this point is reached, call the interactive function,
        * destroy it's frame, and restart the cycle.
        */
@@ -2005,7 +1987,14 @@ io_error_msg (char *str,...)
 #ifdef	HAVE_MOTIF
   extern int using_motif;
 
-  if (using_motif)
+  if (using_motif) {
+	va_start (foo, str);
+	vsprintf (buf, str, foo);
+
+	recover_from_error ();
+	MessageAppend(1, buf);
+	longjmp (error_exception, 1);
+  } else
 #endif
   {
   /*
@@ -2019,6 +2008,7 @@ io_error_msg (char *str,...)
   vsprintf (buf, str, foo);
   sprintf (buf2, "display-msg %s", buf);
   recover_from_error ();
+
   if (display_opened)
     execute_command (buf2);
   else
@@ -2035,10 +2025,23 @@ io_info_msg (char *str,...)
   char buf[1000];
   char buf2[1000];
 
+#ifdef	HAVE_MOTIF
+  extern int using_motif;
+#endif
+
   va_start (foo, str);
   vsprintf (buf, str, foo);
-  sprintf (buf2, "display-msg %s", buf);
-  execute_command (buf2);
+
+#ifdef	HAVE_MOTIF
+  if (using_motif) {
+	MessageAppend(1, buf);
+  }
+  else
+#endif
+  {
+    sprintf (buf2, "display-msg %s", buf);
+    execute_command (buf2);
+  }
 }
 
 
@@ -2121,8 +2124,6 @@ expand_prompt (char * str)
 }
 
 
-
-
 /* Info commands */
 
 void
@@ -2179,8 +2180,6 @@ page_info (int rep)
 void
 view_info (char * name, int ignore)
 {}
-
-
 
 /* The C part of this function is uninteresting.  The interesting part
  * is in defun.h.

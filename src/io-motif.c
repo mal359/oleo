@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.26 1999/03/02 20:04:03 danny Exp $
+ *  $Id: io-motif.c,v 1.27 1999/03/04 10:02:36 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.26 1999/03/02 20:04:03 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.27 1999/03/04 10:02:36 danny Exp $";
 
 #include "config.h"
 
@@ -96,6 +96,8 @@ Widget	FormatD = NULL;
 Widget	PrintDialog = NULL;
 Widget	DefaultFileDialog, DefaultFileShell = NULL;
 
+static char	*early_msg_text = NULL;
+
 static Widget	w;
 
 /* Fallback resources, application resources */
@@ -157,12 +159,29 @@ void MessageAppend(Boolean beep, char *fmt, ...)
 	va_list		ap;
 	static char	s[256];
 
-	if (msgtext == NULL || fmt == NULL)
+	if (fmt == NULL)
 		return;
 
 	va_start(ap, fmt);
 	vsprintf(s, fmt, ap);
 	va_end(ap);
+
+	if (msgtext == NULL) {
+#if 0
+		fprintf(stderr, "MessageAppend: Motif not initialised yet, msg '%s'\n", s);
+#endif
+		if (early_msg_text == NULL) {
+			early_msg_text = strdup(s);
+		} else {
+			int l = strlen(early_msg_text) + strlen(s) + 1;
+			char *x = malloc(l);
+			strcpy(x, early_msg_text);
+			strcat(x, s);
+			free(early_msg_text);
+			early_msg_text = x;
+		}
+		return;
+	}
 
 	if ((i = strlen(s)) == 0)
 		return;
@@ -848,19 +867,10 @@ void ConfigureGraph(Widget w, XtPointer client, XtPointer call)
 /*
  * Plotutils
  */
-void PuShowGraph(Widget w, XtPointer client, XtPointer call)
+void PuShowPie(Widget w, XtPointer client, XtPointer call)
 {
 #ifdef	HAVE_LIBPLOT
 	PuPieChart("X", stdout);
-#endif
-}
-
-void PuPrintGraph(Widget w, XtPointer client, XtPointer call)
-{
-#ifdef	HAVE_LIBPLOT
-	FILE	*x = fopen("x.ps", "w");
-	PuPieChart("ps", x);
-	fclose(x);
 #endif
 }
 
@@ -875,6 +885,20 @@ void PuShowXYChart(Widget w, XtPointer client, XtPointer call)
 {
 #ifdef	HAVE_LIBPLOT
 	PuXYChart("X", stdout, 0);
+#endif
+}
+
+/*
+ * Printing
+ *
+ * FIX ME
+ */
+void PuPrintPie(Widget w, XtPointer client, XtPointer call)
+{
+#ifdef	HAVE_LIBPLOT
+	FILE	*x = fopen("x.ps", "w");
+	PuPieChart("ps", x);
+	fclose(x);
 #endif
 }
 
@@ -2762,6 +2786,13 @@ GscBuildMainWindow(Widget parent)
 		NULL);
 	XtManageChild(msgtext);
 
+	if (early_msg_text) {
+		XmTextSetString(msgtext, early_msg_text);
+		free(early_msg_text);
+		early_msg_text = NULL;
+
+		XBell(XtDisplay(msgtext), 30);
+	}
 
 	/*
 	 * Menu system contents :
@@ -2936,15 +2967,11 @@ GscBuildMainWindow(Widget parent)
 	/* GNU Plotutils */
 	w = XtVaCreateManagedWidget("pulabel", xmLabelGadgetClass, graphmenu,
 		NULL);
-	w = XtVaCreateManagedWidget("pushow", xmPushButtonGadgetClass,
+	w = XtVaCreateManagedWidget("pushowpie", xmPushButtonGadgetClass,
 		graphmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, PuShowGraph, NULL);
+	XtAddCallback(w, XmNactivateCallback, PuShowPie, NULL);
 
-	w = XtVaCreateManagedWidget("puprint", xmPushButtonGadgetClass,
-		graphmenu,
-		NULL);
-	XtAddCallback(w, XmNactivateCallback, PuPrintGraph, NULL);
 	w = XtVaCreateManagedWidget("pushowbar", xmPushButtonGadgetClass,
 		graphmenu,
 		NULL);
@@ -2953,6 +2980,10 @@ GscBuildMainWindow(Widget parent)
 		graphmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, PuShowXYChart, NULL);
+	w = XtVaCreateManagedWidget("puprintpie", xmPushButtonGadgetClass,
+		graphmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, PuPrintPie, NULL);
 #endif
 
 

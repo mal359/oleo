@@ -504,8 +504,12 @@ recalculate (int all)
       all.lc = MIN_COL;
       all.hc = MAX_COL;
       find_cells_in_range (&all);
-      while (next_row_col_in_range (&row, &col))
+      while (next_row_col_in_range (&row, &col)) {
+#if 0
+	fprintf(stderr, "Recalculate cell %d.%d\n", row, col);
+#endif
 	push_cell (row, col);
+      }
     }
   while (eval_next_cell ())
     ;

@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.2 1999/02/04 22:32:50 danny Exp $
+ *  $Id: fallback.c,v 1.3 1999/03/04 10:02:35 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -97,10 +97,10 @@ char *fallback[] = {
 	"*show.labelString:		Show Graph",
 	"*graphmenu.print.labelString:	Print Graph",
 	"*graphmenu.pulabel.labelString:	GNU Plotutils",
-	"*graphmenu.pushow.labelString:		Show Pie Chart",
-	"*graphmenu.puprint.labelString:	Print Pie Chart",
+	"*graphmenu.pushowpie.labelString:		Show Pie Chart",
 	"*graphmenu.pushowbar.labelString:	Show Bar Chart",
 	"*graphmenu.pushowxy.labelString:	Show XY Chart",
+	"*graphmenu.puprintpie.labelString:	Print Pie Chart",
 /* Help */
 	"*helpcascade.labelString:	Help",
 	"*about.labelString:		About Oleo",
@@ -225,7 +225,9 @@ char *fallback[] = {
 	"*formatsFrame*formatsL.labelString:	Cell Range",
 	"*formatsFrame*precisionL.labelString:	Precision",
 /* Quit Dialog */
-	"quitMB_popup.title:			Quit Oleo ?",
+	"*quitMB_popup.title:			Quit Oleo ?",
+	"*quitMB*OK.labelString:		Quit",
+	"*quitMB*Cancel.labelString:	Don't quit",
 /* End */
 	NULL
 };

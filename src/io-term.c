@@ -750,12 +750,14 @@ main (int argc, char **argv)
 	if (opt == EOF)
 		break;
 
+#if 0
 	if (opt)
 		fprintf(stderr, PACKAGE " option %c\n", opt);
 	else {
 		fprintf(stderr, PACKAGE " optind %d option %s strange ...\n",
 			optind, argv[optind]);
 	}
+#endif
 
 	switch (opt)
 	  {
@@ -795,14 +797,18 @@ main (int argc, char **argv)
 	    list_set_separator(option_separator);
 	    break;
 	  case 'F':
+#if 0
 	fprintf(stderr, "F: optind %d argv[optind] '%s' optopt %d %c\n",
 		optind, argv[optind], optopt, optopt);
+#endif
 	    option_format = argv[optind];
 	    file_set_default_format(option_format);
 	    optind++;
 	    break;
 	  case '-':
+#if 0
 		fprintf(stderr, "Filter mode\n");
+#endif
 		option_filter = 1;
 		break;
 	  }
@@ -902,7 +908,7 @@ main (int argc, char **argv)
 
   if (setjmp (error_exception))
   {
-	  fprintf (stderr, "Error in the builtin init scripts (a bug!).");
+	  fprintf (stderr, _("Error in the builtin init scripts (a bug!).\n"));
 	  exit (69);
   }
   else
@@ -953,7 +959,9 @@ main (int argc, char **argv)
       {
 	if (setjmp (error_exception))
 	  {
-	    fprintf (stderr, "   error occured in init file %s near line %d.",
+	    fprintf (stderr, _("   error occured in init file %s near line %d."),
+		     init_file_names [x], sneaky_linec);
+	    io_info_msg(_("   error occured in init file %s near line %d."),
 		     init_file_names [x], sneaky_linec);
 	  }
 	else
@@ -971,15 +979,18 @@ main (int argc, char **argv)
       /* fixme: record file name */
 
     if ((fp = fopen (argv[optind], "r"))) {
-	  if (setjmp (error_exception))
-	    fprintf (stderr, "  error occured reading %s", argv[optind]);
-	  else
+	  if (setjmp (error_exception)) {
+	    fprintf (stderr, _(", error occured reading '%s'\n"), argv[optind]);
+	    io_info_msg(_(", error occured reading '%s'\n"), argv[optind]);
+	  } else
 	    read_file_and_run_hooks (fp, 0, argv[optind]);
 	  fclose (fp);
 	  command_line_file = 1;
 	  file_set_current(argv[optind]);
-    } else
-	fprintf (stderr, "Can't open %s: %s", argv[optind], err_msg ());
+    } else {
+	fprintf (stderr, _("Can't open %s: %s\n"), argv[optind], err_msg ());
+	io_info_msg(_("Can't open %s: %s\n"), argv[optind], err_msg ());
+    }
 
     optind++;
   }

@@ -18,33 +18,35 @@ Oleo is GNU's spreadsheet.
 Oleo has not been actively maintained in quite a while.
 <B>This has changed !</B>
 <P>
-The current release of oleo is still 1.6,
+The current release of oleo is still 1.6
+(<A HREF="ftp://ftp.gnu.org/pub/gnu/oleo-1.6.tar.gz">oleo-1.6.tar.gz</A>),
 but we're working on an intermediate release with lots of bugfixes
 and some exciting new features to arrive shortly.
 <P>
 Those who want to have a look at intermediate versions,
 take a look at
 <A HREF="ftp://alpha.gnu.org/pub/gnu/oleo">ftp://alpha.gnu.org/pub/gnu/oleo</A>.
+
+The latest and greatest release currently available is 
+<A HREF="ftp://alpha.gnu.org/pub/gnu/oleo/oleo-1.6.14.tar.gz">oleo-1.6.14</A> 
+(available from March 1999).
 <P>
 Changes w.r.t. oleo 1.6 :
 <UL>
 <LI> for better portability, the build is done with autoconf and automake
-<LI> oleo is now internationalised
+<LI> oleo is now internationalised (i18n)
 <LI> updated documentation
 <LI> ANSI C code (removed K&amp;R stuff)
-<LI>
-<LI>
-<LI>
+<LI> filter mode (read file from stdin, save to stdout)
 </UL>
 <P>
-Stuff that we're working on :
+Stuff that we're working on (check this out - these should all work) :
 <UL>
-<LI> GUI interface (someone's working on a Motif/LessTif interface,
-     someone else is working on a GTK interface)
-<LI> GNU plotutils graphics
-<LI> SciPlot graphics (Motif only)
-<LI>
-<LI>
+<LI> Motif/<A HREF="http://www.lesstif.org">LessTif</A> interface,
+     based on the <A HREF="http://xbae.syd.net.au">Xbae</A>Matrix widget
+<LI> GNU plotutils graphics (only reachable from Motif/LessTif interface)
+<LI> SciPlot graphics (Motif/LessTif only)
+<LI> cleaned up internals
 </UL>
 <P>
 Oleo features :
@@ -53,11 +55,9 @@ Oleo features :
 <LI> spreadsheets of up to 65536 rows and columns
 <LI> supports (simple) graphics
 <LI> runs in character mode as well as in a GUI
-<LI>
-<LI>
 </UL>
 <P>
-These mailing lists concern oleo :
+This mailing list concern oleo :
 <UL>
 <LI> <I>bug-oleo@gnu.org</I> for reporting (and reading about) bugs in oleo.
      <BR>
@@ -65,21 +65,13 @@ These mailing lists concern oleo :
      <BR>
      <A HREF="mailto:bug-oleo-request@gnu.org">subscribe to bug-oleo
        (be sure to put the word subscribe in your subject line)</A>
-<!--
-<LI> <I>help-oleo@gnu.org</I> for asking and providing help in how to use oleo.
-     <BR>
-     <A HREF="mailto:help-oleo@gnu.org">send mail to help-oleo@gnu.org</A>
-     <BR>
-     <A HREF="mailto:help-oleo-request@gnu.org">subscribe to help-oleo
-       (be sure to put the word unsubscribe in your subject line)</A>
-  -->
 </UL>
 <P>
-The mailing lists maintain <B>archives</B> of the messages sent to it.
+The GNU mailing lists maintain <B>archives</B> of the messages sent to it.
 The archives can be queried by E-mails whose subject starts with
 the word <I>archive</I>.
 By sending a message with subject <I>archive help</I> to
-<A HREF="mailto:help-oleo-request@gnu.org">help-oleo-request@gnu.org</A>
+<A HREF="mailto:bug-oleo-request@gnu.org">bug-oleo-request@gnu.org</A>
 you will ask the server to send you a message with instructions for
 working with the archive server.
 <P>
@@ -87,38 +79,40 @@ We recommend that you also send a message with the subject
 <I>archive ls latest</I>
 as "latest" is the name of a directory.
 <P>
-
+Please note that LessTif is a freely available replacement for OSF/Motif.
+LessTif is licensed by the GNU LGPL and can be obtained from
+<A HREF="http://www.lesstif.org">www.lesstif.org</A>.
 
 <HR>
 
 Return to <A HREF="/home.html">GNU's home page</A>.
 
-<P>
+<br>
 Please send FSF &amp; GNU inquiries &amp; questions to
 
 <A HREF="mailto:gnu@gnu.org"><EM>gnu@gnu.org</EM></A>.
 There are also <A HREF="/home.html#ContactInfo">other ways to contact</A> the FSF.
 
-<P>
+<br>
 Please send comments on these web pages to
 <A HREF="mailto:webmasters@www.gnu.org"><EM>webmasters@www.gnu.org</EM></A>,
 send other questions to
 <A HREF="mailto:gnu@gnu.org"><EM>gnu@gnu.org</EM></A>.
 
-<P>
+<br>
 Copyright (C) 1998 Free Software Foundation, Inc.,
 59 Temple Place - Suite 330, Boston, MA  02111,  USA
 
-<P>
+<br>
 Verbatim copying and distribution is permitted
 in any medium, provided this notice is preserved.
 
 <P>
 Updated:
 <!-- hhmts start -->
-13 Aug 1998 kwzh
+3 March 1999 danny
 <!-- hhmts end -->
-CVS identifier : $Id: oleo_web.html,v 1.3 1998/08/27 21:15:14 danny Exp $
+<I>(CVS identifier : $Id: oleo_web.html,v 1.4 1999/03/04 10:02:30 danny Exp $)</I>
 </P>
 <HR>
 </BODY>

@@ -661,15 +661,26 @@ err_msg (void)
 {
   int n;
   static char buf[80];
+  char *p;
 
   n = errno;
 
-#if 0
+#ifdef	HAVE_STRERROR
+  p = strerror(n);
+  if (p)
+	strcpy(buf, p);
+  else
+	sprintf (buf, "Unknown error code %d (%#x)", n, n);
+#else
+#if 1
+  /* This was #if-fed away. Why ? */
   if (n < sys_nerr);
-     return sys_errlist[n]; /* FIXME */
-#endif /* 0 */
+     return sys_errlist[n];
+#endif
 
   sprintf (buf, "Unknown error code %d (%#x)", n, n);
+#endif	/* HAVE_STRERROR */
+
   return buf;
 }
 

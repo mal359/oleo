@@ -1,4 +1,15 @@
 
+Wed  3 Mar 21:56:22 1999 , Danny Backx
+	* Release 1.6.14.
+	* The err_msg() function didn't attempt to translate errno value into a
+	  string but just said "unknown error". Added code to use strerror
+	  if available or sys_errlist[] otherwise.
+	* Call io_info_msg also when printing to stderr; this gets oleo startup
+	  error messages in the Motif status area as well.
+	* Added examples/ directory and some files in it.
+	* Added hooks so io_error_msg does sensible things with Motif, even before
+	  Motif is initialised.
+
 Tue  2 Mar 20:59:24 1999, Danny Backx
 	* Fix both io-motif.c and plot.c so the XY and bar charts now do sensible
 	  things, including display of multiple data sets.

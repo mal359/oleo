@@ -1453,6 +1453,22 @@ update_cell(CELL *cell)
       push_refs (cell->cell_refs_from);
       return;
     }
+#if 0
+  /* Danny */ fprintf(stderr, "update_cell cycle %d, cell %d.%d was cycle %d\n",
+	current_cycle, 0, 0, cell->cell_cycle);
+#endif
+#if 0
+{ int i;
+  fprintf(stderr, "update_cell -> ");
+  if (cell->cell_refs_from) {
+    for (i=0; i<cell->cell_refs_from->refs_used; i++)
+      fprintf(stderr, "%d.%d ", cell->cell_refs_from->fm_refs[i].ref_row,
+	    cell->cell_refs_from->fm_refs[i].ref_col);
+    fprintf(stderr, "\n");
+  }
+}
+#endif
+
   cell->cell_cycle = current_cycle;
 
   if (new->type != GET_TYP (cell))
