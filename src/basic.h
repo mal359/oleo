@@ -39,6 +39,8 @@ extern char * motion_name[9];
 extern enum motion_magic complementary_motion[9];
 extern enum motion_magic opposite_motion[9];
 
+extern int run_load_hooks;
+
 #ifdef __STDC__
 extern void noop (void);
 extern void insert_row (int repeat);

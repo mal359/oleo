@@ -37,6 +37,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "io-edit.h"
 #include "eval.h"
 #include "byte-compile.h"
+#include "decompile.h"
 
 
 /* Used by motion commands. */
@@ -1341,7 +1342,7 @@ read_cmds_cmd (FILE *fp)
 }
 
 
-static int run_load_hooks = 1;
+int run_load_hooks = 1;
 static char load_hooks_string[] = "load_hooks";
 
 void

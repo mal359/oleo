@@ -32,6 +32,7 @@
 #include "lists.h"
 #include "io-term.h"
 #include "cmd.h"
+#include "sylk.h"
 
 
 /* Routines for formatting cell values */
@@ -1247,4 +1248,28 @@ says_default (char *str)
   while (isspace (*str))
     ++str;
   return !*str;
+}
+
+void
+write_file_generic(FILE *fp, struct rng *rng, char *format)
+{
+	if (!stricmp ("oleo", format)) {
+		oleo_write_file(fp, rng);
+	} else if (!stricmp ("sylk", format)) {
+		sylk_a0 = 1;
+		sylk_write_file(fp, rng);
+	} else if (!stricmp ("sylk-noa0", format)) {
+		sylk_a0 = 0;
+		sylk_write_file(fp, rng);
+	} else if (!stricmp ("sc", format)) {
+		sc_write_file(fp, rng);
+	} else if (!stricmp ("panic", format)) {
+		panic_write_file(fp, rng);
+	} else if (!stricmp ("list", format)) {
+		list_write_file(fp, rng);
+	} else {
+#if 0
+		io_error_msg ("Unknown file format %s", ptr);
+#endif
+	}
 }

@@ -2,6 +2,10 @@
 @chapter Options
 @cindex Options
 
+@html
+<A NAME="HelpOptions">
+@end html
+
 Oleo has various options.  They can be set as a default in the
 @file{.oleorc} file, or using the command @code{M-x set-option}.
 To see all the current options, type @code{C-h o}.

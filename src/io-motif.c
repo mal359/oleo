@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.4 1998/08/28 00:13:47 danny Exp $
+ *  $Id: io-motif.c,v 1.5 1998/08/28 15:30:44 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.4 1998/08/28 00:13:47 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.5 1998/08/28 15:30:44 danny Exp $";
 
 #include "config.h"
 
@@ -63,6 +63,7 @@ static char rcsid[] = "$Id: io-motif.c,v 1.4 1998/08/28 00:13:47 danny Exp $";
 #include "input.h"
 #include "info.h"
 #include "eval.h"
+#include "basic.h"
 
 #include "io-motif.h"		/* To get warnings when inconsistent */
 
@@ -72,7 +73,8 @@ static char rcsid[] = "$Id: io-motif.c,v 1.4 1998/08/28 00:13:47 danny Exp $";
 
 XtAppContext app;
 Widget	toplevel, splash, SplashShell;
-Widget	mw, mat, mb, filemenu, editmenu, optionsmenu, helpmenu, graphmenu;
+Widget	mw, mat, mb, filemenu, editmenu, stylemenu,
+	optionsmenu, helpmenu, graphmenu;
 Widget	msgtext = NULL, statustf = NULL, formulatf = NULL;
 Widget	fsd = NULL;
 Widget	hd, html = NULL, gs;
@@ -116,13 +118,20 @@ void Debug(char *src, char *fmt, ...)
 	}
 }
 
-void MessageAppend(char *s, Boolean beep)
+void MessageAppend(Boolean beep, char *fmt, ...)
 {
 	XmTextPosition	pos;
 	int		i;
+	va_list		ap;
+	static char	s[256];
 
-	if (msgtext == NULL || s == NULL)
+	if (msgtext == NULL || fmt == NULL)
 		return;
+
+	va_start(ap, fmt);
+	vsprintf(s, fmt, ap);
+	va_end(ap);
+
 	if ((i = strlen(s)) == 0)
 		return;
 
@@ -138,6 +147,19 @@ void MessageAppend(char *s, Boolean beep)
 
 	if (beep)
 		XBell(XtDisplay(msgtext), 30);
+}
+
+void none(Widget w, XtPointer client, XtPointer call)
+{
+	XmString	xms;
+	char		*s = NULL;
+
+	XtVaGetValues(w, XmNlabelString, &xms, NULL);
+	if (XmStringGetLtoR(xms, XmFONTLIST_DEFAULT_TAG, &s)) {
+		MessageAppend(False, "%s: not implemented yet\n", s);
+		XtFree(s);
+	}
+	XmStringFree(xms);
 }
 
 void PrintDebug(Widget w, XtPointer client, XtPointer call)
@@ -270,7 +292,7 @@ void DoGraph(Widget w, XtPointer client, XtPointer call)
 		_("Plotting X in %d [%d.%d], A in %d [%d.%d]\n"),
 		rngx.lc, rngx.lr, rngx.hr,
 		rnga.lc, rnga.lr, rnga.hr);
-	MessageAppend(t, False);
+	MessageAppend(False, t);
 
 	sprintf(t,
 		_("Graph X [%s] A [%s]\n"),
@@ -352,7 +374,7 @@ void ConversionError(char *s, char *t)
 	sprintf(r,
 		_("Conversion error: cannot convert '%s' to a %s\n"),
 		s, t);
-	MessageAppend(r, True);
+	MessageAppend(True, r);
 	XtFree(r);
 }
 
@@ -370,11 +392,11 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 	XtVaGetValues(f, XmNuserData, &cw, NULL);
 
 	if (cw == NULL) {
-		MessageAppend(_("Cannot find XmNuserData\n"), True);
+		MessageAppend(True, _("Cannot find XmNuserData\n"));
 		return;
 	}
 
-	MessageAppend("ConfigureGraphOk\n", False);
+	MessageAppend(False, "ConfigureGraphOk\n");
 
 	p = s = XmTextFieldGetString(cw->x);
 	if ((r = parse_cell_or_range(&p, &rngx)) == 0)
@@ -435,19 +457,19 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 #endif
 
 	p = s = XmTextFieldGetString(cw->b);
-	MessageAppend(s, False);
+	MessageAppend(False, s);
 #ifdef	FREE_TF_STRING
 	XtFree(s);
 #endif
 
 	p = s = XmTextFieldGetString(cw->c);
-	MessageAppend(s, False);
+	MessageAppend(False, s);
 #ifdef	FREE_TF_STRING
 	XtFree(s);
 #endif
 
 	p = s = XmTextFieldGetString(cw->d);
-	MessageAppend(s, False);
+	MessageAppend(False, s);
 #ifdef	FREE_TF_STRING
 	XtFree(s);
 #endif
@@ -468,10 +490,10 @@ void ConfigureGraphReset(Widget f)
 	XtVaGetValues(f, XmNuserData, &cw, NULL);
 
 	if (cw == NULL) {
-		MessageAppend(_("Cannot find XmNuserData\n"), True);
+		MessageAppend(True, _("Cannot find XmNuserData\n"));
 		return;
 	}
-	MessageAppend("ConfigureGraphReset\n", False);
+	MessageAppend(False, "ConfigureGraphReset\n");
 
 	r = graph_get_data(0);
 	s = range_name(&r);
@@ -551,7 +573,7 @@ void LeaveCell(Widget w, XtPointer client, XtPointer call)
 	 */
 	r = new_value(cbp->row + 1, cbp->column + 1, cbp->value);
 	if (r) {
-		MessageAppend(r, True);
+		MessageAppend(True, r);
 		cbp->doit = False;	/* veto */
 	} else {
 		modified = 1;
@@ -634,7 +656,7 @@ void FormulaCB(Widget w, XtPointer client, XtPointer call)
 
 	r = new_value(curow, cucol, s);
 	if (r) {
-		MessageAppend(r, True);
+		MessageAppend(True, r);
 	} else
 		modified = 1;
 
@@ -674,6 +696,8 @@ void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 		/* Handle unsaved changes */
 	}
 
+	XbaeMatrixCancelEdit(mat, True);
+
 	fp = fopen(s, "r");
 	if (fp == NULL) {
 		/* handle error */
@@ -705,7 +729,7 @@ void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 	XtVaSetValues(toplevel, XmNiconName, t, NULL);
 
 	sprintf(t, _("Read file '%s'\n"), s);
-	MessageAppend(t, False);
+	MessageAppend(False, t);
 
 	XtFree(s);
 	XtFree(t);
@@ -790,7 +814,12 @@ void ReallySaveCB(Widget w, XtPointer client, XtPointer call)
 		/* handle error */
 		return;
 	}
+
+	/* Which file format ? */
+	write_file_generic(fp, 0, "oleo");
+#if 0
 	oleo_write_file(fp, 0);	/* How to handle more than one format ? */
+#endif
 	if (fclose(fp) != 0) {
 		/* handle error */
 		return;
@@ -799,7 +828,7 @@ void ReallySaveCB(Widget w, XtPointer client, XtPointer call)
 
 	t = XtMalloc(strlen(s) + 32);
 	sprintf(t, _("Saved file '%s'\n"), s);
-	MessageAppend(t, False);
+	MessageAppend(False, t);
 	XtFree(t);
 	XtFree(s);
 }
@@ -1029,7 +1058,7 @@ void ToggleA0(Widget w, XtPointer client, XtPointer call)
  ****************************************************************/
 void UndoCB(Widget w, XtPointer client, XtPointer call)
 {
-	MessageAppend("Not implemented\n", True);
+	none(w, client, call);
 }
 
 /****************************************************************
@@ -1050,17 +1079,17 @@ void UndoCB(Widget w, XtPointer client, XtPointer call)
  */
 void CopyCB(Widget w, XtPointer client, XtPointer call)
 {
-	MessageAppend("Not implemented\n", True);
+	none(w, client, call);
 }
 
 void CutCB(Widget w, XtPointer client, XtPointer call)
 {
-	MessageAppend("Not implemented\n", True);
+	none(w, client, call);
 }
 
 void PasteCB(Widget w, XtPointer client, XtPointer call)
 {
-	MessageAppend("Not implemented\n", True);
+	none(w, client, call);
 }
 
 /****************************************************************
@@ -1169,6 +1198,13 @@ GscBuildMainWindow(Widget parent)
 			XmNsubMenuId,	editmenu,
 		NULL);
 
+	stylemenu = XmCreatePulldownMenu(mb, "stylemenu", NULL, 0);
+	XtManageChild(stylemenu);
+
+	XtVaCreateManagedWidget("stylecascade", xmCascadeButtonGadgetClass, mb,
+			XmNsubMenuId,	stylemenu,
+		NULL);
+
 	optionsmenu = XmCreatePulldownMenu(mb, "optionsmenu", NULL, 0);
 	XtManageChild(optionsmenu);
 
@@ -1266,7 +1302,7 @@ GscBuildMainWindow(Widget parent)
 
 	w = XtVaCreateManagedWidget("close", xmPushButtonGadgetClass, filemenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, versionCB, NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
 
 	w = XtVaCreateManagedWidget("quit", xmPushButtonGadgetClass, filemenu,
 		NULL);
@@ -1278,6 +1314,9 @@ GscBuildMainWindow(Widget parent)
 	w = XtVaCreateManagedWidget("undo", xmPushButtonGadgetClass, editmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, UndoCB, NULL);
+
+	XtVaCreateManagedWidget("sep1", xmSeparatorGadgetClass, editmenu,
+		NULL);
 
 	w = XtVaCreateManagedWidget("copy", xmPushButtonGadgetClass, editmenu,
 		NULL);
@@ -1291,16 +1330,117 @@ GscBuildMainWindow(Widget parent)
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, PasteCB, NULL);
 
+	XtVaCreateManagedWidget("sep2", xmSeparatorGadgetClass, editmenu,
+		NULL);
+
+	w = XtVaCreateManagedWidget("sort", xmPushButtonGadgetClass, editmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("copyvalues", xmPushButtonGadgetClass,
+		editmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	XtVaCreateManagedWidget("sep3", xmSeparatorGadgetClass, editmenu,
+		NULL);
+
+	w = XtVaCreateManagedWidget("insert", xmPushButtonGadgetClass,
+		editmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("delete", xmPushButtonGadgetClass,
+		editmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("move", xmPushButtonGadgetClass,
+		editmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	XtVaCreateManagedWidget("sep4", xmSeparatorGadgetClass, editmenu,
+		NULL);
+
+	w = XtVaCreateManagedWidget("recalculate", xmPushButtonGadgetClass,
+		editmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	XtVaCreateManagedWidget("sep5", xmSeparatorGadgetClass, editmenu,
+		NULL);
+
+	w = XtVaCreateManagedWidget("setregion", xmPushButtonGadgetClass,
+		editmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("setmark", xmPushButtonGadgetClass,
+		editmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("gotocell", xmPushButtonGadgetClass,
+		editmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+
+	/*
+	 *	Style Menu.
+	 */
+	w = XtVaCreateManagedWidget("format", xmPushButtonGadgetClass,
+		stylemenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("alignment", xmPushButtonGadgetClass,
+		stylemenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("font", xmPushButtonGadgetClass,
+		stylemenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	XtVaCreateManagedWidget("sep1", xmSeparatorGadgetClass, stylemenu,
+		NULL);
+
+	w = XtVaCreateManagedWidget("width", xmPushButtonGadgetClass,
+		stylemenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("height", xmPushButtonGadgetClass,
+		stylemenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	XtVaCreateManagedWidget("sep2", xmSeparatorGadgetClass, stylemenu,
+		NULL);
+
+	w = XtVaCreateManagedWidget("protection", xmPushButtonGadgetClass,
+		stylemenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
 	/*
 	 *	Graph Menu.
 	 */
-	w = XtVaCreateManagedWidget("configure", xmPushButtonGadgetClass, graphmenu,
+	w = XtVaCreateManagedWidget("define", xmPushButtonGadgetClass,
+		graphmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, ConfigureGraph, NULL);
 
-	w = XtVaCreateManagedWidget("Debug", xmPushButtonGadgetClass, graphmenu,
+	w = XtVaCreateManagedWidget("show", xmPushButtonGadgetClass, graphmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, DoGraph, NULL);
+
+	w = XtVaCreateManagedWidget("print", xmPushButtonGadgetClass, graphmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
 
 	/*
 	 *	Options Menu.
@@ -1311,35 +1451,167 @@ GscBuildMainWindow(Widget parent)
 	XtAddCallback(w, XmNvalueChangedCallback, ToggleA0, NULL);
 	XmToggleButtonGadgetSetState(w, a0, False);
 
-	w = XtVaCreateManagedWidget("Debug", xmPushButtonGadgetClass, optionsmenu,
+	w = XtVaCreateManagedWidget("edges", xmToggleButtonGadgetClass,
+		optionsmenu,
+		NULL);
+	XtAddCallback(w, XmNvalueChangedCallback, none, NULL);
+	XmToggleButtonGadgetSetState(w, cwin->flags & WIN_EDGES, False);
+
+	w = XtVaCreateManagedWidget("autorecalc", xmToggleButtonGadgetClass,
+		optionsmenu,
+		NULL);
+	XtAddCallback(w, XmNvalueChangedCallback, none, NULL);
+	XmToggleButtonGadgetSetState(w, auto_recalc, False);
+
+	w = XtVaCreateManagedWidget("loadhooks", xmToggleButtonGadgetClass,
+		optionsmenu,
+		NULL);
+	XtAddCallback(w, XmNvalueChangedCallback, none, NULL);
+	XmToggleButtonGadgetSetState(w, run_load_hooks, False);
+
+	w = XtVaCreateManagedWidget("statusline", xmToggleButtonGadgetClass,
+		optionsmenu,
+		NULL);
+	XtAddCallback(w, XmNvalueChangedCallback, none, NULL);
+#if 0
+	XmToggleButtonGadgetSetState(w, a0, False);
+#endif
+
+	w = XtVaCreateManagedWidget("backup", xmToggleButtonGadgetClass,
+		optionsmenu,
+		NULL);
+	XtAddCallback(w, XmNvalueChangedCallback, none, NULL);
+	XmToggleButtonGadgetSetState(w, __make_backups, False);
+
+	w = XtVaCreateManagedWidget("backupcopy", xmToggleButtonGadgetClass,
+		optionsmenu,
+		NULL);
+	XtAddCallback(w, XmNvalueChangedCallback, none, NULL);
+	XmToggleButtonGadgetSetState(w, __backup_by_copying, False);
+
+	XtVaCreateManagedWidget("sep1", xmSeparatorGadgetClass, optionsmenu,
+		NULL);
+
+	w = XtVaCreateManagedWidget("formats", xmPushButtonGadgetClass,
+		optionsmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("printoptions", xmPushButtonGadgetClass,
+		optionsmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("defaultfileformat",
+		xmPushButtonGadgetClass, optionsmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	XtVaCreateManagedWidget("sep2", xmSeparatorGadgetClass, optionsmenu,
+		NULL);
+
+	w = XtVaCreateManagedWidget("setvariable", xmPushButtonGadgetClass,
+		optionsmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("showvariable", xmPushButtonGadgetClass,
+		optionsmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("listvariables", xmPushButtonGadgetClass,
+		optionsmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("showoptions", xmPushButtonGadgetClass,
+		optionsmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+#if 0
+	w = XtVaCreateManagedWidget("Debug", xmPushButtonGadgetClass,
+		optionsmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, PrintDebug, NULL);
+#endif
 
 	/*
 	 *	Help Menu.
 	 */
 	w = XtVaCreateManagedWidget("about", xmPushButtonGadgetClass, helpmenu,
 		NULL);
-#if	HAVE_XmHTML_H
 	XtAddCallback(w, XmNactivateCallback, helpAboutCB, NULL);
-#else
-	XtAddCallback(w, XmNactivateCallback, versionCB, NULL);
-#endif
 
-	w = XtVaCreateManagedWidget("version", xmPushButtonGadgetClass, helpmenu,
+	w = XtVaCreateManagedWidget("version", xmPushButtonGadgetClass,
+		helpmenu,
 		NULL);
-#if	HAVE_XmHTML_H
 	XtAddCallback(w, XmNactivateCallback, helpVersionCB, NULL);
-#else
-	XtAddCallback(w, XmNactivateCallback, versionCB, NULL);
-#endif
 
-
-#if	HAVE_XmHTML_H
 	w = XtVaCreateManagedWidget("using", xmPushButtonGadgetClass, helpmenu,
 		NULL);
+#if	HAVE_XmHTML_H
 	XtAddCallback(w, XmNactivateCallback, helpUsingCB, NULL);
+#else
+	XtSetSensitive(w, False);
 #endif
+
+	XtVaCreateManagedWidget("sep1", xmSeparatorGadgetClass, helpmenu, NULL);
+
+	w = XtVaCreateManagedWidget("math", xmPushButtonGadgetClass, helpmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("trig", xmPushButtonGadgetClass, helpmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("stats", xmPushButtonGadgetClass, helpmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("bool", xmPushButtonGadgetClass, helpmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("string", xmPushButtonGadgetClass, helpmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("struct", xmPushButtonGadgetClass, helpmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("search", xmPushButtonGadgetClass, helpmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("bus", xmPushButtonGadgetClass, helpmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("date", xmPushButtonGadgetClass, helpmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	XtVaCreateManagedWidget("sep2", xmSeparatorGadgetClass, helpmenu, NULL);
+
+	w = XtVaCreateManagedWidget("expr", xmPushButtonGadgetClass, helpmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("error", xmPushButtonGadgetClass, helpmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("format", xmPushButtonGadgetClass, helpmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	w = XtVaCreateManagedWidget("option", xmPushButtonGadgetClass, helpmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, none, NULL);
 
 	return mw;
 }
@@ -1606,7 +1878,7 @@ xio_get_chr (char *prompt)
 	Debug(__FILE__, "xio_get_chr(%s)\n", prompt);
 #endif
 
-	MessageAppend(prompt, True);
+	MessageAppend(True, prompt);
 	return io_getch ();
 }
 
@@ -1715,7 +1987,7 @@ motif_error_msg(char *fmt, ...)
 	vsprintf(ErrorBuffer, fmt, ap);
 	va_end(ap);
 
-	MessageAppend(ErrorBuffer, True);
+	MessageAppend(True, ErrorBuffer);
 }
 
 int
@@ -1793,6 +2065,13 @@ void motif_init(int *argc, char **argv)
 	toplevel = XtVaAppInitialize(&app, "Oleo", NULL, 0,
 		argc, argv, fallback,
 		NULL);
+
+	/*
+	 * Add converter for tearoffs.
+	 */
+#if XmVersion >= 1002
+	XmRepTypeInstallTearOffModelConverter();
+#endif
 
 	XtVaGetApplicationResources(toplevel, &AppRes,
 		resources, num_resources,

@@ -2,6 +2,9 @@
 @section Expressions
 @cindex Expressions
 
+@html
+<A NAME="HelpExpressions">
+@end html
   A cell entry is a value or an expression of values 
 (@pxref{Oleo values}).
 
@@ -112,6 +115,10 @@ Here are some computations in  @code{a0} mode.
 @node   Error values,  , Examples, Expressions
 @subsection Error Values
 @cindex Error values
+
+@html
+<A NAME="HelpErrorValues">
+@end html
 
   Error values are returned by the parser under various error
 conditions, such as invalid parameters to functions, badly formatted

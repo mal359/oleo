@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.h,v 1.2 1998/08/27 21:15:37 danny Exp $
+ *  $Id: fallback.h,v 1.3 1998/08/28 15:30:42 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -25,6 +25,7 @@ char *fallback[] = {
 /* Global */
 	"Oleo.title:			Oleo",
 	"Oleo.geometry:			800x600",
+	"*tearOffModel:			XmTEAR_OFF_ENABLED",
 #if 0
 	"oleo.rows:			65536",
 	"oleo.columns:			65536",
@@ -47,27 +48,71 @@ char *fallback[] = {
 /* File */
 	"*filecascade.labelString:	File",
 	"*open.labelString:		Open",
-	"*quit.labelString:		Quit",
 	"*close.labelString:		Close",
 	"*save.labelString:		Save",
 	"*saveas.labelString:		Save As",
+	"*print.labelString:		Print",
+	"*quit.labelString:		Quit",
 /* Edit */
 	"*editcascade.labelString:	Edit",
 	"*undo.labelString:		Undo",
 	"*copy.labelString:		Copy",
 	"*cut.labelString:		Cut",
 	"*paste.labelString:		Paste",
+	"*insert.labelString:		Insert",
+	"*delete.labelString:		Delete",
+	"*move.labelString:		Move",
+	"*recalculate.labelString:	Recalculate",
+	"*setregion.labelString:	Set Region",
+	"*setmark.labelString:		Set Mark",
+	"*gotocell.labelString:		Goto Cell",
+/* Style */
+	"*stylecascade.labelString:	Style",
+	"*format.labelString:		Format",
+	"*alignment.labelString:	Alignment",
+	"*font.labelString:		Font",
+	"*width.labelString:		Width",
+	"*height.labelString:		Height",
+	"*protection.labelString:	Protection",
 /* Options */
 	"*optionscascade.labelString:	Options",
 	"*a0.labelString:		Represent Columns as A0",
-	"*configure.labelString:	Configure Graph",
+	"*edges.labelString:		Edges",
+	"*autorecalc.labelString:	Automatically Recalculate",
+	"*loadhooks.labelString:	Run load hooks",
+	"*statusline.labelString:	Status line on top",
+	"*backup.labelString:		Backup old file when saving",
+	"*backupcopy.labelString:	Backup by copy, not rename",
+	"*formats.labelString:		Formats",
+	"*printoptions.labelString:	Print Options",
+	"*defaultfileformat.labelString:	Default File Format",
+	"*setvariable.labelString:		Set Variable",
+	"*showvariable.labelString:		Show Variable",
+	"*listvariables.labelString:		List Variables",
+	"*showoptions.labelString:		Show Options",
 /* Graph */
 	"*graphcascade.labelString:	Graph",
+	"*define.labelString:		Define Graph",
+	"*show.labelString:		Show Graph",
+	"*graphmenu.print.labelString:	Print Graph",
 /* Help */
 	"*helpcascade.labelString:	Help",
-	"*about.labelString:		About",
+	"*about.labelString:		About Oleo",
 	"*version.labelString:		Version",
 	"*using.labelString:		Using Oleo",
+	"*math.labelString:		Math Functions",
+	"*trig.labelString:		Trigonometric Functions",
+	"*stats.labelString:		Statistical Functions",
+	"*bool.labelString:		Boolean Functions",
+	"*string.labelString:		String Functions",
+	"*struct.labelString:		Structure Functions",
+	"*search.labelString:		Search Functions",
+	"*bus.labelString:		Business Functions",
+	"*date.labelString:		Date Functions",
+	"*expr.labelString:		Expressions",
+	"*error.labelString:		Error Values",
+	"*helpmenu.format.labelString:	Formats",
+	"*helpmenu.option.labelString:	Options",
 /* BaeMatrix */
 	"*bae.allowColumnResize:	True",
 	"*bae.columnLabelColor:		dark slate blue",
@@ -91,6 +136,7 @@ char *fallback[] = {
 	"*close.mnemonic:		C",
 	"*save.mnemonic:		S",
 	"*saveas.mnemonic:		A",
+	"*filemenu.print.mnemonic:	P",
 
 	"*editcascade.mnemonic:		E",
 	"*undo.mnemonic:		U",
@@ -98,31 +144,47 @@ char *fallback[] = {
 	"*cut.mnemonic:			t",
 	"*paste.mnemonic:		P",
 
+	"*stylecascade.mnemonic:	S",
+
 	"*optionscascade.mnemonic:	O",
+
 	"*graphcascade.mnemonic:	G",
+
 	"*helpcascade.mnemonic:		H",
+
 /* Accelerators */
 	"*open.accelerator:		Ctrl<Key>o",
-	"*quit.accelerator:		Ctrl<Key>q",
 	"*close.accelerator:		Ctrl<Key>x",
 	"*save.accelerator:		Ctrl<Key>s",
 	"*saveas.accelerator:		Ctrl<Key>a",
+	"*filemenu.print.accelerator:	Ctrl<Key>p",
+	"*quit.accelerator:		Ctrl<Key>q",
+
 	"*undo.accelerator:		Ctrl<Key>u",
 	"*copy.accelerator:		Ctrl<Key>osfInsert",
 #ifndef LESSTIF_VERSION
 	"*cut.accelerator:		Shift<Key>osfDelete",
 #endif
 	"*paste.accelerator:		Ctrl<Key>osfInsert",
+	"*insert.accelerator:		Ctrl<Key>plus",
+	"*gotocell.accelerator:		<Key>F5",
+	"*format.accelerator:		Ctrl<Key>F",
 /* Accelerator Texts */
 	"*open.acceleratorText:		Ctrl-O",
-	"*quit.acceleratorText:		Ctrl-Q",
-	"*close.acceleratorText:	Ctrl-X",
 	"*save.acceleratorText:		Ctrl-S",
 	"*saveas.acceleratorText:	Ctrl-A",
+	"*close.acceleratorText:	Ctrl-X",
+	"*print.acceleratorText:	Ctrl-P",
+	"*quit.acceleratorText:		Ctrl-Q",
+
 	"*undo.acceleratorText:		Ctrl-U",
 	"*copy.acceleratorText:		Ctrl-Insert",
 	"*cut.acceleratorText:		Shift-Delete",
 	"*paste.acceleratorText:	Ctrl-Insert",
+	"*insert.acceleratorText:	Ctrl-+",
+	"*gotocell.acceleratorText:	F5",
+
+	"*format.acceleratorText:	Ctrl-F",
 /* End */
 	NULL
 };
