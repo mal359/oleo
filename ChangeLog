@@ -1,4 +1,19 @@
-$Id: ChangeLog,v 1.93 1999/06/04 09:11:41 danny Exp $
+$Id: ChangeLog,v 1.94 1999/06/10 21:50:50 danny Exp $
+
+Thu 10 Jun 23:52:50 1999, Danny Backx
+	* Clarify README-alpha.
+	* Default precision gets read from *.oleo files and
+	  gets applied too.
+	* Column MaxLength correctly applied now, makes it possible
+	  to enter field contents longer than the visible field itself
+	  in the Motif GUI. This was a bug that I neglected to write
+	  down, so forgot :-( .
+	* Move variables in plot.c outside of #ifdef.
+	* Fiddle with obscure XbaeMatrix options to make the cell display
+	  the result of evaluating a formula if you just typed a formula
+	  in a cell and hit enter.
+	* Add a "bin" command to the FTP scripts to make sure we're
+	  FTPing releases the right way.
 
 Fri  4 Jun 11:13:33 1999, Danny Backx
 	* Release 1.99.4

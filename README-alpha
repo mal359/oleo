@@ -1,17 +1,23 @@
-Welcome to the Alpha Oleo tree...
+Welcome to the Oleo Alpha tree !
 
-If you want to get debug information sent to stderr while you're running
-this, use the --enable-debug command on configure.  Otherwise, Oleo
-will attempt to compile itself in as much of a production-environment
-way as possible.
+Alpha releases are stable (don't crash), but incomplete.
+
+This means that anyone who is capable of compiling GNU sources is
+very welcome to grab the latest and work with it : it *should* work.
 
 Known problems with this code are outlined in the files README, FAQ
 and TODO.
 
 If you are GNU friendly, you can check out this repository from its home at
 /gd/gnu/cvsroot.  Otherwise, you will find new releases under
-alpha.gnu.org/gnu/oleo.
 
-Thanks,
+	ftp://alpha.gnu.org/pub/gnu/oleo/
+
+Finally, you're very welcome to contact us with questions, more TODO's,
+or even "hey it works for me !" notes.
+
+We're at bug-oleo@gnu.org .
+
+Have fun,
 
 The Maintainers

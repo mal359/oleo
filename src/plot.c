@@ -21,6 +21,18 @@
 #endif
 
 /*
+ * These must become static somehow - FIX ME.
+ */
+/*
+ * This needs to be put into the graph system
+ * by using graph_set_*() API's.
+ */
+double	XYxMin = 0.0, XYxMax = 100.0, XYyMin = 0.0, XYyMax = 100.0;
+int	XYxAuto = 1, XYyAuto = 1;
+int	LineToOffscreen = 0;
+
+
+/*
  * Don't compile this source unless you have GNU Plotutils
  */
 #ifdef	HAVE_LIBPLOT
@@ -71,18 +83,6 @@ static int	ncolors = sizeof(colors) / sizeof(char *);
 #define pl_fmarker		fmarker
 #define	pl_fillcolorname	fillcolorname
 #endif
-
-/*
- * These must become static somehow - FIX ME.
- */
-/*
- * This needs to be put into the graph system
- * by using graph_set_*() API's.
- */
-double	XYxMin = 0.0, XYxMax = 100.0, XYyMin = 0.0, XYyMax = 100.0;
-int	XYxAuto = 1, XYyAuto = 1;
-int	LineToOffscreen = 0;
-
 
 /*
  * Internal functions - initialize and close GNU PlotUtils

@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.42 1999/06/04 08:02:00 danny Exp $
+ *  $Id: io-motif.c,v 1.43 1999/06/10 21:50:58 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.42 1999/06/04 08:02:00 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.43 1999/06/10 21:50:58 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -135,6 +135,7 @@ static int	chars_buffered = 0;
 void CancelTemplate(Widget w, XtPointer client, XtPointer call);
 static void FixA0();
 static void PopDownSplash();
+static void UpdateStatus(void);
 
 Widget ConfigureBarChart(Widget parent);
 Widget ConfigurePieChart(Widget parent);
@@ -2181,6 +2182,23 @@ void LeaveCell(Widget w, XtPointer client, XtPointer call)
 		modified = 1;
 
 		recalculate(1);
+
+		if (! cp) 
+		    cp = find_cell (curow, cucol);
+		if (cp && cp->cell_formula) {
+			UpdateStatus();
+#if 0
+			XbaeMatrixRefreshCell(mat, curow - 1, cucol - 1);
+#endif
+			/*
+			 * This veto prevents Xbae from displaying the formula
+			 * again. By preventing this, it'll display what we
+			 * just put in there: the result of formula evaluation.
+			 *
+			 * Oh boy.
+			 */
+			cbp->doit = False;	/* veto */
+		}
 		MotifUpdateDisplay();
 	}
 }
@@ -2256,6 +2274,10 @@ void DrawCell(Widget w, XtPointer client, XtPointer call)
 #endif
 	cbp->type = XbaeString;
 
+#if 1
+	cbp->string = cell_value_string(cbp->row + 1, cbp->column + 1,
+		True);
+#else
 	if (curow == cbp->row + 1 && cucol == cbp->column + 1) {
 		cbp->string = cell_value_string(cbp->row + 1, cbp->column + 1,
 			True);
@@ -2263,6 +2285,7 @@ void DrawCell(Widget w, XtPointer client, XtPointer call)
 		cbp->string = print_cell(find_cell(cbp->row + 1,
 			cbp->column + 1));
 	}
+#endif
 }
 
 void FormulaCB(Widget w, XtPointer client, XtPointer call)
@@ -2761,8 +2784,9 @@ void helpVersionCB(Widget w, XtPointer client, XtPointer call)
 /*
  * Row and column labels
  */
-char	**rowlabels = NULL, **columnlabels = NULL, **columnmaxlengths = NULL;
+char	**rowlabels = NULL, **columnlabels = NULL;
 short	*columnwidths = NULL;
+int	*columnmaxlengths = NULL;
 
 void
 MotifUpdateWidth(int col, int wid)
@@ -2795,7 +2819,7 @@ SetRowColumnLabels(void)
 
 	rowlabels = (char **)XtCalloc(AppRes.rows, sizeof(char *));
 	columnlabels = (char **)XtCalloc(AppRes.columns, sizeof(char *));
-	columnmaxlengths = (char **)XtCalloc(AppRes.columns, sizeof(char *));
+	columnmaxlengths = (int *)XtCalloc(AppRes.columns, sizeof(int));
 
 	for (i=0; i<AppRes.rows; i++) {
 		sprintf(tmp, a0 ? "%d" : "R%d", i + 1);
@@ -2808,7 +2832,7 @@ SetRowColumnLabels(void)
 			sprintf(tmp, "C%d", i + 1);
 			columnlabels[i] = XtNewString(tmp);
 		}
-		columnmaxlengths[i] = "64000";		/* ??? */
+		columnmaxlengths[i] = 64000;
 	}
 }
 
@@ -2831,7 +2855,7 @@ ChangeRowColumnLabels(void)
 			sprintf(tmp, "C%d", i + 1);
 			columnlabels[i] = XtNewString(tmp);
 		}
-		columnmaxlengths[i] = "64000";		/* ??? */
+		columnmaxlengths[i] = 64000;
 	}
 }
 
@@ -3636,6 +3660,7 @@ GscBuildMainWindow(Widget parent)
 			XmNrowLabels,		rowlabels,
 			XmNcolumnLabels,	columnlabels,
 			XmNcolumnWidths,	columnwidths,
+			XmNcolumnMaxLengths,	columnmaxlengths,
 			XmNrows,		AppRes.rows,
 			XmNcolumns,		AppRes.columns,
 		NULL);
@@ -4214,20 +4239,15 @@ xio_clear_input_after (void)
 #endif
 }
 
-/*
- * Copy the spreadsheet values into Xbae
- * Then do an event loop until there are no more input events.
- */
 static void
-xio_update_status (void)
+UpdateStatus(void)
 {
-	XEvent	ev;
 	CELL	*cp;
 	char	buf[1024];
 	char	*ptr, *pos = buf, *dec;
 
 	if (!user_status) {
-		Debug(__FILE__, "xio_update_status: no user_status\n");
+		Debug(__FILE__, "UpdateStatus: no user_status\n");
 		return;
 	}
 
@@ -4258,6 +4278,18 @@ xio_update_status (void)
 
 	if (statustf)
 		XmTextFieldSetString(statustf, buf);
+}
+
+/*
+ * Copy the spreadsheet values into Xbae
+ * Then do an event loop until there are no more input events.
+ */
+static void
+xio_update_status (void)
+{
+	XEvent	ev;
+
+	UpdateStatus();
 
 
 #ifdef	VERBOSE
