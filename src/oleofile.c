@@ -613,6 +613,9 @@ oleo_fmt_to_str (f1)
 	  break;
 	default:
 	  p_buf[0] = '?';
+#if 0
+	  fprintf(stderr, "OleoWrite: format %d not supported\n", f1);
+#endif
 	  break;
 	}
       break;

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 /*  t. lord	Sat Oct  3 16:08:21 1992	*/
-
+
 #include "global.h"
 #include "font.h"
 #include "cell.h"
@@ -53,12 +53,8 @@ struct cell_display
 
 struct display;
 /* This should set the w_goal and h_goal fields of the cell_display. */
-#ifdef __STDC__
 typedef void (*cell_display_metric) (struct cell_display *,
 				     struct display *);
-#else
-typedef void (*cell_display_metric) ();
-#endif
 
 struct display
 {
@@ -75,7 +71,6 @@ struct display
 			        /* following the next_damage chain. */
 };
 
-#ifdef __STDC__
 extern void free_display (struct display *);
 extern void build_display (struct display *, struct rng *,
 			   cell_display_metric, void *);
@@ -90,17 +85,6 @@ extern void record_display_damage (struct display *,
 				   int x, int y, int w, int h);
 extern void layout (struct display *);
 extern int pr_display_cell (struct display *, CELLREF, CELLREF, CELL *);
-#else
-extern void free_display ();
-extern void build_display ();
-extern void build_unscaled_display ();
-extern void display_test_cmd ();
-extern struct cell_display *cell_display_of ();
-extern void display_range ();
-extern void record_display_damage ();
-extern void layout ();
-extern int pr_display_cell ();
-#endif
 
 #define display_width(DPY) \
      ((DPY)->colx[(DPY)->range.hc - (DPY)->range.lc] \

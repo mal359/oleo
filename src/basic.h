@@ -18,8 +18,6 @@ along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 /*  t. lord	Sat Jan 23 05:11:14 1993	*/
 
-
-
 enum motion_magic
 {
   magic_up = 0,
@@ -41,7 +39,6 @@ extern enum motion_magic opposite_motion[9];
 
 extern int run_load_hooks;
 
-#ifdef __STDC__
 extern void noop (void);
 extern void insert_row (int repeat);
 extern void insert_col (int repeat);
@@ -124,86 +121,4 @@ extern void auto_move (void);
 extern void auto_next_set (void);
 extern void recompile_spreadsheet (void);
 
-#else
-extern void noop ();
-extern void insert_row ();
-extern void insert_col ();
-extern void delete_row ();
-extern void delete_col ();
-extern void open_window ();
-extern void hsplit_window ();
-extern void vsplit_window ();
-extern void close_window ();
-extern void delete_window ();
-extern void delete_other_windows ();
-extern void nicely_goto_window ();
-extern void goto_minibuffer ();
-extern void goto_window ();
-extern void other_window ();
-extern int set_window_option ();
-extern void show_window_options ();
-extern void recenter_window ();
-extern void suspend_oleo ();
-extern void recalculate ();
-extern void kill_oleo ();
-extern void kill_all_cmd ();
-extern void redraw_screen ();
-extern void shift_cell_cursor ();
-extern void scroll_cell_cursor ();
-extern void goto_region ();
-extern void goto_cell ();
-extern void exchange_point_and_mark ();
-extern void upper_left ();
-extern void lower_left ();
-extern void upper_right ();
-extern void lower_right ();
-extern void mark_cell_cmd ();
-extern void unmark_cmd ();
-extern void do_mouse_goto ();
-extern void do_mouse_mark ();
-extern void do_mouse_mark_and_goto ();
-extern void do_mouse_cmd ();
-extern void mouse_mark_cmd ();
-extern void mouse_goto_cmd ();
-extern void mouse_mark_and_goto_cmd ();
-extern void kill_cell_cmd ();
-extern void sort_region_cmd ();
-extern void imove ();
-extern void inc_direction ();
-extern void beginning_of_row ();
-extern void end_of_row ();
-extern void beginning_of_col ();
-extern void end_of_col ();
-extern void scan_cell_cursor ();
-extern void edit_cell ();
-extern void set_region_formula ();
-extern void goto_edit_cell ();
-extern void read_cmds_cmd ();
-extern void read_file_and_run_hooks ();
-extern void toggle_load_hooks ();
-extern void write_cmd ();
-extern void read_cmd ();
-extern void read_merge_cmd ();
-extern void write_reg_cmd ();
-extern void set_region_height ();
-extern void set_region_width ();
-extern void set_region_protection ();
-extern void set_region_alignment ();
-extern void set_region_format ();
-extern void set_def_height ();
-extern void set_def_width ();
-extern void set_def_protection ();
-extern void set_def_alignment ();
-extern void set_def_format ();
-extern void set_def_font ();
-extern void define_usr_fmt ();
-extern void set_auto_direction ();
-extern void auto_move ();
-extern void auto_next_set ();
-extern void recompile_spreadsheet ();
-
-#endif
-
 #endif  /* BASICH */
-
-

@@ -16,10 +16,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-
+
 #include "sysdef.h"
 #include "utils.h"
-
 
 #define RCFILE ".oleorc"
 
@@ -155,8 +154,6 @@ extern const char oleo_version_string[];
 extern void free();
 #endif /* _DEBUG_MALLOC_INC */
 
-#ifdef __STDC__
-
 extern double astof (char **);
 extern long astol (char **);
 extern void panic (const char *, ...);
@@ -187,38 +184,5 @@ extern unsigned char parse_cell_or_range (char **, struct rng *);
 
 struct var; /* in case it hasn't been declared yet */
 extern void for_all_vars (void (*)(char *, struct var *));
-#else
-
-extern double astof ();
-extern long astol ();
-extern void panic ();
-
-extern VOIDSTAR init_stack ();
-extern void flush_stack ();
-extern void push_stack ();
-extern VOIDSTAR pop_stack ();
-extern int size_stack ();
-
-extern void add_ref ();
-extern void add_range_ref ();
-extern void add_timer_ref ();
-extern void add_ref_to ();
-
-extern char *hash_insert ();
-
-
-extern char *flt_to_str ();
-extern void push_refs ();
-extern void no_more_cells ();
-
-extern char *range_name ();
-extern char *cell_name ();
-
-extern char *new_value ();
-
-extern unsigned char parse_cell_or_range ();
-
-extern void for_all_vars ();
-#endif
 
 #endif

@@ -32,13 +32,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "funcs.h"
 #include "info.h"
 
-
-
-#ifdef __STDC__
 typedef void (*alarm_fn)(void);
-#else
-typedef void (*alarm_fn)();
-#endif
 
 struct alarm_entry
 {
@@ -52,9 +46,6 @@ extern struct alarm_entry alarm_table[];
 
 #define cell_timer_seconds  (alarm_table[0].freq)
 
-
-
-
 /* Fields prefixed by _ should normally be accessed via the macros
  * defined further on. 
  */
@@ -95,7 +86,6 @@ struct input_stream
   int _pushed_back_char;
 };
 
-
 struct macro
 {
   struct macro *mac_prev;
@@ -115,8 +105,6 @@ struct macro
 extern int n_bound_macros;
 extern struct rng *bound_macros;
 extern int bound_macro_vec;
-
-
 
 /* The pattern of interaction is:
  *   the user selects an interactive function
@@ -244,7 +232,6 @@ struct command_frame
 
 extern struct command_frame * the_cmd_frame;
 extern struct command_frame * running_frames;
-
 
 /* For most code, the structure of command loops and input streams
  * is unimportant.  To that code, we make it appear that there is just
@@ -327,8 +314,6 @@ extern struct select_hook file_exception_hooks[SELECT_SET_SIZE];
 extern struct select_hook file_write_hooks[SELECT_SET_SIZE];
 
 
-
-#ifdef __STDC__
 extern void free_input_stream (struct input_stream * stream);
 extern void pop_input_stream (void);
 extern void start_entering_macro (void);
@@ -362,42 +347,5 @@ extern void page_info (int rep);
 extern void view_info (char * name, int ignore);
 extern void with_keymap (char * mapname);
 extern void one_cmd_with_keymap (char * mapname, struct key_sequence * keyseq);
-
-#else
-extern void free_input_stream ();
-extern void pop_input_stream ();
-extern void start_entering_macro ();
-extern void bound_macro ();
-extern void run_string_as_macro ();
-extern void call_last_kbd_macro ();
-extern void end_macro ();
-extern void stop_entering_macro ();
-extern void store_last_macro ();
-extern int real_get_chr ();
-extern void push_command_frame ();
-extern void remove_cmd_frame ();
-extern void free_cmd_frame ();
-extern void pop_unfinished_command ();
-extern void recover_from_error ();
-extern void exit_minibuffer ();
-extern void setn_arg_text ();
-extern void init_arg_text ();
-extern void set_default_arg ();
-extern void command_loop ();
-extern void execute_command ();
-extern int get_chr ();
-extern void display_error_msg ();
-extern void pushback_keystroke ();
-extern void io_error_msg ();
-extern void io_info_msg ();
-extern char * expand_prompt ();
-extern void set_info ();
-extern void page_info_backwards ();
-extern void page_info ();
-extern void view_info ();
-extern void with_keymap ();
-extern void one_cmd_with_keymap ();
-
-#endif
 
 #endif

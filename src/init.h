@@ -21,12 +21,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 extern char *init_cmds[];
 
 
-#ifdef __STDC__
 extern void run_init_cmds (void);
-
-#else
-extern void run_init_cmds ();
-
-#endif
 
 #endif

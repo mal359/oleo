@@ -18,15 +18,9 @@ along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 /*  t. lord	Mon Feb 15 14:11:13 1993	*/
 
-
-
 /* Display-generic updating logic for the input area. */
 
-#ifdef __STDC__
 typedef int (*text_measure) (char * str, int len);
-#else
-typedef int (*text_measure) ();
-#endif
 
 /* These are for the field REDRAW_NEEDED */
 #define NO_REDRAW		-2
@@ -83,22 +77,10 @@ struct input_view
 };
 
 
-#ifdef __STDC__
 extern void iv_fix_input (struct input_view * this_iv);
 extern void iv_move_cursor (struct input_view * this_iv);
 extern void iv_erase (struct input_view * this_iv, int len);
 extern void iv_insert (struct input_view * this_iv, int len);
 extern void iv_over (struct input_view * this_iv, int len);
 
-#else
-extern void iv_fix_input ();
-extern void iv_move_cursor ();
-extern void iv_erase ();
-extern void iv_insert ();
-extern void iv_over ();
-
-#endif
-
 #endif  /* INPUTH */
-
-

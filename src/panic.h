@@ -18,20 +18,9 @@ along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 /*  t. lord	Fri May  7 13:49:46 1993	*/
 
-#ifdef __STDC__
 extern void panic_write_file (FILE *fp, struct rng *rng);
 extern void panic_read_file (FILE *fp, int ismerge);
 extern int panic_set_options (int set_opt, char *option);
 extern void panic_show_options (void);
 
-#else
-extern void panic_write_file ();
-extern void panic_read_file ();
-extern int panic_set_options ();
-extern void panic_show_options ();
-
-#endif
-
 #endif  /* PANICH */
-
-

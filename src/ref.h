@@ -20,7 +20,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 #include "global.h"
 #include "cell.h"
-
 
 
 /* Operations that add or remove cells to the sparse array
@@ -34,7 +33,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
  */
 extern struct cell * my_cell;
 
-#ifdef __STDC__
 extern void set_cell (CELLREF row, CELLREF col, char *string);
 extern char * new_value (CELLREF row, CELLREF col, char *string);
 extern char * set_new_value (CELLREF row, CELLREF col, int type, union vals *value);
@@ -63,37 +61,5 @@ extern struct var * find_or_make_var (char *string, int len);
 extern struct var * find_var (char *string, int len);
 extern void add_var_ref (void * vvar);
 extern void flush_variables (void);
-
-#else
-extern void set_cell ();
-extern char * new_value ();
-extern char * set_new_value ();
-extern char * read_new_value ();
-extern void move_cell ();
-extern void copy_cell ();
-extern void flush_old_value ();
-extern void add_ref ();
-extern void add_range_ref ();
-extern void flush_refs ();
-extern void add_ref_to ();
-extern void add_ref_to ();
-extern void shift_outside ();
-extern void shift_formula ();
-extern void cell_alarm ();
-extern void flush_all_timers ();
-extern void add_timer_ref ();
-extern void init_refs ();
-extern void push_refs ();
-extern void push_cell ();
-extern int eval_next_cell ();
-extern char * new_var_value ();
-extern void for_all_vars ();
-extern struct var * find_or_make_var ();
-extern struct var * find_var ();
-extern void add_var_ref ();
-extern void flush_variables ();
-
-#endif
-
 
 #endif

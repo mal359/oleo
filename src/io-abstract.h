@@ -26,13 +26,9 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "global.h"
 #include "line.h"
 #include "window.h"
-
+
 #ifndef VOLATILE
-#ifdef __STDC__
 #define VOLATILE volatile
-#else
-#define VOLATILE
-#endif
 #endif
 
 EXTERN void (*io_open_display) (void);
@@ -75,11 +71,7 @@ EXTERN void (*io_insert) (int len);
 EXTERN void (*io_over) (char *, int len);
 
 #ifndef X_DISPLAY_MISSING
-#ifdef __STDC__
 extern int io_col_to_input_pos (int col);
-#else
-extern int io_col_to_input_pos ();
-#endif
 #else
 #define io_col_to_input_pos(i)  0
 #endif

@@ -18,8 +18,6 @@ along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 /*  t. lord	Sat Sep 12 13:46:16 1992	*/
 
-
-
 #include "global.h"
 #include "line.h"
 
@@ -50,8 +48,6 @@ struct font_memo
 
 extern struct font_memo *font_list;
 
-
-#ifdef __STDC__
 extern void define_font (char * oleo_name, char * x_name, char * ps_name);
 extern struct font_memo * intern_font (char * oleo_name, double scale);
 extern struct font_memo * default_font (void);
@@ -63,21 +59,5 @@ extern void set_x_default_font (char * str);
 extern void set_ps_font_cmd (char * ps_name);
 extern void set_default_font (char * name, double scale);
 extern void init_fonts (void);
-
-#else
-extern void define_font ();
-extern struct font_memo * intern_font ();
-extern struct font_memo * default_font ();
-extern struct font_memo * matching_font ();
-extern struct font_memo * parsed_matching_font ();
-extern void set_region_font ();
-extern void flush_fonts ();
-extern void set_x_default_font ();
-extern void set_ps_font_cmd ();
-extern void set_default_font ();
-extern void init_fonts ();
-
-#endif
-
 
 #endif

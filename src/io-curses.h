@@ -18,17 +18,8 @@ along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 /*  t. lord	Sun Jan  3 20:16:07 1993	*/
 
-#ifdef __STDC__
 extern void cont_curses(void);
 extern void stop_curses(void);
 extern void tty_graphics (void);
 
-#else
-extern void cont_curses();
-extern void stop_curses();
-extern void tty_graphics ();
-
 #endif
-
-#endif
-

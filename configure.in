@@ -1,12 +1,12 @@
 dnl
 dnl This is the configuration file for GNU oleo.
-dnl $Id: configure.in,v 1.31 1998/12/02 20:10:13 danny Exp $
+dnl $Id: configure.in,v 1.32 1998/12/09 23:02:59 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
 AC_INIT(src/init.c)
 
-AM_INIT_AUTOMAKE([oleo], [1.6.11])
+AM_INIT_AUTOMAKE([oleo], [1.6.12])
 GNU_PACKAGE="GNU $PACKAGE"
 AC_DEFINE_UNQUOTED(GNU_PACKAGE, "$GNU_PACKAGE")
 
@@ -14,7 +14,7 @@ dnl
 dnl Use of this macro will keep unexpected things from happening if
 dnl you're not familiar with automake.
 dnl
-dnl AM_MAINTAINER_MODE
+AM_MAINTAINER_MODE
 
 dnl Define available languages
 ALL_LINGUAS="en nl fr"

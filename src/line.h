@@ -27,8 +27,6 @@ struct line
 
 #define init_line(L)  bzero((L), sizeof (struct line))
 
-
-#ifdef __STDC__
 extern void set_line (struct line *line, char *string);
 extern void setn_line (struct line *line, char *string, int n);
 extern void catn_line (struct line *line, char *string, int n);
@@ -37,17 +35,5 @@ extern void splicen_line (struct line * line, char * str, int n, int pos);
 extern void edit_line (struct line * line, int begin, int len);
 extern void free_line (struct line * line);
 extern int read_line (struct line * line, FILE * fp, int * linec);
-
-#else
-extern void set_line ();
-extern void setn_line ();
-extern void catn_line ();
-extern void sprint_line ();
-extern void splicen_line ();
-extern void edit_line ();
-extern void free_line ();
-extern int read_line ();
-
-#endif
 
 #endif

@@ -82,7 +82,6 @@ extern char **map_prompts;
 #define NAVIGATE_MAP map_id("navigate")
 
 
-#ifdef __STDC__
 extern int search_map_for_cmd (struct line * line, int map, int vec, int code);
 extern void bind_key (char * keymap, char * function, int ch);
 extern void unbind_key (char * keymap, int ch);
@@ -95,19 +94,4 @@ extern int map_idn (char *name, int n);
 extern void create_keymap (char * mapname, char * parentname);
 extern void set_map_prompt (char * map, char * str);
 
-#else
-extern int search_map_for_cmd ();
-extern void bind_key ();
-extern void bind_set ();
-extern void bind_all_keys ();
-extern void write_keys_cmd ();
-extern void clear_keymap ();
-extern int map_idn ();
-extern void create_keymap ();
-extern void set_map_prompt ();
-
-#endif
-
 #endif  /* KEYH */
-
-

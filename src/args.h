@@ -18,9 +18,6 @@ along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 /*  t. lord	Wed Jan 27 15:46:24 1993	*/
 
-
-
-
 /* Interacting with command arguments. */
 
 /* See find_stub. */
@@ -40,13 +37,8 @@ struct command_arg;
 
 /* See comments in arg.c: */
 
-#ifdef __STDC__
 typedef char * (*arg_verifier) (char ** end_out, struct command_arg *);
 typedef void (*arg_destroyer) (struct command_arg *);
-#else
-typedef char * (*arg_verifier) ();
-typedef void (*arg_destroyer) ();
-#endif
 
 /* For every kind of prompt allowed in a FUNC_ARGS string, 
  * there exists a prompt_style that describes how that
@@ -63,7 +55,6 @@ struct prompt_style
 
 
 
-#ifdef __STDC__
 extern char * char_verify (char ** end, struct command_arg * arg);
 extern char * symbol_verify (char ** end, struct command_arg * arg);
 extern char * word_verify (char ** end, struct command_arg * arg);
@@ -84,30 +75,6 @@ extern char * incremental_cmd_verify (char ** end, struct command_arg * arg);
 extern char * menu_verify (char ** end, struct command_arg * arg);
 extern char * format_verify (char ** end, struct command_arg * arg);
 extern char * noop_verify (char ** end, struct command_arg * arg);
-
-#else
-extern char * char_verify ();
-extern char * symbol_verify ();
-extern char * word_verify ();
-extern void symbol_destroy ();
-extern char * command_verify ();
-extern char * read_file_verify ();
-extern void read_file_destroy ();
-extern char * write_file_verify ();
-extern void write_file_destroy ();
-extern char * keyseq_verify ();
-extern char * keymap_verify ();
-extern char * number_verify ();
-extern char * double_verify ();
-extern char * range_verify ();
-extern char * string_verify ();
-extern char * yes_verify ();
-extern char * incremental_cmd_verify ();
-extern char * menu_verify ();
-extern char * format_verify ();
-extern char * noop_verify ();
-
-#endif
 
 #ifdef DEFINE_STYLES
 #define DEFSTYLE(NAME,VER,DEST,REP,KEYMAP) \
@@ -151,5 +118,3 @@ DEFSTYLE(inc_cmd_style, incremental_cmd_verify, 0, cmd_none, "direction");
 DEFSTYLE(mode_style, noop_verify, 0, cmd_none, 0);
 
 #endif  /* ARGSH */
-
-

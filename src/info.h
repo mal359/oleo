@@ -26,7 +26,6 @@ struct info_buffer
   char ** text;
 };
 
-#ifdef __STDC__
 extern void init_info (void);
 extern struct info_buffer * find_info (char * name);
 extern struct info_buffer * find_or_make_info (char * name);
@@ -36,19 +35,4 @@ extern void io_text_start (void);
 extern void io_text_line (char * format, ...);
 extern void io_text_finish (void);
 
-#else
-extern void init_info ();
-extern struct info_buffer * find_info ();
-extern struct info_buffer * find_or_make_info ();
-extern void clear_info ();
-extern void print_info ();
-extern void io_text_start ();
-extern void io_text_line ();
-extern void io_text_finish ();
-
-#endif
-
 #endif  /* INFOH */
-
-
-

@@ -61,7 +61,6 @@ extern struct cmd_func * end_macro_cmd;
 
 
 
-#ifdef __STDC__
 extern void set_options (char * ptr);
 extern void show_options (void);
 extern void read_mp_usr_fmt (char *ptr);
@@ -76,23 +75,6 @@ extern void read_variables (FILE * fp);
 extern void init_maps (void);
 extern int add_usr_cmds (struct cmd_func *new_cmds);
 extern int main (int argc, char **argv);
-
-#else
-extern void set_options ();
-extern void show_options ();
-extern void read_mp_usr_fmt ();
-extern void write_mp_options ();
-extern void read_mp_options ();
-extern void set_var ();
-extern void show_var ();
-extern void show_all_var ();
-extern void write_variables ();
-extern void read_variables ();
-extern void init_maps ();
-extern int add_usr_cmds ();
-extern int main ();
-
-#endif
 
 #ifndef FALSE
 #define FALSE 0

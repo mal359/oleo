@@ -20,17 +20,9 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 #include "global.h"
 
-#ifdef __STDC__
 extern void sc_read_file (FILE *,int);
 extern void sc_write_file (FILE *,struct rng *);
 extern  int sc_set_options (int, char *);
 extern void sc_show_options (void);
-#else
-extern void sc_read_file ();
-extern void sc_write_file ();
-extern  int sc_set_options ();
-extern void sc_show_options ();
-#endif
 
 #endif
-

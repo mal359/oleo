@@ -25,7 +25,6 @@ extern float user_height_scale;
 extern float user_width_scale;
 extern int display_formula_mode;
 
-#ifdef __STDC__
 extern void flush_everything (void);
 extern void find_cells_in_range (struct rng *r);
 extern void make_cells_in_range (struct rng *r);
@@ -51,34 +50,5 @@ extern int get_scaled_width (CELLREF c);
 extern void find_heights (CELLREF lo, CELLREF hi);
 extern int next_height (CELLREF *posp);
 extern void shift_heights (int dn, CELLREF lo, CELLREF hi);
-
-#else
-extern void flush_everything ();
-extern void find_cells_in_range ();
-extern void make_cells_in_range ();
-extern struct cell * next_cell_in_range ();
-extern struct cell * next_row_col_in_range ();
-extern void no_more_cells ();
-extern CELLREF max_row ();
-extern CELLREF max_col ();
-extern CELLREF highest_row ();
-extern CELLREF highest_col ();
-extern int get_width ();
-extern int get_nodef_width ();
-extern void set_width ();
-extern void find_widths ();
-extern int next_width ();
-extern void shift_widths ();
-extern int get_height ();
-extern int get_nodef_height ();
-extern void set_height ();
-extern void set_user_scales ();
-extern int get_scaled_height ();
-extern int get_scaled_width ();
-extern void find_heights ();
-extern int next_height ();
-extern void shift_heights ();
-
-#endif
 
 #endif

@@ -17,8 +17,6 @@ along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 /*  t. lord	Sun Aug  9 22:03:36 1992	*/
 
-
-
 #include <sys/types.h>
 
 #ifdef HAVE_SYS_TIME_H

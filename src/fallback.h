@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.h,v 1.7 1998/11/29 12:49:03 danny Exp $
+ *  $Id: fallback.h,v 1.8 1998/12/09 23:03:07 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -120,18 +120,15 @@ char *fallback[] = {
 	"*bae.allowColumnResize:	True",
 	"*bae.columnLabelColor:		dark slate blue",
 	"*bae.rowLabelColor:		dark slate blue",
-	"*bae.translations:	#override\n"
-		"Shift<Btn1Down>:		SelectCell(start)\n"
-		"Ctrl<Btn1Down>:		SelectCell(end)\n",
+	"*bae.translations:	#override\\n"
+		"Shift<Btn1Down>:		SelectCell(start)\\n"
+		"Ctrl<Btn1Down>:		SelectCell(end)\\n",
 /* Help Dialog */
 	"*versionD*Help*labelString:	GPL",
 /* Configuration Dialogs */
 	"*configureGraph_popup*.title:			Configure the Graph",
 	"*configureGraph*xlog.labelString:		Logarithmic Axes",
 	"*configureGraph*ylog.labelString:		Logarithmic Axes",
-	"*configureGraph*ok.labelString:		OK",
-	"*configureGraph*cancel.labelString:		Cancel",
-	"*configureGraph*help.labelString:		Help",
 	"*configureGraph*l1.labelString:		X Axis",
 	"*configureGraph*l2.labelString:		Data 1",
 	"*configureGraph*l3.labelString:		Data 2",
@@ -207,6 +204,15 @@ char *fallback[] = {
 /* Default File Dialog */
 	"*listSeparatorFrameTitle.labelString:	List File Separator",
 	"*defaultFileShell.title:	Default File Format Dialog",
+	"*defaultFormatFrameTitle.labelString: Default File Format",
+/* Generic dialog buttons */
+	"*ok.labelString:		OK",
+	"*cancel.labelString:		Cancel",
+	"*help.labelString:		Help",
+/* Formats Dialog */
+	"*formatsFrameTitle.labelString:	Cell Format",
+	"*formatsFrame*formatsL.labelString:	Cell Range",
+	"*formatsFrame*precisionL.labelString:	Precision",
 /* End */
 	NULL
 };

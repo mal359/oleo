@@ -41,7 +41,6 @@ extern unsigned int print_width;
 
 
 
-#ifdef __STDC__
 extern void set_rng (struct rng *r, CELLREF r1, CELLREF c1, CELLREF r2, CELLREF c2);
 extern void delete_region (struct rng *where);
 extern void lock_region (struct rng *where, int locked);
@@ -54,21 +53,5 @@ extern void sort_region (void);
 extern int cmp_cells (int n1, int n2);
 extern void swp_cells (int n1, int n2);
 extern void rot_cells (int n1, int n2);
-
-#else
-extern void set_rng ();
-extern void delete_region ();
-extern void lock_region ();
-extern void format_region ();
-extern void print_region ();
-extern void move_region ();
-extern void copy_region ();
-extern void copy_values_region ();
-extern void sort_region ();
-extern int cmp_cells ();
-extern void swp_cells ();
-extern void rot_cells ();
-
-#endif
 
 #endif

@@ -43,7 +43,6 @@ extern char * current_filename;
 /* Has io_open_display been called? */
 extern int display_opened;
 
-#ifdef __STDC__
 extern void (*read_file) (FILE *, int);
 extern void (*write_file) (FILE *, struct rng *);
 extern int (*set_file_opts) (int, char *);
@@ -52,17 +51,6 @@ extern void (*show_file_opts) (void);
 extern int get_chr (void);		/* read from kbd or macro */
 extern int set_window_option (int set_opt, char *text);
 extern void show_window_options (void);
-#else
-extern void (*read_file) ();
-extern void (*write_file) ();
-extern int (*set_file_opts) ();
-extern void (*show_file_opts) ();
-
-extern int get_chr ();		/* read from kbd or macro */
-extern int set_window_option ();
-extern void show_window_options ();
-#endif
-
 
 extern const int rowmagic[], colmagic[];
 

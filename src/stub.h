@@ -23,22 +23,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
  * and call a generic C function.
  */
 
-#ifdef __STDC__
 typedef void (*cmd_invoker) (struct command_frame *);
-#else
-typedef void (*cmd_invoker) ();
-#endif
 
-
-#ifdef __STDC__
 extern cmd_invoker find_stub (void);
 
-#else
-extern cmd_invoker find_stub ();
-
-#endif
-
-
 #endif  /* STUBH */
-
-

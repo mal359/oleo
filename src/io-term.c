@@ -874,7 +874,9 @@ Usage: %s [OPTION]... [FILE]...\n\
   -f, --ignore-init-file   ignore settings defined in init file\n\
   -t, --no-toolkit         disable X toolkit\n\
   -x, --nw                 disable graphics and fallback to curses\n\
-  -s x			   set separator for 'list' file type to x\n\
+  -s x, --separator x	   set separator for 'list' file type to x\n\
+  -S, --space		   set separator for 'list' file type to a space\n\
+  -F x, --format x	   set default file type to x (oleo, list, sc  ...)\n\
 \n\
 Report bugs to <bug-oleo@gnu.org>.\n\
 "));

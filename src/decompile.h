@@ -19,17 +19,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 /*  t. lord	Thu Jan 28 02:58:01 1993	*/
 
 
-#ifdef __STDC__
 extern void decomp_free (void);
 extern char * backslash_a_string (char *string, int add_quote);
 
-#else
-extern void decomp_free ();
-extern char * backslash_a_string ();
-
-#endif
-
-
 #endif  /* DECOMPILEH */
-
-

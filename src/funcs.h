@@ -18,8 +18,6 @@ along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 /*  t. lord	Wed Jan 27 15:31:21 1993	*/
 
-
-
 #include "global.h"
 
 
@@ -98,8 +96,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
  * example:  `{go-right 5}' because the FUNC_ARGS string for go-right is: `+p'.
  */
 
-
-
 typedef void (*interactive_function) ();
 
 struct cmd_func
@@ -124,18 +120,8 @@ extern struct cmd_func **the_funcs;
 
 #define find_func(VEC,CMD,NAME) find_function(VEC,CMD,NAME,strlen(NAME))
 
-#ifdef __STDC__
 extern int find_function (int * vec_out, struct cmd_func ** cmd_out, char * name, int len);
 extern void init_named_macro_strings (void);
 extern void name_macro_string (char * name, char * str);
 
-#else
-extern int find_function ();
-extern void init_named_macro_strings ();
-extern void name_macro_string ();
-
-#endif
-
 #endif  /* FUNCSH */
-
-

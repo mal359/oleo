@@ -16,17 +16,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-
+
 /*  t. lord	Wed Oct 28 00:16:13 1992	*/
 
-#ifdef __STDC__
 extern unsigned char *parse_and_compile (char *);
 extern void byte_free (unsigned char *);
 extern int is_constant (unsigned char *);
-#else
-extern unsigned char *parse_and_compile ();
-extern void byte_free ();
-extern int is_constant ();
-#endif
 
 #endif

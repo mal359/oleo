@@ -102,52 +102,55 @@ char print_buf[BIGFLT + 20];
 /* Structures/vars/functions for dealing with formatting floating-point
    numbers, etc */
 
-struct user_fmt
-  {
-    char *p_hdr, *n_hdr;
-    char *p_trl, *n_trl;
-    char *zero, *comma, *decpt;
-    unsigned char prec;
-    double scale;
-  };
+struct user_fmt {
+    char *name,		/* Format name */
+	*p_hdr,		/* Positive header */
+	*n_hdr,		/* Negative header */
+	*p_trl,		/* Positive trailer */
+	*n_trl,		/* Negative trailer */
+	*zero,		/* How to represent a 0 */
+	*comma,		/* Thousands separator */
+	*decpt;		/* Decimal point */
+    unsigned char prec;	/* Precision */
+    double scale;	/* Scale */
+};
 
 
 struct user_fmt dol =
-{
-  "$", "($", 0, ")", "$0", ",", ".", PRC_FLT, 1};
+{ "dollar", "$", "($", 0, ")", "$0", ",", ".", PRC_FLT, 1};
 
 struct user_fmt cma =
-{
-  0, "(", 0, ")", "0", ",", ".", PRC_FLT, 1};
+{ "comma", 0, "(", 0, ")", "0", ",", ".", PRC_FLT, 1};
 
 struct user_fmt pct =
-{
-  0, "-", "%", "%", "0%", 0, ".", PRC_FLT, 100};
+{ "percent", 0, "-", "%", "%", "0%", 0, ".", 3, 100};
+#if 0
+{ "percent", 0, "-", "%", "%", "0%", 0, ".", PRC_FLT, 100};
+#endif
 
 struct user_fmt fxt =
-{
-  0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1};
+{ "fixed", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1};
 
 /* Variables */
 
 struct user_fmt u[16] =
 {
-  {0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
-  {0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
-  {0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
-  {0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
-  {0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
-  {0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
-  {0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
-  {0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
-  {0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
-  {0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
-  {0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
-  {0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
-  {0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
-  {0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
-  {0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
-  {0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user1", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user2", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user3", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user4", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user5", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user6", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user7", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user8", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user9", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user10", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user11", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user12", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user13", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user14", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user15", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user16", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
 };
 
 
@@ -1263,6 +1266,12 @@ file_set_default_format(char *s)
 		defaultformat = s;
 }
 
+char *
+file_get_default_format(void)
+{
+	return defaultformat;
+}
+
 void
 write_file_generic(FILE *fp, struct rng *rng, char *format)
 {
@@ -1309,7 +1318,7 @@ write_file_generic(FILE *fp, struct rng *rng, char *format)
 void
 read_file_generic(FILE *fp, int ismerge, char *format)
 {
-#if 1
+#if 0
 	fprintf(stderr, PACKAGE " read_file_generic : format %s\n", format);
 #endif
 	if (!stricmp ("oleo", format)) {
@@ -1350,3 +1359,14 @@ read_file_generic(FILE *fp, int ismerge, char *format)
 		}
 	}
 }
+
+void
+fmt_set_format()
+{
+}
+
+void
+fmt_fet_format()
+{
+}
+

@@ -45,11 +45,7 @@ struct xx_sIntRectangle
 
 
 #ifdef PRETTY_PRINT_DECLS
-#ifdef __STDC__
 extern void xx_pp_intrectangle (xx_IntRectangle, FILE *);
-#else
-extern void xx_pp_intrectangle ();
-#endif
 #endif
 
 #define xx_IRx(R) ((R)->x)
@@ -72,8 +68,7 @@ xx_pp_intrectangle (r, stream)
 	   r->x, r->y, r->w, r->h);
 }
 #endif
-
-#ifdef __STDC__
+
 extern int xx_IRencloses (xx_IntRectangle r1, xx_IntRectangle r2);
 extern int xx_IRencloses_width (xx_IntRectangle r1, xx_IntRectangle r2);
 extern int xx_IRequiv (xx_IntRectangle r1, xx_IntRectangle r2);
@@ -83,15 +78,4 @@ extern int xx_IRhits_point (xx_IntRectangle rect, int x, int y);
 extern void xx_IRclip (xx_IntRectangle r1, xx_IntRectangle r2);
 extern int xx_IRsubtract (xx_IntRectangle outv, xx_IntRectangle a, xx_IntRectangle b);
 
-#else
-extern int xx_IRencloses ();
-extern int xx_IRencloses_width ();
-extern int xx_IRequiv ();
-extern void xx_IRbound ();
-extern int xx_IRarea ();
-extern int xx_IRhits_point ();
-extern void xx_IRclip ();
-extern int xx_IRsubtract ();
-
-#endif
 #endif

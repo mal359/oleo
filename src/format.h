@@ -18,24 +18,12 @@ along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 /*  t. lord	Thu Jan 21 15:35:45 1993	*/
 
-
-
 #include "global.h"
 #include "cell.h"
 
-#ifdef __STDC__
 extern char * fmt_to_str (int fmt);
 extern int str_to_fmt (char *ptr);
 extern char * jst_to_str (int jst);
 extern int chr_to_jst (int chr);
 
-#else
-extern char * fmt_to_str ();
-extern int str_to_fmt ();
-extern char * jst_to_str ();
-extern int chr_to_jst ();
-
-#endif
-
 #endif /* FORMATH */
-

@@ -1,4 +1,10 @@
 
+	* Make include files ANSI C. Remove non-ANSI declarations.
+	* Try to get Formats dialog to work. Not yet.
+	* Fixed the bug in range selection. Translations need to contain \n,
+	  but in a C language source this needs to be \\n.
+	* Implement dialog for default file format.
+
 Mon Dec  7 18:14:05 1998, Danny Backx (danny@gnu.org)
 	* Add to parsing numeric strings (recognise +, - too).
 	  Otherwise, list_read_file doesn't read many numbers.

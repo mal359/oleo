@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.17 1998/11/29 12:49:05 danny Exp $
+ *  $Id: io-motif.c,v 1.18 1998/12/09 23:03:11 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.17 1998/11/29 12:49:05 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.18 1998/12/09 23:03:11 danny Exp $";
 
 #include "config.h"
 
@@ -229,10 +229,12 @@ void SelectCellCB(Widget w, XtPointer client, XtPointer call)
 	char	*s;
 	XbaeMatrixSelectCellCallbackStruct *cbp =
 		(XbaeMatrixSelectCellCallbackStruct *)call;
+
 #if 0
 	fprintf(stderr, "SelectCell(%s, %d %d)\n",
 		cbp->params[0], cbp->row, cbp->column);
 #endif
+
 	if (cbp->num_params >= 1 && strcmp(cbp->params[0], "start") == 0) {
 		selection_range.lr = cbp->row + 1;
 		selection_range.lc = cbp->column + 1;
@@ -1023,9 +1025,60 @@ void CancelDialog(Widget w, XtPointer client, XtPointer call)
 	XtPopdown(shell);
 }
 
+void DefaultFileFormatCB(Widget w, XtPointer client, XtPointer call)
+{
+	char		*f = (char *)client;
+
+	file_set_default_format(f);
+}
+
+Widget CreateFileFormatOption(Widget parent, XtCallbackProc f)
+{
+	Arg		al[10];
+	int		ac = 0;
+	XmString	xms;
+	Widget		cb, menu, b;
+
+	menu = XmCreatePulldownMenu(parent, "optionMenu", NULL, 0);
+	ac = 0;
+	XtSetArg(al[ac], XmNsubMenuId, menu); ac++;
+	xms = XmStringCreateSimple(_("File Format"));
+	XtSetArg(al[ac], XmNlabelString, xms); ac++;
+	cb = XmCreateOptionMenu(parent, "optionCB", al, ac);
+	XtManageChild(cb);
+	XmStringFree(xms);
+
+	b = XtVaCreateManagedWidget("oleo", xmPushButtonGadgetClass,
+		menu,
+		NULL);
+	XtAddCallback(b, XmNactivateCallback, f, "oleo");
+
+	b = XtVaCreateManagedWidget("SYLK", xmPushButtonGadgetClass,
+		menu,
+		NULL);
+	XtAddCallback(b, XmNactivateCallback, f, "sylk");
+
+	b = XtVaCreateManagedWidget("SC", xmPushButtonGadgetClass,
+		menu,
+		NULL);
+	XtAddCallback(b, XmNactivateCallback, f, "sc");
+
+	b = XtVaCreateManagedWidget("list", xmPushButtonGadgetClass,
+		menu,
+		NULL);
+	XtAddCallback(b, XmNactivateCallback, f, "list");
+
+	b = XtVaCreateManagedWidget("panic", xmPushButtonGadgetClass,
+		menu,
+		NULL);
+	XtAddCallback(b, XmNactivateCallback, f, "panic");
+
+	return menu;
+}
+
 Widget MotifCreateDefaultFileDialog(Widget s)
 {
-	Widget		form, menu, cb, w, ok, cancel, frame, radio;
+	Widget		form, menu, cb, w, ok, cancel, frame, radio, oldframe;
 	int		npages, i, ac;
 	Arg		al[5];
 	XmString	xms;
@@ -1033,8 +1086,8 @@ Widget MotifCreateDefaultFileDialog(Widget s)
 	ac = 0;
 	form = XmCreateForm(s, "defaultFileForm", al, ac);
 
-	/* Destination */
-	frame = XtVaCreateManagedWidget("defaultFileFrame",
+	/* List File Separator Character */
+	frame = XtVaCreateManagedWidget("listSeparatorFrame",
 			xmFrameWidgetClass, form,
 			XmNleftAttachment,	XmATTACH_FORM,
 			XmNtopAttachment,	XmATTACH_FORM,
@@ -1052,7 +1105,29 @@ Widget MotifCreateDefaultFileDialog(Widget s)
 
 	w = XtVaCreateManagedWidget("listSeparatorTF", xmTextFieldWidgetClass,
 			frame,
+			XmNmaxLength,		1,
 		NULL);
+
+	/* Default File Format */
+	oldframe = frame;
+	frame = XtVaCreateManagedWidget("defaultFormatFrame",
+			xmFrameWidgetClass, form,
+			XmNleftAttachment,	XmATTACH_FORM,
+			XmNtopAttachment,	XmATTACH_WIDGET,
+			XmNtopWidget,		oldframe,
+			XmNleftOffset,		10,
+			XmNtopOffset,		10,
+			XmNrightAttachment,	XmATTACH_FORM,
+			XmNrightOffset,		10,
+		NULL);
+
+	w = XtVaCreateManagedWidget("defaultFormatFrameTitle",
+			xmLabelGadgetClass,		frame,
+			XmNchildType,			XmFRAME_TITLE_CHILD,
+			XmNchildVerticalAlignment,	XmALIGNMENT_CENTER,
+		NULL);
+
+	menu = CreateFileFormatOption(frame, DefaultFileFormatCB);
 
 	/* FIX ME : buttons */
 	ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass, form,
@@ -1218,13 +1293,6 @@ void DrawCell(Widget w, XtPointer client, XtPointer call)
 		cbp->string = print_cell(find_cell(cbp->row + 1,
 			cbp->column + 1));
 	}
-#if 0
-#if 0
-	cbp->string = cell_value_string(cbp->row + 1, cbp->column + 1, True);
-#else
-	cbp->string = print_cell(find_cell(cbp->row + 1, cbp->column + 1));
-#endif
-#endif
 }
 
 void FormulaCB(Widget w, XtPointer client, XtPointer call)
@@ -1355,39 +1423,7 @@ void CreateFSD()
 	XmStringFree(xms);
 
 	/* Option menu */
-	menu = XmCreatePulldownMenu(fsd, "optionMenu", NULL, 0);
-	ac = 0;
-	XtSetArg(al[ac], XmNsubMenuId, menu); ac++;
-	xms = XmStringCreateSimple(_("File Format"));
-	XtSetArg(al[ac], XmNlabelString, xms); ac++;
-	cb = XmCreateOptionMenu(fsd, "optionCB", al, ac);
-	XtManageChild(cb);
-	XmStringFree(xms);
-
-	b = XtVaCreateManagedWidget("oleo", xmPushButtonGadgetClass,
-		menu,
-		NULL);
-	XtAddCallback(b, XmNactivateCallback, FileFormatCB, "oleo");
-
-	b = XtVaCreateManagedWidget("SYLK", xmPushButtonGadgetClass,
-		menu,
-		NULL);
-	XtAddCallback(b, XmNactivateCallback, FileFormatCB, "sylk");
-
-	b = XtVaCreateManagedWidget("SC", xmPushButtonGadgetClass,
-		menu,
-		NULL);
-	XtAddCallback(b, XmNactivateCallback, FileFormatCB, "sc");
-
-	b = XtVaCreateManagedWidget("list", xmPushButtonGadgetClass,
-		menu,
-		NULL);
-	XtAddCallback(b, XmNactivateCallback, FileFormatCB, "list");
-
-	b = XtVaCreateManagedWidget("panic", xmPushButtonGadgetClass,
-		menu,
-		NULL);
-	XtAddCallback(b, XmNactivateCallback, FileFormatCB, "panic");
+	menu = CreateFileFormatOption(fsd, FileFormatCB);
 }
 
 void LoadCB(Widget w, XtPointer client, XtPointer call)
@@ -2054,18 +2090,38 @@ void Yeah(Widget w, XtPointer client, XtPointer call)
 
 void CreateFormatsDialog(Widget p)
 {
-	Widget		frame, rc, tf;
+	Widget		frame, f, tf, l;
 	XmString	xms, x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10,
 			x11, x12, x13, x14, x15;
 
 	frame = XtVaCreateManagedWidget("formatsFrame", xmFrameWidgetClass, p,
 		NULL);
-
-	rc = XtVaCreateManagedWidget("formatsRc", xmRowColumnWidgetClass, frame,
+	l = XtVaCreateManagedWidget("formatsFrameTitle", xmLabelGadgetClass,
+		frame,
+			XmNchildType,			XmFRAME_TITLE_CHILD,
+			XmNchildVerticalAlignment,	XmALIGNMENT_CENTER,
 		NULL);
 
-	tf = XtVaCreateManagedWidget("formatsTf", xmTextFieldWidgetClass, rc,
+	f = XtVaCreateManagedWidget("formatsForm", xmFormWidgetClass, frame,
 		NULL);
+
+	l = XtVaCreateManagedWidget("formatsL", xmLabelGadgetClass, f,
+			XmNleftAttachment,	XmATTACH_FORM,
+			XmNtopAttachment,	XmATTACH_FORM,
+			XmNleftOffset,		10,
+			XmNtopOffset,		10,
+		NULL);
+
+	tf = XtVaCreateManagedWidget("formatsTf", xmTextFieldWidgetClass, f,
+			XmNleftAttachment,	XmATTACH_WIDGET,
+			XmNleftWidget,		l,
+			XmNleftOffset,		10,
+			XmNtopAttachment,	XmATTACH_FORM,
+			XmNtopOffset,		10,
+			XmNrightAttachment,	XmATTACH_FORM,
+			XmNrightOffset,		10,
+		NULL);
+	RegisterRangeSelector(tf);
 
 	xms = XmStringCreateSimple(_("Formats :"));
 
@@ -2086,7 +2142,7 @@ void CreateFormatsDialog(Widget p)
 	x14 = XmStringCreateSimple(_("User-3"));
 	x15 = XmStringCreateSimple(_("User-4"));
 
-	w = XmVaCreateSimpleOptionMenu(rc, "formatsOption",
+	w = XmVaCreateSimpleOptionMenu(f, "formatsOption",
 		xms, /* mnemonic ? */0, /* initial selection */ 0, 
 		/* callback */ Yeah,
 		/* Type, LabelString, Mnemonic, Accelerator, AcceleratorText */
@@ -2106,6 +2162,14 @@ void CreateFormatsDialog(Widget p)
 		XmVaPUSHBUTTON, x13, ' ', NULL, NULL,
 		XmVaPUSHBUTTON, x14, ' ', NULL, NULL,
 		XmVaPUSHBUTTON, x15, ' ', NULL, NULL,
+
+		XmNtopAttachment,	XmATTACH_WIDGET,
+		XmNtopWidget,		tf,
+		XmNtopOffset,		10,
+		XmNrightAttachment,	XmATTACH_FORM,
+		XmNrightOffset,		10,
+		XmNleftAttachment,	XmATTACH_FORM,
+		XmNleftOffset,		10,
 		NULL);
 	XtManageChild(w);
 
@@ -2126,22 +2190,48 @@ void CreateFormatsDialog(Widget p)
 	XmStringFree(x13);
 	XmStringFree(x14);
 	XmStringFree(x15);
+
+	/* Precision */
+	l = XtVaCreateManagedWidget("precisionL", xmLabelGadgetClass, f,
+			XmNleftAttachment,	XmATTACH_FORM,
+			XmNleftOffset,		10,
+			XmNtopAttachment,	XmATTACH_WIDGET,
+			XmNtopOffset,		10,
+			XmNtopWidget,		w,
+		NULL);
+	tf = XtVaCreateManagedWidget("precisionTf", xmTextFieldWidgetClass, f,
+		XmNtopAttachment,	XmATTACH_WIDGET,
+		XmNtopWidget,		w,
+		XmNtopOffset,		10,
+		XmNrightAttachment,	XmATTACH_FORM,
+		XmNrightOffset,		10,
+		XmNleftAttachment,	XmATTACH_WIDGET,
+		XmNleftWidget,		l,
+		XmNleftOffset,		10,
+		XmNbottomAttachment,	XmATTACH_FORM,
+		XmNbottomOffset,	10,
+		NULL);
 }
 
 void FormatsDialogOk(Widget w, XtPointer client, XtPointer call)
 {
 	struct rng	rng;
-	Widget		ww = (Widget)client, om, b = NULL, tf = NULL;
-	char		*p, *s = NULL;
-	int		r;
+	Widget		ww = (Widget)client, om, b = NULL, tf, pr;
+	char		*p, *s = NULL, *prec = NULL;
+	int		r, precision;
 
 	om = XtNameToWidget(ww, "*formatsFrame*formatsOption*formatsOption");
 	tf = XtNameToWidget(ww, "*formatsFrame*formatsTf");
+	pr = XtNameToWidget(ww, "*formatsFrame*precisionTf");
 
 	if (om)
 		XtVaGetValues(om, XmNmenuHistory, &b, NULL);
 	if (tf)
 		p = s = XmTextFieldGetString(tf);
+	if (pr) {
+		prec = XmTextFieldGetString(pr);
+		if (prec) precision = atoi(prec);
+	}
 
 	if (p) {
 		if ((r = parse_cell_or_range(&p, &rng)) == 0)
@@ -2150,14 +2240,42 @@ void FormatsDialogOk(Widget w, XtPointer client, XtPointer call)
 			MessageAppend(False, "FormatRegion %s\n",
 				range_name(&rng));
 
+#if 0
+		/* FIX ME
+			this is an attempt to set the precision on
+			a cell, it seems to have nasty side effects
+		*/
+			if (prec) {
+				int f;
+				f = 0xF0 & fmt;
+				f |= precision;
+				format_region(&rng, f, -1);
+			} else
+				format_region(&rng, fmt, -1);
+#else
 			format_region(&rng, fmt, -1);
+#endif
 			recalculate(1);
 			MotifUpdateDisplay();
 		} else {
 			rng.hr = rng.lr;
 			rng.hc = rng.lc;
 
+#if 0
+		/* FIX ME
+			this is an attempt to set the precision on
+			a cell, it seems to have nasty side effects
+		*/
+			if (prec) {
+				int f;
+				f = 0xF0 & fmt;
+				f |= precision;
+				format_region(&rng, f, -1);
+			} else
+				format_region(&rng, fmt, -1);
+#else
 			format_region(&rng, fmt, -1);
+#endif
 			recalculate(1);
 			MotifUpdateDisplay();
 		}
@@ -2165,6 +2283,7 @@ void FormatsDialogOk(Widget w, XtPointer client, XtPointer call)
 
 #ifdef	FREE_TF_STRING
 	XtFree(s);
+	XtFree(prec);
 #endif
 }
 

@@ -18,13 +18,6 @@ along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 /*  t. lord	Wed Feb 24 22:25:03 1993	*/
 
-#ifdef __STDC__
 extern char ** forminfo_text (char * name);
 
-#else
-extern char ** forminfo_text ();
-
-#endif
-
 #endif  /* FORMINFOH */
-

@@ -17,7 +17,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Oleo; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-
+
 /* Various structures and stuff for the spreadsheet */
 
 /* A union of possible values for a location in the spreadsheet
@@ -144,7 +144,6 @@ typedef struct cell CELL;
  * careful not to add new ones.
  */
 
-#ifdef __STDC__
 extern CELL *find_cell (CELLREF, CELLREF);
 extern CELL *find_or_make_cell (CELLREF, CELLREF);
 extern void find_cells_in_range (struct rng *);
@@ -155,16 +154,5 @@ extern void no_more_cells (void);
 extern char *decomp (CELLREF, CELLREF, CELL *);
 extern char *decomp_formula (CELLREF, CELLREF, CELL *, int);
 extern void decomp_free (void);
-#else
-extern CELL *find_cell ();
-extern CELL *find_or_make_cell ();
-extern void find_cells_in_range ();
-extern void make_cells_in_range ();
-extern CELL *next_cell_in_range ();
-extern CELL *next_row_col_in_range ();
-extern void no_more_cells ();
-extern char *decomp ();
-extern void decomp_free ();
-#endif
 
 #endif

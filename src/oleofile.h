@@ -18,16 +18,9 @@ along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 /*  t. lord	Sun Aug  9 20:40:59 1992	*/
 
-#ifdef __STDC__
 extern void oleo_read_file (FILE *, int);
 extern void oleo_write_file (FILE *, struct rng *);
 extern int oleo_set_options (int, char *);
 extern void oleo_show_options (void);
-#else
-extern void oleo_read_file ();
-extern void oleo_write_file ();
-extern int oleo_set_options ();
-extern void oleo_show_options ();
-#endif
 
 #endif

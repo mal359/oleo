@@ -26,7 +26,6 @@ extern char *argv_name;
 extern int __make_backups;
 extern int __backup_by_copying;
 
-#ifdef __STDC__
 extern VOIDSTAR ck_malloc (size_t);
 extern VOIDSTAR ck_calloc (size_t);
 extern VOIDSTAR ck_realloc (void *,size_t);
@@ -55,36 +54,5 @@ extern VOIDSTAR init_stack (void);
 extern VOIDSTAR pop_stack (VOIDSTAR);
 extern void push_stack (VOIDSTAR, VOIDSTAR);
 extern void flush_stack (VOIDSTAR);
-#else
-extern VOIDSTAR ck_malloc ();
-extern VOIDSTAR ck_calloc ();
-extern VOIDSTAR ck_realloc ();
-extern void ck_free ();
-extern char * ck_savestr ();
-extern char * ck_savestrn ();
-#define ck_remalloc(OLD, SIZE) \
-  ((OLD) ? ck_realloc ((OLD), (SIZE)) : ck_malloc (SIZE))
-
-extern void get_usr_stats ();
-extern void set_usr_stats ();
-
-extern char *char_to_string ();
-extern int string_to_char ();
-extern FILE *xopen_with_backup ();
-extern int xclose ();
-extern char *err_msg ();
-extern char *mk_sprintf ();
-
-extern void init_mem ();
-extern void init_eval ();
-extern void init_refs ();
-extern void init_cells ();
-extern VOIDSTAR init_stack ();
-
-extern VOIDSTAR pop_stack ();
-extern void push_stack ();
-extern void flush_stack ();
-#endif
 
 #endif
-

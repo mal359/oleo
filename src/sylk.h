@@ -20,18 +20,10 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 extern int sylk_a0;
 
-#ifdef __STDC__
 extern void sylk_read_file (FILE *,int);
 extern void sylk_write_file (FILE *,struct rng *);
 extern  int sylk_set_options (int, char *);
 extern void sylk_show_options (void);
-#else
-extern void sylk_read_file ();
-extern void sylk_write_file ();
-extern  int sylk_set_options ();
-extern void sylk_show_options ();
-#endif
-
 
 #endif
 

@@ -29,8 +29,6 @@ static char * FAfnord[] =
 0,
 };
 
-
-
 /* Docstrings */
 
 #undef DEFUN
@@ -61,8 +59,6 @@ static char * FDfnord[] =
 };
 
 
-
-
 /* init_code */
 
 #undef DEFUN
@@ -91,8 +87,6 @@ static char * DFfnord[] =
 };
 
 
-
-
 
 /* Building the function table. */
 

@@ -143,7 +143,6 @@ extern int info_rows;		/* The height of one row of info in a */
 
 #define MOUSE_CHAR '\034'
 
-#ifdef __STDC__
 extern int win_label_cols (struct window * win, CELLREF hr);
 extern int win_label_rows (struct window * win);
 extern void io_set_label_size (int r, int c);
@@ -169,33 +168,4 @@ extern void dequeue_mouse_event (struct mouse_event *out, int seq);
 extern void io_init_windows (int sl, int sc, int ui, int us, int ir, int sr,
 		 int lr, int lc) ;
 
-#else
-extern int win_label_cols ();
-extern int win_label_rows ();
-extern void io_set_label_size ();
-extern void io_set_scr_size ();
-extern void io_set_input_rows ();
-extern void io_set_status_rows ();
-extern void io_set_input_status ();
-extern void io_set_cwin ();
-extern void io_pr_cell ();
-extern void io_redo_region ();
-extern void io_win_open ();
-extern void io_win_close ();
-extern void io_move_cell_cursor ();
-extern void io_shift_cell_cursor ();
-extern void io_scroll_cell_cursor ();
-extern void io_recenter_cur_win ();
-extern void io_recenter_all_win ();
-extern void io_set_win_flags ();
-extern void io_write_window_config ();
-extern void io_read_window_config ();
-extern int enqueue_mouse_event ();
-extern void dequeue_mouse_event ();
-extern void io_init_windows ();
-
 #endif
-
-#endif
-
-

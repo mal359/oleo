@@ -17,14 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 /*  t. lord	Thu Oct 15 18:26:51 1992	*/
-
+
 #include "global.h"
 #include "cell.h"
 extern char numb_oflo[];
 extern char *bname[];
 extern char print_buf[];
 
-#ifdef __STDC__
 extern void init_infinity (void);
 extern char * flt_to_str (double val);
 extern char * flt_to_str_fmt (CELL *cp);
@@ -45,28 +44,5 @@ extern int parray_len (char ** array);
 extern int words_member (char ** keys, int len, char * check);
 extern int prompt_len (char * prompt);
 extern int says_default (char * str);
-
-#else
-extern void init_infinity ();
-extern char * flt_to_str ();
-extern char * long_to_str ();
-extern char * print_cell ();
-extern char * cell_value_string ();
-extern char * adjust_prc ();
-extern void set_usr_stats ();
-extern int usr_set_fmts ();
-extern void get_usr_stats ();
-extern char * cell_name ();
-extern char * range_name ();
-extern int get_abs_rng ();
-extern char * col_to_str ();
-extern void clear_spreadsheet ();
-extern int words_imatch ();
-extern int parray_len ();
-extern int words_member ();
-extern int prompt_len ();
-extern int says_default ();
-
-#endif
 
 #endif

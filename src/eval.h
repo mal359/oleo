@@ -18,7 +18,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Oleo; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-
 
 #include "cell.h"
 
@@ -232,16 +231,9 @@ extern struct function skip_funs[];
 #define X_J	0x08
 #define X_JL	0x10
 
-#ifdef __STDC__
 extern void update_cell (CELL *);
 extern double rtd (double);
 extern double dtr (double);
 extern double to_int (double);
-#else
-extern void update_cell ();
-extern double rtd ();
-extern double dtr ();
-extern double to_int ();
-#endif
 
 #endif
