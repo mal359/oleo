@@ -1,3 +1,40 @@
+Wed 30 Sep 23:45:31 1998 Danny Backx (danny@gnu.org)
+	* src/io-motif.c : XmHTML doesn't need to be in a XmScrolledWindow.
+	* Formats changing now works.
+	* Help anchors need to start with # for XmHTML.
+	  Unfortunately this triggers a bug in XmHTML 1.1.4. It needs to
+	  check whether the widget is realised in _XmHTMLClearArea.
+	  Reported to Koen D'Hondt <ripley@xs4all.nl>.
+
+Wed 30 Sep 22:29:41 1998 Danny Backx (danny@gnu.org)
+	* Too many files and changes to keep track of, really.
+	  All this is mainly to start building an OSF/Motif (aka LessTif)
+	  graphical user interface for oleo.
+	  Shameless plug: LessTif is a free clone of OSF/Motif, available
+	  from
+		http://www.lesstif.org
+	  and
+		ftp://ftp.lesstif.org/pub/hungry/lesstif
+	* m4/* : add a couple of macros to detect presence of Motif/LessTif,
+	  Xbae widgets, XmHTML and SciPlot widgets.
+	* Xresources/* : add text files that allow for internationalisation
+	  of the texts in the Motif GUI. It's easier to put it here (X has
+	  its own i18n mechanism that we're using in this way, using gettext
+	  for this would be quite a bit harder). The texts printed from source
+	  code are still to be internationalised (is this i15d or i14ed ?) 
+	  via GNU gettext, i.e. by replacing "Yow baby" by _("Yow baby").
+	* src/io-motif. : this is the bulk of the Motif GUI source.
+	  Currently this is far from finished but it does pop up a window
+	  and you can interact with it and get reasonable things back.
+	  There's even a help system.
+	* Talking about which: doc/*.texi was modified to add a couple of
+	  tags to allow XmHTML (the HTML widget that I'm using) to locate
+	  some specific piece of text.
+	* */Makefile.am : a couple of tweaks to make the distribution complete.
+	  Now "make distcheck" actually works.
+	* doc/oleo_web.html : this should be a new web page for oleo, to
+	  be put on www.gnu.org .
+
 Thu Apr 16 17:41:00 1997 Jeff Bailey   (jbailey@gnu.org)
 
 	* configure.in: Link for libintl.h if necessary.

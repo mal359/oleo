@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.12 1998/09/26 18:55:14 danny Exp $
+ *  $Id: io-motif.c,v 1.13 1998/09/30 22:02:34 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.12 1998/09/26 18:55:14 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.13 1998/09/30 22:02:34 danny Exp $";
 
 #include "config.h"
 
@@ -237,7 +237,7 @@ struct ConfigureWidgets {
 static void
 sciplot_thunk(void *p, CELL *cp, CELLREF r, CELLREF c)
 {
-	char * str = char_to_q_char (print_cell (cp));
+	char * str = (char *)char_to_q_char (print_cell (cp));
 
 	MessageAppend(False, "SciPlotThunk(r %d c %d) %s",
 		r, c, print_cell(find_cell(r, c)));
@@ -1082,7 +1082,7 @@ anchorCB(Widget widget, XtPointer client, XtPointer call)
 static void
 HelpBuildWindow(void)
 {
-	Widget	f, sw, sep, ok;
+	Widget	f, sep, ok;
 
 	if (! html) {
 		hd = XtVaCreatePopupShell("helpShell",
@@ -1093,23 +1093,20 @@ HelpBuildWindow(void)
 		f = XtVaCreateManagedWidget("form", xmFormWidgetClass, hd,
 			NULL);
 
-		sw = XtVaCreateManagedWidget("scroll",
-			xmScrolledWindowWidgetClass, f,
-				XmNtopAttachment,	XmATTACH_FORM,
-				XmNleftAttachment,	XmATTACH_FORM,
-				XmNrightAttachment,	XmATTACH_FORM,
-				XmNtopOffset,		10,
-				XmNleftOffset,		10,
-				XmNrightOffset,		10,
-			NULL);
-
 		html = XtVaCreateManagedWidget("html",
-			xmHTMLWidgetClass, sw,
+			xmHTMLWidgetClass, f,
 				XmNmarginWidth,			20,
 				XmNmarginHeight,		20,
 				XmNwidth,			600,
 				XmNheight,			500,
 				XmNenableBadHTMLWarnings,	False,
+				XmNscrollBarDisplayPolicy,	XmSTATIC,
+				XmNtopAttachment,		XmATTACH_FORM,
+				XmNleftAttachment,		XmATTACH_FORM,
+				XmNrightAttachment,		XmATTACH_FORM,
+				XmNleftOffset,			10,
+				XmNrightOffset,			10,
+				XmNtopOffset,			10,
 			NULL);
 
 		sep = XtVaCreateManagedWidget("separator",
@@ -1117,7 +1114,7 @@ HelpBuildWindow(void)
 				XmNorientation,		XmHORIZONTAL,
 				XmNtopAttachment,	XmATTACH_WIDGET,
 				XmNtopOffset,		10,
-				XmNtopWidget,		sw,
+				XmNtopWidget,		html,
 				XmNleftAttachment,	XmATTACH_FORM,
 				XmNrightAttachment,	XmATTACH_FORM,
 				XmNleftOffset,		10,
@@ -1554,14 +1551,14 @@ void MoveCB(Widget w, XtPointer client, XtPointer call)
 int fmt;
 int formats_list[] = {
 	/* 0 */		FMT_DEF,
-	/* 1 */		FMT_DEF,
-	/* 2 */		FMT_HID,
-	/* 3 */		FMT_GPH,
-	/* 4 */		PRC_FLT,
-	/* 5 */		FMT_GEN,
-	/* 6 */		FMT_DOL,
-	/* 7 */		FMT_CMA,
-	/* 8 */		FMT_PCT,
+	/* 1 */		FMT_HID,
+	/* 2 */		FMT_GPH,
+	/* 3 */		PRC_FLT,
+	/* 4 */		FMT_GEN,
+	/* 5 */		FMT_DOL,
+	/* 6 */		FMT_CMA,
+	/* 7 */		FMT_PCT,
+	/* 8 */		FMT_DEF,
 	/* 9 */		FMT_DEF,
 	/* 10 */	FMT_DEF,
 	/* 11 */	FMT_DEF,
@@ -1572,18 +1569,25 @@ int formats_list[] = {
 	/* 16 */	FMT_DEF
 };
 
+/*
+ * This is ugly.
+ *
+ * Yeah gets called whenever the user manipulates the option menu.
+ * The OK callback only has to figure out what got selected last
+ * (from the global variable) and do its thing.
+ * A cleaner but harder solution would have to figure out which
+ * button is currently selected and translate that into a format.
+ */
 void Yeah(Widget w, XtPointer client, XtPointer call)
 {
-	fprintf(stderr, "Yeah %s %X %X\n", XtName(w), client, call);
-
 	fmt = formats_list[(int) client];
 }
 
 void CreateFormatsDialog(Widget p)
 {
 	Widget		frame, rc, tf;
-	XmString	xms, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10,
-			x11, x12, x13, x14, x15, x16;
+	XmString	xms, x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10,
+			x11, x12, x13, x14, x15;
 
 	frame = XtVaCreateManagedWidget("formatsFrame", xmFrameWidgetClass, p,
 		NULL);
@@ -1595,29 +1599,31 @@ void CreateFormatsDialog(Widget p)
 		NULL);
 
 	xms = XmStringCreateSimple(_("Formats :"));
-	x1 = XmStringCreateSimple(_("Default"));	/* FMT_DEF */
-	x2 = XmStringCreateSimple(_("Hidden"));		/* FMT_HID */
-	x3 = XmStringCreateSimple(_("Graph"));		/* FMT_GPH */
-	x4 = XmStringCreateSimple(_("Float"));		/* PRC_FLT */
-	x5 = XmStringCreateSimple(_("General"));	/* FMT_GEN */
-	x6 = XmStringCreateSimple(_("Dollar"));		/* FMT_DOL */
-	x7 = XmStringCreateSimple(_("Comma"));		/* FMT_CMA */
-	x8 = XmStringCreateSimple(_("Percent"));	/* FMT_PCT */
-	x9 = XmStringCreateSimple(_("Integer"));
-	x10 = XmStringCreateSimple(_("Decimal"));
-	x11 = XmStringCreateSimple(_("Fixed"));
-	x12 = XmStringCreateSimple(_("Exponent"));
-	x13 = XmStringCreateSimple(_("User-1"));
-	x14 = XmStringCreateSimple(_("User-2"));
-	x15 = XmStringCreateSimple(_("User-3"));
-	x16 = XmStringCreateSimple(_("User-4"));
+
+	x0 = XmStringCreateSimple(_("Default"));	/* FMT_DEF */
+	x1 = XmStringCreateSimple(_("Hidden"));		/* FMT_HID */
+	x2 = XmStringCreateSimple(_("Graph"));		/* FMT_GPH */
+	x3 = XmStringCreateSimple(_("Float"));		/* PRC_FLT */
+	x4 = XmStringCreateSimple(_("General"));	/* FMT_GEN */
+	x5 = XmStringCreateSimple(_("Dollar"));		/* FMT_DOL */
+	x6 = XmStringCreateSimple(_("Comma"));		/* FMT_CMA */
+	x7 = XmStringCreateSimple(_("Percent"));	/* FMT_PCT */
+	x8 = XmStringCreateSimple(_("Integer"));
+	x9 = XmStringCreateSimple(_("Decimal"));
+	x10 = XmStringCreateSimple(_("Fixed"));
+	x11 = XmStringCreateSimple(_("Exponent"));
+	x12 = XmStringCreateSimple(_("User-1"));
+	x13 = XmStringCreateSimple(_("User-2"));
+	x14 = XmStringCreateSimple(_("User-3"));
+	x15 = XmStringCreateSimple(_("User-4"));
 
 	w = XmVaCreateSimpleOptionMenu(rc, "formatsOption",
 		xms, /* mnemonic ? */0, /* initial selection */ 0, 
 		/* callback */ Yeah,
 		/* Type, LabelString, Mnemonic, Accelerator, AcceleratorText */
-		XmVaPUSHBUTTON, x1, 'D', NULL, NULL,
-		XmVaPUSHBUTTON, x2, 'P', NULL, NULL,
+		XmVaPUSHBUTTON, x0, 'D', NULL, NULL,
+		XmVaPUSHBUTTON, x1, 'P', NULL, NULL,
+		XmVaPUSHBUTTON, x2, ' ', NULL, NULL,
 		XmVaPUSHBUTTON, x3, ' ', NULL, NULL,
 		XmVaPUSHBUTTON, x4, ' ', NULL, NULL,
 		XmVaPUSHBUTTON, x5, ' ', NULL, NULL,
@@ -1631,11 +1637,11 @@ void CreateFormatsDialog(Widget p)
 		XmVaPUSHBUTTON, x13, ' ', NULL, NULL,
 		XmVaPUSHBUTTON, x14, ' ', NULL, NULL,
 		XmVaPUSHBUTTON, x15, ' ', NULL, NULL,
-		XmVaPUSHBUTTON, x16, ' ', NULL, NULL,
 		NULL);
 	XtManageChild(w);
 
 	XmStringFree(xms);
+	XmStringFree(x0);
 	XmStringFree(x1);
 	XmStringFree(x2);
 	XmStringFree(x3);
@@ -1651,7 +1657,6 @@ void CreateFormatsDialog(Widget p)
 	XmStringFree(x13);
 	XmStringFree(x14);
 	XmStringFree(x15);
-	XmStringFree(x16);
 }
 
 void FormatsDialogOk(Widget w, XtPointer client, XtPointer call)
@@ -1673,13 +1678,18 @@ void FormatsDialogOk(Widget w, XtPointer client, XtPointer call)
 		if ((r = parse_cell_or_range(&p, &rng)) == 0)
 			ConversionError(s, _("range"));
 		else if (r & RANGE) {
+			MessageAppend(False, "FormatRegion %s\n",
+				range_name(&rng));
+
 			format_region(&rng, fmt, -1);
+			recalculate(1);
 			MotifUpdateDisplay();
 		} else {
 			rng.hr = rng.lr;
 			rng.hc = rng.lc;
 
 			format_region(&rng, fmt, -1);
+			recalculate(1);
 			MotifUpdateDisplay();
 		}
 	}
@@ -1714,6 +1724,8 @@ void FormatsDialog(Widget w, XtPointer Client, XtPointer call)
 
 		XtAddCallback(ok, XmNactivateCallback, FormatsDialogOk,
 			(XtPointer)FormatD);
+		XtAddCallback(help, XmNactivateCallback, helpUsingCB,
+			(XtPointer)"#HelpFormats");
 	}
 
 	FormatsDialogReset(FormatD);
@@ -2175,56 +2187,58 @@ GscBuildMainWindow(Widget parent)
 
 	w = XtVaCreateManagedWidget("math", xmPushButtonGadgetClass, helpmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, helpUsingCB, "HelpMathFunctions");
+	XtAddCallback(w, XmNactivateCallback, helpUsingCB,
+		"#HelpMathFunctions");
 
 	w = XtVaCreateManagedWidget("trig", xmPushButtonGadgetClass, helpmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, helpUsingCB,
-		"HelpTrigonometricFunctions");
+		"#HelpTrigonometricFunctions");
 
 	w = XtVaCreateManagedWidget("stats", xmPushButtonGadgetClass, helpmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, helpUsingCB,
-		"HelpStatisticalFunctions");
+		"#HelpStatisticalFunctions");
 
 	w = XtVaCreateManagedWidget("bool", xmPushButtonGadgetClass, helpmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, helpUsingCB,
-		"HelpBooleanFunctions");
+		"#HelpBooleanFunctions");
 
 	w = XtVaCreateManagedWidget("string", xmPushButtonGadgetClass, helpmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, helpUsingCB,
-		"HelpStringFunctions");
+		"#HelpStringFunctions");
 
 	w = XtVaCreateManagedWidget("struct", xmPushButtonGadgetClass, helpmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, helpUsingCB,
-		"HelpStructuralFunctions");
+		"#HelpStructuralFunctions");
 
 	w = XtVaCreateManagedWidget("search", xmPushButtonGadgetClass, helpmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, helpUsingCB,
-		"HelpSearchFunctions");
+		"#HelpSearchFunctions");
 
 	w = XtVaCreateManagedWidget("bus", xmPushButtonGadgetClass, helpmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, helpUsingCB,
-		"HelpBusinessFunctions");
+		"#HelpBusinessFunctions");
 
 	w = XtVaCreateManagedWidget("date", xmPushButtonGadgetClass, helpmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, helpUsingCB, "HelpDateFunctions");
+	XtAddCallback(w, XmNactivateCallback, helpUsingCB,
+		"#HelpDateFunctions");
 
 	XtVaCreateManagedWidget("sep2", xmSeparatorGadgetClass, helpmenu, NULL);
 
 	w = XtVaCreateManagedWidget("expr", xmPushButtonGadgetClass, helpmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, helpUsingCB, "HelpExpressions");
+	XtAddCallback(w, XmNactivateCallback, helpUsingCB, "#HelpExpressions");
 
 	w = XtVaCreateManagedWidget("error", xmPushButtonGadgetClass, helpmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, helpUsingCB, "HelpErrorValues");
+	XtAddCallback(w, XmNactivateCallback, helpUsingCB, "#HelpErrorValues");
 
 	w = XtVaCreateManagedWidget("format", xmPushButtonGadgetClass, helpmenu,
 		NULL);
@@ -2232,7 +2246,7 @@ GscBuildMainWindow(Widget parent)
 
 	w = XtVaCreateManagedWidget("option", xmPushButtonGadgetClass, helpmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, helpUsingCB, "HelpOptions");
+	XtAddCallback(w, XmNactivateCallback, helpUsingCB, "#HelpOptions");
 
 	return mw;
 }
