@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.52 1999/03/25 23:28:15 danny Exp $
+dnl $Id: configure.in,v 1.53 1999/03/25 23:31:02 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -72,7 +72,7 @@ dnl
 AC_CHECK_LIB(ncurses, waddch, ,
 	AC_CHECK_LIB(curses, addch, ,
 		AC_CHECK_LIB(termlib, tgetent, ,
-			AC_CHECK_LIB(termcap, tgetend))))
+			AC_CHECK_LIB(termcap, tgetent))))
 
 dnl
 dnl This library is required on FreeBSD.

@@ -1,3 +1,5 @@
+Wed, 24 Mar 1999 14:02:54, Jeff Bailey
+	* Fix typo in configure.in .
 
 Fri 26 Mar 00:27:46 1999, Danny Backx
 	* Get configure to recognize both 2.2 and older versions of
