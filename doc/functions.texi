@@ -232,7 +232,7 @@ point (@var{x}, @var{y}).
 @item hypot(@var{x}, @var{y})
   Returns the length of the hypotenuse of a triangle with sides @var{x}
 and @var{y}; i.e., @w{@code{sqrt(@var{x}*@var{x} + @var{y}*@var{y})}}.
-(@xref{General math functions}).
+(@pxref{General math functions})
 @end table
 
 
@@ -615,71 +615,104 @@ than @var{num}, then returns the value in the cell that is
 <A NAME="HelpBusinessFunctions">
 @end ifhtml
 
+Functions for various business-related calculations.  Rates are expressed as
+exactly, i.e. don't expect @samp{10} to mean @var{10%}, but rather use
+@samp{0.10}.  The units for @var{term} are payment periods.  Thus, if you want
+to calculate any of the following using, for example, monthly componunding, you
+will want @samp{pmt(p, r/12, t*12)}, where @var{t} is in years.
+
 @table @code
-@item pmt(@var{p}, @var{r}, @var{t})
+@item pmt(@var{p}, @var{r}, @var{term})
 @findex pmt
-  Payment per period for a loan of principle @var{p} at rate @var{r} for
-@var{t} payments.
+  Payment per period for a loan of principal @var{p} at rate @var{r} for
+  @var{term} payments, assuming a fully amortizing loan which compounds
+  at the payment rate.
 @item pv(@var{pmt}, @var{r}, @var{term})
 @findex pv
-  Present value of an investment that pays $@var{pmt} at the end of each
-of @var{term} periods with a discount rate (interest) of @var{r}.
+  Present value of an investment that pays @var{pmt} at the end of each
+  of @var{term} periods with a discount (interest) rate of @var{r}.
 @item npv(@var{rng}, @var{r})
 @findex npv
-  Net present value of an investment which will pay uneven payments.
-The term is calculated from the number of cells in range @var{rng}.
+  Net present value of an investment which will pay uneven payments.  The term
+  is calculated from the number of cells in range @var{rng}, with the first
+  cell corresponding to @var{t=0} (i.e., assuming a beginning of year paymest
+  stream).  Entries in the range can be positive or negative, corresponding to
+  receipts or payments, respectively.
 @item irr(@var{rng}, @var{guess})
 @findex irr
-  Internal rate of return.  This function is untested and should not be
-trusted.  Returns @code{#BAD_INPUT} if it does not converge for the
-given input.
+  Internal rate of return.  Given a range of cells corresponding to
+  uneven periodic payments, calculate the rate @var{r} such that
+  @code{npv(rng,r)==0}.  This function can be multivalued when entries
+  in the range change sign more than once, and hence returns @code{#BAD_INPUT}
+  if it fails to converge.  Argument @var{guess} helps the function return
+  more quickly, but is not critical.
+@item fmrr(@var{rng}, @var{safe}, @var{reinvest}, @var{reinvmin})
+@findex fmrr
+  Financial management rate of return.  This function attempts to be a more
+  encompassing and consistent version of the internal rate of return, which
+  ignores the disposition of intermediate cash in- and outflows.  The
+  @code{fmrr} function pulls back negative values to the nearest positive ones
+  at the @var{safe} rate (e.g. certificate of deposit rate), and pushes
+  forward all outflows to the end of the period as specified by @var{rng}.
+  These outflows generate income at the @var{reinvest}ment rate if they
+  accumulate to be over @var{reinvinmin}, otherwise at the @var{safe} rate.
 @item fv(@var{pmt}, @var{r}, @var{term})
 @findex fv
-  Future value of an annuity.
+  Future value of an annuity that pays @var{pmt} at the end of each
+  of @var{term} periods assuming a discount rate of @var{r}.
 @item rate(@var{fut}, @var{pres}, @var{term})
 @findex rate
-  Interest rate required to turn $@var{pres} into $@var{fut} in
-@var{term} periods.
-@item term(@var{pmt}, @var{r}, @var{put})
+  Interest rate required to turn current principal @var{pres} into
+  future principal @var{fut} in @var{term} periods.
+@item term(@var{pmt}, @var{r}, @var{fut})
 @findex term
-  Number of periods required to collect $@var{fut} in payments of
-$@var{pmt}, with an interest rate of @var{r}.
+  Number of periods required to collect @var{fut} in payments of
+  @var{pmt}, with an interest rate of @var{r}.
 @item cterm(@var{r}, @var{fut}, @var{pres})
 @findex cterm
-  Number of periods required to collect $@var{fut} from a single deposit
-of $@var{pres}, at an interest rate of @var{r}.
+  Number of periods required to collect @var{fut} from a single deposit
+  of @var{pres}, at an interest rate of @var{r}.
 @item sln(@var{cost}, @var{scrap}, @var{life})
 @findex sln
-  Straight line depreciation of an asset that cost $@var{cost} when new,
-can be sold for $@var{scrap}, and will last for @var{life} periods.
+  Straight line depreciation of an asset that cost @var{cost} when new,
+  can be sold for @var{scrap}, and will last for @var{life} periods.
 @item syd(@var{cost}, @var{scrap}, @var{life}, @var{per})
 @findex syd
-  Sum-of-the-digits depreciation of an asset that cost $@var{cost}, can
-be sold for $@var{scrap} and lasts @var{life}, in period @var{per}.
+  Sum-of-the-digits depreciation in period @var{per} of an asset that cost
+  @var{cost}, can be sold for @var{scrap}, and lasts @var{life} periods.
 @item ddb(@var{cost}, @var{scrap}, @var{life}, @var{per})
 @findex ddb
   Double-declining-balance depreciation; similar to @code{syd()}.
-@item anrate(@var{pmt}, @var{pres}, @var{term})
+@item anrate(@var{pmt}, @var{p}, @var{term})
 @findex anrate
-  Undocumented.
+  Solve @code{pmt(pmt, r, term) == p} for @var{r}.
 @item anterm(@var{pmt}, @var{prin}, @var{r})
 @findex anterm
-  Undocumented.
-@item balance(@var{prin}, @var{r}, @var{term}, @var{per})
+  Solve @code{pmt(pmt, r, term) == p} for @var{term}.
+@item balance(@var{p}, @var{r}, @var{term}, @var{n})
 @findex balance
-  Undocumented.
-@item paidint(@var{prin}, @var{r}, @var{term}, @var{per})
+  After @var{n} payments (of @code{pmt(p, r, term)}) towards a debt of 
+  @var{p} at interest rate @var{r} over @var{term} periods, this function
+  gives the amount left due.
+@item paidint(@var{p}, @var{r}, @var{term}, @var{n})
 @findex paidint
-  Undocumented.
-@item kint(@var{prin}, @var{r}, @var{term}, @var{per})
+  After @var{n} payments (of @code{pmt(p, r, term)}) towards a debt of 
+  @var{p} at interest rate @var{r} over @var{term} periods, this function
+  gives the sum of the amounts of the payments which have gone to service
+  the interest on the debt.
+@item kint(@var{p}, @var{r}, @var{term}, @var{n})
 @findex kint
-  Undocumented.
-@item kprin(@var{prin}, @var{r}, @var{term}, @var{per})
+  At period @var{n}, this amount goes towards paying the interest on the
+  amortizing loan at rate @var{r}, term @var{term}, and principal @var{p}.
+@item kprin(@var{p}, @var{r}, @var{term}, @var{n})
 @findex kprin
-  Undocumented.
-@item compbal(@var{prin}, @var{r}, @var{term})
+  At period @var{n}, this amount goes towards reducing the principal on the
+  amortizing loan at rate @var{r}, term @var{term}, and principal @var{p}.
+  Note that @code{kint(p,r,term,n)+kprin(p,r,term,n)==pmt(p,r,term)}.
+@item compbal(@var{p}, @var{r}, @var{term})
 @findex compbal
-  Undocumented.
+  Compound balance.  Returns the value of principal @var{p} after earning
+  interest @var{r} over @var{term} terms.
 @end table
 
 
