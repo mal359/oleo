@@ -1,4 +1,4 @@
-$Id: ChangeLog,v 1.121 1999/12/19 16:42:35 danny Exp $
+$Id: ChangeLog,v 1.122 2000/02/19 11:26:06 danny Exp $
 
 Sun 19 Dec 17:40:28 1999, Danny
 	* Define a function @button(label, command). Motif should
@@ -12,6 +12,22 @@ Sun 19 Dec 17:40:28 1999, Danny
 	  The only thing left to clean up (I think) is the global
 	  quit menu item - it doesn't currently inquire about all
 	  individual open files.
+	* Move away from old-style GNU Plotutils API, use the new
+	  and cleaner API. This means no more support for GNU
+	  plotutils 2.2 or older.
+	* Use the new GNU Plotutils SciPlot library which I'm writing.
+	  For now, it'll be bundled with Oleo.
+	* Upgrade doc/texi2html to version 1.60 beta, corresponding
+	  change in doc/Makefile.am.
+	* Explicitly include src/parse.h in distributions.
+	* More accurate value of PI, but if available, go get it
+	  from system include files. (src/eval.c)
+	* Add AM_MAINTAINER_MODE macro call in configure.in to keep
+	  us from using the auto_ tools too many times.
+	* Add #include <dmalloc.h> consistently, and fix a couple of
+	  omitted checks for <config.h>.
+	* Worked around a memory overrun problem in SelectCellCB.
+	  Still need to pinpoint it exactly !
 
 Wed  1 Dec 22:10:51 1999, Danny
 	* Release 1.99.8.
