@@ -1,9 +1,9 @@
 /*
- *  $Id: mysql.c,v 1.9 2000/03/03 07:52:40 danny Exp $
+ *  $Id: mysql.c,v 1.10 2000/07/22 06:13:16 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
- *  Copyright (C) 1999 by the Free Software Foundation, Inc.
+ *  Copyright © 1999-2000 by the Free Software Foundation, Inc.
  *  Written by Danny Backx <danny@gnu.org>.
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: mysql.c,v 1.9 2000/03/03 07:52:40 danny Exp $";
+static char rcsid[] = "$Id: mysql.c,v 1.10 2000/07/22 06:13:16 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"

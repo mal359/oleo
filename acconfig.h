@@ -181,6 +181,7 @@
 #undef	HAVE_LIBPLOT
 #undef	HAVE_LIBPLOT_2_2
 #undef	HAVE_LIBSCIPLOT
+#undef	WITH_GNUPLOT
 
 /* GNU scientific library */
 #undef	HAVE_GSL

@@ -1,22 +1,28 @@
-/*	Copyright (C) 1993 Free Software Foundation, Inc.
+/*
+ * $Id: stub.c,v 1.5 2000/07/22 06:13:16 danny Exp $
+ *
+ * Copyright © 1993, 2000 Free Software Foundation, Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
+static char *rcsid = "$Id: stub.c,v 1.5 2000/07/22 06:13:16 danny Exp $";
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this software; see the file COPYING.  If not, write to
-the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-
-
-
-/* This is a collection of stubs that are used to call interactive functions.
+/*
+ * This is a collection of stubs that are used to call interactive functions.
+ *
  * Their responsability is to extract arguments from a command_frame as
  * constructed by the function COMMAND_LOOP.
  */
@@ -33,9 +39,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "cmd.h"
 #include "stub.h"
 
-
-
-
 static void
 find_args (struct command_arg ** argv_out, int argc, struct command_frame * frame)
 {
@@ -48,7 +51,6 @@ find_args (struct command_arg ** argv_out, int argc, struct command_frame * fram
       ++pos;
     }
 }
-
 
 /* These macros are invoked in stubs.h and are used to define
  * the stub functions.  Later, these macros will be redifined 
@@ -151,10 +153,6 @@ stub_isssssssss (frame)
 			 argv[9]->val.string);
 }
 
-
-
-
-
 /* Single character type-codes denote the types of arguments.  A string
  * of type-codes maps to a stub function (hopefully).
  */
@@ -187,32 +185,33 @@ static struct cmd_stub the_stubs[] =
   { 0, 0 }
 };
 
-
-
-/* This looks at the arguments built for the current command and 
+/*
+ * This looks at the arguments built for the current command and 
  * finds the right stub.
  */
 cmd_invoker
 find_stub (void)
 {
-  char type_buf[100];
+	char	type_buf[100];
+	int	x, bufpos;
 
-  /* Figure out a name for the stub we want. */
-  {
-    int x, bufpos;
-    for (x = 0, bufpos = 0; x < cmd_argc; ++x)
-      if (the_cmd_frame->argv[x].style->representation != cmd_none)
-	type_buf[bufpos++] = the_cmd_frame->argv[x].style->representation;
-    type_buf[bufpos] = '\0';
-  }
+	/* Figure out a name for the stub we want. */
+	for (x = 0, bufpos = 0; x < cmd_argc; ++x)
+		if (the_cmd_frame->argv[x].style->representation != cmd_none)
+			type_buf[bufpos++] = the_cmd_frame->argv[x].style->representation;
+	type_buf[bufpos] = '\0';
 
-  /* Look for the stub. */
-  {
-    int x;
-    for (x = 0; the_stubs[x].type; ++x)
-      if (!stricmp (the_stubs[x].type, type_buf))
-	break;
-    return the_stubs[x].stub;
-  }
+	/* Look for the stub. */
+	for (x = 0; the_stubs[x].type; ++x)
+		if (!stricmp (the_stubs[x].type, type_buf))
+			break;
+
+#if 0
+	/* This causes an infinite loop */
+	if (! the_stubs[x].stub) {
+		io_error_msg("internal error: find_stub(%s) no match", type_buf);
+	}
+#endif
+
+	return the_stubs[x].stub;
 }
-

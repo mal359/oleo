@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 1993 Free Software Foundation, Inc.
+ * $Id: forminfo.c,v 1.7 2000/07/22 06:13:15 danny Exp $
+ *
+ * Copyright (C) 1993, 2000 Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1011,6 +1013,49 @@ char * formula_info[] =
 "^W --  print-wallchart",
 "	Write a list of keybindings to a file.",
 0,
+#ifdef	HAVE_LIBPLOT
+"Plotutils-graphs",
+"",
+"[plotutils-presets-verbosely]	--  Reset graphing parameters to default values.",
+"[plotutils-clear-verbosely]	--  Clear the datasets of their assigned ranges.",
+"[plotutils-select-output]	--  Choose the output type for graphs.",
+"[plotutils-set-data]	--  Assign a range of data to a dataset in the graph.",
+"[plotutils-verify]	--  Verify graph parameters.",
+"[plotutils-plot]	--  Plot with the current parameters.",
+"",
+"[plotutils-x-axis]	--  Define parameters relating the X axis.",
+"[plotutils-y-axis]	--  Define parameters relating the Y axis.",
+"[plotutils-set-data-title]	--  Assign a title to a dataset.",
+"[plotutils-set-style]	--  Assign a style to a dataset.",
+"[plotutils-set-filename]	--  Set the file in which to store the graph.",
+"",
+"[plotutils-pie]	--  The graph should be a pie chart.",
+"[plotutils-bar]	--  The graph should be a bar chart.",
+"[plotutils-xy]	--  The graph should be a xy plot.",
+"",
+"Esc	--  End this command.",
+0,
+"plotutils-x-axis-help",
+"",
+"[plotutils-set-x-range-low]	--  Set the beginning of the range of the X axis.",
+"[plotutils-set-x-range-high]	--  Set the end of the range of the X axis.",
+"[plotutils-set-x-labels]	--  Provide labels for tic marks on the X axis.",
+"[plotutils-default-x-labels]	--  Use the default tic marks on the X axis.",
+"",
+"",
+"Esc	--  End this command.",
+0,
+"plotutils-y-axis-help",
+"",
+"[plotutils-set-y-range-low]	--  Set the beginning of the range of the Y axis.",
+"[plotutils-set-y-range-high]	--  Set the end of the range of the Y axis.",
+"[plotutils-set-y-labels]	--  Provide labels for tic marks on the Y axis.",
+"[plotutils-default-y-labels]	--  Use the default tic marks on the Y axis.",
+"",
+"Esc	--  End this command.",
+0,
+#else
+# ifdef WITH_GNUPLOT
 "graphing",
 "",
 "[graph-presets-verbosely]	--  Reset graphing parameters to default values.",
@@ -1049,6 +1094,25 @@ char * formula_info[] =
 "",
 "Esc	--  End this command.",
 0,
+# endif
+#endif
+#ifdef	HAVE_LIBPLOT
+"plotutils-output-types",
+"",
+#ifndef X_DISPLAY_MISSING
+"[plotutils-x11-mono]	--  Draw the graph in an X window, in black and white.",
+"[plotutils-x11-color]	--  Draw the graph in an X window, in color.",
+#endif
+"[plotutils-postscript]	--  Write a file of postscript commands that draw that graph.",
+"[plotutils-tek]	--  Write a file of Tektronix terminal commands that draw that graph.",
+"[plotutils-pcl]	--  Write a file of PCL printer commands that draw that graph.",
+"[plotutils-hpgl]	--  Write a file of HP GL printer/plotter commands that draw that graph.",
+"[plotutils-illustrator]	--  Write a file in Adobe Illustrator format.",
+"[plotutils-metaplot]	--  Write a file GNU MetaPlot format.",
+"[plotutils-fig]	--  Write a file in the format of the FIG program.",
+0,
+#else
+#ifdef WITH_GNUPLOT
 "graph-output-types",
 "",
 #ifndef X_DISPLAY_MISSING
@@ -1057,6 +1121,8 @@ char * formula_info[] =
 #endif
 "[graph-postscript]	--  Write a file of postscript commands that draw that graph.",
 0,
+#endif
+#endif
 "keybindings-wallchart",
 "",
 "			   General Utility",

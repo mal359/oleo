@@ -1,4 +1,6 @@
 /*
+ * $Id: io-curses.c,v 1.16 2000/07/22 06:13:15 danny Exp $
+ *
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -66,7 +68,6 @@ static int textout = 0;
 static int term_cursor_claimed = 0;
 
 static void move_cursor_to (struct window *, CELLREF, CELLREF, int);
-
 
 static int
 curses_metric (char * str, int len)
@@ -181,10 +182,6 @@ _io_over (char * str, int len)
   iv_over (&input_view, len);
 }
 
-
-
-
-
 static void 
 _io_display_cell_cursor (void)
 {
@@ -264,8 +261,6 @@ _io_hide_cell_cursor (void)
 #endif
   move (y, x);
 }
-
-
 
 /* Functions, etc for dealing with cell contents being displayed
 	on top of other cells. */
@@ -374,7 +369,6 @@ change_slop (VOIDSTAR where,
 	}
     }
 }
-
 
 static void 
 _io_open_display (void)
@@ -558,13 +552,16 @@ _io_repaint (void)
 }
 
 static void 
-_io_close_display (void)
+_io_close_display (int e)
 {
-  clear ();
-  refresh ();
-  (void) endwin ();
+	if (e == 0) {
+		clear ();
+		refresh ();
+	}
+
+	(void) endwin ();
 }
-
+
 static int 
 _io_input_avail (void)
 {
@@ -594,7 +591,7 @@ _io_read_kbd (char *buf, int size)
   FD_CLR (0, &exception_pending_fd_set);
   return r;
 }
-
+
 
 #if defined(SIGIO)
 
@@ -623,7 +620,6 @@ _io_getch (void)
 	  ? EOF
 	  : ch);
 }
-
 
 static int 
 _io_get_chr (char *prompt)
@@ -666,7 +662,6 @@ _io_bell (void)
 #endif
 }
 
-
 static void
 move_cursor_to (struct window *win, CELLREF r, CELLREF c, int dn)
 {
@@ -984,7 +979,6 @@ _io_pr_cell_win (struct window *win, CELLREF r, CELLREF c, CELL *cp)
     io_update_status ();
   move (yy, xx);
 }
-
 
 
 static void
@@ -992,8 +986,6 @@ _io_flush (void)
 {
   refresh ();
 }
-
-
 
 void
 _io_command_loop (int a)

@@ -1,5 +1,5 @@
 /*
- * $Id: oleo_plot.h,v 1.7 2000/07/03 19:28:34 danny Exp $
+ * $Id: oleo_plot.h,v 1.8 2000/07/22 06:13:16 danny Exp $
  * 
  * Copyright (C) 1998-1999 Free Software Foundation, Inc.
  * 
@@ -22,6 +22,28 @@
 #define _OLEO_PLOT_H_
 
 #include "line.h"
+
+/* Define the devices that we can generate plots for. */
+enum graph_device {
+	GRAPH_NONE,
+	GRAPH_POSTSCRIPT,
+	GRAPH_TEK,
+	GRAPH_X,
+	GRAPH_X_MONO,	/* ??? */
+	GRAPH_PNG,
+	GRAPH_GIF,
+	GRAPH_METAPLOT,
+	GRAPH_ILLUSTRATOR,
+	GRAPH_FIG,
+	GRAPH_PCL,
+	GRAPH_HPGL,
+};
+
+enum graph_type {
+	GRAPH_XY,
+	GRAPH_PIE,
+	GRAPH_BAR,
+};
 
 /*
  * The public functions in plot.c should all have the same signature,
@@ -71,6 +93,11 @@ struct PlotGlobalType {
 /* SciPlot */
 	int	ticktype[graph_num_axis];
 	char	*tickformat[graph_num_axis];
+
+/* Plotutils */
+	enum graph_device	device;
+	enum graph_type		graph_type;
+	char			*output_file;
 };
 
 #define	XYxMin			Global->PlotGlobal->XYMin[0]

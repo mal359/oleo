@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 1990, 1992, 1993, 1999 Free Software Foundation, Inc.
+ * $Id: io-term.c,v 1.42 2000/07/22 06:13:16 danny Exp $
+ *
+ * Copyright (C) 1990, 1992, 1993, 1999, 2000 Free Software Foundation, Inc.
  * 
  * This file is part of Oleo, the GNU Spreadsheet.
  * 
@@ -17,6 +19,9 @@
  * along with Oleo; see the file COPYING.  If not, write to
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+
+static char *rcsid = "$Id: io-term.c,v 1.42 2000/07/22 06:13:16 danny Exp $";
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -792,6 +797,13 @@ add_usr_cmds (struct cmd_func *new_cmds)
   return num_funcs - 1;
 }
 
+/*
+ * The variable below makes it possible for the program "what" to identify
+ * which version of oleo this executable is.
+ */
+
+static char *what_version = "@(#)" PACKAGE " " VERSION ;
+
 static void
 show_usage (void)
 {
@@ -1072,8 +1084,9 @@ main (int argc, char **argv)
 
   if (setjmp (Global->error_exception))
   {
-	  fprintf (stderr, _("Error in the builtin init scripts (a bug!).\n"));
-	  exit (69);
+	fprintf (stderr, _("Error in the builtin init scripts (a bug!).\n"));
+	io_close_display(69);
+	exit (69);
   }
   else
   {

@@ -1,4 +1,6 @@
 /*
+ * $Id: hash.c,v 1.4 2000/07/22 06:13:15 danny Exp $
+ *
  * hash.c - hash table lookup strings - Copyright (C) 1987, 1992, 1993 Free Software
  * Foundation, Inc.
  *

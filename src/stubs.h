@@ -1,22 +1,25 @@
-/*	Copyright (C) 1993 Free Software Foundation, Inc.
+/*
+ * $Id: stubs.h,v 1.2 2000/07/22 06:13:16 danny Exp $
+ *
+ * Copyright © 1993, 2000 Free Software Foundation, Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this software; see the file COPYING.  If not, write to
-the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-/*  t. lord	Tue Feb  2 02:14:36 1993	*/
-
-
-/* This file contains the only list of all the stub functions that
+/*
+ * This file contains the only list of all the stub functions that
  * are needed for the command set.  The list is maintained this way
  * to make it harder to make mistakes in building the table of stub
  * functions.  Preprocessor magic is used in stub.c to process this list.
@@ -32,6 +35,7 @@ STUB2("dd", stub_dd, (double), floating, double, (double), floating, double)
 STUB2("fs", stub_fs, (FILE *), fp, FILE *, (char *), string, char *)
 STUB2("ii", stub_ii, (int), integer, int, (int), integer, int)
 STUB2("is", stub_is, (int),integer, int, (char *),string, char *)
+STUB2("ir", stub_ir, (int), integer, int, &, range, struct rng *)
 STUB2("rr", stub_rr, &, range, struct rng *, &, range, struct rng *)
 STUB2("rf", stub_rf, &, range, struct rng *, (FILE *), fp, FILE *)
 STUB2("ri", stub_ri, &, range, struct rng *, (int), integer, int)

@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 1993, 1999 Free Software Foundation, Inc.
+ * $Id: cmd.c,v 1.17 2000/07/22 06:13:15 danny Exp $
+ *
+ * Copyright © 1993, 1999, 2000 Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -589,6 +591,17 @@ fini:
   return ch;
 }
 
+void OleoLog(char *fmt, ...)
+{
+	va_list	ap;
+	FILE	*log = fopen("/tmp/oleolog", "a");
+	if (log) {
+		va_start(ap, fmt);
+		vfprintf(log, fmt, ap);
+		va_end(ap);
+		fclose(log);
+	}
+}
 
 /*****************************************************************
  * 
@@ -627,7 +640,8 @@ struct command_frame * the_cmd_frame = 0;
 struct command_frame * running_frames = 0;
 
 
-/* This is called when the current frame has keymapped
+/*
+ * This is called when the current frame has keymapped
  * down to some function (stored in the_cmd_frame->_cur_cmd.
  * This pushes a new frame in which the arguments to that
  * command will be stored.
@@ -638,7 +652,7 @@ struct command_frame * running_frames = 0;
  */
 
 void
-push_command_frame (struct rng * rng, char * first_line, int len)
+push_command_frame(struct rng * rng, char * first_line, int len)
 {
   struct command_frame * new_cf =
     (struct command_frame *)ck_malloc (sizeof (*new_cf));
@@ -719,6 +733,7 @@ push_command_frame (struct rng * rng, char * first_line, int len)
 	new_cf->_mkcol = mkcol;
 	new_cf->_setrow = setrow;
 	new_cf->_setcol = setcol;
+
 	if (!rng)
 	  new_cf->input = the_cmd_frame->input;
       }
@@ -966,13 +981,16 @@ set_default_arg (struct command_arg * arg, char * text, int len)
   setn_arg_text (arg, text, len);
 }
 
-/* This is the main loop of oleo.   It reads commands and their arguments, and
- * evaluates them.  It (via real_get_chr) udpates the display and performs
- * background recomputation.
+/*
+ * This is the main loop of oleo.
+ *
+ * It reads commands and their arguments, and evaluates them.
+ * It (via real_get_chr) udpates the display and performs background recomputation.
  *
  * This function can also be used to evaluate a function without doing any
- * interaction.  This is done by pushing a macro_only command frame
- *  (see execute_command).
+ * interaction.
+ *
+ * This is done by pushing a macro_only command frame (see execute_command).
  */
 
 void
@@ -985,9 +1003,10 @@ command_loop (int prefix, int iscmd)
   if (the_cmd_frame->cmd)
     goto resume_getting_arguments;
 
-  /* Commands (notably execute_command) just tweek the command_frame
+  /*
+   * Commands (notably execute_command) just tweek the command_frame
    * state for some other command.  To accomplish this, there is an 
-   * entry point that avoid reinitializing the command_frame.\
+   * entry point that avoid reinitializing the command_frame.
    */
   if (prefix)
     {
@@ -1311,8 +1330,9 @@ command_loop (int prefix, int iscmd)
 	       */
 	      char * prompt = the_cmd_arg.arg_desc;
 	      
-	      switch (*prompt)
-		{
+	OleoLog("Prompt [%s]\n", prompt);
+
+	      switch (*prompt) {	/* Main prompt */
 		case 'c':
 		  {
                     int tmp;
@@ -1478,30 +1498,21 @@ command_loop (int prefix, int iscmd)
 		case 'p':
 		  {
 		    ++prompt;
-		    switch (*prompt)
-		      {
-		      default:
-			the_cmd_arg.val.integer
-			  = the_cmd_frame->prev->_how_many;
-			the_cmd_arg.is_set = 1;
-			the_cmd_arg.do_prompt = 0;
-			the_cmd_arg.style = &int_constant_style;
-			init_arg_text
-			  (&the_cmd_arg,
-			   long_to_str ((long)the_cmd_arg.val.integer)); 
-			break;
 
-		      case '?':	/* Command wants to know if prefix provided */
-			the_cmd_arg.val.integer =
-			  (the_cmd_frame->prev->_raw_prefix.alloc
-			   && the_cmd_frame->prev->_raw_prefix.buf[0]);
+		    if (*prompt == '?') {	/* Command wants to know if prefix provided */
+			the_cmd_arg.val.integer = (the_cmd_frame->prev->_raw_prefix.alloc
+				&& the_cmd_frame->prev->_raw_prefix.buf[0]);
 			the_cmd_arg.is_set = 1;
 			the_cmd_arg.do_prompt = 0;
 			the_cmd_arg.style = &int_constant_style;
-			init_arg_text (&the_cmd_arg,
-				       the_cmd_arg.val.integer ? "1" : "0");
-			break;
-		      }
+			init_arg_text(&the_cmd_arg, the_cmd_arg.val.integer ? "1" : "0");
+		    } else {
+			the_cmd_arg.val.integer = the_cmd_frame->prev->_how_many;
+			the_cmd_arg.is_set = 1;
+			the_cmd_arg.do_prompt = 0;
+			the_cmd_arg.style = &int_constant_style;
+			init_arg_text(&the_cmd_arg, long_to_str((long)the_cmd_arg.val.integer)); 
+		    }
 		    goto next_arg;
 		  }
 		case 'N':
@@ -1576,11 +1587,17 @@ command_loop (int prefix, int iscmd)
 		case 'r':
 		case 'R':
 		  {
+#if 0
+	/*
+	 * I don't know what I'm breaking by uncommenting this.
+	 * Danny 18/7/2000.
+	 */
 		    if (*prompt != '@' && !mark_is_set) {
 			/* Default to current cell */
                         mkrow = curow;
                         mkcol = cucol;
                     }
+#endif
                     if ((*prompt != 'R' && interactive_mode
 				&& mark_is_set) || *prompt =='@') {
 			the_cmd_arg.val.range.lr = MIN(mkrow, curow);
@@ -1788,16 +1805,18 @@ command_loop (int prefix, int iscmd)
 	    io_hide_cell_cursor ();
 	  }
 	remove_cmd_frame (frame);
+
 	/* Add frame to the list of frames to be freed on error. */
 	frame->next = running_frames;
 	running_frames = frame;
 	if (move_cursor)
 	  io_display_cell_cursor ();
+
 	if (!stub)
-	  io_error_msg ("Don't know how to invoke %s!!!",
-			frame->cmd->func_name);
+	  io_error_msg ("Don't know how to invoke %s!!!", frame->cmd->func_name);
 	else
 	  stub (frame);
+
 	running_frames = running_frames->next;
 	frame->next = 0;
 	free_cmd_frame (frame);
@@ -2039,6 +2058,7 @@ io_error_msg (char *str,...)
     execute_command (buf2);
   else
     fprintf (stderr, "oleo: %s\n", buf);
+
   longjmp (Global->error_exception, 1);
   }
 }

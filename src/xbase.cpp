@@ -1,5 +1,5 @@
 /*
- *  $Id: xbase.cpp,v 1.5 1999/07/23 16:23:52 danny Exp $
+ *  $Id: xbase.cpp,v 1.6 2000/07/22 06:13:16 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -23,7 +23,7 @@
 
 extern "C" {
 
-static char rcsid[] = "$Id: xbase.cpp,v 1.5 1999/07/23 16:23:52 danny Exp $";
+static char rcsid[] = "$Id: xbase.cpp,v 1.6 2000/07/22 06:13:16 danny Exp $";
 
 #include "config.h"
 
@@ -41,7 +41,7 @@ static char rcsid[] = "$Id: xbase.cpp,v 1.5 1999/07/23 16:23:52 danny Exp $";
 
 }
 
-#if defined(HAVE_LIBXBASE)
+#if defined(HAVE_LIBXBASE) || defined(HAVE_LIBXDB)
 
 /*
  * Avoid Xbase madness
@@ -53,7 +53,12 @@ static char rcsid[] = "$Id: xbase.cpp,v 1.5 1999/07/23 16:23:52 danny Exp $";
 #undef	VERSION
 #endif
 
+#ifdef	HAVE_LIBXBASE
 #include <xbase/xbase.h>
+#endif
+#ifdef	HAVE_LIBXDB
+#include <xdb/xbase.h>
+#endif
 
 void
 CppReadXbaseFile(char *fn, int ismerge)

@@ -1,20 +1,26 @@
-/*      Copyright (C) 1990, 1992, 1993 Free Software Foundation, Inc.
+/*
+ * $Id: io-utils.c,v 1.35 2000/07/22 06:13:16 danny Exp $
+ *
+ * Copyright (C) 1990, 1992, 1993, 2000 Free Software Foundation, Inc.
+ *
+ * This file is part of Oleo, the GNU Spreadsheet.
+ *
+ * Oleo is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * Oleo is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * Oleo; see the file COPYING.  If not, write to the Free Software Foundation, 675
+ * Mass Ave, Cambridge, MA 02139, USA.
+ */
 
-   This file is part of Oleo, the GNU Spreadsheet.
-
-   Oleo is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
-
-   Oleo is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License along with
-   Oleo; see the file COPYING.  If not, write to the Free Software Foundation, 675
-   Mass Ave, Cambridge, MA 02139, USA.  */
+static char *rcsid = "$Id: ";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -1401,7 +1407,7 @@ read_file_generic_2(FILE *fp, int ismerge, char *format, char *name)
 		list_set_separator(',');
 		list_read_file(fp, ismerge);
 	} else if (stricmp("dbf", format) == 0) {
-#ifdef HAVE_LIBXBASE
+#if defined(HAVE_LIBXBASE) || defined(HAVE_LIBXDB)
 		ReadXbaseFile(name, ismerge);
 #else
 		io_error_msg ("Cannot read XBASE file (xbase not compiled into " PACKAGE ")");

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1993, 1999, 2000 Free Software Foundation, Inc.
+ * Copyright (c) 1993, 1999, 2000 Free Software Foundation, Inc.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: graph.c,v 1.16 2000/07/03 19:28:34 danny Exp $
+ * $Id: graph.c,v 1.17 2000/07/22 06:13:15 danny Exp $
  *
  * This file contains the functions to maintain the internal graphing
  * data structures in Oleo.
@@ -210,6 +210,11 @@ graph_x11_mono (void)
 {
   set_line (&graph_term_cmd, "x11 # b/w");
   set_line (&graph_output_file, "");
+
+  if (Global->PlotGlobal->output_file)
+	free(Global->PlotGlobal->output_file);
+  Global->PlotGlobal->output_file = "";
+
   plot_fn = spew_for_x;
 }
 
@@ -219,6 +224,11 @@ graph_x11_color (void)
 {
   set_line (&graph_term_cmd, "X11 # color");
   set_line (&graph_output_file, "");
+
+  if (Global->PlotGlobal->output_file)
+	free(Global->PlotGlobal->output_file);
+  Global->PlotGlobal->output_file = "";
+
   plot_fn = spew_for_x;
 }
 
@@ -242,6 +252,10 @@ graph_postscript (char * file, int kind, int spectrum, char * font, int pt_size)
 	       "postscript %c %c %s %d  # Postscript",
 	       kind, spectrum, char_to_q_char (font), pt_size);
   set_line (&graph_output_file, file);
+  if (Global->PlotGlobal->output_file)
+	free(Global->PlotGlobal->output_file);
+  Global->PlotGlobal->output_file = strdup(file);
+
   plot_fn = spew_for_ps;
 }
 
@@ -432,6 +446,16 @@ graph_get_data_title(int data_set)
   if ((data_set < 0) || (data_set >= NUM_DATASETS))
     return NULL;
   return Global->PlotGlobal->graph_title[data_set].buf;
+}
+
+void
+plotutils_set_data(int data_set, struct rng *rng)
+{
+  if ((data_set < 0) || (data_set >= NUM_DATASETS))
+    io_error_msg
+      ("set-graph-data -- data-set out of range: %d (should be in [0..%d])",
+       data_set, NUM_DATASETS);
+  Global->PlotGlobal->graph_data[data_set] = *rng;
 }
 
 void
@@ -1160,21 +1184,241 @@ spew_for_ps(void)
 {
 #ifdef	HAVE_LIBPLOT
 	void (*f)(char *, FILE *) = PuXYChart;	/* FIX ME */
-	FILE	*fp;
+	FILE	*fp = NULL;
+	int	havepipe = 0;
 
-	fp = fopen("#plot.ps", "w");
-	if (fp == NULL)
-		return;				/* FIX ME */
+	switch (Global->PlotGlobal->graph_type) {
+	case GRAPH_XY:
+		f = PuXYChart;
+		break;
+	case GRAPH_BAR:
+		f = PuBarChart;
+		break;
+	case GRAPH_PIE:
+		f = PuPieChart;
+		break;
+	};
 
-	PlotInit();
+	if (Global->PlotGlobal->output_file) {
+	    /* Treat stdout ("-") case */
+	    if (strcmp(Global->PlotGlobal->output_file, "-") == 0)
+		fp = stdout;
+	    else if (Global->PlotGlobal->output_file[0] == '|') {
+		/* FIX ME treat pipe */
+		havepipe = 1;
+	    } else {
+		fp = fopen(Global->PlotGlobal->output_file, "w");
+	    }
+	}
 
-	(*f)("ps", fp);		/* FIX ME */
+	if (fp == NULL) {
+		io_error_msg("Cannot open file '%s'", Global->PlotGlobal->output_file);
+		return;
+	}
 
-	fclose(fp);
+	switch (Global->PlotGlobal->device) {
+	case GRAPH_TEK:
+		PlotInit();
+#if 0
+		/* A failed attempt to clear the screen prior to drawing */
+		printf("\027\014");
+#endif
+		(*f)("tek", fp);
+		break;
+	default:
+		PlotInit();
+		(*f)("ps", fp);		/* FIX ME */
+		break;
+	};
+
+	if (havepipe) {
+		/* FIX ME */
+	} else if (fp != stdout)
+		fclose(fp);
 #endif
 }
 static void
 spew_for_x(void)
 {
+}
+#endif
+
+#ifdef	HAVE_LIBPLOT
+void
+plotutils_metaplot(void)
+{
+	Global->PlotGlobal->device = GRAPH_METAPLOT;
+}
+
+void
+plotutils_illustrator(void)
+{
+	Global->PlotGlobal->device = GRAPH_ILLUSTRATOR;
+}
+
+void
+plotutils_fig(void)
+{
+	Global->PlotGlobal->device = GRAPH_FIG;
+}
+
+void
+plotutils_pcl(void)
+{
+	Global->PlotGlobal->device = GRAPH_PCL;
+}
+
+void
+plotutils_hpgl(void)
+{
+	Global->PlotGlobal->device = GRAPH_HPGL;
+}
+
+void
+plotutils_tek(void)
+{
+	Global->PlotGlobal->device = GRAPH_TEK;
+}
+
+/* FIX ME !!! */
+void
+plotutils_make_info(void)
+{
+  struct info_buffer	*ib = find_or_make_info ("graphing-parameters");
+  enum graph_axis	axis;
+  int			x;
+
+  clear_info (ib);
+
+  print_info(ib, "");
+  switch (Global->PlotGlobal->graph_type) {
+	case GRAPH_XY:
+		print_info(ib, "Graph type is XY plot.");
+		break;
+	case GRAPH_BAR:
+		print_info(ib, "Graph type is BAR chart.");
+		break;
+	case GRAPH_PIE:
+		print_info(ib, "Graph type is PIE chart.");
+		break;
+  }
+  print_info(ib, "");
+  print_info(ib,
+	"Parameter		Value");
+  print_info(ib, "");
+  switch (Global->PlotGlobal->device) {
+  case GRAPH_TEK:
+    print_info(ib, "output type		%s", "Tektronix");
+    break;
+  case GRAPH_X:
+  case GRAPH_X_MONO:
+    print_info(ib, "output type		%s", "X window");
+    break;
+  case GRAPH_PNG:
+    print_info(ib, "output type		%s", "PNG");
+    break;
+  case GRAPH_GIF:
+    print_info(ib, "output type		%s", "GIF");
+    break;
+  case GRAPH_METAPLOT:
+    print_info(ib, "output type		%s", "GNU MetaPlot");
+    break;
+  case GRAPH_ILLUSTRATOR:
+    print_info(ib, "output type		%s", "Adobe Illustrator");
+    break;
+  case GRAPH_FIG:
+    print_info(ib, "output type		%s", "FIG");
+    break;
+  case GRAPH_PCL:
+    print_info(ib, "output type		%s", "PCL");
+    break;
+  case GRAPH_HPGL:
+    print_info(ib, "output type		%s", "HP GL");
+    break;
+  case GRAPH_POSTSCRIPT:
+  case GRAPH_NONE:
+  default:
+    print_info(ib, "output type		%s", graph_term_cmd.buf);
+    break;
+  };
+
+  if (Global->PlotGlobal->output_file)
+    print_info(ib,
+       "output file		%s",
+	Global->PlotGlobal->output_file);
+  
+  for (axis = graph_x; axis <= graph_y; ++axis)
+    print_info(ib,
+       "%s-axis title		%s",
+       graph_axis_name[axis], Global->PlotGlobal->graph_axis_title[axis].buf);
+
+  print_info(ib,
+       "logarithmic axes	%s",
+       (Global->PlotGlobal->graph_logness[graph_x]
+	? (Global->PlotGlobal->graph_logness[graph_y] ? "x,y" : "x")
+	: (Global->PlotGlobal->graph_logness[graph_y] ? "y" : "-neither-")));
+
+  for (axis = graph_x; axis <= graph_y; ++axis) {
+	print_info(ib,
+		"%s-axis range		[%s..%s]",
+	   graph_axis_name [axis],
+	   Global->PlotGlobal->graph_rng_lo[axis].buf, Global->PlotGlobal->graph_rng_hi[axis].buf,
+	   Global->PlotGlobal->graph_rng_hi[axis].buf, Global->PlotGlobal->graph_rng_hi[axis].buf);
+    }
+
+  for (axis = graph_x; axis <= graph_y; ++axis) {
+      if (Global->PlotGlobal->graph_axis_labels[axis].lr != NON_ROW)
+	print_info(ib,
+	   	"%s-axis labels		%s",
+	   graph_axis_name[axis],
+	   range_name(&Global->PlotGlobal->graph_axis_labels[axis]));
+    }
+
+    for (x = 0; x < NUM_DATASETS; ++x)
+      if (Global->PlotGlobal->graph_data [x].lr != NON_ROW)
+      {
+	print_info (ib, "");
+	print_info (ib,"Data Set %d%s%s",
+		    x,
+		    Global->PlotGlobal->graph_title[x].buf[0] ? " entitled " : "",
+		    Global->PlotGlobal->graph_title[x].buf);
+	print_info (ib,"  data for this set: %s",
+		    range_name (&Global->PlotGlobal->graph_data[x]));
+	print_info (ib,"  style for this set: %s",
+		    Global->PlotGlobal->graph_style[x].buf);
+	print_info (ib,"");
+      }
+}
+
+void
+plotutils_set_axis_labels(int axis_c, struct rng * rng)
+{
+  enum graph_axis axis = chr_to_axis (axis_c);
+  Global->PlotGlobal->graph_axis_labels [axis] = *rng;
+}
+
+void
+plotutils_set_filename(char *file)
+{
+  set_line (&graph_output_file, file);
+
+  if (Global->PlotGlobal->output_file)
+	free(Global->PlotGlobal->output_file);
+  Global->PlotGlobal->output_file = strdup(file);
+}
+
+void plotutils_xy(void)
+{
+	Global->PlotGlobal->graph_type = GRAPH_XY;
+}
+
+void plotutils_pie(void)
+{
+	Global->PlotGlobal->graph_type = GRAPH_PIE;
+}
+
+void plotutils_bar(void)
+{
+	Global->PlotGlobal->graph_type = GRAPH_BAR;
 }
 #endif

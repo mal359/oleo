@@ -1,6 +1,6 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.61 2000/07/08 15:22:35 danny Exp $
+ *  $Id: io-motif.c,v 1.62 2000/07/22 06:13:16 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -22,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.61 2000/07/08 15:22:35 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.62 2000/07/22 06:13:16 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -5610,7 +5610,7 @@ xio_redisp (void)
 }
 
 extern void
-xio_close_display (void)
+xio_close_display(int e)
 {
 #ifdef	VERBOSE
 	Debug(__FILE__, "xio_close_display\n");
@@ -5986,6 +5986,15 @@ void versionCB(Widget w, XtPointer client, XtPointer call)
 
 #ifdef	HAVE_LIBPLOT
 	sprintf(xbae, "\n  GNU PlotUtils (libplot version %s)", PL_LIBPLOT_VER_STRING);
+	xms1 = xms;
+	xms2 = XmStringCreateLtoR(xbae, XmFONTLIST_DEFAULT_TAG);
+	xms = XmStringConcat(xms1, xms2);
+	XmStringFree(xms1);
+	XmStringFree(xms2);
+#endif
+
+#if defined(HAVE_LIBXDB) && defined(XDB_VERSION)
+	sprintf(xbae, "\n  Xdb library version %s", XDB_VERSION);
 	xms1 = xms;
 	xms2 = XmStringCreateLtoR(xbae, XmFONTLIST_DEFAULT_TAG);
 	xms = XmStringConcat(xms1, xms2);

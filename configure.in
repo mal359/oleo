@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.79 2000/07/08 15:22:35 danny Exp $
+dnl $Id: configure.in,v 1.80 2000/07/22 06:13:15 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -215,6 +215,19 @@ AC_CHECK_LIB(plot, pl_openpl_r,
 AC_CHECK_LIB(sciplot, sp_begin_plot)
 if test x$ac_cv_lib_sciplot_sp_begin_plot = xyes; then
 	AC_DEFINE(HAVE_LIBSCIPLOT)
+fi
+
+AC_ARG_WITH(gnuplot,
+[ --with-gnuplot       Oleo graphing calls gnuplot. Deprecated & only if no plotutils.],
+[  case "${withval}" in
+     y | ye | yes)	usegnuplot=yes ;;
+     n | no      )	usegnuplot=no ;;
+     * )                usegnuplot=yes ;;
+   esac],
+[  usegnuplot=yes])
+
+if test $usegnuplot = yes; then
+	AC_DEFINE(WITH_GNUPLOT)
 fi
 
 dnl Checks for Guile

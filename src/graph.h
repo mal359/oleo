@@ -2,7 +2,7 @@
 #define GRAPHH
 
 /*
- * $Id: graph.h,v 1.7 2000/07/03 19:28:34 danny Exp $
+ * $Id: graph.h,v 1.8 2000/07/22 06:13:15 danny Exp $
  *
  * Copyright (C) 1993-2000 Free Software Foundation, Inc.
  *
@@ -61,6 +61,21 @@ extern void graph_make_info (void);
 extern void for_pairs_in (struct rng * rng, enum graph_pair_ordering order, fpi_thunk thunk, void * frame);
 extern void graph_plot (void);
 
+extern void plotutils_set_filename(char *file);
+extern void plotutils_tek(void);
+extern void plotutils_fig(void);
+extern void plotutils_illustrator(void);
+extern void plotutils_metaplot(void);
+extern void plotutils_pcl(void);
+extern void plotutils_hpgl(void);
+extern void plotutils_set_data(int data_set, struct rng * rng);
+extern void plotutils_make_info(void);
+extern void plotutils_set_axis_labels(int axis_c, struct rng * rng);
+
+extern void plotutils_xy(void);
+extern void plotutils_pie(void);
+extern void plotutils_bar(void);
+
 extern char *graph_get_axis_title(int axis_c);
 extern void graph_set_title(char *);
 extern char *graph_get_title(void);
@@ -89,8 +104,9 @@ typedef struct oleo_graph {
 /* Arguments to `set range [%s:%s]' */
 	struct line graph_rng_lo [graph_num_axis];
 	struct line graph_rng_hi [graph_num_axis];
-/* The ranges (if any) of the symbolic names
- * for integer coordinates starting at 0.
+/*
+ * The ranges (if any) of the symbolic names for integer coordinates starting
+ * at 0.
  * If none, these will have lr == NON_ROW.
  */
 	struct rng graph_axis_symbols [graph_num_axis];

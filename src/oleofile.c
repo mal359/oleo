@@ -1,4 +1,6 @@
 /*
+ * $Id: oleofile.c,v 1.21 2000/07/22 06:13:16 danny Exp $
+ *
  * Copyright (C) 1990-2000 Free Software Foundation, Inc.
  *
  * This program is free software; you can redistribute it and/or modify

@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.50 2000/07/08 15:22:35 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.51 2000/07/22 06:13:15 danny Exp $
 #
 # CPPFLAGS = -Wall
 
@@ -118,3 +118,7 @@ sc.o:		parse.h
 
 plot.o:		oleo_plot.h
 graph.o:	oleo_plot.h
+
+cmd.o funcs.o:	defun.h defuns.h
+
+cmd.o stub.o:	stubs.h

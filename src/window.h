@@ -1,5 +1,7 @@
 /*
- *	Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
+ * $Id: window.h,v 1.4 2000/07/22 06:13:16 danny Exp $
+ *
+ * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

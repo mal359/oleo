@@ -1,18 +1,22 @@
-/*	Copyright (C) 1993 Free Software Foundation, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this software; see the file COPYING.  If not, write to
-the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
+/*
+ * $Id: basic.c,v 1.20 2000/07/22 06:13:15 danny Exp $
+ *
+ * Copyright © 1993, 2000 Free Software Foundation, Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -530,7 +534,7 @@ kill_oleo (void)
 	write_file_generic(stdout, NULL, NULL);
   }
 
-  io_close_display ();
+  io_close_display(0);
   exit (0);
 }
 
@@ -571,13 +575,13 @@ goto_region (struct rng *r)
 {
   (void) io_move_cell_cursor (r->lr, r->lc);
 
-  if (r->hr != r->lr || r->hc != r->lc)
-    {
-      mkrow = r->hr;
-      mkcol = r->hc;
-    }
-  else if (mkrow != NON_ROW)
-    mkrow = NON_ROW;
+  if (r->hr != r->lr || r->hc != r->lc) {
+	mkrow = r->hr;
+	mkcol = r->hc;
+  } else if (mkrow != NON_ROW) {
+	mkrow = NON_ROW;
+  }
+
   io_update_status ();
 }
 
@@ -809,21 +813,20 @@ mark_cell_cmd (int popmk)
 	  rng.hc = NON_COL;
 	  goto_region (&rng);
 	}
-    }
-  else
-    {
-      mkrow = curow;
-      mkcol = cucol;
-      io_update_status ();
+    } else {
+	mkrow = curow;
+	mkcol = cucol;
+	io_update_status ();
     }
 }
 
 void
 unmark_cmd (void)
 {
-  mkrow = NON_ROW;
-  mkcol = NON_COL;
-  io_update_status ();
+	mkrow = NON_ROW;
+	mkcol = NON_COL;
+
+	io_update_status ();
 }
 
 void
@@ -905,10 +908,9 @@ do_mouse_goto (void)
 void
 do_mouse_mark (void)
 {
-  if (last_mouse_event.location >= 0 && last_mouse_event.downp)
-    {
-      mkrow = last_mouse_event.r;
-      mkcol = last_mouse_event.c;
+  if (last_mouse_event.location >= 0 && last_mouse_event.downp) {
+	mkrow = last_mouse_event.r;
+	mkcol = last_mouse_event.c;
     }
 }
 
@@ -916,10 +918,9 @@ do_mouse_mark (void)
 void
 do_mouse_mark_and_goto (void)
 {
-  if (last_mouse_event.location >= 0 && last_mouse_event.downp)
-    {
-      mkrow = curow;
-      mkcol = cucol;
+  if (last_mouse_event.location >= 0 && last_mouse_event.downp) {
+	mkrow = curow;
+	mkcol = cucol;
     }
   do_mouse_goto ();
 }

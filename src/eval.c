@@ -1,4 +1,6 @@
 /*
+ * $Header: /home/matt/cvs/oleo/oleo/src/eval.c,v 1.9 2000/07/22 06:13:15 danny Exp $
+ *
  * Copyright (C) 1990, 1992, 1993 Free Software Foundation, Inc.
  *
  * This file is part of Oleo, the GNU Spreadsheet.
@@ -16,8 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Oleo; see the file COPYING.  If not, write to
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- * $Header: /home/matt/cvs/oleo/oleo/src/eval.c,v 1.8 2000/02/22 23:29:33 danny Exp $
  */
 
 #ifdef HAVE_CONFIG_H

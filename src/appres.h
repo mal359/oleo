@@ -1,24 +1,22 @@
 /*
- *  $Id: appres.h,v 1.6 1999/03/06 13:44:28 danny Exp $
+ * $Id: appres.h,v 1.7 2000/07/22 06:13:15 danny Exp $
  *
- *  This file is part of GnuSheet, a free spreadsheet.
+ * Copyright (C) 1998 Free Software Foundation, Inc.
+ * Written by Danny Backx <danny@gnu.org>.
  *
- *  Modifications from oleo-1.6 are copyright (C) 1998 by Danny Backx
- *  <danny.backx@advalvas.be>.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 #include <X11/Intrinsic.h>
 #include <Xm/Xm.h>

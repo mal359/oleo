@@ -1,22 +1,25 @@
 #ifndef CMDH
 #define CMDH
 
-/*	Copyright (C) 1992, 1993 Free Software Foundation, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this software; see the file COPYING.  If not, write to
-the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-/*  t. lord	Wed Oct 14 12:01:37 1992	*/
+/*
+ * $Id: cmd.h,v 1.4 2000/07/22 06:13:15 danny Exp $
+ *
+ * Copyright (C) 1992, 1993 Free Software Foundation, Inc.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this software; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
 /*
  * This file explains the generic interface to interactive functions.
@@ -177,10 +180,15 @@ struct command_frame
   CELLREF _setcol;
   
   /* The current cell and the mark. */
+  long	buf1;
   CELLREF _curow;
+  long	buf2;
   CELLREF _cucol;
+  long	buf3;
   CELLREF _mkrow;
+  long	buf4;
   CELLREF _mkcol;
+  long	buf5;
 
   /* What passes for a window configuration, for now. */
   /* 

@@ -1,4 +1,29 @@
-$Id: ChangeLog,v 1.129 2000/07/08 15:22:35 danny Exp $
+$Id: ChangeLog,v 1.130 2000/07/22 06:13:15 danny Exp $
+
+	* Conditionally compile only GNU Plotutils support, not gnuplot,
+	  if plotutils is detected by configure.
+	* Start developing curses menus to support plotutils.
+	* io_close_display() now has an int parameter which you should
+	  pass a nonzero number on errors. That makes it bypass a screen
+	  refresh before leaving curses. This is interesting if you've
+	  just printed an error message...
+	* Call io_close_display() when encountering an inconsistency
+	  in the startup script. This cleans up curses.
+	* Replace call to display-error-msg by display-msg.
+	* Implement support for 'tek' device in graphs, only
+	  for stdout for now. This really means if you run in an
+	  xterm window, then a plot to the tek device will open
+	  the Tektronix window of your xterm and show the plot
+	  in that.
+	* The xBase library has been renamed to be xdb. It can be
+	  found through the old xBase home page but also on
+	  http://sourceforge.net/projects/xdb .
+	  Configuration has been adapted to recognise xdb as well
+	  as the old xBase.
+	  Things are however still messy because of inconsistent naming
+	  in xdb. Currently things work with xdb 1.2.0 .
+	* Make sure the Id string and copyright notes appear more
+	  consistently throughout the sources.
 
 Sat  8 Jul 17:15:57 2000, Danny
 	* Make sure Oleo compiles without GNU plotutils also.

@@ -1,9 +1,9 @@
 /*
- *  $Id: oleo_xb.h,v 1.2 1999/03/17 21:21:39 danny Exp $
+ *  $Id: oleo_xb.h,v 1.3 2000/07/22 06:13:16 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
- *  Copyright (C) 1998 by the Free Software Foundation, Inc.
+ *  Copyright (C) 1998-2000 by the Free Software Foundation, Inc.
  *  Written by Danny Backx <danny@gnu.org>.
  *
  *  This program is free software; you can redistribute it and/or modify
