@@ -1,3 +1,8 @@
+Fri Oct 3  00:25:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
+
+	* Regenerate with Automake 1.2c to remove test error
+	* configure.in: Change Oleo to oleo
+
 Thu Oct 2  22:27:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
 
 	* ansi2knr.[c1] added to lib/ directory.
