@@ -33,6 +33,9 @@ exit(0);
 ],
 lt_cv_libxp=yes,
 lt_cv_libxp=no)
+CFLAGS="$lt_save_CFLAGS"
+CPPFLAGS="$lt_save_CPPFLAGS"
+LIBS="$lt_save_LIBS"
 ])
 if test $lt_cv_libxp = yes; then
   AC_DEFINE(HAVE_LIB_XP)
@@ -42,8 +45,5 @@ else
 fi
 AM_CONDITIONAL(Have_Libxp, test "$lt_cv_libxp" = "yes")
 AC_SUBST(LT_HAVELIBXP)
-CFLAGS="$lt_save_CFLAGS"
-CPPFLAGS="$lt_save_CPPFLAGS"
-LIBS="$lt_save_LIBS"
 ])
 
