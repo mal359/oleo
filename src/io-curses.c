@@ -1,5 +1,5 @@
 /*
- * $Id: io-curses.c,v 1.20 2001/02/13 23:38:06 danny Exp $
+ * $Id: io-curses.c,v 1.21 2001/05/13 07:48:35 danny Exp $
  *
  * Copyright © 1992, 1993, 1999, 2001 Free Software Foundation, Inc.
  *
@@ -41,7 +41,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <signal.h>
-#undef NULL
+
 #include "sysdef.h"
 #include "global.h"
 #include "cell.h"
@@ -58,6 +58,7 @@
 #include "key.h"
 #include "input.h"
 #include "info.h"
+
 #include <term.h>
 
 #define MIN_WIN_HEIGHT	(cwin->flags&WIN_EDGES ? 2 : 1)
