@@ -14,7 +14,7 @@ dnl
 dnl The link_motif and include_motif variables should be fit to put on
 dnl your application's link line in your Makefile.
 dnl
-dnl Oleo CVS $Id: motif.m4,v 1.9 1999/04/09 11:46:49 danny Exp $
+dnl Oleo CVS $Id: motif.m4,v 1.10 1999/04/27 18:18:58 danny Exp $
 dnl
 AC_DEFUN(AC_FIND_MOTIF,
 [
@@ -52,12 +52,12 @@ if test "$motif_includes" = ""; then
 AC_CACHE_VAL(ac_cv_motif_includes,
 [
 ac_motif_save_LIBS="$LIBS"
-ac_motif_save_CFLAGS="$CFLAGS"
+ac_motif_save_INCLUDES="$INCLUDES"
 ac_motif_save_CPPFLAGS="$CPPFLAGS"
 ac_motif_save_LDFLAGS="$LDFLAGS"
 #
 LIBS="$X_PRE_LIBS -lXm -lXt -lX11 $X_EXTRA_LIBS $LIBS"
-CFLAGS="$X_CFLAGS $CFLAGS"
+INCLUDES="$X_CFLAGS $INCLUDES"
 CPPFLAGS="$X_CFLAGS $CPPFLAGS"
 LDFLAGS="$X_LIBS $LDFLAGS"
 #
@@ -91,7 +91,7 @@ done
 ])
 #
 LIBS="$ac_motif_save_LIBS"
-CFLAGS="$ac_motif_save_CFLAGS"
+INCLUDES="$ac_motif_save_INCLUDES"
 CPPFLAGS="$ac_motif_save_CPPFLAGS"
 LDFLAGS="$ac_motif_save_LDFLAGS"
 ])
@@ -105,12 +105,12 @@ if test "$motif_libraries" = ""; then
 AC_CACHE_VAL(ac_cv_motif_libraries,
 [
 ac_motif_save_LIBS="$LIBS"
-ac_motif_save_CFLAGS="$CFLAGS"
+ac_motif_save_INCLUDES="$INCLUDES"
 ac_motif_save_CPPFLAGS="$CPPFLAGS"
 ac_motif_save_LDFLAGS="$LDFLAGS"
 #
 LIBS="$X_PRE_LIBS -lXm -lXt -lX11 $X_EXTRA_LIBS $LIBS"
-CFLAGS="$X_CFLAGS $CFLAGS"
+INCLUDES="$X_CFLAGS $INCLUDES"
 CPPFLAGS="$X_CFLAGS $CPPFLAGS"
 LDFLAGS="$X_LIBS $LDFLAGS"
 #
@@ -146,7 +146,7 @@ done
 ])
 #
 LIBS="$ac_motif_save_LIBS"
-CFLAGS="$ac_motif_save_CFLAGS"
+INCLUDES="$ac_motif_save_INCLUDES"
 CPPFLAGS="$ac_motif_save_CPPFLAGS"
 LDFLAGS="$ac_motif_save_LDFLAGS"
 ])
