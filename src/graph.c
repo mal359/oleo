@@ -1018,8 +1018,10 @@ static char *graph_plot_title = NULL;
 void
 graph_set_title(char *t)
 {
+#ifndef X_DISPLAY_MISSING
 	if (graph_plot_title)
 		XtFree(graph_plot_title);
+#endif
 	graph_plot_title = strdup(t);
 }
 
