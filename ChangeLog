@@ -1,5 +1,11 @@
 
-$Id: ChangeLog,v 1.142 2001/02/06 02:40:57 pw Exp $
+$Id: ChangeLog,v 1.143 2001/02/07 03:32:59 pw Exp $
+
+Tue Feb  6 22:11:27 EST 2001  Pete Wyckoff  (pw@osc.edu)
+	* Add CVS complation instructions in README.
+	* Move around checks in configure.in so that X works without Motif.
+	* Adjust spacing so that ./configure --help is prettier.
+	* Update doc/keymaps.texi for current keymaps.
 
 Sun Feb  5 21:35:07 EST 2001  Pete Wyckoff  (pw@osc.edu)
 	* Rewrite real_get_chr() slightly so that curses mode doesn't
