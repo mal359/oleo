@@ -1,5 +1,5 @@
 /*
- *  $Id: postscript.c,v 1.3 1999/04/29 22:30:11 danny Exp $
+ *  $Id: postscript.c,v 1.4 1999/05/06 22:18:15 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -28,7 +28,7 @@
  * There shouldn't be much spreadsheet functionality here...
  */
 
-static char rcsid[] = "$Id: postscript.c,v 1.3 1999/04/29 22:30:11 danny Exp $";
+static char rcsid[] = "$Id: postscript.c,v 1.4 1999/05/06 22:18:15 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -519,25 +519,17 @@ void PostScriptJobHeader(char *title, int npages, FILE *fp)
 {
 	fprintf(fp, "%%!PS-Adobe-3.0\n");
 	fprintf(fp, "%%%%Creator: %s %s\n", PACKAGE, VERSION);
-	fprintf(fp, "%%%%Pages: %d\n", npages);
+	fprintf(fp, "%%%%Pages: (atend)\n");
 	fprintf(fp, "%%%%PageOrder: Ascend\n");
 	fprintf(fp, "%%%%Title: %s\n", title);
 	fprintf(fp, "%%%%EndComments\n%%%%BeginProlog\n");
-#if 0
-	fprintf(fp, "/FontName where { pop } { /FontName (Palatino-Italic) def } ifelse\n");
-	fprintf(fp, "/FirstSize where { pop } { /FirstSize 8 def } ifelse\n");
-	fprintf(fp, "FontName findfont FirstSize scalefont setfont\n");
-#else
-	fprintf(fp, "/FontName where { pop } { /FontName (Courier) def } ifelse\n");
-	fprintf(fp, "/FirstSize where { pop } { /FirstSize 10 def } ifelse\n");
-	fprintf(fp, "FontName findfont FirstSize scalefont setfont\n");
-#endif
 	fprintf(fp, "%%%%EndProlog\n");
 
 }
 
-void PostScriptJobTrailer(FILE *fp)
+void PostScriptJobTrailer(int npages, FILE *fp)
 {
+	fprintf(fp, "%%Pages: %d\n", npages);
 	fprintf(fp, "%%EOF\n");
 }
 
@@ -575,8 +567,16 @@ void PostScriptBorders(FILE *fp)
 {
 }
 
-void PostScriptFont(char *fn, FILE *fp)
+void PostScriptFont(char *family, char *slant, int size, FILE *fp)
 {
+#if 0
+	fprintf(fp, "/FontName where { pop } { /FontName (Palatino-Italic) def } ifelse\n");
+	fprintf(fp, "/FirstSize where { pop } { /FirstSize 8 def } ifelse\n");
+#else
+	fprintf(fp, "/FontName where { pop } { /FontName (Courier) def } ifelse\n");
+	fprintf(fp, "/FirstSize where { pop } { /FirstSize 10 def } ifelse\n");
+#endif
+	fprintf(fp, "FontName findfont FirstSize scalefont setfont\n");
 }
 
 void PostScriptNewLine(int ht, FILE *fp)

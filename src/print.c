@@ -2,6 +2,8 @@
 
 /*
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
+ *
+ * $Id: print.c,v 1.8 1999/05/06 22:18:14 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,6 +80,8 @@ static struct page_size size_table[] =
   { "folio",        612,  936     }, /* (8.5 x 13  in.)   */
   { "quarto",       610,  780     }
 };
+
+float zoom = 1.0;
 
 struct page_size *
 find_size( char * size, int len )
@@ -278,43 +282,30 @@ print_region_cmd (struct rng *print, FILE *fp)
 	CurrentPrintDriver->job_header("title (print_region_cmd)", npages, fp);
 
 	/* Set default font */
-	CurrentPrintDriver->font("Courier-10", fp);
+	CurrentPrintDriver->font("Courier", NULL, 10, fp);
 
-	CurrentPrintDriver->page_header("page 1", fp);
-
-#if 0
-	/* Simplistic case - everything fits on a page */
-	for (rr = print->lr; rr <= print->hr; rr++) {
-		ht = get_height(rr) * 20;
-
-		for (cc = print->lc; cc <= print->hc; cc++) {
-			w = get_width(cc);
-			cp = find_cell (rr, cc);
-			ptr = print_cell (cp);
-			lenstr = strlen (ptr);
-			if (lenstr > w)
-				if (w > 1) ptr[w-1] = 0;
-			CurrentPrintDriver->field(ptr, w, 1, fp);
-		}
-		CurrentPrintDriver->newline(ht, fp);
-	}
-#else
 	/* Adapted from txt_print_region */
-
+	npages = 1;
 	for (c_lo = print->lc, c_hi = 0; c_hi != print->hc; c_lo = c_hi + 1) {
 	    w = 0;
 
 	    /* Figure out which columns we can print */
 	    cc = c_lo;
-	    for (w = get_width (cc); w <= print_width && cc <= print->hc; w += get_width (++cc))
+	    for (w = get_width (cc); w <= print_width && cc <= print->hc;
+			w += get_width(++cc) * 10)
 		;
 	    if (cc != c_lo)
 		--cc;
 	    c_hi = cc;		/* The last column to print on the current page */
 
 	    totht = 0;		/* Start counting height taken up on a page */
-	    npages = 1;
 	    for (rr = print->lr; rr <= print->hr; rr++) {
+		if (totht == 0) {
+			sprintf(pg, "page %d", npages);
+			CurrentPrintDriver->page_header(pg, fp);
+			npages++;
+		}
+
 		ht = get_height(rr) * 20;
 		spaces = 0;
 		for (cc = c_lo; cc <= c_hi; cc++) {
@@ -406,16 +397,20 @@ print_region_cmd (struct rng *print, FILE *fp)
 
 			sprintf(pg, "page %d", npages);
 			CurrentPrintDriver->page_footer(pg, fp);
-
-			npages++;
-
-			sprintf(pg, "page %d", npages);
-			CurrentPrintDriver->page_header(pg, fp);
 		}
+	    }	/* Rows on a page */
+
+	    if (totht != 0) {
+		totht = 0; 
+		sprintf(pg, "page %d", npages);
+		CurrentPrintDriver->page_footer(pg, fp);
 	    }
 	}
-#endif
-	CurrentPrintDriver->page_footer("end page 1", fp);
-	CurrentPrintDriver->job_trailer(fp);
+
+	if (totht != 0) {
+	    sprintf(pg, "end page %d", npages);
+	    CurrentPrintDriver->page_footer(pg, fp);
+	}
+	CurrentPrintDriver->job_trailer(npages-1, fp);
 #endif
 }

@@ -1,5 +1,5 @@
 /*
- *  $Id: epson.c,v 1.3 1999/04/29 22:30:13 danny Exp $
+ *  $Id: epson.c,v 1.4 1999/05/06 22:18:16 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: epson.c,v 1.3 1999/04/29 22:30:13 danny Exp $";
+static char rcsid[] = "$Id: epson.c,v 1.4 1999/05/06 22:18:16 danny Exp $";
 
 #include <stdio.h>
 
@@ -32,12 +32,21 @@ static char rcsid[] = "$Id: epson.c,v 1.3 1999/04/29 22:30:13 danny Exp $";
 char	*Escape = "\033";
 char	*formfeed = "\f";
 
+/* Fonts */
+char	*courier = "\033k2";
+char	*proportional = "\033p1";
+char	*noproportional = "\033p0";
+char	*Defaultfont = "\033k\002\033X\0\025\0";
+char	*defaultfont = "\033k\002\033X\000\012\000";	/* play */
+char	*italic = "\0334";
+char	*noitalic = "\0335";
+
 void EpsonJobHeader(char *str, int npages, FILE *fp)
 {
 	fprintf(fp, "%s@", Escape);
 }
 
-void EpsonJobTrailer(FILE *fp)
+void EpsonJobTrailer(int npages, FILE *fp)
 {
 }
 
@@ -52,15 +61,29 @@ void EpsonPageFooter(char *str, FILE *fp)
 
 void EpsonField(char *str, int wid, int justify, int rightborder, FILE *fp)
 {
-	fprintf(fp, "%s", str);
+	char	format[16];
+#if 1
+	static int	play = 0;
+
+	if (play) {
+		play--;
+		fprintf(fp, "%s", italic);
+	} else {
+		play++;
+		fprintf(fp, "%s", noitalic);
+	}
+#endif
+	sprintf(format, "%%%ds", wid);
+	fprintf(fp, format, str);
 }
 
 void EpsonBorders(FILE *fp)
 {
 }
 
-void EpsonFont(char *fn, FILE *fp)
+void EpsonFont(char *family, char *slant, int size, FILE *fp)
 {
+	fprintf(fp, "%s", defaultfont);
 }
 
 void EpsonNewLine(int ht, FILE *fp)
@@ -70,7 +93,7 @@ void EpsonNewLine(int ht, FILE *fp)
 
 int EpsonPrinterJustifies(void)
 {
-	return 0;
+	return 1;
 }
 
 struct PrintDriver EpsonEscP2PrintDriver = {

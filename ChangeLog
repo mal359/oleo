@@ -1,3 +1,12 @@
+Fri  7 May 00:18:56 1999, Danny Backx
+	* Try to put the right stuff in epson.c
+	* Printing : add end of page detection to the right pages.
+	* Printing: incorporate some more hardcoded values to
+	  get the multipage printing to work at least for such
+	  a case. Printing Courier-10 only for now.
+	* Printing : add a couple of functionalities to the
+	  print drivers. Setting fonts.
+
 Fri 30 Apr 00:14:39 1999, Danny Backx
 	* configure.in : don't just check for libncurses,
 	  also check for <ncurses.h>. Only go for it if

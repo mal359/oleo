@@ -1,5 +1,5 @@
 /*
- *  $Id: pcl.c,v 1.3 1999/04/29 22:30:12 danny Exp $
+ *  $Id: pcl.c,v 1.4 1999/05/06 22:18:15 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: pcl.c,v 1.3 1999/04/29 22:30:12 danny Exp $";
+static char rcsid[] = "$Id: pcl.c,v 1.4 1999/05/06 22:18:15 danny Exp $";
 
 #include <stdio.h>
 
@@ -34,7 +34,7 @@ void PCLJobHeader(char *str, int npages, FILE *fp)
 {
 }
 
-void PCLJobTrailer(FILE *fp)
+void PCLJobTrailer(int npages, FILE *fp)
 {
 }
 
@@ -54,7 +54,7 @@ void PCLBorders(FILE *fp)
 {
 }
 
-void PCLFont(char *fn, FILE *fp)
+void PCLFont(char *family, char *slant, int size, FILE *fp)
 {
 }
 
