@@ -1,5 +1,5 @@
 /*
- * $Id: cmd.c,v 1.20 2001/01/10 20:16:32 danny Exp $
+ * $Id: cmd.c,v 1.21 2001/02/03 23:59:03 pw Exp $
  *
  * Copyright © 1993, 1999, 2000 Free Software Foundation, Inc.
  *
@@ -1301,7 +1301,7 @@ command_loop (int prefix, int iscmd)
        * the function interactively.
        */
       /* Whever a new command is encountered, we begin by creating a 
-       * frame in which to store it's arguments.
+       * frame in which to store its arguments.
        * This initializes the new frame on the basis of cur_cmd in 
        * the_cmd_frame.  
        */
@@ -1328,7 +1328,7 @@ command_loop (int prefix, int iscmd)
 	       * FUNC_ARGS string. To continue this loop, use `goto next_arg;'.
 	       *
 	       * If user interaction is required, the appropriate keymap,
-	       * editting area, etc. is set up, and the command loop resumes
+	       * editing area, etc. is set up, and the command loop resumes
 	       * (`goto new_cycle').
 	       */
 	      char * prompt = the_cmd_arg.arg_desc;
@@ -1795,7 +1795,7 @@ command_loop (int prefix, int iscmd)
 	  goto resume_getting_arguments;
 
       /* If this point is reached, call the interactive function,
-       * destroy it's frame, and restart the cycle.
+       * destroy its frame, and restart the cycle.
        */
       {
 	int move_cursor = 0;
