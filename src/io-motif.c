@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.11 1998/09/26 18:24:01 danny Exp $
+ *  $Id: io-motif.c,v 1.12 1998/09/26 18:55:14 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.11 1998/09/26 18:24:01 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.12 1998/09/26 18:55:14 danny Exp $";
 
 #include "config.h"
 
@@ -1551,18 +1551,47 @@ void MoveCB(Widget w, XtPointer client, XtPointer call)
  *		Formats Dialog					*
  *								*
  ****************************************************************/
+int fmt;
+int formats_list[] = {
+	/* 0 */		FMT_DEF,
+	/* 1 */		FMT_DEF,
+	/* 2 */		FMT_HID,
+	/* 3 */		FMT_GPH,
+	/* 4 */		PRC_FLT,
+	/* 5 */		FMT_GEN,
+	/* 6 */		FMT_DOL,
+	/* 7 */		FMT_CMA,
+	/* 8 */		FMT_PCT,
+	/* 9 */		FMT_DEF,
+	/* 10 */	FMT_DEF,
+	/* 11 */	FMT_DEF,
+	/* 12 */	FMT_DEF,
+	/* 13 */	FMT_DEF,
+	/* 14 */	FMT_DEF,
+	/* 15 */	FMT_DEF,
+	/* 16 */	FMT_DEF
+};
+
 void Yeah(Widget w, XtPointer client, XtPointer call)
 {
 	fprintf(stderr, "Yeah %s %X %X\n", XtName(w), client, call);
+
+	fmt = formats_list[(int) client];
 }
 
 void CreateFormatsDialog(Widget p)
 {
-	Widget	frame;
+	Widget		frame, rc, tf;
 	XmString	xms, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10,
 			x11, x12, x13, x14, x15, x16;
 
 	frame = XtVaCreateManagedWidget("formatsFrame", xmFrameWidgetClass, p,
+		NULL);
+
+	rc = XtVaCreateManagedWidget("formatsRc", xmRowColumnWidgetClass, frame,
+		NULL);
+
+	tf = XtVaCreateManagedWidget("formatsTf", xmTextFieldWidgetClass, rc,
 		NULL);
 
 	xms = XmStringCreateSimple(_("Formats :"));
@@ -1583,9 +1612,9 @@ void CreateFormatsDialog(Widget p)
 	x15 = XmStringCreateSimple(_("User-3"));
 	x16 = XmStringCreateSimple(_("User-4"));
 
-	w = XmVaCreateSimpleOptionMenu(frame, "formatsOption",
+	w = XmVaCreateSimpleOptionMenu(rc, "formatsOption",
 		xms, /* mnemonic ? */0, /* initial selection */ 0, 
-		/* callback */ NULL,
+		/* callback */ Yeah,
 		/* Type, LabelString, Mnemonic, Accelerator, AcceleratorText */
 		XmVaPUSHBUTTON, x1, 'D', NULL, NULL,
 		XmVaPUSHBUTTON, x2, 'P', NULL, NULL,
@@ -1628,17 +1657,36 @@ void CreateFormatsDialog(Widget p)
 void FormatsDialogOk(Widget w, XtPointer client, XtPointer call)
 {
 	struct rng	rng;
-	int		fmt;
-	Widget		ww = (Widget)client, om, b = NULL;
+	Widget		ww = (Widget)client, om, b = NULL, tf = NULL;
+	char		*p, *s = NULL;
+	int		r;
 
 	om = XtNameToWidget(ww, "*formatsFrame*formatsOption*formatsOption");
+	tf = XtNameToWidget(ww, "*formatsFrame*formatsTf");
+
 	if (om)
 		XtVaGetValues(om, XmNmenuHistory, &b, NULL);
-	/* FIX ME */
-#if 0
-	format_region(&rng, fmt, -1);
+	if (tf)
+		p = s = XmTextFieldGetString(tf);
+
+	if (p) {
+		if ((r = parse_cell_or_range(&p, &rng)) == 0)
+			ConversionError(s, _("range"));
+		else if (r & RANGE) {
+			format_region(&rng, fmt, -1);
+			MotifUpdateDisplay();
+		} else {
+			rng.hr = rng.lr;
+			rng.hc = rng.lc;
+
+			format_region(&rng, fmt, -1);
+			MotifUpdateDisplay();
+		}
+	}
+
+#ifdef	FREE_TF_STRING
+	XtFree(s);
 #endif
-	MotifUpdateDisplay();
 }
 
 void FormatsDialogReset(Widget d)
