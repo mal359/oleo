@@ -1,8 +1,8 @@
-#ifndef _PLOT_H_
-#define _PLOT_H_
+#ifndef _OLEO_PLOT_H_
+#define _OLEO_PLOT_H_
 
 /*
-	$Id: plot.h,v 1.3 1999/03/06 13:44:31 danny Exp $
+	$Id: oleo_plot.h,v 1.1 1999/03/16 22:56:02 danny Exp $
 
 	Copyright (C) 1998-1999 Free Software Foundation, Inc.
 
@@ -38,4 +38,4 @@ void PuPieChart(char *plotter, FILE *outfile);
 void PuBarChart(char *plotter, FILE *outfile);
 void PuXYChart(char *plotter, FILE *outfile);
 
-#endif  /* _PLOT_H_ */
+#endif  /* _OLEO_PLOT_H_ */

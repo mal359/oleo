@@ -1,0 +1,3 @@
+cd /fs/gnu/share/ftp/pub/gnu/oleo
+ren put oleo-version.tar.gz
+quit
