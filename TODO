@@ -4,7 +4,7 @@ TODO's:
   for arithmetic with them.
 	(done) Clean up cell.h's junk.
 	(done) Add FMT_DATE
-	(todo) check file I/O stuff against new date format
+	(done) check file I/O stuff against new date format
 	(todo) document FMT_DATE, the various date representations
 
 * Increase "X" friendliness.
@@ -19,8 +19,6 @@ TODO's:
   In the process, make the plotting user interface more transparent.
 
 * Make io_error_msg work right in Motif.
-
-* Make 3 / 3 work right. Now it says it's infinity, not 1.
 
 * Get i18n to work right.
 

@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Oleo; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -26,8 +26,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "eval.h"
 #include "cell.h"
 #include "io-utils.h"
-
-
 
 struct pr_node
   {
@@ -726,7 +724,6 @@ backslash_a_string (char *string, int add_quote)
   return string;
 }
 
-#ifdef TEST
 void
 dbg_print_formula (expr)
      unsigned char *expr;
@@ -842,5 +839,3 @@ dbg_print_formula (expr)
     }
   io_text_line (print_buf);
 }
-
-#endif

@@ -1,4 +1,13 @@
 
+Tue 23 Feb 22:23:14 1999, Danny Backx
+	* Add some details to Motif graph interface.
+	* The infinity initialisation wasn't working on FreeBSD but it was
+	  on Linux. Strange. Now if the ANSI macros are there, don't try to
+	  find infinity by dividing 1 by 0, but just use the macro.
+	* Enhance formats dialog for date formats.
+	* Fix m4/x11.m4 so it links -lXt -lX11 not the other way around.
+	* Add -lXext so plotutils is found on Linux.
+
 Thu 11 Feb 23:59:41 1999, Danny Backx (danny@gnu.org)
 	* Fix oleo file read/write for new data structure.
 

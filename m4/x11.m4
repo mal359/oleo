@@ -11,10 +11,10 @@ dnl
 dnl The link_x variable should be fit to put on the application's
 dnl link line in the Makefile.
 dnl
-dnl Oleo CVS $Id: x11.m4,v 1.1 1999/02/10 02:01:18 bennett Exp $
+dnl Oleo CVS $Id: x11.m4,v 1.2 1999/02/23 21:24:40 danny Exp $
 dnl
 AC_DEFUN(AC_LINK_X,
 [if test "$with_x" = "yes"; then
-  X_LIBS="${X_LIBS} -lX11 -lXt"
+  X_LIBS="${X_LIBS} -lXt -lX11"
 fi])
 

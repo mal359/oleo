@@ -126,6 +126,9 @@ io_text_line (char * format, ...)
   va_end (ap);
   len = strlen (txt);
 
+  if (the_text_buf == NULL)
+	return;
+
   ++the_text_buf->len;		/* Number of lines in the the_text_buf */
   the_text_buf->text =
     (char **)ck_remalloc (the_text_buf->text,

@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.41 1999/02/10 22:23:05 danny Exp $
+dnl $Id: configure.in,v 1.42 1999/02/23 21:24:36 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -86,13 +86,14 @@ AC_CHECK_LIB(m, main)
 dnl Checks for X11
 AC_PATH_XTRA
 
+dnl
 dnl Add link to X11
+dnl	This is only for the non-motif case.
+dnl
 AC_LINK_X
 
 dnl
 dnl Motif (LessTif)
-dnl
-dnl If user selects Motif, deselect GTK even if the user requested it.
 dnl
 AC_ARG_WITH(motif,
 [  --without-motif		  Do not use Motif, even if detected],
@@ -118,7 +119,7 @@ if test "$with_motif" = "yes"; then
   AC_FIND_XLT
   if test "$have_xlt" = "yes"; then
     CFLAGS="$XLT_CFLAGS $MOTIF_CFLAGS $X_CFLAGS $CFLAGS"
-    LIBS="$XLT_LIBS $MOTIF_LIBS $X_LIBS $X_PRE_LIBS -lXt -lX11 $X_EXTRA_LIBS $LIBS"
+    LIBS="$XLT_LIBS $MOTIF_LIBS $X_LIBS $X_PRE_LIBS -lXt -lX11 -lXext $X_EXTRA_LIBS $LIBS"
     AC_DEFINE(HAVE_SciPlot_H)
   else
     ICE_FIND_SciPlot

@@ -1442,8 +1442,7 @@ math_sig (sig)
 
 /* Here's the entry point for this module. */
 void
-update_cell (cell)
-     CELL *cell;
+update_cell(CELL *cell)
 {
   struct value *new;
   int new_val;

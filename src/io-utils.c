@@ -60,6 +60,21 @@ char nname[] = "#NOT_A_NUMBER";
 char iname[] = "#INFINITY";
 char mname[] = "#MINUS_INFINITY";
 
+char *date_formats[] = {
+	"%Y/%m/%d",			/* YYYY/MM/DD */
+	"%Y-%m-%d",			/* YYYY-MM-DD */
+	"%d/%m/%Y",			/* European style */
+	"%m/%d/%Y",			/* American style */
+	"%d/%m",
+	"%Y%m",
+	"%m%Y",
+	"%B %d, %Y",			/* Month, day, year */
+	"%d %B %Y",			/* Day, month, year */
+	"%b %d, %Y",			/* Mon, day, year */
+	"%d %b %Y",			/* Day, mon, year */
+	NULL
+};
+
 static double
 divide (a, b)
      double a;
@@ -83,11 +98,16 @@ ignore_sig (sig)
 void
 init_infinity (void)
 {
+#ifdef	MAXFLOAT
+  __plinf = MAXFLOAT;
+  __neinf = - MAXFLOAT;
+#else
   (void) signal (SIGFPE, ignore_sig);
   __plinf = divide (1., 0.);
   (void) signal (SIGFPE, ignore_sig);
   __neinf = divide (-1., 0.);
   (void) signal (SIGFPE, ignore_sig);
+#endif
   __nan = __plinf + __neinf;
 }
 
@@ -309,6 +329,7 @@ print_cell (CELL * cp)
 	    double f;
 
 	    f = fabs (cp->cell_flt);
+
 	    if (f >= 1e6 || (f > 0 && f <= 9.9999e-6))
 	      goto handle_exp;
 	    return pr_flt (cp->cell_flt, &fxt, p);
@@ -374,21 +395,6 @@ print_cell (CELL * cp)
 		    time_t t = cp->cell_int;
 		    int	f = GET_PRECISION(cp);		/* Determines date format */
 		    struct tm *tmp = localtime(&t);
-
-		    static char *date_formats[] = {
-			"%Y/%m/%d",			/* YYYY/MM/DD */
-			"%Y-%m-%d",			/* YYYY-MM-DD */
-			"%d/%m/%Y",			/* European style */
-			"%m/%d/%Y",			/* American style */
-			"%d/%m",
-			"%Y%m",
-			"%m%Y",
-			"%B %d, %Y",			/* Month, day, year */
-			"%d %B %Y",			/* Day, month, year */
-			"%b %d, %Y",			/* Mon, day, year */
-			"%d %b %Y",			/* Day, mon, year */
-			NULL
-		    };
 
 #ifdef	HAVE_STRFTIME
 		    (void)strftime(print_buf, sizeof(print_buf),

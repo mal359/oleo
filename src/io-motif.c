@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.24 1999/02/11 23:09:26 danny Exp $
+ *  $Id: io-motif.c,v 1.25 1999/02/23 21:24:43 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.24 1999/02/11 23:09:26 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.25 1999/02/23 21:24:43 danny Exp $";
 
 #include "config.h"
 
@@ -737,6 +737,9 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
  * Revert configure graph fields to their current internal values.
  *	This is needed for popping up the dialog after it's been changed by
  *	the user but he's hit Cancel.
+ *	Or for values read from a file. (new to 1.6.14)
+ *
+ * FIX ME incomplete.
  */
 void ConfigureGraphReset(Widget f)
 {
@@ -763,6 +766,12 @@ void ConfigureGraphReset(Widget f)
 
 	s = graph_get_title();
 	XmTextFieldSetString(cw->title, s);
+
+	s = graph_get_axis_title('x');
+	XmTextFieldSetString(cw->xtitle, s);
+
+	s = graph_get_axis_title('y');
+	XmTextFieldSetString(cw->ytitle, s);
 }
 
 void ConfigureGraph(Widget w, XtPointer client, XtPointer call)
@@ -2243,11 +2252,21 @@ void Yeah(Widget w, XtPointer client, XtPointer call)
 	fmt = formats_list[(int) client];
 }
 
+int	date_format;
+void MotifDateFormat(Widget w, XtPointer client, XtPointer call)
+{
+	date_format = (int) client;
+}
+
 void CreateFormatsDialog(Widget p)
 {
 	Widget		frame, f, tf, l;
 	XmString	xms, x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10,
 			x11, x12, x13, x14, x15;
+	extern char	*date_formats[];
+	Widget		menu, cb;
+	Arg		al[5];
+	int		ac, i;
 
 	frame = XtVaCreateManagedWidget("formatsFrame", xmFrameWidgetClass, p,
 		NULL);
@@ -2363,9 +2382,41 @@ void CreateFormatsDialog(Widget p)
 		XmNleftAttachment,	XmATTACH_WIDGET,
 		XmNleftWidget,		l,
 		XmNleftOffset,		10,
+		NULL);
+
+	/* A dialog for date formats */
+	menu = XmCreatePulldownMenu(f, "optionMenu", NULL, 0);
+	ac = 0;
+	XtSetArg(al[ac], XmNsubMenuId, menu); ac++;
+	xms = XmStringCreateSimple(_("Date Format"));
+	XtSetArg(al[ac], XmNlabelString, xms); ac++;
+	cb = XmCreateOptionMenu(f, "optionCB", al, ac);
+	XtVaSetValues(cb,
+		XmNtopAttachment,	XmATTACH_WIDGET,
+		XmNtopWidget,		tf,
+		XmNtopOffset,		10,
+		XmNrightAttachment,	XmATTACH_FORM,
+		XmNrightOffset,		10,
+		XmNleftAttachment,	XmATTACH_FORM,
+		XmNleftOffset,		10,
 		XmNbottomAttachment,	XmATTACH_FORM,
 		XmNbottomOffset,	10,
 		NULL);
+	XtManageChild(cb);
+	XmStringFree(xms);
+
+	for (i=0; date_formats[i]; i++) {
+		ac = 0;
+		xms = XmStringCreateSimple(date_formats[i]);
+		XtSetArg(al[ac], XmNlabelString, xms); ac++;
+		w = XmCreatePushButtonGadget(menu, "button", al, ac);
+		if (i == 0)
+			XtVaSetValues(menu, XmNmenuHistory, w, NULL);
+		XtAddCallback(w, XmNactivateCallback,
+			MotifDateFormat, (XtPointer)i);
+		XmStringFree(xms);
+		XtManageChild(w);
+	}
 }
 
 void FormatsDialogOk(Widget w, XtPointer client, XtPointer call)
@@ -2387,6 +2438,10 @@ void FormatsDialogOk(Widget w, XtPointer client, XtPointer call)
 		prec = XmTextFieldGetString(pr);
 		if (prec) precision = atoi(prec);
 	}
+
+	/* date */
+	if (fmt == FMT_DATE)
+		precision = date_format;
 
 	if (p) {
 		if ((r = parse_cell_or_range(&p, &rng)) == 0)
