@@ -189,6 +189,7 @@ static long *end_ptr = &randtbl[DEG_3 + 1];
  * values produced by this routine.
  */
 
+void
 srandom (x)
 
      unsigned x;
