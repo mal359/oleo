@@ -2,7 +2,7 @@
 #define CMDH
 
 /*
- * $Id: cmd.h,v 1.8 2001/02/13 23:38:05 danny Exp $
+ * $Id: cmd.h,v 1.9 2001/02/14 19:22:57 danny Exp $
  *
  * Copyright © 1992, 1993, 2001 Free Software Foundation, Inc.
  * 

@@ -1,5 +1,5 @@
 /*
- * $Id: cmd.c,v 1.25 2001/02/13 23:38:05 danny Exp $
+ * $Id: cmd.c,v 1.26 2001/02/14 19:22:57 danny Exp $
  *
  * Copyright © 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  *
@@ -441,14 +441,11 @@ block_until_excitement(struct timeval *tv)
     }
 }
 
-/* This is the main interact loop.  As quickly as possible
+/*
+ * This is the main interact loop.  As quickly as possible
  * it returns a character from the keyboard.  While waiting,
  * it updates cells and the display.  If a macro is being defined,
  * this function save characters in the macro.
- */
-
-/*
- * Version without 8-bit problem.
  */
 int 
 real_get_chr (void)
@@ -475,24 +472,21 @@ real_get_chr (void)
       goto fini;
     }
 
-  if (i_cnt)
-    {
+  if (i_cnt) {
       ch = ibuf[i_cnt++];
       if (i_cnt == i_in)
 	i_cnt = i_in = 0;
       goto fini;
-    }
+  }
 
   /* This loop until a character can be read. */
-  while (!io_input_avail ())
-    {
+  while (!io_input_avail ()) {
       alarm_hooks ();
       select_hooks ();
       io_scan_for_input (0);
       if (io_input_avail ())
         break;
-      if (Global->auto_recalc && eval_next_cell ())
-	{
+      if (Global->auto_recalc && eval_next_cell ()) {
 	  if (Global->bkgrnd_recalc) {
 	    int loop = 0;
 	    while (!io_input_avail () && eval_next_cell () && ++loop < 10)
@@ -505,9 +499,7 @@ real_get_chr (void)
 	    io_redisp ();
 	  io_flush ();
 	  io_scan_for_input (0);
-	}
-      else
-	{
+      } else {
 	  io_redisp ();
 	  io_flush ();
 	  io_scan_for_input (0);
@@ -522,21 +514,21 @@ real_get_chr (void)
 	      tv.tv_usec = 0;
 	      block_until_excitement(&tv);
 	  }
-	}
+      }
     }
 
     ret = io_read_kbd (ibuf, sizeof (ibuf));
-    if (ret == 1)
+    if (ret == 1) {
 	ch = ibuf[0];
-    else if (ret > 1) {
+    } else if (ret > 1) {
 	i_cnt = 1;
 	i_in = ret;
 	ch = ibuf[0];
-    } else if (ret == 0 || errno != EINTR)
+    } else if (ret == 0 || errno != EINTR) {
 	return EOF;
+    }
 
 fini:
-
   if (ch & META_BIT) {
 	switch (ch) {
 		case 229:                             /* e */
@@ -553,26 +545,25 @@ fini:
 	}
   }
 
-  if (making_macro)
-    {
+  if (making_macro) {
       /* This is stoopid and should be fixed.
        * Macros (and other cell strings) should be 
        * `struct line' and not c-strings.   -tl
        */
-      if (ch == 0)
+      if (ch == 0) {
 	*making_macro++ = SPECIAL_CODE_A;
-      else if (ch == '{')
+      } else if (ch == '{') {
 	*making_macro++ = SPECIAL_CODE_B;
-      else
+      } else {
 	*making_macro++ = ch;
-      if (making_macro >= (making_macro_start + making_macro_size))
-	{
+      }
+      if (making_macro >= (making_macro_start + making_macro_size)) {
 	  making_macro_start = ck_realloc (making_macro_start, 5
 					   + making_macro_size * 2);
 	  making_macro = (making_macro_start + making_macro_size);
 	  making_macro_size *= 2;
-	}
-    }
+      }
+  }
   return ch;
 }
 
@@ -750,7 +741,8 @@ remove_cmd_frame (struct command_frame * frame)
 }
 
 
-/* This frees all of the memory allocated to FRAME (including
+/*
+ * This frees all of the memory allocated to FRAME (including
  * the frame itself. 
  */
 void
@@ -776,8 +768,8 @@ free_cmd_frame (struct command_frame * frame)
   ck_free (frame);
 }
 
-
-/* Discard the current frame if it contains an unexecuted commnand. 
+/*
+ * Discard the current frame if it contains an unexecuted commnand. 
  * This is used, for example, to handle break.
  */
 void
@@ -805,7 +797,6 @@ pop_unfinished_command (void)
  * and cancels all pending macros.  This is properly followed by 
  * generating an error message for the user and longjmp to error_exception.
  */
-
 void
 recover_from_error (void)
 {
@@ -848,7 +839,8 @@ recover_from_error (void)
     }
 }
 
-/* When we begin editting a new argument, this function sets up the
+/*
+ * When we begin editting a new argument, this function sets up the
  * appropriate keymap, and then resets the state of the editting commands.
  *
  * The return value is 1 if the user must be prompted, 0 otherwise.
@@ -1024,7 +1016,6 @@ command_loop (int prefix, int iscmd)
        */
 
     prefix_cmd_continuation:
-
       /* In this loop, we look for the next command to
        * execute.  This may involve reading from a macro, 
        * or the keyboard.  If there is time to kill, updates
@@ -1033,8 +1024,7 @@ command_loop (int prefix, int iscmd)
        * This loop is exited by `goto got_command'.
        */
 
-      while (1)
-	{
+      while (1) {
 	  /* Get the next character.
 	   * However, if we are in a macro, and the next character
 	   * is '{', then the macro contains a function name
@@ -1043,18 +1033,13 @@ command_loop (int prefix, int iscmd)
 
 	get_next_char:
 
-	  if (pushed_back_char >= 0)
-	    {
+	  if (pushed_back_char >= 0) {
 	      ch = pushed_back_char;
 	      pushed_back_char = -1;
-	    }
-	  else if (!rmac)
-	    {
+	  } else if (!rmac) {
 	      io_fix_input ();
 	      ch = real_get_chr ();
-	    }
-	  else
-	    {
+	  } else {
 	      int len;
 	      unsigned char *ptr;
 	      
@@ -1157,45 +1142,43 @@ command_loop (int prefix, int iscmd)
 		    rmac->mac_exe += len + 1;
 		  goto got_command;
 		}
-	    }
+	  }
 
 	  /* When control comes here, adjust the keystate according 
 	   * to the cur_keymap and `ch';
 	   */
 	have_character:
-
 	  /* This is how keymaps are searched for a binding. */ 
-	  while (1)
-	    {
+	  while (1) {
 	      struct key * key;
 	      key = &(the_maps[cur_keymap]->keys[ch]);
-	      if (key->vector < 0)
-		{
-		  if (key->code >= 0)
-		    {
+#if 0
+	/* Debug keymap processing */
+	      fprintf(stderr, "Key %c Keymap %p (%s) code %d next %p\n",
+			ch, cur_keymap, map_names[cur_keymap],
+			key->code, the_maps[cur_keymap]->map_next);
+#endif
+	      if (key->vector < 0) {
+		  if (key->code >= 0) {
 		      cur_keymap = key->code;
 		      goto get_next_char;
-		    }
-		  else if (the_maps[cur_keymap]->map_next)
+		  } else if (the_maps[cur_keymap]->map_next) {
 		    cur_keymap =
 		      the_maps[cur_keymap]->map_next->id;
-		  else
-		    {
+		  } else {
 		      cur_vector = 0;
 		      cur_cmd = 0;
 		      cur_chr = ch;
 		      goto got_command;
-		    }
-		}
-	      else
-		{
+		  }
+	      } else {
 		  cur_vector = key->vector;
 		  cur_cmd =
 		    &(the_funcs[key->vector][key->code]);
 		  cur_chr = ch;
 		  goto got_command;
-		}
-	    }
+	      }
+	  }
 	}
 
       /* Now the next command to begin has been read from a macro

@@ -1,5 +1,5 @@
 /*
- * $Id: init.c,v 1.9 2001/02/13 23:38:06 danny Exp $
+ * $Id: init.c,v 1.10 2001/02/14 19:22:57 danny Exp $
  *
  * Copyright © 1993, 2000, 2001 Free Software Foundation, Inc.
  *
@@ -268,7 +268,6 @@ static char *init_cmds[] =
   "bind-set main goto-edit-cell a-z",
   "bind-set main goto-edit-cell A-Z",
   "bind-set main goto-edit-cell 0-9",
-  "bind-set main goto-edit-cell ¡-ÿ",
   "bind-key main goto-edit-cell \\",
   "bind-key main goto-edit-cell +",
   "bind-key main goto-edit-cell -",
@@ -313,6 +312,7 @@ static char *init_cmds[] =
   "",
   "bind-key read-string meta-read-string ^[",
   "bind-set read-string self-insert-command \\ -~",
+  "bind-set read-string self-insert-command ¡-ÿ",
   "bind-key read-string exit-minibuffer ^m",
   "bind-key read-string beginning-of-line ^a",
   "bind-key read-string end-of-line ^e",

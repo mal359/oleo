@@ -1,5 +1,10 @@
 
-$Id: ChangeLog,v 1.145 2001/02/13 23:38:05 danny Exp $
+$Id: ChangeLog,v 1.146 2001/02/14 19:22:57 danny Exp $
+
+Wed Feb 14 20:13:27 CET 2001, Danny
+	* Fix a checkin problem - cmd.c was in DOS mode. Ouch.
+	* Part of the i18n works in raw X mode now : it takes characters
+	  with the eight bit set. Doesn't do compose key processing yet.
 
 Wed Feb 14 00:34:54 CET 2001, Danny
 	* Merge my stuff with Pete's before I lose track :-)

@@ -1,7 +1,7 @@
-#define	I18N_VERBOSE
+#undef	I18N_VERBOSE
 #define	X_I18N
 /*
- * $Id: io-x11.c,v 1.28 2001/02/05 00:14:36 pw Exp $
+ * $Id: io-x11.c,v 1.29 2001/02/14 19:22:57 danny Exp $
  *
  *	Copyright © 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 	
