@@ -2,7 +2,7 @@
 #define CELLH
 
 /*
- * $Id: cell.h,v 1.12 2000/08/10 21:02:50 danny Exp $
+ * $Id: cell.h,v 1.13 2001/02/06 02:32:42 pw Exp $
  *
  * Copyright © 1990-1999, Free Software Foundation, Inc.
  * 
@@ -54,11 +54,11 @@ struct cell
 	unsigned int	cell_format:	4;	/* Was 3 */
 	unsigned int	cell_precision:	4;
     } cell_flags;
-    struct font_memo * cell_font;
+    unsigned short cell_cycle;
+    struct font_memo *cell_font;
     struct ref_fm *cell_refs_from;
     struct ref_to *cell_refs_to;
     unsigned char *cell_formula;
-    unsigned short cell_cycle;
     union vals c_z;
   };
 
