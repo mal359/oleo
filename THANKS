@@ -8,10 +8,11 @@ Joel N. Weber II, Richard Stallman, Mark E. Davidson, Ted Arm
 Steve Fisk, Kai Getrost.
 
 Other people deserve a word of thanks:
-Tom Tromey & Friends: For making AutoMake
-Emacs Maintainers: For giving me X Toolkit code to steal
-Fileutils Maintainers: For giving me automake examples to steal
+Tom Tromey & Friends: For making AutoMake.
+Emacs Maintainers: For giving me X Toolkit code to steal.
+Fileutils Maintainers: For giving me automake examples to steal.
 Libc Maintainers: For already having written lots of memory handling routines.
+Also, for writing the bug reporting script.
 Elenore Amon: For telling me that learning C was a _really_ good idea.
 
 And lastly, mom & dad - Without you, I wouldn't be here.

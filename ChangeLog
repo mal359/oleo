@@ -1,3 +1,14 @@
+Mon Jan 26 18:25:00 1997  Jeff Bailey  (jbailey@gnu.org)
+
+	* oleobug.in: Create - Thanks to the GLIBC people!
+	* Makefile.am: Distribute oleobug.in
+
+Thu Jan 15 19:14:00 1997  Jeff Bailey  (jbailey@gnu.org)
+
+	* src/io-term.c: i18n
+	* acconfig.h: More 18n
+	* po/ChangeLog: Create - Null file
+
 Sun Jan 11 21:23:00 1997  Jeff Bailey  (jbailey@gnu.org)
 
 	* configure.in:  Create po/Makefile to fix make maintainer-clean.

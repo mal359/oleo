@@ -155,6 +155,25 @@
 /* Define to 1 if GNU regex should be used instead of GNU rx.  */
 #undef WITH_REGEX
 
+#if HAVE_LOCALE_H
+# include <locale.h>
+#endif
+#if !HAVE_SETLOCALE
+# define setlocale(Category, Locale) /* empty */
+#endif
+
+#if ENABLE_NLS
+# include <libintl.h>
+# define _(Text) gettext (Text)
+#else
+# undef bindtextdomain
+# define bindtextdomain(Domain, Directory) /* empty */
+# undef textdomain
+# define textdomain(Domain) /* empty */
+# define _(Text) Text
+#endif
+
+
 
 /* Leave that blank line there!!  Autoheader needs it.
    If you're adding to this file, keep in mind:

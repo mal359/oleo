@@ -19,6 +19,9 @@
 /* Define if you don't have vprintf but do have _doprnt.  */
 #undef HAVE_DOPRNT
 
+/* Define if you have a working `mmap' system call.  */
+#undef HAVE_MMAP
+
 /* Define if you have the strftime function.  */
 #undef HAVE_STRFTIME
 
@@ -34,6 +37,12 @@
 
 /* Define as __inline if that's what the C compiler calls it.  */
 #undef inline
+
+/* Define to `long' if <sys/types.h> doesn't define.  */
+#undef off_t
+
+/* Define if you need to in order for stat and other things to work.  */
+#undef _POSIX_SOURCE
 
 /* Define as the return type of signal handlers (int or void).  */
 #undef RETSIGTYPE
@@ -62,8 +71,23 @@
 /* Define if the X Window System is missing or not being used.  */
 #undef X_DISPLAY_MISSING
 
+/* Define to 1 if NLS is requested.  */
+#undef ENABLE_NLS
+
+/* Define as 1 if you have catgets and don't want to use GNU gettext.  */
+#undef HAVE_CATGETS
+
+/* Define as 1 if you have gettext and don't want to use GNU gettext.  */
+#undef HAVE_GETTEXT
+
+/* Define if your locale.h file contains LC_MESSAGES.  */
+#undef HAVE_LC_MESSAGES
+
 /* Define to 1 if you have the obstack functions from GNU libc.  */
 #undef HAVE_OBSTACK
+
+/* Define to 1 if you have the stpcpy function.  */
+#undef HAVE_STPCPY
 
 /* Define to the name of the distribution.  */
 #undef PACKAGE
@@ -77,11 +101,43 @@
 /* Define to the version of the distribution.  */
 #undef VERSION
 
+#if ENABLE_NLS
+# include <libintl.h>
+# define _(Text) gettext (Text)
+#else
+# undef bindtextdomain
+# define bindtextdomain(Domain, Directory) /* empty */
+# undef textdomain
+# define textdomain(Domain) /* empty */
+# define _(Text) Text
+#endif
+
+/* Define if you have the __argz_count function.  */
+#undef HAVE___ARGZ_COUNT
+
+/* Define if you have the __argz_next function.  */
+#undef HAVE___ARGZ_NEXT
+
+/* Define if you have the __argz_stringify function.  */
+#undef HAVE___ARGZ_STRINGIFY
+
+/* Define if you have the alarm function.  */
+#undef HAVE_ALARM
+
+/* Define if you have the dcgettext function.  */
+#undef HAVE_DCGETTEXT
+
 /* Define if you have the ftime function.  */
 #undef HAVE_FTIME
 
+/* Define if you have the getcwd function.  */
+#undef HAVE_GETCWD
+
 /* Define if you have the gethostname function.  */
 #undef HAVE_GETHOSTNAME
+
+/* Define if you have the getpagesize function.  */
+#undef HAVE_GETPAGESIZE
 
 /* Define if you have the gettimeofday function.  */
 #undef HAVE_GETTIMEOFDAY
@@ -89,14 +145,38 @@
 /* Define if you have the mktime function.  */
 #undef HAVE_MKTIME
 
+/* Define if you have the munmap function.  */
+#undef HAVE_MUNMAP
+
+/* Define if you have the putenv function.  */
+#undef HAVE_PUTENV
+
 /* Define if you have the select function.  */
 #undef HAVE_SELECT
+
+/* Define if you have the setenv function.  */
+#undef HAVE_SETENV
+
+/* Define if you have the setlocale function.  */
+#undef HAVE_SETLOCALE
+
+/* Define if you have the stpcpy function.  */
+#undef HAVE_STPCPY
+
+/* Define if you have the strcasecmp function.  */
+#undef HAVE_STRCASECMP
+
+/* Define if you have the strchr function.  */
+#undef HAVE_STRCHR
 
 /* Define if you have the strdup function.  */
 #undef HAVE_STRDUP
 
 /* Define if you have the strstr function.  */
 #undef HAVE_STRSTR
+
+/* Define if you have the <argz.h> header file.  */
+#undef HAVE_ARGZ_H
 
 /* Define if you have the <dirent.h> header file.  */
 #undef HAVE_DIRENT_H
@@ -107,11 +187,17 @@
 /* Define if you have the <limits.h> header file.  */
 #undef HAVE_LIMITS_H
 
+/* Define if you have the <locale.h> header file.  */
+#undef HAVE_LOCALE_H
+
 /* Define if you have the <malloc.h> header file.  */
 #undef HAVE_MALLOC_H
 
 /* Define if you have the <ndir.h> header file.  */
 #undef HAVE_NDIR_H
+
+/* Define if you have the <nl_types.h> header file.  */
+#undef HAVE_NL_TYPES_H
 
 /* Define if you have the <string.h> header file.  */
 #undef HAVE_STRING_H
@@ -125,11 +211,17 @@
 /* Define if you have the <sys/ndir.h> header file.  */
 #undef HAVE_SYS_NDIR_H
 
+/* Define if you have the <sys/param.h> header file.  */
+#undef HAVE_SYS_PARAM_H
+
 /* Define if you have the <sys/time.h> header file.  */
 #undef HAVE_SYS_TIME_H
 
 /* Define if you have the <unistd.h> header file.  */
 #undef HAVE_UNISTD_H
+
+/* Define if you have the <values.h> header file.  */
+#undef HAVE_VALUES_H
 
 /* Define if you have the X11 library (-lX11).  */
 #undef HAVE_LIBX11
@@ -142,6 +234,9 @@
 
 /* Define if you have the gtk library (-lgtk).  */
 #undef HAVE_LIBGTK
+
+/* Define if you have the i library (-li).  */
+#undef HAVE_LIBI
 
 /* Define if you have the m library (-lm).  */
 #undef HAVE_LIBM

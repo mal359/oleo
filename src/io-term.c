@@ -863,7 +863,7 @@ static void
 show_usage (void)
 {
   char ** use = usage;
-  fprintf (stderr, "Usage: %s ", PACKAGE);
+  printf (_("Usage: %s "), PACKAGE);
   while (*use)
     {
       fprintf (stderr, "%s\n", *use);
