@@ -2002,7 +2002,14 @@ io_error_msg (char *str,...)
   char buf[1000];
   char buf2[1000];
 
-  /* This is made robust against errors that occur before
+#ifdef	HAVE_MOTIF
+  extern int using_motif;
+
+  if (using_motif)
+#endif
+  {
+  /*
+   * This is made robust against errors that occur before
    * the io hooks have been initialized.
    */
   if (display_opened)
@@ -2017,6 +2024,7 @@ io_error_msg (char *str,...)
   else
     fprintf (stderr, "oleo: %s\n", buf);
   longjmp (error_exception, 1);
+  }
 }
 
 

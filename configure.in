@@ -1,6 +1,6 @@
 dnl
 dnl This is the configuration file for GNU oleo.
-dnl $Id: configure.in,v 1.20 1998/08/18 05:02:57 danny Exp $
+dnl $Id: configure.in,v 1.21 1998/08/19 07:44:52 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -36,6 +36,7 @@ AC_CHECK_LIB(ncurses, main, ,
 		AC_CHECK_LIB(termlib, tgetent, ,
 			AC_CHECK_LIB(termcap, tgetend))))
 
+dnl This library is required on FreeBSD.
 AC_CHECK_LIB(mytinfo, tputs)
 
 dnl Replace `main' with a function in -lm:
@@ -43,6 +44,10 @@ AC_CHECK_LIB(m, main)
 
 dnl Checks for X11
 AC_PATH_XTRA
+AC_FIND_MOTIF
+ICE_FIND_Xbae
+ICE_FIND_XmHTML
+ICE_FIND_SciPlot
 
 CFLAGS="$CFLAGS $X_CFLAGS"
 LIBS="$LIBS $X_LIBS"
@@ -137,4 +142,15 @@ AC_LINK_FILES($nls_cv_header_libgt, $nls_cv_header_intl)
 
 AC_SUBST(LIBOBJS)
 
-AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile m4/Makefile po/Makefile.in], [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])
+AC_SUBST(include_motif)
+AC_SUBST(link_motif)
+AC_SUBST(include_xbae)
+AC_SUBST(link_xbae)
+AC_SUBST(include_xmhtml)
+AC_SUBST(link_xmhtml)
+AC_SUBST(include_sciplot)
+AC_SUBST(link_sciplot)
+
+AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile m4/Makefile])
+
+dnl AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile m4/Makefile po/Makefile.in], [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])

@@ -165,6 +165,13 @@
 # define setlocale(Category, Locale) /* empty */
 #endif
 
+/* LessTif or Motif */
+#undef HAVE_MOTIF
+#undef HAVE_SciPlot_H
+#undef HAVE_XmHTML_H
+#undef HAVE_Xbae
+
+
 #if ENABLE_NLS
 # include <libintl.h>
 # define _(Text) gettext (Text)

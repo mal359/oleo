@@ -147,6 +147,10 @@ fi
 #
 test "$motif_libraries" != "" && link_motif="-L$motif_libraries -lXm"
 test "$motif_includes" != "" && include_motif="-I$motif_includes"
+test "$motif_includes" != "" && AC_DEFINE(HAVE_MOTIF)
+#
+AC_SUBST(link_motif)
+AC_SUBST(include_motif)
 #
 #
 #

@@ -19,6 +19,7 @@
 #include "config.h"
 #endif
 
+#ifndef	HAVE_MOTIF
 #ifndef X_DISPLAY_MISSING
 
 #include  <stdio.h>
@@ -2301,4 +2302,4 @@ set_x_default_point_size (int l)
 
 
 #endif /* X_DISPLAY_MISSING */
-
+#endif	/* HAVE_MOTIF */

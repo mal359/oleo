@@ -435,6 +435,12 @@ graph_set_data (int data_set, struct rng * rng, int pair, int dir)
   graph_data_order [data_set] = order;
 }
 
+struct rng
+graph_get_data(int data_set)
+{
+	return graph_data[data_set];
+}
+
 
 
 

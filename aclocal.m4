@@ -1,7 +1,7 @@
-dnl aclocal.m4 generated automatically by aclocal 1.3
+dnl aclocal.m4 generated automatically by aclocal 1.3b
 
 dnl Copyright (C) 1994, 1995, 1996, 1997, 1998 Free Software Foundation, Inc.
-dnl This Makefile.in is free software; the Free Software Foundation
+dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
 
@@ -257,6 +257,710 @@ case "x$am_cv_prog_cc_stdc" in
 esac
 ])
 
+dnl
+dnl
+dnl AC_FIND_MOTIF : find OSF/Motif or LessTif, and provide variables
+dnl	to easily use them in a Makefile.
+dnl
+dnl Adapted from a macro by Andreas Zeller.
+dnl
+dnl The variables provided are :
+dnl	link_motif		(e.g. -L/usr/lesstif/lib -lXm)
+dnl	include_motif		(e.g. -I/usr/lesstif/lib)
+dnl	motif_libraries		(e.g. /usr/lesstif/lib)
+dnl	motif_includes		(e.g. /usr/lesstif/include)
+dnl
+dnl The link_motif and include_motif variables should be fit to put on
+dnl your application's link line in your Makefile.
+dnl
+AC_DEFUN(AC_FIND_MOTIF,
+[
+AC_REQUIRE([AC_PATH_XTRA])
+motif_includes=
+motif_libraries=
+AC_ARG_WITH(motif,
+[  --without-motif         do not use Motif widgets])
+dnl Treat --without-motif like
+dnl --without-motif-includes --without-motif-libraries.
+if test "$with_motif" = "no"
+then
+motif_includes=no
+motif_libraries=no
+fi
+AC_ARG_WITH(motif-includes,
+[  --with-motif-includes=DIR    Motif include files are in DIR],
+motif_includes="$withval")
+AC_ARG_WITH(motif-libraries,
+[  --with-motif-libraries=DIR   Motif libraries are in DIR],
+motif_libraries="$withval")
+AC_MSG_CHECKING(for Motif)
+#
+#
+# Search the include files.
+#
+if test "$motif_includes" = ""; then
+AC_CACHE_VAL(ac_cv_motif_includes,
+[
+ac_motif_save_LIBS="$LIBS"
+ac_motif_save_CFLAGS="$CFLAGS"
+ac_motif_save_CPPFLAGS="$CPPFLAGS"
+ac_motif_save_LDFLAGS="$LDFLAGS"
+#
+LIBS="$X_PRE_LIBS -lXm -lXt -lX11 $X_EXTRA_LIBS $LIBS"
+CFLAGS="$X_CFLAGS $CFLAGS"
+CPPFLAGS="$X_CFLAGS $CPPFLAGS"
+LDFLAGS="$X_LIBS $LDFLAGS"
+#
+AC_TRY_COMPILE([#include <Xm/Xm.h>],[int a;],
+[
+# Xm/Xm.h is in the standard search path.
+ac_cv_motif_includes=
+],
+[
+# Xm/Xm.h is not in the standard search path.
+# Locate it and put its directory in `motif_includes'
+#
+# /usr/include/Motif* are used on HP-UX (Motif).
+# /usr/include/X11* are used on HP-UX (X and Athena).
+# /usr/dt is used on Solaris (Motif).
+# /usr/openwin is used on Solaris (X and Athena).
+# Other directories are just guesses.
+for dir in "$x_includes" "${prefix}/include" /usr/include /usr/local/include \
+           /usr/include/Motif2.0 /usr/include/Motif1.2 /usr/include/Motif1.1 \
+           /usr/include/X11R6 /usr/include/X11R5 /usr/include/X11R4 \
+           /usr/dt/include /usr/openwin/include \
+           /usr/dt/*/include /opt/*/include /usr/include/Motif* \
+           "${prefix}"/*/include /usr/*/include /usr/local/*/include \
+           "${prefix}"/include/* /usr/include/* /usr/local/include/*; do
+if test -f "$dir/Xm/Xm.h"; then
+ac_cv_motif_includes="$dir"
+break
+fi
+done
+])
+#
+LIBS="$ac_motif_save_LIBS"
+CFLAGS="$ac_motif_save_CFLAGS"
+CPPFLAGS="$ac_motif_save_CPPFLAGS"
+LDFLAGS="$ac_motif_save_LDFLAGS"
+])
+motif_includes="$ac_cv_motif_includes"
+fi
+#
+#
+# Now for the libraries.
+#
+if test "$motif_libraries" = ""; then
+AC_CACHE_VAL(ac_cv_motif_libraries,
+[
+ac_motif_save_LIBS="$LIBS"
+ac_motif_save_CFLAGS="$CFLAGS"
+ac_motif_save_CPPFLAGS="$CPPFLAGS"
+ac_motif_save_LDFLAGS="$LDFLAGS"
+#
+LIBS="$X_PRE_LIBS -lXm -lXt -lX11 $X_EXTRA_LIBS $LIBS"
+CFLAGS="$X_CFLAGS $CFLAGS"
+CPPFLAGS="$X_CFLAGS $CPPFLAGS"
+LDFLAGS="$X_LIBS $LDFLAGS"
+#
+AC_TRY_LINK([#include <Xm/Xm.h>],[XtToolkitInitialize();],
+[
+# libXm.a is in the standard search path.
+ac_cv_motif_libraries=
+],
+[
+# libXm.a is not in the standard search path.
+# Locate it and put its directory in `motif_libraries'
+#
+# /usr/lib/Motif* are used on HP-UX (Motif).
+# /usr/lib/X11* are used on HP-UX (X and Athena).
+# /usr/dt is used on Solaris (Motif).
+# /usr/lesstif is used on Linux (Lesstif).
+# /usr/openwin is used on Solaris (X and Athena).
+# Other directories are just guesses.
+for dir in "$x_libraries" "${prefix}/lib" /usr/lib /usr/local/lib \
+           /usr/lib/Motif2.0 /usr/lib/Motif1.2 /usr/lib/Motif1.1 \
+           /usr/lib/X11R6 /usr/lib/X11R5 /usr/lib/X11R4 /usr/lib/X11 \
+           /usr/dt/lib /usr/openwin/lib \
+           /usr/dt/*/lib /opt/*/lib /usr/lib/Motif* \
+           /usr/lesstif*/lib /usr/lib/Lesstif* \
+           "${prefix}"/*/lib /usr/*/lib /usr/local/*/lib \
+           "${prefix}"/lib/* /usr/lib/* /usr/local/lib/*; do
+if test -d "$dir" && test "`ls $dir/libXm.* 2> /dev/null`" != ""; then
+ac_cv_motif_libraries="$dir"
+break
+fi
+done
+])
+#
+LIBS="$ac_motif_save_LIBS"
+CFLAGS="$ac_motif_save_CFLAGS"
+CPPFLAGS="$ac_motif_save_CPPFLAGS"
+LDFLAGS="$ac_motif_save_LDFLAGS"
+])
+#
+motif_libraries="$ac_cv_motif_libraries"
+fi
+#
+# Provide an easier way to link
+#
+test "$motif_libraries" != "" && link_motif="-L$motif_libraries -lXm"
+test "$motif_includes" != "" && include_motif="-I$motif_includes"
+test "$motif_includes" != "" && AC_DEFINE(HAVE_MOTIF)
+#
+AC_SUBST(link_motif)
+AC_SUBST(include_motif)
+#
+#
+#
+motif_libraries_result="$motif_libraries"
+motif_includes_result="$motif_includes"
+test "$motif_libraries_result" = "" &&
+  motif_libraries_result="in default path"
+test "$motif_includes_result" = "" &&
+  motif_includes_result="in default path"
+test "$motif_libraries_result" = "no" &&
+  motif_libraries_result="(none)"
+test "$motif_includes_result" = "no" &&
+  motif_includes_result="(none)"
+AC_MSG_RESULT(
+  [libraries $motif_libraries_result, headers $motif_includes_result])
+])dnl
+
+dnl
+dnl
+dnl ICE_FIND_Xbae
+dnl
+dnl Adapted from a macro by Andreas Zeller.
+dnl
+AC_DEFUN(ICE_FIND_Xbae,
+[
+AC_REQUIRE([AC_PATH_XTRA])
+xbae_includes=
+xbae_libraries=
+AC_ARG_WITH(Xbae,
+[  --without-Xbae         do not use Xbae widgets])
+dnl Treat --without-Xbae like
+dnl --without-Xbae-includes --without-Xbae-libraries.
+if test "$with_Xbae" = "no"
+then
+xbae_includes=no
+xbae_libraries=no
+fi
+AC_ARG_WITH(Xbae-includes,
+[  --with-Xbae-includes=DIR    Motif include files are in DIR],
+xbae_includes="$withval")
+AC_ARG_WITH(Xbae-libraries,
+[  --with-Xbae-libraries=DIR   Motif libraries are in DIR],
+xbae_libraries="$withval")
+AC_MSG_CHECKING(for Xbae)
+#
+#
+# Search the include files.
+#
+if test "$xbae_includes" = ""; then
+AC_CACHE_VAL(ice_cv_xbae_includes,
+[
+ice_xbae_save_LIBS="$LIBS"
+ice_xbae_save_CFLAGS="$CFLAGS"
+ice_xbae_save_CPPFLAGS="$CPPFLAGS"
+ice_xbae_save_LDFLAGS="$LDFLAGS"
+#
+LIBS="$X_PRE_LIBS -lXm -lXt -lX11 $X_EXTRA_LIBS $LIBS"
+CFLAGS="$X_CFLAGS $CFLAGS"
+CPPFLAGS="$X_CFLAGS $CPPFLAGS"
+LDFLAGS="$X_LIBS $LDFLAGS"
+#
+AC_TRY_COMPILE([#include <Xbae/Matrix.h>],[int a;],
+[
+# Xbae/Matrix.h is in the standard search path.
+ice_cv_xbae_includes=
+],
+[
+# Xbae/Matrix.h is not in the standard search path.
+# Locate it and put its directory in `xbae_includes'
+#
+# /usr/include/Motif* are used on HP-UX (Motif).
+# /usr/include/X11* are used on HP-UX (X and Athena).
+# /usr/dt is used on Solaris (Motif).
+# /usr/openwin is used on Solaris (X and Athena).
+# Other directories are just guesses.
+for dir in "$x_includes" "${prefix}/include" /usr/include /usr/local/include \
+           /usr/include/Motif2.0 /usr/include/Motif1.2 /usr/include/Motif1.1 \
+           /usr/include/X11R6 /usr/include/X11R5 /usr/include/X11R4 \
+           /usr/dt/include /usr/openwin/include \
+           /usr/dt/*/include /opt/*/include /usr/include/Motif* \
+	   /home/Xbae/include /usr/Xbae/include /opt/Xbae/include \
+	   /home/Xbae*/include /usr/Xbae*/include /opt/Xbae*/include \
+           "${prefix}"/*/include /usr/*/include /usr/local/*/include \
+           "${prefix}"/include/* /usr/include/* /usr/local/include/*; do
+if test -f "$dir/Xbae/Matrix.h"; then
+ice_cv_xbae_includes="$dir"
+break
+fi
+done
+])
+#
+LIBS="$ice_xbae_save_LIBS"
+CFLAGS="$ice_xbae_save_CFLAGS"
+CPPFLAGS="$ice_xbae_save_CPPFLAGS"
+LDFLAGS="$ice_xbae_save_LDFLAGS"
+])
+xbae_includes="$ice_cv_xbae_includes"
+fi
+#
+#
+# Now for the libraries.
+#
+if test "$xbae_libraries" = ""; then
+AC_CACHE_VAL(ice_cv_xbae_libraries,
+[
+ice_xbae_save_LIBS="$LIBS"
+ice_xbae_save_CFLAGS="$CFLAGS"
+ice_xbae_save_CPPFLAGS="$CPPFLAGS"
+ice_xbae_save_LDFLAGS="$LDFLAGS"
+#
+LIBS="$X_PRE_LIBS -lXbae -lXm -lXt -lX11 $X_EXTRA_LIBS $LIBS"
+CFLAGS="$X_CFLAGS $CFLAGS"
+CPPFLAGS="$X_CFLAGS $CPPFLAGS"
+LDFLAGS="$X_LIBS $LDFLAGS"
+#
+AC_TRY_LINK([#include <Xbae/Matrix.h>],[XbaeMatrixAddRows();],
+[
+# libXm.a is in the standard search path.
+ice_cv_xbae_libraries=
+],
+[
+# libXm.a is not in the standard search path.
+# Locate it and put its directory in `xbae_libraries'
+#
+# /usr/lib/Motif* are used on HP-UX (Motif).
+# /usr/lib/X11* are used on HP-UX (X and Athena).
+# /usr/dt is used on Solaris (Motif).
+# /usr/lesstif is used on Linux (Lesstif).
+# /usr/openwin is used on Solaris (X and Athena).
+# Other directories are just guesses.
+for dir in "$x_libraries" "${prefix}/lib" /usr/lib /usr/local/lib \
+           /usr/lib/Motif2.0 /usr/lib/Motif1.2 /usr/lib/Motif1.1 \
+           /usr/lib/X11R6 /usr/lib/X11R5 /usr/lib/X11R4 /usr/lib/X11 \
+           /usr/dt/lib /usr/openwin/lib \
+           /usr/dt/*/lib /opt/*/lib /usr/lib/Motif* \
+           /usr/lesstif*/lib /usr/lib/Lesstif* \
+	   /home/Xbae/lib /usr/Xbae/lib /opt/Xbae/lib \
+	   /home/Xbae*/lib /usr/Xbae*/lib /opt/Xbae*/lib \
+           "${prefix}"/*/lib /usr/*/lib /usr/local/*/lib \
+           "${prefix}"/lib/* /usr/lib/* /usr/local/lib/*; do
+if test -d "$dir" && test "`ls $dir/libXbae.* 2> /dev/null`" != ""; then
+ice_cv_xbae_libraries="$dir"
+break
+fi
+done
+])
+#
+LIBS="$ice_xbae_save_LIBS"
+CFLAGS="$ice_xbae_save_CFLAGS"
+CPPFLAGS="$ice_xbae_save_CPPFLAGS"
+LDFLAGS="$ice_xbae_save_LDFLAGS"
+])
+#
+xbae_libraries="$ice_cv_xbae_libraries"
+fi
+# Add Motif definitions to X flags
+#
+# if test "$xbae_includes" != "" && test "$xbae_includes" != "$x_includes" && test "$xbae_includes" != "no"
+# then
+# X_CFLAGS="-I$xbae_includes $X_CFLAGS"
+# fi
+# if test "$xbae_libraries" != "" && test "$xbae_libraries" != "$x_libraries" && test "$xbae_libraries" != "no"
+# then
+# case "$X_LIBS" in
+#   *-R\ *) X_LIBS="-L$xbae_libraries -R $xbae_libraries $X_LIBS";;
+#   *-R*)   X_LIBS="-L$xbae_libraries -R$xbae_libraries $X_LIBS";;
+#   *)      X_LIBS="-L$xbae_libraries $X_LIBS";;
+# esac
+# fi
+#
+# Provide an easier way to link
+#
+test "$xbae_libraries" != "" && link_xbae="-L$xbae_libraries -lXbae"
+test "$xbae_includes" != "" && include_xbae="-I$xbae_includes"
+test "$xbae_includes" != "" && AC_DEFINE(HAVE_Xbae)
+#
+AC_SUBST(include_xbae)
+AC_SUBST(link_xbae)
+#
+#
+#
+xbae_libraries_result="$xbae_libraries"
+xbae_includes_result="$xbae_includes"
+test "$xbae_libraries_result" = "" &&
+  xbae_libraries_result="in default path"
+test "$xbae_includes_result" = "" &&
+  xbae_includes_result="in default path"
+test "$xbae_libraries_result" = "no" &&
+  xbae_libraries_result="(none)"
+test "$xbae_includes_result" = "no" &&
+  xbae_includes_result="(none)"
+AC_MSG_RESULT(
+  [libraries $xbae_libraries_result, headers $xbae_includes_result])
+])dnl
+
+dnl
+dnl
+dnl ICE_FIND_XmHTML
+dnl
+dnl Adapted from a macro by Andreas Zeller.
+dnl
+AC_DEFUN(ICE_FIND_XmHTML,
+[
+AC_REQUIRE([AC_PATH_XTRA])
+xmhtml_includes=
+xmhtml_libraries=
+AC_ARG_WITH(XmHTML,
+[  --without-XmHTML         do not use XmHTML widgets])
+dnl Treat --without-XmHTML like
+dnl --without-XmHTML-includes --without-XmHTML-libraries.
+if test "$with_XmHTML" = "no"
+then
+xmhtml_includes=no
+xmhtml_libraries=no
+fi
+AC_ARG_WITH(xmhtml-includes,
+[  --with-xmhtml-includes=DIR    Motif include files are in DIR],
+xmhtml_includes="$withval")
+AC_ARG_WITH(xmhtml-libraries,
+[  --with-xmhtml-libraries=DIR   Motif libraries are in DIR],
+xmhtml_libraries="$withval")
+AC_MSG_CHECKING(for XmHTML)
+#
+#
+# Search the include files.
+#
+if test "$xmhtml_includes" = ""; then
+AC_CACHE_VAL(ice_cv_xmhtml_includes,
+[
+ice_xmhtml_save_LIBS="$LIBS"
+ice_xmhtml_save_CFLAGS="$CFLAGS"
+ice_xmhtml_save_CPPFLAGS="$CPPFLAGS"
+ice_xmhtml_save_LDFLAGS="$LDFLAGS"
+#
+LIBS="$X_PRE_LIBS -lXm -lXt -lX11 $X_EXTRA_LIBS $LIBS"
+CFLAGS="$X_CFLAGS $CFLAGS"
+CPPFLAGS="$X_CFLAGS $CPPFLAGS"
+LDFLAGS="$X_LIBS $LDFLAGS"
+#
+AC_TRY_COMPILE([#include <XmHTML/XmHTML.h>],[int a;],
+[
+# XmHTML/XmHTML.h is in the standard search path.
+ice_cv_xmhtml_includes=
+],
+[
+# XmHTML/XmHTML.h is not in the standard search path.
+# Locate it and put its directory in `xmhtml_includes'
+#
+# /usr/include/Motif* are used on HP-UX (Motif).
+# /usr/include/X11* are used on HP-UX (X and Athena).
+# /usr/dt is used on Solaris (Motif).
+# /usr/openwin is used on Solaris (X and Athena).
+# Other directories are just guesses.
+for dir in "$x_includes" "${prefix}/include" /usr/include /usr/local/include \
+           /usr/include/Motif2.0 /usr/include/Motif1.2 /usr/include/Motif1.1 \
+           /usr/include/X11R6 /usr/include/X11R5 /usr/include/X11R4 \
+           /usr/dt/include /usr/openwin/include \
+           /usr/dt/*/include /opt/*/include /usr/include/Motif* \
+	   /home/XmHTML/include /usr/XmHTML/include /opt/XmHTML/include \
+	   /home/XmHTML*/include /usr/XmHTML*/include /opt/XmHTML*/include \
+           "${prefix}"/*/include /usr/*/include /usr/local/*/include \
+           "${prefix}"/include/* /usr/include/* /usr/local/include/*; do
+if test -f "$dir/XmHTML/XmHTML.h"; then
+	ice_cv_xmhtml_includes="$dir"
+	break
+fi
+done
+])
+#
+LIBS="$ice_xmhtml_save_LIBS"
+CFLAGS="$ice_xmhtml_save_CFLAGS"
+CPPFLAGS="$ice_xmhtml_save_CPPFLAGS"
+LDFLAGS="$ice_xmhtml_save_LDFLAGS"
+])
+xmhtml_includes="$ice_cv_xmhtml_includes"
+fi
+#
+#
+# Now for the libraries.
+#
+if test "$xmhtml_libraries" = ""; then
+AC_CACHE_VAL(ice_cv_xmhtml_libraries,
+[
+ice_xmhtml_save_LIBS="$LIBS"
+ice_xmhtml_save_CFLAGS="$CFLAGS"
+ice_xmhtml_save_CPPFLAGS="$CPPFLAGS"
+ice_xmhtml_save_LDFLAGS="$LDFLAGS"
+#
+LIBS="$X_PRE_LIBS -lXmHTML -lXm -lXt -lX11 $X_EXTRA_LIBS $LIBS"
+CFLAGS="$X_CFLAGS $CFLAGS"
+CPPFLAGS="$X_CFLAGS $CPPFLAGS"
+LDFLAGS="$X_LIBS $LDFLAGS"
+#
+AC_TRY_LINK([#include <XmHTML/XmHTML.h>],[XmCreateHTML();],
+[
+# libXm.a is in the standard search path.
+ice_cv_xmhtml_libraries=
+],
+[
+# libXm.a is not in the standard search path.
+# Locate it and put its directory in `xmhtml_libraries'
+#
+# /usr/lib/Motif* are used on HP-UX (Motif).
+# /usr/lib/X11* are used on HP-UX (X and Athena).
+# /usr/dt is used on Solaris (Motif).
+# /usr/lesstif is used on Linux (Lesstif).
+# /usr/openwin is used on Solaris (X and Athena).
+# Other directories are just guesses.
+for dir in "$x_libraries" "${prefix}/lib" /usr/lib /usr/local/lib \
+           /usr/lib/Motif2.0 /usr/lib/Motif1.2 /usr/lib/Motif1.1 \
+           /usr/lib/X11R6 /usr/lib/X11R5 /usr/lib/X11R4 /usr/lib/X11 \
+           /usr/dt/lib /usr/openwin/lib \
+           /usr/dt/*/lib /opt/*/lib /usr/lib/Motif* \
+           /usr/lesstif*/lib /usr/lib/Lesstif* \
+	   /home/XmHTML/lib /usr/XmHTML/lib /opt/XmHTML/lib \
+	   /home/XmHTML*/lib /usr/XmHTML*/lib /opt/XmHTML*/lib \
+           "${prefix}"/*/lib /usr/*/lib /usr/local/*/lib \
+           "${prefix}"/lib/* /usr/lib/* /usr/local/lib/*; do
+if test -d "$dir" && test "`ls $dir/libXmHTML.* 2> /dev/null`" != ""; then
+ice_cv_xmhtml_libraries="$dir"
+break
+fi
+done
+])
+#
+LIBS="$ice_xmhtml_save_LIBS"
+CFLAGS="$ice_xmhtml_save_CFLAGS"
+CPPFLAGS="$ice_xmhtml_save_CPPFLAGS"
+LDFLAGS="$ice_xmhtml_save_LDFLAGS"
+])
+#
+xmhtml_libraries="$ice_cv_xmhtml_libraries"
+fi
+# Add Motif definitions to X flags
+#
+# if test "$xmhtml_includes" != "" && test "$xmhtml_includes" != "$x_includes" && test "$xmhtml_includes" != "no"
+# then
+# X_CFLAGS="-I$xmhtml_includes $X_CFLAGS"
+# fi
+# if test "$xmhtml_libraries" != "" && test "$xmhtml_libraries" != "$x_libraries" && test "$xmhtml_libraries" != "no"
+# then
+# case "$X_LIBS" in
+#   *-R\ *) X_LIBS="-L$xmhtml_libraries -R $xmhtml_libraries $X_LIBS";;
+#   *-R*)   X_LIBS="-L$xmhtml_libraries -R$xmhtml_libraries $X_LIBS";;
+#   *)      X_LIBS="-L$xmhtml_libraries $X_LIBS";;
+# esac
+# fi
+#
+# Provide an easier way to link
+#
+test "$xmhtml_libraries" != "" && link_xmhtml="-L$xmhtml_libraries -lXmHTML -ljpeg"
+test "$xmhtml_includes" != "" && include_xmhtml="-I$xmhtml_includes"
+test "$xmhtml_includes" != "" && AC_DEFINE(HAVE_XmHTML_H)
+#
+AC_SUBST(include_xmhtml)
+AC_SUBST(link_xmhtml)
+#
+#
+#
+xmhtml_libraries_result="$xmhtml_libraries"
+xmhtml_includes_result="$xmhtml_includes"
+test "$xmhtml_libraries_result" = "" &&
+  xmhtml_libraries_result="in default path"
+test "$xmhtml_includes_result" = "" &&
+  xmhtml_includes_result="in default path"
+test "$xmhtml_libraries_result" = "no" &&
+  xmhtml_libraries_result="(none)"
+test "$xmhtml_includes_result" = "no" &&
+  xmhtml_includes_result="(none)"
+AC_MSG_RESULT(
+  [libraries $xmhtml_libraries_result, headers $xmhtml_includes_result])
+])dnl
+
+dnl
+dnl
+dnl ICE_FIND_SciPlot
+dnl
+dnl Adapted from a macro by Andreas Zeller.
+dnl
+AC_DEFUN(ICE_FIND_SciPlot,
+[
+AC_REQUIRE([AC_PATH_XTRA])
+sciplot_includes=
+sciplot_libraries=
+AC_ARG_WITH(SciPlot,
+[  --without-SciPlot         do not use SciPlot widgets])
+dnl Treat --without-SciPlot like
+dnl --without-SciPlot-includes --without-SciPlot-libraries.
+if test "$with_SciPlot" = "no"
+then
+sciplot_includes=no
+sciplot_libraries=no
+fi
+AC_ARG_WITH(SciPlot-includes,
+[  --with-SciPlot-includes=DIR    Motif include files are in DIR],
+sciplot_includes="$withval")
+AC_ARG_WITH(SciPlot-libraries,
+[  --with-SciPlot-libraries=DIR   Motif libraries are in DIR],
+sciplot_libraries="$withval")
+AC_MSG_CHECKING(for SciPlot)
+#
+#
+# Search the include files.
+#
+if test "$sciplot_includes" = ""; then
+AC_CACHE_VAL(ice_cv_sciplot_includes,
+[
+ice_sciplot_save_LIBS="$LIBS"
+ice_sciplot_save_CFLAGS="$CFLAGS"
+ice_sciplot_save_CPPFLAGS="$CPPFLAGS"
+ice_sciplot_save_LDFLAGS="$LDFLAGS"
+#
+LIBS="$X_PRE_LIBS -lXm -lXt -lX11 $X_EXTRA_LIBS $LIBS"
+CFLAGS="$X_CFLAGS $CFLAGS"
+CPPFLAGS="$X_CFLAGS $CPPFLAGS"
+LDFLAGS="$X_LIBS $LDFLAGS"
+#
+AC_TRY_COMPILE([#include <SciPlot/SciPlot.h>],[int a;],
+[
+# SciPlot/SciPlot.h is in the standard search path.
+ice_cv_sciplot_includes=
+],
+[
+# SciPlot/SciPlot.h is not in the standard search path.
+# Locate it and put its directory in `sciplot_includes'
+#
+# /usr/include/Motif* are used on HP-UX (Motif).
+# /usr/include/X11* are used on HP-UX (X and Athena).
+# /usr/dt is used on Solaris (Motif).
+# /usr/openwin is used on Solaris (X and Athena).
+# Other directories are just guesses.
+for dir in "$x_includes" "${prefix}/include" /usr/include /usr/local/include \
+           /usr/include/Motif2.0 /usr/include/Motif1.2 /usr/include/Motif1.1 \
+           /usr/include/X11R6 /usr/include/X11R5 /usr/include/X11R4 \
+           /usr/dt/include /usr/openwin/include \
+           /usr/dt/*/include /opt/*/include /usr/include/Motif* \
+	   /home/SciPlot/include /usr/SciPlot/include /opt/SciPlot/include \
+	   /home/SciPlot*/include /usr/SciPlot*/include /opt/SciPlot*/include \
+           "${prefix}"/*/include /usr/*/include /usr/local/*/include \
+           "${prefix}"/include/* /usr/include/* /usr/local/include/*; do
+if test -f "$dir/SciPlot/SciPlot.h"; then
+ice_cv_sciplot_includes="$dir"
+break
+fi
+done
+])
+#
+LIBS="$ice_sciplot_save_LIBS"
+CFLAGS="$ice_sciplot_save_CFLAGS"
+CPPFLAGS="$ice_sciplot_save_CPPFLAGS"
+LDFLAGS="$ice_sciplot_save_LDFLAGS"
+])
+sciplot_includes="$ice_cv_sciplot_includes"
+fi
+#
+#
+# Now for the libraries.
+#
+if test "$sciplot_libraries" = ""; then
+AC_CACHE_VAL(ice_cv_sciplot_libraries,
+[
+ice_sciplot_save_LIBS="$LIBS"
+ice_sciplot_save_CFLAGS="$CFLAGS"
+ice_sciplot_save_CPPFLAGS="$CPPFLAGS"
+ice_sciplot_save_LDFLAGS="$LDFLAGS"
+#
+LIBS="$X_PRE_LIBS -lSciPlot -lXm -lXt -lX11 $X_EXTRA_LIBS $LIBS"
+CFLAGS="$X_CFLAGS $CFLAGS"
+CPPFLAGS="$X_CFLAGS $CPPFLAGS"
+LDFLAGS="$X_LIBS $LDFLAGS"
+#
+AC_TRY_LINK([#include <SciPlot/SciPlot.h>],[SciPlotQuickUpdate();],
+[
+# libXm.a is in the standard search path.
+ice_cv_sciplot_libraries=
+],
+[
+# libXm.a is not in the standard search path.
+# Locate it and put its directory in `sciplot_libraries'
+#
+# /usr/lib/Motif* are used on HP-UX (Motif).
+# /usr/lib/X11* are used on HP-UX (X and Athena).
+# /usr/dt is used on Solaris (Motif).
+# /usr/lesstif is used on Linux (Lesstif).
+# /usr/openwin is used on Solaris (X and Athena).
+# Other directories are just guesses.
+for dir in "$x_libraries" "${prefix}/lib" /usr/lib /usr/local/lib \
+           /usr/lib/Motif2.0 /usr/lib/Motif1.2 /usr/lib/Motif1.1 \
+           /usr/lib/X11R6 /usr/lib/X11R5 /usr/lib/X11R4 /usr/lib/X11 \
+           /usr/dt/lib /usr/openwin/lib \
+           /usr/dt/*/lib /opt/*/lib /usr/lib/Motif* \
+           /usr/lesstif*/lib /usr/lib/Lesstif* \
+	   /home/SciPlot/lib /usr/SciPlot/lib /opt/SciPlot/lib \
+	   /home/SciPlot*/lib /usr/SciPlot*/lib /opt/SciPlot*/lib \
+           "${prefix}"/*/lib /usr/*/lib /usr/local/*/lib \
+           "${prefix}"/lib/* /usr/lib/* /usr/local/lib/*; do
+if test -d "$dir" && test "`ls $dir/libSciPlot.* 2> /dev/null`" != ""; then
+ice_cv_sciplot_libraries="$dir"
+break
+fi
+done
+])
+#
+LIBS="$ice_sciplot_save_LIBS"
+CFLAGS="$ice_sciplot_save_CFLAGS"
+CPPFLAGS="$ice_sciplot_save_CPPFLAGS"
+LDFLAGS="$ice_sciplot_save_LDFLAGS"
+])
+#
+sciplot_libraries="$ice_cv_sciplot_libraries"
+fi
+# Add Motif definitions to X flags
+#
+# if test "$sciplot_includes" != "" && test "$sciplot_includes" != "$x_includes" && test "$sciplot_includes" != "no"
+# then
+# X_CFLAGS="-I$sciplot_includes $X_CFLAGS"
+# fi
+# if test "$sciplot_libraries" != "" && test "$sciplot_libraries" != "$x_libraries" && test "$sciplot_libraries" != "no"
+# then
+# case "$X_LIBS" in
+#   *-R\ *) X_LIBS="-L$sciplot_libraries -R $sciplot_libraries $X_LIBS";;
+#   *-R*)   X_LIBS="-L$sciplot_libraries -R$sciplot_libraries $X_LIBS";;
+#   *)      X_LIBS="-L$sciplot_libraries $X_LIBS";;
+# esac
+# fi
+#
+# Provide an easier way to link
+#
+test "$sciplot_libraries" != "" && link_sciplot="-L$sciplot_libraries -lSciPlot"
+test "$sciplot_includes" != "" && include_sciplot="-I$sciplot_includes"
+test "$sciplot_includes" != "" && AC_DEFINE(HAVE_SciPlot_H)
+#
+AC_SUBST(include_sciplot)
+AC_SUBST(link_sciplot)
+#
+#
+#
+sciplot_libraries_result="$sciplot_libraries"
+sciplot_includes_result="$sciplot_includes"
+test "$sciplot_libraries_result" = "" &&
+  sciplot_libraries_result="in default path"
+test "$sciplot_includes_result" = "" &&
+  sciplot_includes_result="in default path"
+test "$sciplot_libraries_result" = "no" &&
+  sciplot_libraries_result="(none)"
+test "$sciplot_includes_result" = "no" &&
+  sciplot_includes_result="(none)"
+AC_MSG_RESULT(
+  [libraries $sciplot_libraries_result, headers $sciplot_includes_result])
+])dnl
+
 # Configure paths for GTK+
 # Owen Taylor     97-11-3
 
@@ -267,38 +971,20 @@ AC_DEFUN(AM_PATH_GTK,
 [dnl 
 dnl Get the cflags and libraries from the gtk-config script
 dnl
-AC_ARG_WITH(gtk-prefix,[  --with-gtk-prefix=PFX   Prefix where GTK is installed (optional)],
-            gtk_config_prefix="$withval", gtk_config_prefix="")
-AC_ARG_WITH(gtk-exec-prefix,[  --with-gtk-exec-prefix=PFX Exec prefix where GTK is installed (optional)],
-            gtk_config_exec_prefix="$withval", gtk_config_exec_prefix="")
-
-  if test x$gtk_config_exec_prefix != x ; then
-     gtk_config_args="$gtk_config_args --exec-prefix=$gtk_config_exec_prefix"
-     if test x${GTK_CONFIG+set} != xset ; then
-        GTK_CONFIG=$gtk_config_exec_prefix/bin/gtk-config
-     fi
-  fi
-  if test x$gtk_config_prefix != x ; then
-     gtk_config_args="$gtk_config_args --prefix=$gtk_config_prefix"
-     if test x${GTK_CONFIG+set} != xset ; then
-        GTK_CONFIG=$gtk_config_prefix/bin/gtk-config
-     fi
-  fi
-
   AC_PATH_PROG(GTK_CONFIG, gtk-config, no)
   min_gtk_version=ifelse([$1], ,0.99.7,$1)
   AC_MSG_CHECKING(for GTK - version >= $min_gtk_version)
   no_gtk=""
   if test "$GTK_CONFIG" != "no" ; then
-    GTK_CFLAGS=`$GTK_CONFIG $gtk_config_args --cflags`
-    GTK_LIBS=`$GTK_CONFIG $gtk_config_args --libs`
+    GTK_CFLAGS=`$GTK_CONFIG --cflags`
+    GTK_LIBS=`$GTK_CONFIG --libs`
     ac_save_CFLAGS="$CFLAGS"
     ac_save_LIBS="$LIBS"
     CFLAGS="$CFLAGS $GTK_CFLAGS"
     LIBS="$LIBS $GTK_LIBS"
 dnl
 dnl Now check if the installed GTK is sufficiently new. (Also sanity
-dnl checks the results of gtk-config to some extent
+dnl checks the results of gtk-config to some extent)
 dnl
     AC_TRY_RUN([
 #include <gtk/gtk.h>
@@ -326,15 +1012,19 @@ main ()
   fi
   if test "x$no_gtk" = x ; then
      AC_MSG_RESULT(yes)
+     HAVE_LIBGTK=1
      ifelse([$2], , :, [$2])     
   else
      AC_MSG_RESULT(no)
+     HAVE_LIBGTK=0
      GTK_CFLAGS=""
      GTK_LIBS=""
      ifelse([$3], , :, [$3])
   fi
   AC_SUBST(GTK_CFLAGS)
   AC_SUBST(GTK_LIBS)
+
+  AC_SUBST(HAVE_LIBGTK)
 ])
 
 #serial 4
