@@ -5,15 +5,13 @@ this, use the --enable-debug command on configure.  Otherwise, Oleo
 will attempt to compile itself in as much of a production-environment
 way as possible.
 
-Apparently the sort routine is hooped, but there's other memory corruptions
-that I've decided to worry about first.  The reason I'm doing the GTK
-interface before anything else is because I want an interface that works
-well.
+Known problems with this code are outlined in the files README, FAQ
+and TODO.
 
-If you are GNU friendly you can check out this repository from it's home
-at /gd/gnu/cvsroot - Otherwise, you will find periodical updates on 
-alpha.gnu.org/gnu/oleo.  Those are updated as frequently as I get to it.
+If you are GNU friendly, you can check out this repository from its home at
+/gd/gnu/cvsroot.  Otherwise, you will find new releases under
+alpha.gnu.org/gnu/oleo.
 
-Tks,
-Jeff Bailey
+Thanks,
 
+The Maintainers
