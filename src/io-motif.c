@@ -1,6 +1,6 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.51 1999/10/15 23:52:32 danny Exp $
+ *  $Id: io-motif.c,v 1.52 1999/10/24 12:19:45 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -22,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.51 1999/10/15 23:52:32 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.52 1999/10/24 12:19:45 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -1669,7 +1669,7 @@ void ReallyPrintCB(Widget w, XtPointer client, XtPointer call)
 		char	cmd[64], *pr;
 
 		pr = XmTextFieldGetString(PrintWidgets.printerTF);
-		if (strlen(pr)) {
+		if (pr && strlen(pr)) {
 			sprintf(cmd, "lpr -P%s", pr);
 		} else if (strlen(AppRes.printer)) {
 			sprintf(cmd, "lpr -P%s", AppRes.printer);
@@ -4842,7 +4842,8 @@ GscBuildMainWindow(Widget parent)
 	w = XtVaCreateManagedWidget("sep", xmSeparatorGadgetClass,
 		dbmenu,
 		NULL);
-#else
+#endif
+#if (! defined(HAVE_LIBMYSQLCLIENT)) && (! defined(HAVE_LIBXBASE))
 	/* This only happens if no db linked in */
 	w = XtVaCreateManagedWidget("nodbms", xmLabelGadgetClass,
 		dbmenu,

@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.43 1999/10/23 23:27:51 jbailey Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.44 1999/10/24 12:19:43 danny Exp $
 #
 # CPPFLAGS = -Wall
 
@@ -76,7 +76,7 @@ endif
 
 oleo_LDADD = ${X_PRE_LIBS} ${MYLD} @INTLLIBS@ ../lib/liboleo.a ${X_LIBS}
 INCLUDES = -I.. -I$(srcdir) -I$(top_srcdir)/lib -I../intl ${MYINC}
-CFLAGS = @CFLAGS@ -DLOCALEDIR=\"$(localedir)\" ${MYCFL}
+CFLAGS = @CFLAGS@ -DLOCALEDIR=\"$(localedir)\" ${MYCFL} -DBUILD_PREFIX='"'${BUILD_PREFIX}'"'
 
 noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  defun.h defuns.h display.h errors.h eval.h font.h format.h forminfo.h \
@@ -103,3 +103,4 @@ io-term.o:	../config.h
 cmd.o:		../config.h
 io-x11.o:	../config.h
 lists.o:	../config.h
+afm.o:		../config.h

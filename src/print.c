@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.20 1999/10/23 23:28:11 jbailey Exp $
+ * $Id: print.c,v 1.21 1999/10/24 12:19:51 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@
 #include "io-generic.h"
 #include "io-abstract.h"
 #include "io-utils.h"
-#include "lists.h"
+
 #include "print.h"
 #include "afm.h"
 
@@ -301,9 +301,14 @@ print_region_cmd (struct rng *print, FILE *fp)
 		* ((print_width - 1 + totwid) / print_width);
 
 	/* Build title */
-	title = (char *)malloc(strlen(PACKAGE) + 20 +
-		strlen(FileGetCurrentFileName()));
-	sprintf(title, "%s : '%s'", PACKAGE, FileGetCurrentFileName());
+	if (FileGetCurrentFileName()) {
+		title = (char *)malloc(strlen(PACKAGE) + 20 +
+			strlen(FileGetCurrentFileName()));
+		sprintf(title, "%s : '%s'", PACKAGE, FileGetCurrentFileName());
+	} else {
+		title = (char *)malloc(strlen(PACKAGE) + 20);
+		sprintf(title, "%s : (no current file)", PACKAGE);
+	}
 
 	/* Start Printing */
 	Global->CurrentPrintDriver->job_header(title, npages, fp);
@@ -386,10 +391,11 @@ print_region_cmd (struct rng *print, FILE *fp)
 		 *	of simply the cell width
 		 */
 		ptr = print_cell (cp);
-#if 0
-		if (strlen(ptr) > w)	/* Is this right ?? what about font size ?? FIX ME */
+#if 1
+	/* Is this right ?? what about font size ?? FIX ME */
+		if (AfmStringWidth(ptr) > w)
 #else
-		if (1)
+		if (strlen(ptr) > w)	/* Is this right ?? what about font size ?? FIX ME */
 #endif
 		{
 			int	i, wtot;
@@ -423,7 +429,7 @@ print_region_cmd (struct rng *print, FILE *fp)
 			 */
 			ptr = print_cell (cp);
 			s = strdup(ptr);
-			if (strlen(s) > w)
+			if (AfmStringWidth(s) > w)
 				if (w > 1) s[w-1] = 0;
 			Global->CurrentPrintDriver->field(ptr, w, GET_JST(cp), 1, fp);
 			free(s);

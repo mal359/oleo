@@ -1,5 +1,5 @@
 /*
- *  $Id: mysql.c,v 1.6 1999/10/23 23:28:08 jbailey Exp $
+ *  $Id: mysql.c,v 1.7 1999/10/24 12:19:50 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: mysql.c,v 1.6 1999/10/23 23:28:08 jbailey Exp $";
+static char rcsid[] = "$Id: mysql.c,v 1.7 1999/10/24 12:19:50 danny Exp $";
 
 #ifndef	TEST
 
@@ -417,9 +417,14 @@ enum enum_field_types {
 /*
  * The functions below need to exist even if we don't have MySQL
  */
-#ifndef	HAVE_LIBMYSQLCLIENT
-
-#include "eval.h"
+void AllocateDatabaseGlobal(void)
+{
+	if (Global->DatabaseGlobal == NULL) {
+		Global->DatabaseGlobal = (struct DatabaseGlobalType *)
+			malloc(sizeof(struct DatabaseGlobalType));
+		memset(Global->DatabaseGlobal, 0, sizeof(struct DatabaseGlobalType));
+	}
+}
 
 void DatabaseSetName(const char *name)
 {
@@ -442,14 +447,9 @@ void DatabaseSetUser(const char *user)
 	Global->DatabaseGlobal->user = strdup(user);
 }
 
-void AllocateDatabaseGlobal(void)
-{
-	if (Global->DatabaseGlobal == NULL) {
-		Global->DatabaseGlobal = (struct DatabaseGlobalType *)
-			malloc(sizeof(struct DatabaseGlobalType));
-		memset(Global->DatabaseGlobal, 0, sizeof(struct DatabaseGlobalType));
-	}
-}
+#ifndef	HAVE_LIBMYSQLCLIENT
+
+#include "eval.h"
 
 /*
  * Define Oleo functions

@@ -903,7 +903,7 @@ astol (char **ptr)
     s++;
 
   /* Read in the digits */
-  for (; c = *s; s++)
+  for (; (c = *s); s++)
     {
       if (!isdigit (c) || i > 214748364 || (i == 214748364 && c > (sign > 0 ? '7' : '8')))
 	break;

@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.70 1999/10/24 12:18:39 danny Exp $
+dnl $Id: configure.in,v 1.71 1999/10/24 12:19:39 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
