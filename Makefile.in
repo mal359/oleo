@@ -66,7 +66,7 @@ YACC = @YACC@
 
 AUTOMAKE_OPTIONS = gnu no-dependencies 1.2
 
-SUBDIRS = src doc
+SUBDIRS = src doc 
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = config.h

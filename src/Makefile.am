@@ -1,3 +1,5 @@
+AUTOMAKE_OPTIONS = ../lib/ansi2knr
+
 bin_PROGRAMS = oleo
 
 oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \

@@ -64,6 +64,8 @@ U = @U@
 VERSION = @VERSION@
 YACC = @YACC@
 
+AUTOMAKE_OPTIONS = ../lib/ansi2knr
+
 bin_PROGRAMS = oleo
 
 oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
@@ -105,13 +107,16 @@ X_CFLAGS = @X_CFLAGS@
 X_LIBS = @X_LIBS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
 X_PRE_LIBS = @X_PRE_LIBS@
-oleo_OBJECTS =  parse.o byte-compile.o eval.o ref.o decompile.o sort.o \
-regions.o utils.o lists.o io-term.o getopt.o getopt1.o io-utils.o \
-io-x11.o window.o io-edit.o hash.o panic.o line.o key.o format.o \
-funcs.o ir.o io-curses.o font.o display.o print.o init.o sylk.o \
-oleofile.o sc.o list.o busi.o string.o cells.o random.o cmd.o basic.o \
-args.o stub.o input.o info.o help.o graph.o forminfo.o getdate.o \
-posixtm.o date.o xmalloc.o xrdb.o
+ANSI2KNR = ../lib/ansi2knr
+oleo_OBJECTS =  parse$U.o byte-compile$U.o eval$U.o ref$U.o \
+decompile$U.o sort$U.o regions$U.o utils$U.o lists$U.o io-term$U.o \
+getopt$U.o getopt1$U.o io-utils$U.o io-x11$U.o window$U.o io-edit$U.o \
+hash$U.o panic$U.o line$U.o key$U.o format$U.o funcs$U.o ir$U.o \
+io-curses$U.o font$U.o display$U.o print$U.o init$U.o sylk$U.o \
+oleofile$U.o sc$U.o list$U.o busi$U.o string$U.o cells$U.o random$U.o \
+cmd$U.o basic$U.o args$U.o stub$U.o input$U.o info$U.o help$U.o \
+graph$U.o forminfo$U.o getdate$U.o posixtm$U.o date$U.o xmalloc$U.o \
+xrdb$U.o
 oleo_LDADD = $(LDADD)
 oleo_DEPENDENCIES = 
 oleo_LDFLAGS = 
@@ -193,6 +198,18 @@ distclean-compile:
 	-rm -f *.tab.c
 
 maintainer-clean-compile:
+../lib/ansi2knr: ../lib/ansi2knr.o
+	cd ../lib && $(MAKE) ansi2knr
+
+
+mostlyclean-kr:
+	-rm -f *_.c
+
+clean-kr:
+
+distclean-kr:
+
+maintainer-clean-kr:
 
 oleo: $(oleo_OBJECTS) $(oleo_DEPENDENCIES)
 	@rm -f oleo
@@ -201,6 +218,114 @@ oleo: $(oleo_OBJECTS) $(oleo_DEPENDENCIES)
 	$(SHELL) $(YLWRAP) "$(YACC)" $< y.tab.c $*.c y.tab.h $*.h -- $(YACCFLAGS)
 .y.h:
 	$(SHELL) $(YLWRAP) "$(YACC)" $< y.tab.c $*.c y.tab.h $*.h -- $(YACCFLAGS)
+args_.c: args.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/args.c; then echo $(srcdir)/args.c; else echo args.c; fi` args_.c
+basic_.c: basic.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/basic.c; then echo $(srcdir)/basic.c; else echo basic.c; fi` basic_.c
+busi_.c: busi.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/busi.c; then echo $(srcdir)/busi.c; else echo busi.c; fi` busi_.c
+byte-compile_.c: byte-compile.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/byte-compile.c; then echo $(srcdir)/byte-compile.c; else echo byte-compile.c; fi` byte-compile_.c
+cells_.c: cells.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/cells.c; then echo $(srcdir)/cells.c; else echo cells.c; fi` cells_.c
+cmd_.c: cmd.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/cmd.c; then echo $(srcdir)/cmd.c; else echo cmd.c; fi` cmd_.c
+date_.c: date.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/date.c; then echo $(srcdir)/date.c; else echo date.c; fi` date_.c
+decompile_.c: decompile.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/decompile.c; then echo $(srcdir)/decompile.c; else echo decompile.c; fi` decompile_.c
+display_.c: display.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/display.c; then echo $(srcdir)/display.c; else echo display.c; fi` display_.c
+eval_.c: eval.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/eval.c; then echo $(srcdir)/eval.c; else echo eval.c; fi` eval_.c
+font_.c: font.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/font.c; then echo $(srcdir)/font.c; else echo font.c; fi` font_.c
+format_.c: format.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/format.c; then echo $(srcdir)/format.c; else echo format.c; fi` format_.c
+forminfo_.c: forminfo.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/forminfo.c; then echo $(srcdir)/forminfo.c; else echo forminfo.c; fi` forminfo_.c
+funcs_.c: funcs.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/funcs.c; then echo $(srcdir)/funcs.c; else echo funcs.c; fi` funcs_.c
+getdate_.c: getdate.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/getdate.c; then echo $(srcdir)/getdate.c; else echo getdate.c; fi` getdate_.c
+getopt_.c: getopt.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/getopt.c; then echo $(srcdir)/getopt.c; else echo getopt.c; fi` getopt_.c
+getopt1_.c: getopt1.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/getopt1.c; then echo $(srcdir)/getopt1.c; else echo getopt1.c; fi` getopt1_.c
+graph_.c: graph.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/graph.c; then echo $(srcdir)/graph.c; else echo graph.c; fi` graph_.c
+hash_.c: hash.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/hash.c; then echo $(srcdir)/hash.c; else echo hash.c; fi` hash_.c
+help_.c: help.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/help.c; then echo $(srcdir)/help.c; else echo help.c; fi` help_.c
+info_.c: info.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/info.c; then echo $(srcdir)/info.c; else echo info.c; fi` info_.c
+init_.c: init.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/init.c; then echo $(srcdir)/init.c; else echo init.c; fi` init_.c
+input_.c: input.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/input.c; then echo $(srcdir)/input.c; else echo input.c; fi` input_.c
+io-curses_.c: io-curses.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/io-curses.c; then echo $(srcdir)/io-curses.c; else echo io-curses.c; fi` io-curses_.c
+io-edit_.c: io-edit.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/io-edit.c; then echo $(srcdir)/io-edit.c; else echo io-edit.c; fi` io-edit_.c
+io-term_.c: io-term.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/io-term.c; then echo $(srcdir)/io-term.c; else echo io-term.c; fi` io-term_.c
+io-utils_.c: io-utils.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/io-utils.c; then echo $(srcdir)/io-utils.c; else echo io-utils.c; fi` io-utils_.c
+io-x11_.c: io-x11.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/io-x11.c; then echo $(srcdir)/io-x11.c; else echo io-x11.c; fi` io-x11_.c
+ir_.c: ir.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/ir.c; then echo $(srcdir)/ir.c; else echo ir.c; fi` ir_.c
+key_.c: key.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/key.c; then echo $(srcdir)/key.c; else echo key.c; fi` key_.c
+line_.c: line.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/line.c; then echo $(srcdir)/line.c; else echo line.c; fi` line_.c
+list_.c: list.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/list.c; then echo $(srcdir)/list.c; else echo list.c; fi` list_.c
+lists_.c: lists.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/lists.c; then echo $(srcdir)/lists.c; else echo lists.c; fi` lists_.c
+oleofile_.c: oleofile.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/oleofile.c; then echo $(srcdir)/oleofile.c; else echo oleofile.c; fi` oleofile_.c
+panic_.c: panic.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/panic.c; then echo $(srcdir)/panic.c; else echo panic.c; fi` panic_.c
+parse_.c: parse.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/parse.c; then echo $(srcdir)/parse.c; else echo parse.c; fi` parse_.c
+posixtm_.c: posixtm.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/posixtm.c; then echo $(srcdir)/posixtm.c; else echo posixtm.c; fi` posixtm_.c
+print_.c: print.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/print.c; then echo $(srcdir)/print.c; else echo print.c; fi` print_.c
+random_.c: random.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/random.c; then echo $(srcdir)/random.c; else echo random.c; fi` random_.c
+ref_.c: ref.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/ref.c; then echo $(srcdir)/ref.c; else echo ref.c; fi` ref_.c
+regions_.c: regions.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/regions.c; then echo $(srcdir)/regions.c; else echo regions.c; fi` regions_.c
+sc_.c: sc.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/sc.c; then echo $(srcdir)/sc.c; else echo sc.c; fi` sc_.c
+sort_.c: sort.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/sort.c; then echo $(srcdir)/sort.c; else echo sort.c; fi` sort_.c
+string_.c: string.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/string.c; then echo $(srcdir)/string.c; else echo string.c; fi` string_.c
+stub_.c: stub.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/stub.c; then echo $(srcdir)/stub.c; else echo stub.c; fi` stub_.c
+sylk_.c: sylk.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/sylk.c; then echo $(srcdir)/sylk.c; else echo sylk.c; fi` sylk_.c
+utils_.c: utils.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/utils.c; then echo $(srcdir)/utils.c; else echo utils.c; fi` utils_.c
+window_.c: window.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/window.c; then echo $(srcdir)/window.c; else echo window.c; fi` window_.c
+xmalloc_.c: xmalloc.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/xmalloc.c; then echo $(srcdir)/xmalloc.c; else echo xmalloc.c; fi` xmalloc_.c
+xrdb_.c: xrdb.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/xrdb.c; then echo $(srcdir)/xrdb.c; else echo xrdb.c; fi` xrdb_.c
+args_.o basic_.o busi_.o byte-compile_.o cells_.o cmd_.o date_.o \
+decompile_.o display_.o eval_.o font_.o format_.o forminfo_.o funcs_.o \
+getdate_.o getopt_.o getopt1_.o graph_.o hash_.o help_.o info_.o \
+init_.o input_.o io-curses_.o io-edit_.o io-term_.o io-utils_.o \
+io-x11_.o ir_.o key_.o line_.o list_.o lists_.o oleofile_.o panic_.o \
+parse_.o posixtm_.o print_.o random_.o ref_.o regions_.o sc_.o sort_.o \
+string_.o stub_.o sylk_.o utils_.o window_.o xmalloc_.o xrdb_.o : \
+$(ANSI2KNR)
 
 tags: TAGS
 
@@ -302,31 +427,33 @@ distclean-generic:
 maintainer-clean-generic:
 	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
 	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
-mostlyclean:  mostlyclean-binPROGRAMS mostlyclean-compile \
+mostlyclean:  mostlyclean-binPROGRAMS mostlyclean-compile mostlyclean-kr \
 		mostlyclean-tags mostlyclean-depend mostlyclean-generic
 
-clean:  clean-binPROGRAMS clean-compile clean-tags clean-depend \
+clean:  clean-binPROGRAMS clean-compile clean-kr clean-tags clean-depend \
 		clean-generic mostlyclean
 
-distclean:  distclean-binPROGRAMS distclean-compile distclean-tags \
-		distclean-depend distclean-generic clean
+distclean:  distclean-binPROGRAMS distclean-compile distclean-kr \
+		distclean-tags distclean-depend distclean-generic clean
 	-rm -f config.status
 
 maintainer-clean:  maintainer-clean-binPROGRAMS maintainer-clean-compile \
-		maintainer-clean-tags maintainer-clean-depend \
-		maintainer-clean-generic distclean
+		maintainer-clean-kr maintainer-clean-tags \
+		maintainer-clean-depend maintainer-clean-generic \
+		distclean
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 
 .PHONY: default mostlyclean-binPROGRAMS distclean-binPROGRAMS \
 clean-binPROGRAMS maintainer-clean-binPROGRAMS uninstall-binPROGRAMS \
 install-binPROGRAMS mostlyclean-compile distclean-compile clean-compile \
-maintainer-clean-compile tags mostlyclean-tags distclean-tags \
-clean-tags maintainer-clean-tags distdir mostlyclean-depend \
-distclean-depend clean-depend maintainer-clean-depend info dvi \
-installcheck install-exec install-data install uninstall all \
-installdirs mostlyclean-generic distclean-generic clean-generic \
-maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+maintainer-clean-compile mostlyclean-kr distclean-kr clean-kr \
+maintainer-clean-kr tags mostlyclean-tags distclean-tags clean-tags \
+maintainer-clean-tags distdir mostlyclean-depend distclean-depend \
+clean-depend maintainer-clean-depend info dvi installcheck install-exec \
+install-data install uninstall all installdirs mostlyclean-generic \
+distclean-generic clean-generic maintainer-clean-generic clean \
+mostlyclean distclean maintainer-clean
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
