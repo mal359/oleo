@@ -1,6 +1,8 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.18 1998/08/27 21:15:36 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.19 1998/08/29 23:59:15 danny Exp $
 #
+localedir = $(prefix)/share/locale
+
 AUTOMAKE_OPTIONS = ../lib/ansi2knr dejagnu
 
 bin_PROGRAMS = oleo

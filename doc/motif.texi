@@ -36,7 +36,7 @@ the new name of the organisation is The Open Group.
 
 A free implementation of Motif, called LessTif,
 which is available from
-@url{http://www.lesstif.org},
+@uref{http://www.lesstif.org, the LessTif home page},
 can be used instead of Motif.
 
 LessTif is covered by the LGPL (Library General Public License).

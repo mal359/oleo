@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1998-08-28 17:19+0200\n"
+"POT-Creation-Date: 1998-08-29 19:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,33 +57,33 @@ msgstr ""
 
 #. Set window title
 #. enough
-#: src/io-motif.c:727
+#: src/io-motif.c:736
 #, c-format
 msgid "[Oleo: %s]"
 msgstr ""
 
-#: src/io-motif.c:731
+#: src/io-motif.c:740
 #, c-format
 msgid "Read file '%s'\n"
 msgstr ""
 
-#: src/io-motif.c:747
+#: src/io-motif.c:756
 msgid "*.oleo"
 msgstr ""
 
-#: src/io-motif.c:760
+#: src/io-motif.c:769
 msgid "File Format"
 msgstr ""
 
-#: src/io-motif.c:830
+#: src/io-motif.c:845
 #, c-format
 msgid "Saved file '%s'\n"
 msgstr ""
 
-#: src/io-motif.c:1151
+#: src/io-motif.c:1166
 msgid "\n"
 msgstr ""
 
-#: src/io-motif.c:2095
+#: src/io-motif.c:2110
 msgid "XmProcessTraversal failed\n"
 msgstr ""

@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.5 1998/08/28 15:30:44 danny Exp $
+ *  $Id: io-motif.c,v 1.6 1998/08/29 23:59:16 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.5 1998/08/28 15:30:44 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.6 1998/08/29 23:59:16 danny Exp $";
 
 #include "config.h"
 
@@ -149,6 +149,10 @@ void MessageAppend(Boolean beep, char *fmt, ...)
 		XBell(XtDisplay(msgtext), 30);
 }
 
+/*
+ * This just prints a message saying this functionality hasn't been
+ * implemented yet.
+ */
 void none(Widget w, XtPointer client, XtPointer call)
 {
 	XmString	xms;
@@ -680,6 +684,23 @@ void FormulaCB(Widget w, XtPointer client, XtPointer call)
  *		File interaction				*
  *								*
  ****************************************************************/
+static char	fileformat[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+static char	pattern[13];
+
+void FileFormatCB(Widget w, XtPointer client, XtPointer call)
+{
+	char		*f = (char *)client;
+	XmString	xms;
+
+	strcpy(fileformat, f);
+	strcpy(pattern, "*.");
+	strcat(pattern, f);
+
+	xms = XmStringCreateSimple(pattern);
+	XtVaSetValues(fsd, XmNpattern, xms, NULL);
+	XmStringFree(xms);
+}
+
 void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 {
 	XmFileSelectionBoxCallbackStruct *cbp =
@@ -766,18 +787,27 @@ void CreateFSD()
 	b = XtVaCreateManagedWidget("oleo", xmPushButtonGadgetClass,
 		menu,
 		NULL);
+	XtAddCallback(b, XmNactivateCallback, FileFormatCB, "oleo");
+
 	b = XtVaCreateManagedWidget("SYLK", xmPushButtonGadgetClass,
 		menu,
 		NULL);
+	XtAddCallback(b, XmNactivateCallback, FileFormatCB, "sylk");
+
 	b = XtVaCreateManagedWidget("SC", xmPushButtonGadgetClass,
 		menu,
 		NULL);
+	XtAddCallback(b, XmNactivateCallback, FileFormatCB, "sc");
+
 	b = XtVaCreateManagedWidget("list", xmPushButtonGadgetClass,
 		menu,
 		NULL);
+	XtAddCallback(b, XmNactivateCallback, FileFormatCB, "list");
+
 	b = XtVaCreateManagedWidget("panic", xmPushButtonGadgetClass,
 		menu,
 		NULL);
+	XtAddCallback(b, XmNactivateCallback, FileFormatCB, "panic");
 }
 
 void LoadCB(Widget w, XtPointer client, XtPointer call)
@@ -815,11 +845,8 @@ void ReallySaveCB(Widget w, XtPointer client, XtPointer call)
 		return;
 	}
 
-	/* Which file format ? */
-	write_file_generic(fp, 0, "oleo");
-#if 0
-	oleo_write_file(fp, 0);	/* How to handle more than one format ? */
-#endif
+	write_file_generic(fp, 0, fileformat);
+
 	if (fclose(fp) != 0) {
 		/* handle error */
 		return;
@@ -880,7 +907,8 @@ anchorCB(Widget widget, XtPointer client, XtPointer call)
         cbs->visited = True;
 }
 
-void helpUsingCB(Widget w, XtPointer client, XtPointer call)
+static void
+HelpBuildWindow(void)
 {
 	Widget	f, sw, sep, ok;
 
@@ -905,10 +933,11 @@ void helpUsingCB(Widget w, XtPointer client, XtPointer call)
 
 		html = XtVaCreateManagedWidget("html",
 			xmHTMLWidgetClass, sw,
-				XmNmarginWidth, 20,
-				XmNmarginHeight, 20,
-				XmNwidth, 600,
-				XmNheight, 500,
+				XmNmarginWidth,			20,
+				XmNmarginHeight,		20,
+				XmNwidth,			600,
+				XmNheight,			500,
+				XmNenableBadHTMLWarnings,	False,
 			NULL);
 
 		sep = XtVaCreateManagedWidget("separator",
@@ -935,34 +964,79 @@ void helpUsingCB(Widget w, XtPointer client, XtPointer call)
 			NULL);
 		XtAddCallback(ok, XmNactivateCallback, PopDownHelpCB, hd);
 
-#if 0
-		XmHTMLTextSetString(html,
-			"<html><body>"
-			"There's <b><i>no</i></b> help yet."
-			"</body></html>" );
-#else
-{
-#define	LEN	200000
-	char	*buffer = XtMalloc(LEN);
-	FILE	*fp = fopen("oleo.html", "r");
-	if (fp == NULL)
-		fp = fopen("oleo_1.html", "r");
-	if (fp == NULL)
-		fp = fopen("oleo.html", "r");
-	if (fp) {
-		fread(buffer, 1, LEN, fp);
-		fclose(fp);
-		XmHTMLTextSetString(html, buffer);
-	}
-	XtFree(buffer);
-}
-#endif
 		XtAddCallback(html, XmNactivateCallback,
 			(XtCallbackProc)anchorCB, NULL);
+	}
+}
 
+/*
+ * Load a file into the help window.
+ * This probably needs to look at the language.
+ */
+#define	HELP_FILE_LENGTH	200000
 
+#ifndef	HTMLDIR
+#define	HTMLDIR			"/usr/local/share/oleo"
+#endif
+
+static void
+HelpLoadFile(char *fn, char *anchor)
+{
+	char	*buffer = XtMalloc(HELP_FILE_LENGTH);
+	FILE	*fp = fopen("oleo.html", "r");
+	char	*n;
+
+	if (fn == NULL) {
+		XmHTMLTextSetString(html,
+			_("<html><body>"
+			  "Can't find the requested help file\n"
+			  "</body></html>"));
+		return;
 	}
 
+	n = XtMalloc(256);
+	fp = fopen(fn, "r");
+	if (fp == NULL) {
+		sprintf(n, "%s/%s/%s",
+			HTMLDIR, getenv("LANGUAGE"), fn);
+		fp = fopen(n, "r");
+	}
+
+	if (fp == NULL) {
+		sprintf(n, "%s/%s/%s",
+			HTMLDIR, getenv("LANG"), fn);
+		fp = fopen(n, "r");
+	}
+
+	if (fp == NULL) {
+		sprintf(n, "%s/%s", HTMLDIR, fn);
+		fp = fopen(n, "r");
+	}
+
+	if (fp) {
+		fread(buffer, 1, HELP_FILE_LENGTH, fp);
+		fclose(fp);
+		XmHTMLTextSetString(html, buffer);
+	} else {
+		XmHTMLTextSetString(html,
+			_("<html><body>"
+			  "Can't find the requested help file\n"
+			  "</body></html>"));
+                return; 
+	}
+	XtFree(buffer);
+
+	MessageAppend(False, "Help requested on '%s'", anchor);
+
+	if (anchor)
+		XmHTMLAnchorScrollToName(html, anchor);
+	XtFree(n);
+}
+
+void helpUsingCB(Widget w, XtPointer client, XtPointer call)
+{
+	HelpBuildWindow();
+	HelpLoadFile("oleo.html", client);
 	XtPopup(hd, XtGrabNone);
 }
 
@@ -975,7 +1049,6 @@ void helpVersionCB(Widget w, XtPointer client, XtPointer call)
 {
 	/* FIX ME */	versionCB(w, client, call);
 }
-
 #endif
 
 /*
@@ -1551,67 +1624,70 @@ GscBuildMainWindow(Widget parent)
 
 	w = XtVaCreateManagedWidget("using", xmPushButtonGadgetClass, helpmenu,
 		NULL);
-#if	HAVE_XmHTML_H
 	XtAddCallback(w, XmNactivateCallback, helpUsingCB, NULL);
-#else
-	XtSetSensitive(w, False);
-#endif
 
 	XtVaCreateManagedWidget("sep1", xmSeparatorGadgetClass, helpmenu, NULL);
 
 	w = XtVaCreateManagedWidget("math", xmPushButtonGadgetClass, helpmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, helpUsingCB, "HelpMathFunctions");
 
 	w = XtVaCreateManagedWidget("trig", xmPushButtonGadgetClass, helpmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, helpUsingCB,
+		"HelpTrigonometricFunctions");
 
 	w = XtVaCreateManagedWidget("stats", xmPushButtonGadgetClass, helpmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, helpUsingCB,
+		"HelpStatisticalFunctions");
 
 	w = XtVaCreateManagedWidget("bool", xmPushButtonGadgetClass, helpmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, helpUsingCB,
+		"HelpBooleanFunctions");
 
 	w = XtVaCreateManagedWidget("string", xmPushButtonGadgetClass, helpmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, helpUsingCB,
+		"HelpStringFunctions");
 
 	w = XtVaCreateManagedWidget("struct", xmPushButtonGadgetClass, helpmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, helpUsingCB,
+		"HelpStructuralFunctions");
 
 	w = XtVaCreateManagedWidget("search", xmPushButtonGadgetClass, helpmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, helpUsingCB,
+		"HelpSearchFunctions");
 
 	w = XtVaCreateManagedWidget("bus", xmPushButtonGadgetClass, helpmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, helpUsingCB,
+		"HelpBusinessFunctions");
 
 	w = XtVaCreateManagedWidget("date", xmPushButtonGadgetClass, helpmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, helpUsingCB, "HelpDateFunctions");
 
 	XtVaCreateManagedWidget("sep2", xmSeparatorGadgetClass, helpmenu, NULL);
 
 	w = XtVaCreateManagedWidget("expr", xmPushButtonGadgetClass, helpmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, helpUsingCB, "HelpExpressions");
 
 	w = XtVaCreateManagedWidget("error", xmPushButtonGadgetClass, helpmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, helpUsingCB, "HelpErrorValues");
 
 	w = XtVaCreateManagedWidget("format", xmPushButtonGadgetClass, helpmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, helpUsingCB, NULL);
 
 	w = XtVaCreateManagedWidget("option", xmPushButtonGadgetClass, helpmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, helpUsingCB, "HelpOptions");
 
 	return mw;
 }
