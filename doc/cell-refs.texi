@@ -106,7 +106,7 @@ the topmost, leftmost four cells in the spreadsheet.
 @subsection Comparison
 
 In order to get an understanding of these two addressing modes, assume that the
-cell cursor is in @code{E7} = @code{R7C5}.  The left hand column is @code{noao}
+cell cursor is in @code{E7} = @code{R7C5}.  The left hand column is @code{noa0}
 mode, and the right hand one is @code{a0} mode.
 
 @example
