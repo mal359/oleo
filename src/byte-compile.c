@@ -1,5 +1,5 @@
 /*
- * $Id: byte-compile.c,v 1.11 2000/08/10 21:02:49 danny Exp $
+ * $Id: byte-compile.c,v 1.12 2000/11/22 19:33:00 danny Exp $
  *
  * Copyright © 1990, 1992, 1993 Free Software Foundation, Inc.
  * 
@@ -32,6 +32,10 @@
 #include <stdio.h>
 
 #include "sysdef.h"
+
+#ifdef	HAVE_MALLOC_H
+#include <malloc.h>
+#endif
 
 #ifdef _DEBUG_MALLOC_INC
 static void

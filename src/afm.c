@@ -1,7 +1,7 @@
 /*
  * Copyright © 1999 Free Software Foundation, Inc.
  *
- * $Id: afm.c,v 1.7 2000/08/10 21:02:49 danny Exp $
+ * $Id: afm.c,v 1.8 2000/11/22 19:33:00 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@
 
 #define	AFM_PATH	"/share/afm"
 #define	USRLOCAL_PATH	"/usr/local"
+#define	USR_PATH	"/usr"
 #define	GS_PATH		"/share/ghostscript/fonts"
 
 #define	LINE_LEN	256
@@ -223,23 +224,52 @@ OpenAfmFile(char *name, char *slant)
 	fp = fopen(fn, "r");
 	if (fp)
 		return fp;
+#ifdef	VERBOSE
+	else
+		MessageAppend(0, "Failed to open %s\n", fn);
+#endif
+
+	sprintf(fn, "%s/%s%s.afm", USR_PATH GS_PATH, name, slant ? slant : "");
+	fp = fopen(fn, "r");
+	if (fp)
+		return fp;
+#ifdef	VERBOSE
+	else
+		MessageAppend(0, "Failed to open %s\n", fn);
+#endif
 
 	sprintf(fn, "%s/%s%s.afm", USRLOCAL_PATH GS_PATH, name, slant ? slant : "");
 	fp = fopen(fn, "r");
 	if (fp)
 		return fp;
+#ifdef	VERBOSE
+	else
+		MessageAppend(0, "Failed to open %s\n", fn);
+#endif
 
 	if ((alias = GSName(name, slant)) != NULL) {
+		sprintf(fn, "%s/%s.afm", USR_PATH GS_PATH, alias);
+		fp = fopen(fn, "r");
+		if (fp)
+			return fp;
+#ifdef	VERBOSE
+	else
+		MessageAppend(0, "Failed to open %s\n", fn);
+#endif
 		sprintf(fn, "%s/%s.afm", USRLOCAL_PATH GS_PATH, alias);
 		fp = fopen(fn, "r");
 		if (fp)
 			return fp;
+#ifdef	VERBOSE
+	else
+		MessageAppend(0, "Failed to open %s\n", fn);
+#endif
 	}
 
 	if (fp == 0) {
 		io_info_msg(PACKAGE ": couldn't open AFM file for %s%s\n", name, slant);
 		free(fn);
-		return;
+		return NULL;
 	}
 	free(fn);
 
@@ -281,14 +311,16 @@ AfmSetFont(char *name, char *slant, int size)
  * Start reading file.
  */
 	fp = OpenAfmFile(name, slant);
-	line = malloc(LINE_LEN + 3);
+	if (fp) {
+		line = malloc(LINE_LEN + 3);
 
-	while (fgets(line, LINE_LEN, fp) != NULL) {
-		ReadAfmLine();
+		while (fgets(line, LINE_LEN, fp) != NULL) {
+			ReadAfmLine();
+		}
+
+		fclose(fp);
+		free(line);
 	}
-
-	fclose(fp);
-	free(line);
 
 	AfmSetEncoding("ISOLatin1");
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: io-term.c,v 1.44 2000/08/10 21:02:50 danny Exp $
+ * $Id: io-term.c,v 1.45 2000/11/22 19:33:01 danny Exp $
  *
  * Copyright © 1990, 1992, 1993, 1999, 2000 Free Software Foundation, Inc.
  * 
@@ -20,7 +20,7 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char *rcsid = "$Id: io-term.c,v 1.44 2000/08/10 21:02:50 danny Exp $";
+static char *rcsid = "$Id: io-term.c,v 1.45 2000/11/22 19:33:01 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -30,11 +30,10 @@ static char *rcsid = "$Id: io-term.c,v 1.44 2000/08/10 21:02:50 danny Exp $";
 #include <dmalloc.h>
 #endif
 
-#include <libintl.h>
-#include <locale.h>
-
 #include <ctype.h>
 #include <stdio.h>
+#include <locale.h>
+#include <stdlib.h>
 
 #include "global.h"
 
@@ -842,6 +841,7 @@ continue_oleo (int sig)
 void InitializeGlobals(void)
 {
   Global->display_opened = 0;
+  Global->return_from_error = 0;
 
   /* Initialize stuff that's now in Global */
   Global->bkgrnd_recalc = 1;

@@ -1,5 +1,5 @@
 /*
- * $Header: /home/matt/cvs/oleo/oleo/src/sciplot.h,v 1.5 2000/08/10 21:02:51 danny Exp $
+ * $Header: /home/matt/cvs/oleo/oleo/src/sciplot.h,v 1.6 2000/11/22 19:33:01 danny Exp $
  *
  * This file is part of GNU plotutils.
  *
@@ -132,10 +132,10 @@ void sp_legend_label(Multigrapher *mg, int i, char *s);
 
 typedef enum {
 	SP_TICK_DEFAULT = 0,
-	SP_TICK_PRINTF,
-	SP_TICK_STRFTIME,
-	SP_TICK_CUSTOM,
-	SP_TICK_NONE,
+	SP_TICK_PRINTF = 1,
+	SP_TICK_STRFTIME = 2,
+	SP_TICK_CUSTOM = 3,
+	SP_TICK_NONE = 4,
 
 	SP_TICK_LAST
 } tick_type_e;

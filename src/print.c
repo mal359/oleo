@@ -1,7 +1,7 @@
 /*
  * Copyright © 1992, 1993, 1999, 2000 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.30 2000/07/08 15:22:35 danny Exp $
+ * $Id: print.c,v 1.31 2000/11/22 19:33:01 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,8 @@
 
 #include <stdio.h>
 #include <ctype.h>
+#include <stdlib.h>
+
 #include "display.h"
 #include "font.h"
 #include "global.h"

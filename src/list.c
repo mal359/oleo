@@ -1,5 +1,5 @@
 /*
- * $Id: list.c,v 1.12 2000/08/10 21:02:50 danny Exp $
+ * $Id: list.c,v 1.13 2000/11/22 19:33:01 danny Exp $
  *
  * Copyright © 1990, 1992, 1993 Free Software Foundation, Inc.
  * 
@@ -89,9 +89,11 @@ list_read_file (fp, ismerge)
 	}
       }
 
+#if 0
       /* Be loud after every 50 line read. Useless. */
       if (lineno % 50 == 0)
 	io_info_msg ("Line %d", lineno);
+#endif
 
       endit = 0;
       for (bptr = &cbuf[1];; bptr = eptr + 1)

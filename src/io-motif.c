@@ -1,6 +1,6 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.64 2000/08/10 21:02:50 danny Exp $
+ *  $Id: io-motif.c,v 1.65 2000/11/22 19:33:01 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -22,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.64 2000/08/10 21:02:50 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.65 2000/11/22 19:33:01 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -638,10 +638,13 @@ void PrintOptionsOk(Widget w, XtPointer client, XtPointer call)
 	MotifSelectGlobal(w);
 	XtUnmanageChild(optionsDialog);
 
-	XtVaGetValues(Global->MotifGlobal->ZoomScale,
-			XmNvalue, &scale,
-		NULL);
-	f = scale;
+	if (Global->MotifGlobal->ZoomScale) {
+		XtVaGetValues(Global->MotifGlobal->ZoomScale,
+				XmNvalue, &scale,
+			NULL);
+		f = scale;
+	} else
+		f = 100.0;
 
 	f = f / 100.0;
 	Global->zoom = f;
@@ -654,9 +657,11 @@ void PrintOptionsReset(Widget w)
 	float	f = Global->zoom * 100.0;
 	int	s = f;
 
-	XtVaSetValues(Global->MotifGlobal->ZoomScale,
-			XmNvalue,	s,
-		NULL);
+	if (Global->MotifGlobal->ZoomScale) {
+		XtVaSetValues(Global->MotifGlobal->ZoomScale,
+				XmNvalue,	s,
+			NULL);
+	}
 }
 
 void PrintOptionsCB(Widget w, XtPointer client, XtPointer call)
@@ -928,12 +933,19 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 	int			r;
 
 	MotifSelectGlobal(w);
-	XtUnmanageChild(configureGraph);
+
+/* We should only pop down if everything was read correctly.
+ *	XtUnmanageChild(configureGraph);
+ */
+	Global->return_from_error = 1;
+	Global->had_error = 0;
 
 	XtVaGetValues(f, XmNuserData, &cw, NULL);
 
 	if (cw == NULL) {
 		MessageAppend(True, _("Cannot find XmNuserData\n"));
+		XtUnmanageChild(configureGraph);
+		Global->return_from_error = 0;
 		return;
 	}
 
@@ -1072,6 +1084,12 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 	ConfigureXYOk();
 	ConfigurePieOk();
 	ConfigureBarOk();
+
+	/* Pop down */
+	if (Global->had_error == 0)
+		XtUnmanageChild(configureGraph);
+
+	Global->return_from_error = 0;
 }
 
 /*
@@ -1449,13 +1467,45 @@ static void TickTypeCB(Widget w, XtPointer client, XtPointer call)
 	int	n = (int)client;
 	int	axis = n / 256;
 	int	val = n % 256;
+	tick_type_e	v = (tick_type_e)val;
+	Widget	tw;
 
 	MotifSelectGlobal(w);
 
-	if (axis == 0)
+	if (axis == 0) {
 		Global->MotifGlobal->xtick = val;
-	else
+		tw = Global->MotifGlobal->xtickfmt;
+	} else {
 		Global->MotifGlobal->ytick = val;
+		tw = Global->MotifGlobal->ytickfmt;
+	}
+
+	switch (v) {
+	SP_TICK_DEFAULT:
+	SP_TICK_NONE:
+#if 0
+		fprintf(stderr, "TickTypeCB(axis %d type %d) -> insensitive \n", axis, val);
+#endif
+		XmTextFieldSetEditable(tw, False);
+		break;
+	SP_TICK_PRINTF:
+	SP_TICK_STRFTIME:
+#if 0
+		fprintf(stderr, "TickTypeCB(axis %d type %d) -> sensitive \n", axis, val);
+#endif
+		XmTextFieldSetEditable(tw, True);
+		break;
+	default:
+#if 0
+		fprintf(stderr, "Huh ? TickTypeCB(axis %d type %d) -> sensitive \n", axis, val);
+#endif
+	}
+#if 0
+	fprintf(stderr, "SP_TICK_DEFAULT %d\n", SP_TICK_DEFAULT);
+	fprintf(stderr, "SP_TICK_NONE %d\n", SP_TICK_NONE);
+	fprintf(stderr, "SP_TICK_PRINTF %d\n", SP_TICK_PRINTF);
+	fprintf(stderr, "SP_TICK_STRFTIME %d\n", SP_TICK_STRFTIME);
+#endif
 }
 
 /*
@@ -1850,7 +1900,7 @@ void ReallyPrintCB(Widget w, XtPointer client, XtPointer call)
 	 */
 	FILE		*fp = NULL;
 	struct rng	rng;
-	char		*fn, *s, *p;
+	char		*fn = NULL, *s, *p, *pr = NULL;
 	int		r;
 
 	MotifSelectGlobal(w);
@@ -1858,15 +1908,18 @@ void ReallyPrintCB(Widget w, XtPointer client, XtPointer call)
 	XtUnmanageChild(PrintDialog);
 
 	if (XmToggleButtonGadgetGetState(PrintWidgets.PrinterToggle)) {
-		char	cmd[64], *pr;
+		char	cmd[64];
 
 		pr = XmTextFieldGetString(PrintWidgets.printerTF);
 		if (pr && strlen(pr)) {
 			sprintf(cmd, "lpr -P%s", pr);
 		} else if (strlen(AppRes.printer)) {
 			sprintf(cmd, "lpr -P%s", AppRes.printer);
-		} else
+			pr = AppRes.printer;
+		} else {
 			sprintf(cmd, "lpr");
+			pr = "[default printer]";
+		}
 
 		fp = popen(cmd, "w");
 		if (fp == NULL) {
@@ -1925,10 +1978,17 @@ void ReallyPrintCB(Widget w, XtPointer client, XtPointer call)
 
 	if (Global->zoom < 0.90 || Global->zoom > 1.1) {
 		int	z = Global->zoom * 100;
-		MessageAppend(False, "Printed %s to %s, at %d percent size\n",
+		if (fn)
+		    MessageAppend(False, "Printed %s to file %s, at %d percent size\n",
 			range_name(&rng), fn, z);
-	} else
-		MessageAppend(False, "Printed %s to %s\n", range_name(&rng), fn);
+		else
+		    MessageAppend(False, "Printed %s to printer %s, at %d percent size\n",
+			range_name(&rng), pr, z);
+	} else if (fn) {
+		MessageAppend(False, "Printed %s to file %s\n", range_name(&rng), fn);
+	} else {
+		MessageAppend(False, "Printed %s to printer %s\n", range_name(&rng), pr);
+	}
 
 #ifdef	FREE_TF_STRING
 	XtFree(fn);
@@ -2021,7 +2081,7 @@ Widget MotifCreatePrintDialog(Widget s)
 	int		defaultprint = 0;
 	char		**printers;
 
-	MotifSelectGlobal(w);
+	MotifSelectGlobal(s);
 
 	ac = 0;
 	form = XmCreateForm(s, "printForm", al, ac);
@@ -5943,13 +6003,20 @@ void versionCB(Widget w, XtPointer client, XtPointer call)
 	XmStringFree(xms2);
 #endif
 
-#if defined(HAVE_LIBXDB) && defined(XDB_VERSION)
-	sprintf(xbae, "\n  Xdb library version %s", XDB_VERSION);
-	xms1 = xms;
-	xms2 = XmStringCreateLtoR(xbae, XmFONTLIST_DEFAULT_TAG);
-	xms = XmStringConcat(xms1, xms2);
-	XmStringFree(xms1);
-	XmStringFree(xms2);
+#if defined(HAVE_LIBXDB)
+    {
+	extern char	*oleoXdbVersion();
+	char	*v = oleoXdbVersion();
+
+	if (v) {
+		sprintf(xbae, "\n  XBase library version %s", v);
+		xms1 = xms;
+		xms2 = XmStringCreateLtoR(xbae, XmFONTLIST_DEFAULT_TAG);
+		xms = XmStringConcat(xms1, xms2);
+		XmStringFree(xms1);
+		XmStringFree(xms2);
+	}
+    }
 #endif
 
 	ac = 0;

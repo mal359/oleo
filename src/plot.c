@@ -1,5 +1,5 @@
 /*
- * $Id: plot.c,v 1.25 2000/08/10 21:02:51 danny Exp $
+ * $Id: plot.c,v 1.26 2000/11/22 19:33:01 danny Exp $
  *
  * Copyright © 1998-2000 Free Software Foundation, Inc.
  * 
@@ -19,7 +19,7 @@
  */
 
 /*
- * $Id: plot.c,v 1.25 2000/08/10 21:02:51 danny Exp $
+ * $Id: plot.c,v 1.26 2000/11/22 19:33:01 danny Exp $
  *
  * This file contains the code to draw plots from the Oleo data
  * layered on top of the libsciplot functions.
@@ -480,12 +480,20 @@ PuXYChart(char *plotter, FILE *outfile)
 	sp_set_axis_range(mg, Y_AXIS, ymin, ymax, 0.0, 0);
 
 	if (Global->PlotGlobal->ticktype[0] == SP_TICK_STRFTIME) {
-		sp_set_axis_ticktype_date(mg, X_AXIS, 1.0, 1.0, Global->PlotGlobal->tickformat[0]);
+		/* protect against empty format string */
+		if (Global->PlotGlobal->tickformat[0] == NULL || strlen(Global->PlotGlobal->tickformat[0]) == 0)
+		    sp_set_axis_ticktype_date(mg, X_AXIS, 1.0, 1.0, "%c");
+		else
+		    sp_set_axis_ticktype_date(mg, X_AXIS, 1.0, 1.0, Global->PlotGlobal->tickformat[0]);
 	} else if (Global->PlotGlobal->ticktype[0] == SP_TICK_PRINTF) {
 		/* FIX ME need more API for this */
 	}
 	if (Global->PlotGlobal->ticktype[1] == SP_TICK_STRFTIME) {
-		sp_set_axis_ticktype_date(mg, Y_AXIS, 1.0, 1.0, Global->PlotGlobal->tickformat[1]);
+		/* protect against empty format string */
+		if (Global->PlotGlobal->tickformat[1] == NULL || strlen(Global->PlotGlobal->tickformat[1]) == 0)
+		    sp_set_axis_ticktype_date(mg, Y_AXIS, 1.0, 1.0, "%c");
+		else
+		    sp_set_axis_ticktype_date(mg, Y_AXIS, 1.0, 1.0, Global->PlotGlobal->tickformat[1]);
 	} else if (Global->PlotGlobal->ticktype[1] == SP_TICK_PRINTF) {
 		/* FIX ME need more API for this */
 	}

@@ -1,5 +1,5 @@
 /*
- * $Id: plotter.c,v 1.7 2000/08/10 21:02:51 danny Exp $
+ * $Id: plotter.c,v 1.8 2000/11/22 19:33:01 danny Exp $
  *
  * This file contains the heart of libsciplot - the scientific plotting
  * library layered on top of GNU plotutils.
@@ -9,6 +9,7 @@
 #ifdef	HAVE_LIBPLOT
 #ifndef	HAVE_LIBSCIPLOT
 
+#include <stdlib.h>
 #include <sciplot.h>
 #include <sciplotI.h>
 
@@ -2648,6 +2649,9 @@ sp_plot_point_simple(Multigrapher *mg, int connected, double x, double y)
 {
 	Point	*p = &mg->point;
 
+#if 0	/* Danny */
+	fprintf(stderr, "sp_plot_point_simple(1, %f, %f)\n", connected, x, y);
+#endif
 	p->x = x;
 	p->y = y;
 	p->pendown = connected;

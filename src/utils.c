@@ -30,6 +30,8 @@
 
 #include <stdio.h>
 #include <errno.h>
+#include <stdlib.h>
+
 #include "sysdef.h"
 #include <stdarg.h>
 #include <fcntl.h>

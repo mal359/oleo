@@ -1,3 +1,4 @@
+#define	GRAPH_VERBOSE
 /*
  * Copyright © 1993, 1999, 2000 Free Software Foundation, Inc.
  * 
@@ -17,7 +18,7 @@
  */
 
 /*
- * $Id: graph.c,v 1.19 2000/08/10 21:02:50 danny Exp $
+ * $Id: graph.c,v 1.20 2000/11/22 19:33:01 danny Exp $
  *
  * This file contains the functions to maintain the internal graphing
  * data structures in Oleo.
@@ -34,6 +35,8 @@
 #endif
 
 #include <ctype.h>
+#include <stdlib.h>
+
 #include "global.h"
 #include "graph.h"
 #include "cmd.h"
@@ -180,7 +183,7 @@ graph_check_range (char * val)
   while (isspace (*val)) ++val;
   if (!isdigit (*val))
     io_error_msg
-      ("Illegal range specifier %s (should be a numer or `def').", val);
+      ("Illegal range specifier %s (should be a number or `def').", val);
   else
     {
       while (*val)
@@ -195,7 +198,7 @@ graph_check_range (char * val)
 	  ++val;
 	else
 	  io_error_msg
-	    ("Illegal range specifier %s (should be a numer or `def').", val);
+	    ("Illegal range specifier %s (should be a number or `def').", val);
     }
 	    
 }
@@ -502,6 +505,10 @@ graph_get_linetooffscreen(void)
 void
 graph_set_axis_ticks(int axis, int ticktype, char *fmt)
 {
+#ifdef	GRAPH_VERBOSE
+	fprintf(stderr, "graph_set_axis_ticks(%d, %d, %s)\n", axis, ticktype, fmt);
+#endif
+
 	if (axis < 0 || axis > graph_num_axis) {
 		io_error_msg("graph_set_axis_ticks: invalid graph axis %d, must be 0 or 1", axis);
 		return;

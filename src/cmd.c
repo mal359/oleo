@@ -1,5 +1,5 @@
 /*
- * $Id: cmd.c,v 1.18 2000/07/25 12:56:32 danny Exp $
+ * $Id: cmd.c,v 1.19 2000/11/22 19:33:00 danny Exp $
  *
  * Copyright © 1993, 1999, 2000 Free Software Foundation, Inc.
  *
@@ -31,6 +31,7 @@
 #include <stdarg.h>
 #include "sysdef.h"
 #include <termios.h>
+#include <malloc.h>
 
 #ifdef	HAVE_MOTIF
 #include "io-motif.h"
@@ -2031,6 +2032,50 @@ io_error_msg (char *str,...)
   char buf[1000];
   char buf2[1000];
 
+#if 1
+  /*
+   * Experimental : don't always crash on error.
+   */
+#ifdef	HAVE_MOTIF
+  extern int using_motif;
+
+  if (using_motif) {
+	va_start (foo, str);
+	vsprintf (buf, str, foo);
+
+	if (Global->return_from_error) {
+		Global->had_error++;		/* Indicate that we had an error */
+		MessageAppend(1, buf);
+		return;
+	}
+
+	recover_from_error ();
+	MessageAppend(1, buf);
+	longjmp (Global->error_exception, 1);
+  } else
+#endif
+  {
+  /*
+   * This is made robust against errors that occur before
+   * the io hooks have been initialized.
+   */
+  if (Global->display_opened)
+    io_bell ();
+  
+  va_start (foo, str);
+  vsprintf (buf, str, foo);
+  sprintf (buf2, "display-msg %s", buf);
+  recover_from_error ();
+
+  if (Global->display_opened)
+    execute_command (buf2);
+  else
+    fprintf (stderr, "oleo: %s\n", buf);
+
+  longjmp (Global->error_exception, 1);
+  }
+#else
+
 #ifdef	HAVE_MOTIF
   extern int using_motif;
 
@@ -2063,6 +2108,7 @@ io_error_msg (char *str,...)
 
   longjmp (Global->error_exception, 1);
   }
+#endif
 }
 
 

@@ -1,5 +1,5 @@
 /*
- * $Id: oleofile.c,v 1.23 2000/08/10 21:02:51 danny Exp $
+ * $Id: oleofile.c,v 1.24 2000/11/22 19:33:01 danny Exp $
  *
  * Copyright © 1990-2000 Free Software Foundation, Inc.
  *
@@ -79,6 +79,8 @@ oleo_read_file (fp, ismerge)
   long mx_row = MAX_ROW, mx_col = MAX_COL;
   int old_a0;
   int next_a0;
+
+  Global->return_from_error = 1;
 
   old_a0 = Global->a0;
   next_a0 = old_a0;
@@ -638,19 +640,22 @@ oleo_read_file (fp, ismerge)
 	    clear_spreadsheet ();
 	  io_recenter_all_win ();
 	  io_error_msg ("Line %d: Unknown OLEO line \"%s\"", lineno, cbuf);
+	  Global->return_from_error = 0;
 	  return;
 	}	/* End of switch */
     }
-  if (!feof (fp))
-    {
-      if (!ismerge)
-	clear_spreadsheet ();
-      io_recenter_all_win ();
-      io_error_msg ("read-file: read-error near line %d.", lineno);
-      return;
+  if (!feof (fp)) {
+	if (!ismerge)
+		clear_spreadsheet ();
+	io_recenter_all_win ();
+	io_error_msg ("read-file: read-error near line %d.", lineno);
+	Global->return_from_error = 0;
+	return;
     }
   Global->a0 = next_a0;
   io_recenter_all_win ();
+
+  Global->return_from_error = 0;
 }
 
 static char *
@@ -904,10 +909,16 @@ oleo_write_file (fp, rng)
 	      if (cp->cell_font->id_memo < 0)
 		{
 		  cp->cell_font->id_memo = fnt_map_size++;
-		  fprintf (fp, "%%F%s,%s,%f\n",
+		  if (isnan(cp->cell_font->scale))
+			fprintf (fp, "%%F%s,%s,%f\n",
 			   cp->cell_font->names->x_name,
 			   cp->cell_font->names->ps_name,
 			   cp->cell_font->scale);
+		  else
+			fprintf (fp, "%%F%s,%s,%f\n",
+			   cp->cell_font->names->x_name,
+			   cp->cell_font->names->ps_name,
+			   1.0);
 		}
 	    }
 	  (void) fprintf (fp, "F;");
@@ -1033,8 +1044,13 @@ oleo_write_file (fp, rng)
 
   /* Axis range : GrxlVALUE , l = 0 for low, 1 for high */
   for (i=0; i< 2; i++) {
-	fprintf(fp, "Gr%c0%f\n", '0' + i, graph_get_axis_lo(i));
-	fprintf(fp, "Gr%c1%f\n", '0' + i, graph_get_axis_hi(i));
+	double	d;
+	d = graph_get_axis_lo(i);
+	if (! isnan(d))
+		fprintf(fp, "Gr%c0%f\n", '0' + i, d);
+	d = graph_get_axis_hi(i);
+	if (! isnan(d))
+		fprintf(fp, "Gr%c1%f\n", '0' + i, d);
   }
 
   /* Automatic axis setting : Gax0 or Gax1 */

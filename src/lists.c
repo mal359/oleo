@@ -1,5 +1,5 @@
 /*
- * $Id: lists.c,v 1.12 2000/08/10 21:02:50 danny Exp $
+ * $Id: lists.c,v 1.13 2000/11/22 19:33:01 danny Exp $
  *
  * Copyright © 1990, 1992, 1993 Free Software Foundation, Inc.
  * 
@@ -26,6 +26,10 @@
 
 #ifdef	WITH_DMALLOC
 #include <dmalloc.h>
+#endif
+
+#ifdef	HAVE_MALLOC_H
+#include <malloc.h>
 #endif
 
 #include "global.h"

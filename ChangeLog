@@ -1,4 +1,9 @@
-$Id: ChangeLog,v 1.133 2000/08/10 21:02:49 danny Exp $
+
+$Id: ChangeLog,v 1.134 2000/11/22 19:33:00 danny Exp $
+
+Wed Nov 22 00:24:12 CET 2000, Danny
+
+	* This is Oleo 1.99.14.
 
 	* Add a way to specify GIF, PNG output format in curses.
 	* Graph documentation update.
@@ -12,6 +17,20 @@ $Id: ChangeLog,v 1.133 2000/08/10 21:02:49 danny Exp $
 	  graph_set_data().
 	* Start coding for graphs to have lines, marks, or both.
 	  Option should be user-settable.
+	* Add code to display XDB version in Version dialog.
+	  This only works with the CVS version of XDB, of 15 August 2000
+	  or later.
+	* XDB is now renamed to Xbase again. XDB already exists.
+	* SuSE 7.0 fixes (malloc.h and stdlib.h added).
+	* A couple of Motif 1.2 compatibility and other stupid coding
+	  error fixes.
+	* In src/oleofile.c, avoid writing "nan" to the save file
+	  when writing floating point values. Just don't write that
+	  entry to the file. (Not sure if this is the right thing to
+	  do.)
+	* Don't pop down the configure graph dialog if errors occur
+	  while scanning its contents. This would result in loss of
+	  the data that the user has just entered.
 
 Tue 25 Jul 14:54:21 2000, Danny
 	* This is Oleo 1.99.12.

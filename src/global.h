@@ -1,7 +1,7 @@
 #ifndef GLOBALH
 #define GLOBALH
 /*
- * $Id: global.h,v 1.14 2000/08/10 21:02:50 danny Exp $
+ * $Id: global.h,v 1.15 2000/11/22 19:33:00 danny Exp $
  *
  * Copyright © 1990, 1992, 1993, 1999, 2000 Free Software Foundation, Inc.
  * 
@@ -347,6 +347,8 @@ struct OleoGlobal {
 
 /* new stuff */
 	char				*encoding;
+	int				return_from_error;
+	int				had_error;
 };
 
 extern struct OleoGlobal *Global;

@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.83 2000/08/10 21:02:49 danny Exp $
+dnl $Id: configure.in,v 1.84 2000/11/22 19:33:00 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -12,7 +12,7 @@ dnl Need to be processed with Autoconf >= 2.13
 dnl
 AC_PREREQ(2.13)
 
-AM_INIT_AUTOMAKE([oleo], [1.99.13])
+AM_INIT_AUTOMAKE([oleo], [1.99.14])
 GNU_PACKAGE="GNU $PACKAGE"
 AC_DEFINE_UNQUOTED(GNU_PACKAGE, "$GNU_PACKAGE")
 
@@ -245,7 +245,7 @@ dnl
 AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_CHECK_HEADERS(fcntl.h limits.h malloc.h strings.h sys/time.h unistd.h)
-AC_CHECK_HEADERS(locale.h time.h math.h)
+AC_CHECK_HEADERS(locale.h time.h math.h libintl.h)
 
 dnl
 dnl
