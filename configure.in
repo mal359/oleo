@@ -1,6 +1,6 @@
 dnl
 dnl This is the configuration file for GNU oleo.
-dnl $Id: configure.in,v 1.26 1998/09/17 22:09:36 danny Exp $
+dnl $Id: configure.in,v 1.27 1998/10/07 20:14:35 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -31,6 +31,9 @@ AC_PROG_CC
 AM_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_RANLIB
+
+AC_CHECK_PROG(HAVE_TEXI2HTML, texi2html, yes)
+AM_CONDITIONAL(HaveTexi2Html, test x$HAVE_TEXI2HTML = xyes)
 
 dnl Checks the Compiler.
 AM_C_PROTOTYPES
