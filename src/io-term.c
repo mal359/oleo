@@ -1,5 +1,5 @@
 /*
- * $Id: io-term.c,v 1.56 2001/11/23 21:28:44 pw Exp $
+ * $Id: io-term.c,v 1.57 2003/01/16 00:36:36 pw Exp $
  *
  * Copyright © 1990, 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 
@@ -20,7 +20,7 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char *rcsid = "$Id: io-term.c,v 1.56 2001/11/23 21:28:44 pw Exp $";
+static char *rcsid = "$Id: io-term.c,v 1.57 2003/01/16 00:36:36 pw Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -1058,9 +1058,8 @@ main (int argc, char **argv)
 	fprintf(stderr, "F: optind %d argv[optind] '%s' optopt %d %c\n",
 		optind, argv[optind], optopt, optopt);
 #endif
-	    option_format = argv[optind];
+	    option_format = optarg;
 	    file_set_default_format(option_format);
-	    optind++;
 	    break;
 	  case '-':
 		option_filter = 1;
@@ -1198,7 +1197,13 @@ main (int argc, char **argv)
 
 
   if (option_filter) {
-	    read_file_and_run_hooks(stdin, 0, "stdin");
+    if (setjmp(Global->error_exception)) {
+	fprintf (stderr, _("   error occured in stdin near line %d."),
+	  Global->sneaky_linec);
+	io_info_msg(_("   error occured in stdin near line %d."),
+	  Global->sneaky_linec);
+    } else
+	read_file_and_run_hooks(stdin, 0, "stdin");
   } else if (argc - optind == 1) {
       FILE * fp;
       /* fixme: record file name */
