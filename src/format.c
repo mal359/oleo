@@ -1,5 +1,5 @@
 /*
- * $Id: format.c,v 1.12 2000/08/10 21:02:50 danny Exp $
+ * $Id: format.c,v 1.13 2001/02/03 23:59:45 pw Exp $
  *
  * Copyright © 1993 Free Software Foundation, Inc.
  * 
@@ -99,9 +99,13 @@ fmt_to_str (int format, int precision)
 char *
 cell_format_string(CELL *cp)
 {
+	static char no_default[] = "";
+
 	/* FIXME: Doesn't anything! */
 	if (cp == NULL)
 		return fmt_to_str(0, 0);
+	else
+		return no_default;
 
 	
 }
