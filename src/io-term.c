@@ -1,5 +1,5 @@
 /*
- * $Id: io-term.c,v 1.51 2001/02/13 23:38:06 danny Exp $
+ * $Id: io-term.c,v 1.52 2001/03/25 00:21:46 pw Exp $
  *
  * Copyright © 1990, 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 
@@ -20,7 +20,7 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char *rcsid = "$Id: io-term.c,v 1.51 2001/02/13 23:38:06 danny Exp $";
+static char *rcsid = "$Id: io-term.c,v 1.52 2001/03/25 00:21:46 pw Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -198,7 +198,7 @@ struct UserPreferences UserPreferences;
  */
 static struct pref {
 	char	*name;
-	void	*var;
+	void	*var;  /* if copynext then actual type is char** else int* */
 	int	value;
 	void	(*trigger)(char *);
 	int	copynext;
@@ -234,9 +234,9 @@ do_set_option (char *ptr)
 
 		if (Preferences[i].copynext) {
 			ptr += strlen(Preferences[i].name) + 1;
-			((char *)Preferences[i].var) = strdup(ptr);
+			*(char **)Preferences[i].var = strdup(ptr);
 		} else if (Preferences[i].var)
-			*((int *)Preferences[i].var) = Preferences[i].value;
+			*(int *)Preferences[i].var = Preferences[i].value;
 
 		if (Preferences[i].cont == 0)
 			return 1;
@@ -385,10 +385,10 @@ save_preferences(void)
 	for (i=0; Preferences[i].name; i++)
 		if (Preferences[i].write) {
 			if (Preferences[i].copynext) {
-				if (strlen((char *)Preferences[i].var) != 0)
+				if (strlen(*(char **)Preferences[i].var) != 0)
 				    fprintf(fp, "set-option %s %s\n",
 					Preferences[i].name,
-					(char *) Preferences[i].var);
+					*(char **) Preferences[i].var);
 			} else if (Preferences[i].value == *(int *)Preferences[i].var)
 				fprintf(fp, "set-option %s\n",
 					Preferences[i].name);
