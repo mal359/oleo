@@ -1,5 +1,5 @@
 /*
- * $Id: decompile.c,v 1.16 2001/04/16 00:16:21 pw Exp $
+ * $Id: decompile.c,v 1.17 2001/04/19 00:05:27 pw Exp $
  *
  * Copyright © 1990, 1992, 1993, 1999 Free Software Foundation, Inc.
  * 
@@ -734,12 +734,12 @@ dbg_print_formula (expr)
   struct rng rng;
   char *buf;
   unsigned jumpto;
-  extern char print_buf[];
+  char pr_buf[2048];
 
   if (!expr)
     return;
-  strcpy (print_buf, "Formula: ");
-  buf = print_buf + 9;
+  strcpy (buf, "Formula: ");
+  buf = pr_buf + 9;
   while (*expr)
     {
       byte = *expr++;
@@ -833,5 +833,5 @@ dbg_print_formula (expr)
 	}
       buf += strlen (buf);
     }
-  io_text_line (print_buf);
+  io_text_line (pr_buf);
 }

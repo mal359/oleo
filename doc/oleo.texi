@@ -27,6 +27,14 @@
 @end tex
 @end ifclear
 
+@ifinfo
+@format
+START-INFO-DIR-ENTRY
+* Oleo: (oleo).        The GNU spreadsheet.
+END-INFO-DIR-ENTRY
+@end format
+@end ifinfo
+
 @finalout
 
 @ifinfo

@@ -1,5 +1,13 @@
 
-$Id: ChangeLog,v 1.153 2001/04/16 23:50:07 pw Exp $
+$Id: ChangeLog,v 1.154 2001/04/19 00:05:27 pw Exp $
+
+Wed Apr 18 20:01:21 EDT 2001  Pete Wyckoff  <pw@osc.edu>
+	* doc/oleo.texi: Add INFO-DIR-ENTRY.
+	* src/decompile.c src/io-term.c: Use private print_buf.
+	* src/io-utils.c src/io-utils.h: Privatize print_buf.
+	* src/regions.c (txt_print_region): Allow cells to leak into
+	  those to its right as long as there are spaces for it.
+	* src/string.c: Remove extraneous declaration.
 
 Mon Apr 16 19:47:08 EDT 2001  Pete Wyckoff  <pw@osc.edu>
 	* doc/print-plot.texi: Remove latex printing documentation, add

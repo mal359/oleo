@@ -1,5 +1,5 @@
 /*
- * $Id: io-term.c,v 1.52 2001/03/25 00:21:46 pw Exp $
+ * $Id: io-term.c,v 1.53 2001/04/19 00:05:27 pw Exp $
  *
  * Copyright © 1990, 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 
@@ -20,7 +20,7 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char *rcsid = "$Id: io-term.c,v 1.52 2001/03/25 00:21:46 pw Exp $";
+static char *rcsid = "$Id: io-term.c,v 1.53 2001/04/19 00:05:27 pw Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -626,6 +626,7 @@ show_var (char *ptr)
 {
   struct var *v;
   int num;
+  char buf[2048];
 
   while (*ptr == ' ')
     ptr++;
@@ -641,13 +642,13 @@ show_var (char *ptr)
   if (Global->a0)
     {
       if (v->v_rng.lr != v->v_rng.hr || v->v_rng.lc != v->v_rng.hc)
-	/* FOO */ sprintf (print_buf, "%s $%s$%u:$%s$%u", v->var_name, col_to_str (v->v_rng.lc), v->v_rng.lr, col_to_str (v->v_rng.hc), v->v_rng.hr);
+	/* FOO */ sprintf (buf, "%s $%s$%u:$%s$%u", v->var_name, col_to_str (v->v_rng.lc), v->v_rng.lr, col_to_str (v->v_rng.hc), v->v_rng.hr);
       else
-	/* FOO */ sprintf (print_buf, "%s $%s$%u", v->var_name, col_to_str (v->v_rng.lc), v->v_rng.lr);
+	/* FOO */ sprintf (buf, "%s $%s$%u", v->var_name, col_to_str (v->v_rng.lc), v->v_rng.lr);
     }
   else
-    sprintf (print_buf, "%s %s", v->var_name, range_name (&(v->v_rng)));
-  io_info_msg (print_buf);
+    sprintf (buf, "%s %s", v->var_name, range_name (&(v->v_rng)));
+  io_info_msg (buf);
 }
 
 static void

@@ -1,5 +1,5 @@
 /*
- * $Id: io-utils.c,v 1.39 2001/02/13 23:38:06 danny Exp $
+ * $Id: io-utils.c,v 1.40 2001/04/19 00:05:27 pw Exp $
  *
  * Copyright © 1990, 1992, 1993, 2000, 2001 Free Software Foundation, Inc.
  *
@@ -133,9 +133,9 @@ init_infinity (void)
 /* Slightly larger than the maximum exponent we ever expect to see */
 #define BIGFLT 309
 #ifdef TEST
-char print_buf[1024 * 8];
+static char print_buf[1024 * 8];
 #else
-char print_buf[BIGFLT + 20];
+static char print_buf[BIGFLT + 20];
 #endif
 
 
