@@ -52,7 +52,6 @@ find_args (struct command_arg ** argv_out, int argc, struct command_frame * fram
  */
 
 #define STUB1(STR,NAME, PRE, VAL, TYPE) \
-
 static void \
 NAME (frame) \
      struct command_frame * frame; \
@@ -63,7 +62,6 @@ NAME (frame) \
 }
 
 #define STUB2(STR,NAME,PRE1,VAL1,TYPE1,PRE2,VAL2,TYPE2) \
-
 static void \
 NAME (frame) \
      struct command_frame * frame; \
@@ -77,7 +75,6 @@ NAME (frame) \
 
 
 #define STUB3(STR,NAME,PRE1,VAL1,TYPE1,PRE2,VAL2,TYPE2,PRE3,VAL3,TYPE3) \
-
 static void \
 NAME (frame) \
      struct command_frame * frame; \
@@ -91,7 +88,6 @@ NAME (frame) \
 }
 
 #define STUB4(STR,NAME,PRE1,VAL1,TYPE1,PRE2,VAL2,TYPE2,PRE3,VAL3,TYPE3,PRE4,VAL4,TYPE4) \
-
 static void \
 NAME (frame) \
      struct command_frame * frame; \
@@ -106,7 +102,6 @@ NAME (frame) \
 }
 
 #define STUB5(STR,NAME,PRE1,VAL1,TYPE1,PRE2,VAL2,TYPE2,PRE3,VAL3,TYPE3,PRE4,VAL4,TYPE4,PRE5,VAL5,TYPE5) \
-
 static void \
 NAME (frame) \
      struct command_frame * frame; \
