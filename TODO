@@ -1,9 +1,9 @@
-$Id: TODO,v 1.27 1999/06/10 21:50:52 danny Exp $
+$Id: TODO,v 1.28 1999/06/20 07:27:40 danny Exp $
 
 TODO's:
 
 * Motif
-	(todo) Handle interaction between formula editor and Xbae better.
+	(done) Handle interaction between formula editor and Xbae better.
 	(todo) User preferences (color, font, ..)
 	(done) Where does the beep come from ? (enter 1.123 in a cell)
 		Column MaxLengths weren't set (correctly), therefore an XbaeMatrix

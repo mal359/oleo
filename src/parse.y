@@ -1,21 +1,23 @@
 %{
-/*	Copyright (C) 1990, 1992, 1993 Free Software Foundation, Inc.
-
-This file is part of Oleo, the GNU Spreadsheet.
-
-Oleo is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
-
-Oleo is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Oleo; see the file COPYING.  If not, write to
-the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
+/*
+ * Copyright (C) 1990, 1992, 1993, 1999 Free Software Foundation, Inc.
+ *
+ * This file is part of Oleo, the GNU Spreadsheet.
+ * 
+ * Oleo is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ * 
+ * Oleo is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Oleo; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 %}
 
 %right '?' ':'
@@ -54,11 +56,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "ref.h"
 
 int yylex ();
-#ifdef __STDC__
 void yyerror (char *);
-#else
-void yyerror ();
-#endif
 VOIDSTAR parse_hash;
 extern VOIDSTAR hash_find();
 
@@ -70,11 +68,7 @@ unsigned char fnin[] = {
 #define YYSTYPE _y_y_s_t_y_p_e
 typedef struct node *YYSTYPE;
 YYSTYPE parse_return;
-#ifdef __STDC__
 YYSTYPE make_list (YYSTYPE, YYSTYPE);
-#else
-YYSTYPE make_list ();
-#endif
 
 char *instr;
 int parse_error = 0;
@@ -313,12 +307,8 @@ make_list (YYSTYPE car, YYSTYPE cdr)
 
 extern struct node *yylval;
 
-#ifdef __STDC__
 unsigned char parse_cell_or_range (char **,struct rng *);
 int str_to_col (char ** str);
-#else
-unsigned char parse_cell_or_range ();
-#endif
 
 int
 yylex ()
@@ -335,6 +325,7 @@ yylex ()
 	int nn;
 	struct function *fp;
 	int tmp_ch;
+	int	bracket = 0;
 
 #ifdef TEST
 	if(!instr)
@@ -467,8 +458,8 @@ yylex ()
 	case '\'':
 	case ';':
 	case '[':
-	case '\\':
 	case ']':
+	case '\\':
 	case '`':
 	case '{':
 	case '}':
@@ -754,6 +745,42 @@ noa0_find_end(char *p)
 }
 
 /*
+ * Taking relative as well as absolute coordinates into account,
+ * potentially swap the order of the range.
+ */
+static int
+SwapEm(int bits, struct rng *retp)
+{
+	signed short	retbits, r1, r2, c1, c2, x;
+
+	r1 = retp->lr;
+	r2 = retp->hr;
+	c1 = retp->lc;
+	c2 = retp->hc;
+
+	retbits = bits & ~(LRREL|HRREL|LCREL|HCREL);
+	if (r1 > r2) {
+		x = retp->lr;
+		retp->lr = retp->hr;
+		retp->hr = x;
+		if (LRREL) retbits |= HRREL;
+		if (HRREL) retbits |= LRREL;
+	} else {
+		retbits |= (bits & (LRREL|HRREL));
+	}
+	if (c1 > c2) {
+		x = retp->lc;
+		retp->lc = retp->hc;
+		retp->hc = x;
+		if (LCREL) retbits |= HCREL;
+		if (HCREL) retbits |= LCREL;
+	} else {
+		retbits |= (bits & (LCREL|HCREL));
+	}
+	return retbits;
+}
+
+/*
  * The new implementation of parse_cell_or_range can read non-A0
  *	in SYLK format as well.
  *
@@ -772,12 +799,12 @@ noa0_find_end(char *p)
  *	(Oleo)		RC[-2:-3]
  *	(SYLK)		RC[-2]:RC[-3]
  */
-#if 1
 static unsigned char
 noa0_parse_cell_or_range(char **ptr, struct rng *retp)
 {
 	int		rrange = 0, crange = 0;		/* Are R or C ranges ? */
-	int		rrel = 0, crel = 0;		/* Are R or C relative ? */
+							/* Are R or C relative ? */
+	int		r1rel = 0, c1rel = 0, r2rel = 0, c2rel = 0;
 	char		*p, *next;
 	struct rng	rng;
 	int		r1, r2, c1, c2, ret, forget;
@@ -795,7 +822,7 @@ noa0_parse_cell_or_range(char **ptr, struct rng *retp)
 	case 'c':	/* Relative with no row offset */
 	case 'C':
 		r1 = r2 = cur_row;
-		rrel = 1;
+		r1rel = r2rel = 1;
 		rrange = 0;
 		break;
 	case '+': case '-':
@@ -806,7 +833,7 @@ noa0_parse_cell_or_range(char **ptr, struct rng *retp)
 		break;
 	case '[':
 		p++;
-		rrel = 1;
+		r1rel = r2rel = 1;
 		rrange = noa0_numeric_range(&p, &r1, &r2, cur_row);
 		if (*p != ']')
 			return 0;	/* Invalid string */
@@ -814,6 +841,15 @@ noa0_parse_cell_or_range(char **ptr, struct rng *retp)
 		break;
 	default:
 		return 0;	/* Invalid string */
+	}
+
+	/* If this is a bracket then we have a mixed absolute/relative range */
+	if (*p == '[') {
+		p++;	/* Skip [ */
+		r2rel = 1;
+		noa0_number(&p, &r2, 0);
+		r2 += cur_row;
+		p++;	/* Skip ] */
 	}
 
 	/* Need to find a C now */
@@ -826,7 +862,7 @@ noa0_parse_cell_or_range(char **ptr, struct rng *retp)
 	case '.':	/* SYLK style range */
 	case ':':
 		c1 = c2 = cur_col;
-		crel = 1;
+		c1rel = c2rel = 1;
 		break;
 	case '+': case '-':
 	case '0': case '1': case '2': case '3':
@@ -838,13 +874,42 @@ noa0_parse_cell_or_range(char **ptr, struct rng *retp)
 				/* SYLK range; only read one number here */
 				noa0_number(&p, &c1, 0);
 				break;
+			} else if (*(next+1) == '[') {
+				noa0_number(&p, &c1, 0);
+				p = next+2;
+				noa0_number(&p, &c2, cur_col);
+				p++;	/* Skip ] */
+				c2rel = 1;
+
+				*ptr = p;
+				ret = 0;
+
+				retp->lr = r1;
+				retp->hr = r2;
+				retp->lc = c1;
+				retp->hc = c2;
+
+				if (rrange || crange)
+					ret |= RANGE;
+				else
+					ret |= R_CELL;
+				if (c1rel)
+					ret |= LCREL;
+				if (r1rel)
+					ret |= LRREL;
+				if (c2rel)
+					ret |= HCREL;
+				if (r2rel)
+					ret |= HRREL;
+
+				return SwapEm(ret, retp);
 			}
 		}
 		crange = noa0_numeric_range(&p, &c1, &c2, 0);
 		break;
 	case '[':
 		p++;
-		crel = 1;
+		c1rel = 1;
 		crange = noa0_numeric_range(&p, &c1, &c2, cur_col);
 		if (*p != ']')
 			return 0;	/* Invalid string */
@@ -852,7 +917,7 @@ noa0_parse_cell_or_range(char **ptr, struct rng *retp)
 		break;
 	default:
 		c1 = c2 = cur_col;
-		crel = 1;
+		c1rel = c2rel = 1;
 #if 0
 		*ptr = p;
 		if (rrange || crange)
@@ -866,30 +931,25 @@ noa0_parse_cell_or_range(char **ptr, struct rng *retp)
 		*ptr = p;
 		ret = 0;
 
-		if (c1 < c2) {
-			retp->lc = c1;
-			retp->hc = c2;
-		} else {
-			retp->lc = c2;
-			retp->hc = c1;
-		}
-		if (r1 < r2) {
-			retp->lr = r1;
-			retp->hr = r2;
-		} else {
-			retp->lr = r2;
-			retp->hr = r1;
-		}
+		retp->lr = r1;
+		retp->hr = r2;
+		retp->lc = c1;
+		retp->hc = c2;
 
 		if (rrange || crange)
 			ret |= RANGE;
 		else
 			ret |= R_CELL;
-		if (crel)
-			ret |= LCREL | HCREL;
-		if (rrel)
-			ret |= LRREL|HRREL;
-		return ret;
+		if (c1rel)
+			ret |= LCREL;
+		if (r1rel)
+			ret |= LRREL;
+		if (c2rel)
+			ret |= HCREL;
+		if (r2rel)
+			ret |= HRREL;
+
+		return SwapEm(ret, retp);
 	}
 
 	/* So now it's a SYLK range */
@@ -904,7 +964,7 @@ noa0_parse_cell_or_range(char **ptr, struct rng *retp)
 	case 'c':	/* Relative with no row offset */
 	case 'C':
 		r2 = cur_row;
-		rrel = 1;
+		r2rel = 1;
 		rrange = (r1 == r2) ? 0 : 1;
 		break;
 	case '+': case '-':
@@ -915,7 +975,7 @@ noa0_parse_cell_or_range(char **ptr, struct rng *retp)
 		break;
 	case '[':
 		p++;
-		rrel = 1;
+		r1rel = r2rel = 1;
 		rrange = noa0_numeric_range(&p, &r2, &forget, cur_row);
 		if (*p != ']')
 			return 0;	/* Invalid string */
@@ -935,7 +995,7 @@ noa0_parse_cell_or_range(char **ptr, struct rng *retp)
 	case '.':	/* SYLK style range */
 	case ':':
 		c2 = cur_col;
-		crel = 1;
+		c1rel = c2rel = 1;
 		crange = (c1 == c2) ? 0 : 1;
 		break;
 	case '+': case '-':
@@ -946,7 +1006,7 @@ noa0_parse_cell_or_range(char **ptr, struct rng *retp)
 		break;
 	case '[':
 		p++;
-		crel = 1;
+		c2rel = 1;
 		crange = noa0_numeric_range(&p, &c2, &forget, cur_col);
 		if (*p != ']')
 			return 0;	/* Invalid string */
@@ -954,223 +1014,28 @@ noa0_parse_cell_or_range(char **ptr, struct rng *retp)
 		break;
 	default:
 		c2 = cur_col;
-		crel = 1;
+		c1rel = c2rel = 1;
 	}
 
 	*ptr = p;
 	ret = RANGE;
 
-	if (c1 < c2) {
-		retp->lc = c1;
-		retp->hc = c2;
-	} else {
-		retp->lc = c2;
-		retp->hc = c1;
-	}
-	if (r1 < r2) {
-		retp->lr = r1;
-		retp->hr = r2;
-	} else {
-		retp->lr = r2;
-		retp->hr = r1;
-	}
+	retp->lr = r1;
+	retp->hr = r2;
+	retp->lc = c1;
+	retp->hc = c2;
 
-	if (crel)
-		ret |= LCREL | HCREL;
-	if (rrel)
-		ret |= LRREL|HRREL;
-	return ret;
+	if (c1rel)
+		ret |= LCREL;
+	if (c2rel)
+		ret |= HCREL;
+	if (r1rel)
+		ret |= LRREL;
+	if (r2rel)
+		ret |= HRREL;
+
+	return SwapEm(ret, retp);
 }
-#else
-/*
- * The old implementation
- */
-static unsigned char
-noa0_parse_cell_or_range(char **ptr, struct rng *retp)
-{
-	char *p;
-	unsigned char retr;
-	unsigned char retc;
-	int ended;
-	long num;
-	CELLREF tmp;
-
-#define CK_ABS_R(x)	((x)<MIN_ROW || (x)>MAX_ROW)
-
-#define CK_REL_R(x)	(((x)>0 && MAX_ROW-(x)<cur_row) \
-		 || ((x)<0 && MIN_ROW-(x)>cur_row)) 
-
-#define CK_ABS_C(x)	((x)<MIN_COL || (x)>MAX_COL)
-
-#define CK_REL_C(x)	(((x)>0 && MAX_COL-(x)<cur_col)	\
-		 || ((x)<0 && MIN_COL-(x)>cur_col))
-
-#define MAYBEREL(p) (*(p)=='[' && (isdigit((p)[1]) || (((p)[1]=='+' || (p)[1]=='-') && isdigit((p)[2]))))
-
-	p= *ptr;
-	retr=0;
-	retc=0;
-	ended=0;
-	while(ended==0) {
-		switch(*p) {
-		case 'r':
-		case 'R':
-			if(retr) {
-				ended++;
-				break;
-			}
-			p++;
-			retr=R_CELL;
-			if(isdigit(*p)) {
-				num=astol(&p);
-				if (CK_ABS_R(num))
-				  return 0;
-				retp->lr= retp->hr=num;
-			} else if(MAYBEREL(p)) {
-				p++;
-				num=astol(&p);
-				if (CK_REL_R(num))
-				  return 0;
-				retp->lr= retp->hr=num+cur_row;
-				retr|=ROWREL;
-				if(*p==':') {
-					retr=RANGE|LRREL|HRREL;
-					p++;
-					num=astol(&p);
-					if (CK_REL_R(num))
-					  return 0;
-					retp->hr=num+cur_row;
-				}
-				if(*p++!=']')
-					return 0;
-			} else if(retc || *p=='c' || *p=='C') {
-				retr|=ROWREL;
-				retp->lr= retp->hr=cur_row;
-			} else
-				return 0;
-			if(*p==':' && retr!=(RANGE|LRREL|HRREL)) {
-				retr= (retr&ROWREL) ? RANGE|LRREL : RANGE;
-				p++;
-				if(isdigit(*p)) {
-					num=astol(&p);
-					if (CK_ABS_R(num))
-					  return 0;
-					retp->hr=num;
-				} else if(MAYBEREL(p)) {
-					p++;
-					num=astol(&p);
-					if (CK_REL_R(num))
-					  return 0;
-					retp->hr=num+cur_row;
-					retr|=HRREL;
-					if(*p++!=']')
-						return 0;
-				} else
-					return 0;
-			}
-
-			if(retc)
-				ended++;
-			break;
-
-		case 'c':
-		case 'C':
-			if(retc) {
-				ended++;
-				break;
-			}
-			p++;
-			retc=R_CELL;
-			if(isdigit(*p)) {
-				num=astol(&p);
-				if (CK_ABS_C(num))
-				  return 0;
-				retp->lc= retp->hc=num;
-			} else if(MAYBEREL(p)) {
-				p++;
-				num=astol(&p);
-				if (CK_REL_C(num))
-				  return 0;
-				retp->lc= retp->hc=num+cur_col;
-				retc|=COLREL;
-				if(*p==':') {
-					retc=RANGE|LCREL|HCREL;
-					p++;
-					num=astol(&p);
-					if (CK_REL_C(num))
-					  return 0;
-					retp->hc=num+cur_col;
-				}
-				if(*p++!=']')
-					return 0;
-			} else if(retr || *p=='r' || *p=='R') {
-				retc|=COLREL;
-				retp->lc= retp->hc=cur_col;
-			} else
-				return 0;
-			if(*p==':' && retc!=(RANGE|LCREL|HCREL)) {
-				retc= (retc&COLREL) ? RANGE|LCREL : RANGE;
-				p++;
-				if(isdigit(*p)) {
-					num=astol(&p);
-					if (CK_ABS_C(num))
-					  return 0;
-					retp->hc=num;
-				} else if(MAYBEREL(p)) {
-					p++;
-					num=astol(&p);
-					if (CK_REL_C(num))
-					  return 0;
-					retp->hc=num+cur_col;
-					retc|=HCREL;
-					if(*p++!=']')
-						return 0;
-				} else
-					return 0;
-			}
-
-			if(retr)
-				ended++;
-			break;
-		default:
-			if(retr) {
-				*ptr=p;
-				retp->lc=MIN_COL;
-				retp->hc=MAX_COL;
-				if((retr|ROWREL)==(R_CELL|ROWREL))
-					return (retr&ROWREL) ? (RANGE|LRREL|HRREL) : RANGE;
-				else
-					return retr;
-			} else if(retc) {
-				*ptr=p;
-				retp->lr=MIN_ROW;
-				retp->hr=MAX_ROW;
-				if((retc|COLREL)==(R_CELL|COLREL))
-					return (retc&COLREL) ? (RANGE|LCREL|HCREL) : RANGE;
-				else
-					return retc;
-			}
-			return 0;
-		}
-	}
-	if(!retr || !retc)
-		return 0;
-	*ptr=p;
-	if(retp->lr>retp->hr)
-		tmp=retp->lr,retp->lr=retp->hr,retp->hr=tmp;
-	if(retp->lc>retp->hc)
-		tmp=retp->lc,retp->lc=retp->hc,retp->hc=tmp;
-
-	if((retr|ROWREL)==(R_CELL|ROWREL)) {
-		if((retc|COLREL)==(R_CELL|COLREL))
-			return retr|retc;
-		return (retr&ROWREL) ? (retc|LRREL|HRREL) : retc;
-	}
-	if((retc|COLREL)==(R_CELL|COLREL))
-		return (retc&COLREL) ? (retr|LCREL|HCREL) : retr;
-	return retr|retc;
-}
-#endif
 
 /*
  * The return value of parse_cell_or_range() is
@@ -1203,6 +1068,7 @@ parse_cell_or_range (char **ptr, struct rng *retp)
 	 */
 	fprintf(stderr, "parse_cell_or_range(%s) -> [%d..%d, %d..%d], %d\n",
 		p, retp->lr, retp->hr, retp->lc, retp->hc, r);
+	fprintf(stderr, "parse_cell_or_range -> remaining string is '%s'\n", *ptr);
 #endif
 	return r;
 }

@@ -694,22 +694,25 @@ oleo_write_var (name, var)
      char *name;
      struct var *var;
 {
-  if (var->var_flags
-      == VAR_UNDEF && (!var->var_ref_fm || var->var_ref_fm->refs_used == 0))
+  if (var->var_flags == VAR_UNDEF
+	&& (!var->var_ref_fm || var->var_ref_fm->refs_used == 0))
     return;
-  switch (var->var_flags)
-    {
+
+  switch (var->var_flags) {
     case VAR_UNDEF:
       break;
     case VAR_CELL:
-      if (var->v_rng.lr >= oleo_rng->lr && var->v_rng.lr <= oleo_rng->hr && var->v_rng.lc >= oleo_rng->lc && var->v_rng.lc <= oleo_rng->hc)
-	(void) fprintf (oleo_fp, "NN;N%s;E%s\n", var->var_name, cell_name (var->v_rng.lr, var->v_rng.lc));
+      if (var->v_rng.lr >= oleo_rng->lr && var->v_rng.lr <= oleo_rng->hr
+		&& var->v_rng.lc >= oleo_rng->lc && var->v_rng.lc <= oleo_rng->hc)
+	(void) fprintf(oleo_fp, "NN;N%s;E%s\n",
+		var->var_name, cell_name(var->v_rng.lr, var->v_rng.lc));
       break;
     case VAR_RANGE:
-      if (var->v_rng.lr < oleo_rng->lr || var->v_rng.hr > oleo_rng->hr || var->v_rng.lc < oleo_rng->lc || var->v_rng.hc > oleo_rng->hc)
+      if (var->v_rng.lr < oleo_rng->lr || var->v_rng.hr > oleo_rng->hr
+		|| var->v_rng.lc < oleo_rng->lc || var->v_rng.hc > oleo_rng->hc)
 	break;
 
-      (void) fprintf (oleo_fp, "NN;N%s;E%s\n", var->var_name, range_name (&(var->v_rng)));
+      (void) fprintf(oleo_fp, "NN;N%s;E%s\n", var->var_name, range_name (&(var->v_rng)));
       break;
 #ifdef TEST
     default:
@@ -723,6 +726,7 @@ write_mp_windows (fp)
      FILE *fp;
 {
   struct line line;
+
   line.alloc = 0;
   line.buf = 0;
   io_write_window_config (&line);
@@ -890,8 +894,8 @@ oleo_write_file (fp, rng)
 
       if (cp->cell_formula)
 	{
-	  (void) fprintf (fp, "E%s", decomp (r, c, cp));
-	  decomp_free ();
+	  (void) fprintf (fp, "E%s", decomp(r, c, cp));
+	  decomp_free();
 	}
 
       switch (GET_TYP (cp))

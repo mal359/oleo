@@ -1,4 +1,12 @@
-$Id: ChangeLog,v 1.94 1999/06/10 21:50:50 danny Exp $
+$Id: ChangeLog,v 1.95 1999/06/20 07:27:39 danny Exp $
+
+Sun 20 Jun 09:29:24 1999, Danny Backx
+	* Fix a bug reading ranges. Some of the more exotic range
+	  definitions weren't parsed correctly.
+	* Make print size more accurate, to improve calculation of
+	  the amount of stuff that'll fit on a page. This has two
+	  pieces : a device independent one in src/print.c, and
+	  a bunch of device dependent stuff in other sources.
 
 Thu 10 Jun 23:52:50 1999, Danny Backx
 	* Clarify README-alpha.

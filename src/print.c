@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.10 1999/06/04 08:02:03 danny Exp $
+ * $Id: print.c,v 1.11 1999/06/20 07:27:43 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this software; see the file COPYING.  If not, write to
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/*
+ * This is Oleo's general print driver.
+ *
+ * It calls PostScript, PCL, or other modules in order to print to
+ * specific hardware.
+ *
+ * In this file, all dimensions are to be specified in points,
+ * which are a measurement 1/72 of an inch (roughly 1/3 of a
+ * millimeter).
  */
 
 #ifdef HAVE_CONFIG_H
@@ -59,6 +70,18 @@ static struct PrintDriver *Drivers[] = {
 static int NumPrintDrivers = (sizeof(Drivers) / sizeof(struct PrintDriver *)) - 1;
 static struct PrintDriver *CurrentPrintDriver = &PostScriptPrintDriver;
 
+/*
+ * Default page dimensions
+ */
+float default_pswid = 612;
+float default_pshgt = 792;
+
+/*
+ * Default font
+ */
+static char	*default_font_family = "Courier",
+		*default_font_slant = NULL;
+static int	default_font_size = 10;
 
 static struct page_size size_table[] =
 {
@@ -130,9 +153,6 @@ PrintGetType(int i)
 		return NULL;
 	return Drivers[i]->name;
 }
-
-float default_pswid = 8.5 * 72.;
-float default_pshgt = 11. * 72.;
 
 void
 PrintSetPageSize(float wid, float ht)
@@ -260,11 +280,13 @@ print_region_cmd (struct rng *print, FILE *fp)
 		/* FIX ME */
 	totht = totwid = 0;
 	for (rr = print->lr; rr <= print->hr; rr++) {
-		totht += get_height(rr) * 20;	/* FIX ME font height */
+		totht += get_height(rr) * default_font_size;	/* FIX ME */
 	}
 	for (cc = print->lc; cc <= print->hc; cc++) {
-		totwid += get_width(cc) * 10;	/* FIX ME font cell width */
+		totwid += get_width(cc) * default_font_size;
 	}
+	totwid = totwid * 2 / 3;				/* FIX ME */
+
 	npages = ((print_height - 1 + totht) / print_height)
 		* ((print_width - 1 + totwid) / print_width);
 
@@ -273,7 +295,8 @@ print_region_cmd (struct rng *print, FILE *fp)
 	CurrentPrintDriver->paper_size(print_width, print_height, fp);
 
 	/* Set default font */
-	CurrentPrintDriver->font("Courier", NULL, 10, fp);
+	CurrentPrintDriver->font(default_font_family, default_font_slant,
+		default_font_size, fp);
 
 	/* Adapted from txt_print_region */
 	npages = 1;
@@ -283,7 +306,7 @@ print_region_cmd (struct rng *print, FILE *fp)
 	    /* Figure out which columns we can print */
 	    cc = c_lo;
 	    for (w = get_width (cc); w <= print_width && cc <= print->hc;
-			w += get_width(++cc) * 10)
+			w += get_width(++cc) * default_font_size * 2 / 3)
 		;
 	    if (cc != c_lo)
 		--cc;
@@ -297,7 +320,7 @@ print_region_cmd (struct rng *print, FILE *fp)
 			npages++;
 		}
 
-		ht = get_height(rr) * 20;
+		ht = get_height(rr) * default_font_size;
 		spaces = 0;
 		for (cc = c_lo; cc <= c_hi; cc++) {
 		    w = get_width (cc);
