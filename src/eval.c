@@ -1,5 +1,5 @@
 /*
- * $Header: /home/matt/cvs/oleo/oleo/src/eval.c,v 1.12 2001/02/13 23:38:05 danny Exp $
+ * $Header: /home/matt/cvs/oleo/oleo/src/eval.c,v 1.13 2001/05/13 07:50:53 danny Exp $
  *
  * Copyright © 1990, 1992, 1993, 2001 Free Software Foundation, Inc.
  *
@@ -35,13 +35,12 @@
 
 #ifdef	HAVE_MATH_H
 #include <math.h>
-#else
+#endif
+
+#ifndef	M_PI
 /*
  * Non-standard platform.
  */
-#ifdef	M_PI
-#undef M_PI
-#endif
 #define M_PI (3.1415926535897932384626433832795028841971693993751)
 #endif
 
