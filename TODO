@@ -6,7 +6,7 @@ Short-term TODO's:
 
 * Increase "X" friendliness. (June 1/97 - JB)
 
-* Add Mouse support. (June 1/97 - JB)
+* Add Mouse support with Curses/GPM. (June 1/97 - JB)
 
 * Create proper bug tracking facilities.  GNATS?  (June 1/97 - JB)
 
@@ -24,7 +24,6 @@ Short-term TODO's:
 
 * Setup Oleo Lists (Nov 15/97 - JB)
 
-* Merge newer documention (Nov 15/97 - Paul Wendt)
-
 * Fix sort routines (Nov 15/97 - Steve Fisk)
 
+* Get a useful copy of Ansi2Knr going (Nov 29/97 - JB)

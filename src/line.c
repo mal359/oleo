@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "global.h"
 #include "line.h"
+#include <stdarg.h>
 
 void
 set_line (struct line *line, char *string)
@@ -78,7 +79,7 @@ sprint_line (struct line *line, char * fmt, ...)
       line->buf = ck_realloc (line->buf, len);
       line->alloc = len;
     }
-  var_start (iggy, fmt);
+  va_start (iggy, fmt);
   vsprintf (line->buf, fmt, iggy);
   va_end (iggy);
 }

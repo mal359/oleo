@@ -20,6 +20,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "config.h"
 #endif
 
+#include <stdarg.h>
 #include "global.h"
 #include "decompile.h"
 #include "eval.h"
@@ -53,7 +54,7 @@ static CELLREF decomp_col;
 /* We decompile things with these wierd node-things.  It's ugly, but it works.
  */
 static struct pr_node *
-n_alloc (int size, int tightness, char *fmt,...)
+n_alloc (int size, int tightness, char *fmt, ...)
 {
   struct pr_node *ret;
   va_list args;
@@ -61,7 +62,7 @@ n_alloc (int size, int tightness, char *fmt,...)
   ret = ck_malloc (sizeof (struct pr_node) + size + 1);
   ret->len = size;
   ret->tightness = tightness;
-  var_start (args, fmt);
+  va_start (args, fmt);
   vsprintf (ret->string, fmt, args);
   va_end (args);
   return ret;

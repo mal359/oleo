@@ -29,6 +29,17 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "basic.h"
 #include "io-gtk.h"
 
+/* FIXME - Put this in an .oleorc file */
+
+static char *emergency_font_name = "8x13";
+static char *cell_font_name = "times_roman12";
+static char *default_font_name = "8x13";
+static char *input_font_name = "8x13";
+static char *status_font_name = "6x10";
+static char *text_line_font_name = "8x13";
+static char *label_font_name = "5x8";
+
+
 static GdkPixmap *pixmap = NULL;
 static GtkWidget *mainWindow;
 static struct sGport *gtkPort;
@@ -41,6 +52,12 @@ gdestroy_window (GtkWidget *widget,
 	*window = NULL;
 }
 
+int
+g_input_metric (char *str, int len)
+{
+	/* FIXME: Should match x_input_metric function */
+	return 5;
+}
 void
 gfile_selection_ok (GtkWidget *widget, GtkFileSelection *file)
 {
@@ -75,11 +92,11 @@ gfile_selection ()
 
 
 static void
-gdraw_text_item(GtkWidget *widget, int start, int ypos, int cwid, int input_rows, gtkTextItem *cursor_text, int a)
+gdraw_text_item(GtkWidget *widget, int start, int ypos, int cwid, int input_rows, GdkFont *font, gtkTextItem *cursor_text, int a)
 {
 
 		gdk_draw_text(widget->window,
-			      widget->style->font,
+			      font,
 			      widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
 			      start,  
 			      (ypos + 10), /* FIXME - make calculated! */
@@ -109,7 +126,7 @@ gio_redraw_input_cursor (GtkWidget *widget, int on)
 
 	printf("io-gtk.c: Before gdraw_text_item\n");
 	gdraw_text_item((GtkWidget*)widget, start, ypos, cwid, input_rows,
-			&cursor_text, 1);
+			gtkPort->input_font, &cursor_text, 1);
 } 
 
 static void
@@ -122,17 +139,25 @@ gio_redraw_input (GtkWidget *widget)
 	printf("io-gtk.c: Beginning of gio_redraw_input\n");
 
 	/* FIXME */
-	if (iv->redraw_needed == FALSE) return;
-	if (iv->redraw_needed == TRUE) {
+	if (iv->redraw_needed == NO_REDRAW) return;
+	if (iv->redraw_needed == FULL_REDRAW) {
+		printf("io-gtk.c: In FULL_REDRAW\n");
 		if (iv->expanded_keymap_prompt) {
+			text.text = iv->expanded_keymap_prompt;
+			text.lentext = strlen (iv->expanded_keymap_prompt);
+			gdraw_text_item((GtkWidget*)widget, 0, ypos,
+			iv->prompt_wid, input_rows, gtkPort->input_font,
+			&text, 0);
 			iv->redraw_needed = FALSE;
 			gio_redraw_input_cursor ((GtkWidget*)widget, 1);
 			return;	
 		} else if (iv->prompt_wid) {
+			printf("io-gtk.c: Not FULL_REDRAW, Not NO_REDRAW\n");
 			text.text = iv->prompt;
 			text.lentext = prompt_len (text.text);
 			gdraw_text_item((GtkWidget*)widget, 0, ypos,
-			iv->prompt_wid, input_rows, &text, 0);
+			iv->prompt_wid, input_rows, gtkPort->input_font, 
+			&text, 0);
 		}
 	}			
 
@@ -163,7 +188,7 @@ static gint
 gio_configure_backing (GtkWidget *widget, GdkEventConfigure *event)
 {
 	if (pixmap) {
-		gdk_pixmap_destroy (pixmap);
+		gdk_pixmap_unref (pixmap);
 	}
 	
 	pixmap = gdk_pixmap_new(widget->window,
@@ -180,6 +205,16 @@ gio_configure_backing (GtkWidget *widget, GdkEventConfigure *event)
 
 	return TRUE;
 }
+
+static GdkFont *
+reasonable_font (char *fontname)
+{
+	/* FIXME - needs flushing out */
+	GdkFont *font = gdk_font_load (fontname);
+
+	return font;
+}
+
 
 void
 gio_open_display()
@@ -203,7 +238,17 @@ gio_open_display()
 	gtkPort->cursor_visible = 1;
 	gtkPort->redisp_needed = 1;
 	bzero (&gtkPort->input_view, sizeof (struct input_view));
+	gtkPort->input_view.prompt_metric = g_input_metric;
+	gtkPort->input_view.input_metric = g_input_metric;
 	
+	gtkPort->input_font = reasonable_font (input_font_name);
+
+	gtkPort->status_font = reasonable_font (status_font_name);
+
+	gtkPort->label_font = reasonable_font (label_font_name);
+
+	gtkPort->text_line_font = reasonable_font (text_line_font_name);
+
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
 	gtk_window_set_title(GTK_WINDOW (window), GNU_PACKAGE);
@@ -328,7 +373,7 @@ gio_open_display()
 void
 gio_inputize_cursor(void)
 {
-	printf("io-gtk.c: STUB gio_inputize_cursor\n");
+	gio_redraw_input_cursor (mainWindow, 1);
 }
 
 void
@@ -395,7 +440,7 @@ void
 gio_fix_input(void)
 {
 	printf("io-gtk.c: Entering gio_fix_input\n");
-	/* FIXME iv_fix_input (&gtkPort->input_view); */
+	iv_fix_input (&gtkPort->input_view);
 }
 
 gtkTextItem status_text;
@@ -404,7 +449,7 @@ void
 gset_text (gtkTextItem *Textstruct, char *text, int len)
 {
 	if (Textstruct->lentext < len) {
-		Textstruct->text = xrealloc(Textstruct->text, len);
+		Textstruct->text = ck_remalloc (Textstruct->text, len);
 		Textstruct->lentext = len;
 	}
 	if (len)
@@ -418,7 +463,7 @@ gdraw_status (void)
 {
 	if (user_status)
 		gdraw_text_item((GtkWidget*)mainWindow, 0, status, 0,
-				0, &status_text, 0);
+				0, gtkPort->status_font, &status_text, 0);
 }
 
 void
@@ -540,7 +585,9 @@ gio_close_display(void)
 void
 gio_repaint_win(void)
 {
-	printf("stub: In gio_repaint_win\n");
+	/* FIXME - jb flush out */
+	printf("io-gtk.c: In gio_repaint_win\n");
+	gtkPort->input_view.redraw_needed = FULL_REDRAW;	
 }
 
 void

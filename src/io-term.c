@@ -120,7 +120,7 @@ void (*show_file_opts) () = oleo_show_options;
 
 static char * disclaimer[] = 
 {
-  " Copyright (C) 1990, 1991, 1992, 1993 Free Software Foundation,Inc.\n",
+  " Copyright (C) 1990, 1991, 1992, 1997 Free Software Foundation,Inc.\n",
   "There is ABSOLUTELY NO WARRANTY for Oleo; see the file COPYING\n",
   "for details.  Oleo is free software and you are welcome to distribute\n",
   "copies of it under certain conditions; see the file COPYING to see the\n",
@@ -1026,8 +1026,6 @@ main (int argc, char **argv)
 
   init_graphing ();
 
-  printf("after init_graphing\n");
-  
   if (setjmp (error_exception))
   {
 	  fprintf (stderr, "Error in the builtin init scripts (a bug!).");
@@ -1035,15 +1033,10 @@ main (int argc, char **argv)
   }
   else
   {
-	  printf("Before init_maps\n");
 	  init_maps ();
-	  printf("Before init_named_macro_strings\n");
 	  init_named_macro_strings ();
-	  printf("Before run_init_cmds\n");
 	  run_init_cmds ();
   }
-
- printf("after run_init_cmds\n");
 
   /* These probably don't all need to be ifdef, but
    * it is harmless.
@@ -1120,9 +1113,13 @@ main (int argc, char **argv)
 
   display_opened = 1;
 
+  #if 0
+  /* FIXME - Find better way of doing this */
+  /* Display openning Copyright screen */
   if (!command_line_file)
     run_string_as_macro
       ("{pushback-keystroke}{builtin-help _NON_WARRANTY_}");
+  #endif /* 0 */
 
   while (1)
     {

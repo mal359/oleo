@@ -21,6 +21,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 #include <ctype.h>
 #include <errno.h>
+#include <stdarg.h>
 #include "sysdef.h"
 #ifndef _DEBUG_MALLOC_INC
 #define local_free free
@@ -1939,7 +1940,7 @@ io_error_msg (char *str,...)
   if (display_opened)
     io_bell ();
   
-  var_start (foo, str);
+  va_start (foo, str);
   vsprintf (buf, str, foo);
   sprintf (buf2, "display-error-msg %s", buf);
   recover_from_error ();
@@ -1958,7 +1959,7 @@ io_info_msg (char *str,...)
   char buf[1000];
   char buf2[1000];
 
-  var_start (foo, str);
+  va_start (foo, str);
   vsprintf (buf, str, foo);
   sprintf (buf2, "display-error-msg %s", buf);
   execute_command (buf2);

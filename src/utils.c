@@ -23,6 +23,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include <stdio.h>
 #include <errno.h>
 #include "sysdef.h"
+#include <stdarg.h>
 
 
 /* unistd.h defines _POSIX_VERSION on POSIX.1 systems.  */
@@ -82,7 +83,7 @@ panic (const char *s,...)
 {
   va_list iggy;
 
-  var_start (iggy, s);
+  va_start (iggy, s);
   fprintf (stderr, "%s %s:", GNU_PACKAGE, VERSION);
   vfprintf (stderr, s, iggy);
   putc ('\n', stderr);

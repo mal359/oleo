@@ -1956,8 +1956,6 @@ xio_redisp (void)
 }
 
 
-
-
 static XFontStruct *
 reasonable_font (Xport port, char *name)
 {

@@ -7,6 +7,10 @@ struct sGport {
 	int cursor_visible;
 	int redisp_needed;
 	struct input_view input_view;
+	GdkFont *input_font;
+	GdkFont *text_line_font;
+	GdkFont *label_font;
+	GdkFont *status_font;
 };
 
 struct gtkHandle {

@@ -18,6 +18,8 @@ You should have received a copy of the GNU General Public License
 along with Oleo; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
+#if 0
+
 #ifdef __STDC__
 #include <stdarg.h>
 #define var_start(x,y) va_start(x,y)
@@ -29,3 +31,5 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 #endif
 #endif
+
+#endif /* 0 */

@@ -1336,7 +1336,7 @@ char * formula_info[] =
 0,
 "_NON_WARRANTY_",
 "",
-" Copyright (C) 1990, 1991, 1992, 1993 Free Software Foundation,Inc.",
+" Copyright (C) 1990, 1991, 1992, 1997 Free Software Foundation,Inc.",
 "There is ABSOLUTELY NO WARRANTY for Oleo; see the file COPYING",
 "for details.  Oleo is free software and you are welcome to distribute",
 "copies of it under certain conditions; see the file COPYING to see the",

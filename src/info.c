@@ -22,6 +22,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "info.h"
 #include "hash.h"
 #include "cmd.h"
+#include <stdarg.h>
 
 struct hash_control * info_buffers;
 
@@ -79,7 +80,7 @@ print_info (struct info_buffer * buf, char * format, ...)
   char txt[1000];
   int len;			/* Length of the new line */
   
-  var_start (ap, format);
+  va_start (ap, format);
   vsprintf (txt, format, ap);
   va_end (ap);
   len = strlen (txt);
@@ -112,7 +113,7 @@ io_text_line (char * format, ...)
   char txt[1000];
   int len;			/* Length of the new line */
   
-  var_start (ap, format);
+  va_start (ap, format);
   vsprintf (txt, format, ap);
   va_end (ap);
   len = strlen (txt);
