@@ -117,8 +117,9 @@ int (*set_file_opts) (int, char *) = oleo_set_options;
 void (*show_file_opts) () = oleo_show_options;
 
 static int	option_separator = '\t';
+static char	*option_format = NULL;
 
-static char short_options[] = "Vqfxths";
+static char short_options[] = "VqfxthsFS";
 static struct option long_options[] =
 {
 	{"version",		0,	NULL,			'V'},
@@ -129,6 +130,7 @@ static struct option long_options[] =
 	{"help",		0,	NULL,			'h'},
 	{"separator",		1,	&option_separator,	's'},
 	{"space",		0,	NULL,			'S'},
+	{"format",		1,	NULL,			'F'},
 	{NULL,			0,	NULL,			0}
 };
 
@@ -956,6 +958,11 @@ main (int argc, char **argv)
 	  case 'S':
 	    option_separator = ' ';
 	    list_set_separator(option_separator);
+	    break;
+	  case 'F':
+	    option_format = argv[optind];
+	    file_set_default_format(option_format);
+	    optind++;
 	    break;
 	  }
       }

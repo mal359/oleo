@@ -1,3 +1,8 @@
+
+Mon Dec  7 18:14:05 1998, Danny Backx (danny@gnu.org)
+	* Add to parsing numeric strings (recognise +, - too).
+	  Otherwise, list_read_file doesn't read many numbers.
+
 Wed Dec  2 20:47:49 1998 Danny Backx (danny@gnu.org)
 	* Release oleo 1.6.11 so Tom can test and use the list file stuff.
 	* Oleo now recognizes file name extensions at startup. This means

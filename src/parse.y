@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with Oleo; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 %}
-
 
 %right '?' ':'
 /* %left '|' */
@@ -223,6 +222,16 @@ exp:	  L_CONST
 		$2->n_x.v_subs[0]=$1;
 		$2->n_x.v_subs[1]=$3;
 		$$ = $2; }
+	| '+' exp {
+		if($2->comp_value==CONST_FLT) {
+			$2->n_x.v_float= ($2->n_x.v_float);
+			$$=$2;
+		} else if($2->comp_value==CONST_INT) {
+			$2->n_x.v_int= ($2->n_x.v_int);
+			$$=$2;
+		} else {
+			$$ = $2;
+		} }
 	| '-' exp %prec NEG {
 		if($2->comp_value==CONST_FLT) {
 			$2->n_x.v_float= -($2->n_x.v_float);

@@ -1249,6 +1249,20 @@ says_default (char *str)
   return !*str;
 }
 
+static char *defaultformat = NULL;
+
+void
+file_set_default_format(char *s)
+{
+	if (defaultformat)
+		free(defaultformat);
+
+	if (s == NULL)
+		defaultformat = strdup("oleo");
+	else
+		defaultformat = s;
+}
+
 void
 write_file_generic(FILE *fp, struct rng *rng, char *format)
 {
@@ -1268,10 +1282,27 @@ write_file_generic(FILE *fp, struct rng *rng, char *format)
 		list_write_file(fp, rng);
 	} else {
 		/* Fall back to default */
-		oleo_write_file(fp, rng);
-#if 0
-		io_error_msg ("Unknown file format %s", ptr);
-#endif
+		if (defaultformat == NULL) {
+			/* There's no default -> Oleo format */
+			oleo_write_file(fp, rng);
+		} else if (!stricmp ("oleo", defaultformat)) {
+			oleo_write_file(fp, rng);
+		} else if (!stricmp ("sylk", defaultformat)) {
+			sylk_a0 = 1;
+			sylk_write_file(fp, rng);
+		} else if (!stricmp ("sylk-noa0", defaultformat)) {
+			sylk_a0 = 0;
+			sylk_write_file(fp, rng);
+		} else if (!stricmp ("sc", defaultformat)) {
+			sc_write_file(fp, rng);
+		} else if (!stricmp ("panic", defaultformat)) {
+			panic_write_file(fp, rng);
+		} else if (!stricmp ("list", defaultformat)) {
+			list_write_file(fp, rng);
+		} else {
+			/* There's no default -> Oleo format */
+			oleo_write_file(fp, rng);
+		}
 	}
 }
 
@@ -1296,10 +1327,26 @@ read_file_generic(FILE *fp, int ismerge, char *format)
 	} else if (!stricmp ("list", format)) {
 		list_read_file(fp, ismerge);
 	} else {
-		/* Fall back to default */
-		oleo_read_file(fp, ismerge);
-#if 0
-		io_error_msg ("Unknown file format %s", ptr);
-#endif
+		if (defaultformat == NULL) {
+			/* There's no default -> Oleo format */
+			oleo_read_file(fp, ismerge);
+		} else if (!stricmp ("oleo", format)) {
+			oleo_read_file(fp, ismerge);
+		} else if (!stricmp ("sylk", format)) {
+			sylk_a0 = 1;
+			sylk_read_file(fp, ismerge);
+		} else if (!stricmp ("sylk-noa0", format)) {
+			sylk_a0 = 0;
+			sylk_read_file(fp, ismerge);
+		} else if (!stricmp ("sc", format)) {
+			sc_read_file(fp, ismerge);
+		} else if (!stricmp ("panic", format)) {
+			panic_read_file(fp, ismerge);
+		} else if (!stricmp ("list", format)) {
+			list_read_file(fp, ismerge);
+		} else {
+			/* There's no default -> Oleo format */
+			oleo_read_file(fp, ismerge);
+		}
 	}
 }

@@ -41,7 +41,7 @@ static char sl_sep = '\t';
    programs.
 
    Note that this format loses *most* of the information about the cells,
-   including formuale, formats, column widths, etc
+   including formulae, formats, column widths, etc
  */
 void
 list_read_file (fp, ismerge)
@@ -80,7 +80,12 @@ list_read_file (fp, ismerge)
 	    }
 	  string = 0;
 	  for (ptr = bptr; ptr != eptr; ptr++)
+#if 0
 	    if (!isdigit (*ptr) && *ptr != '.' && *ptr != 'e' && *ptr != 'E')
+#else
+	    if (!isdigit (*ptr) && *ptr != '.' && *ptr != 'e' && *ptr != 'E'
+		&& *ptr != '+' && *ptr != '-')
+#endif
 	      {
 		string++;
 		break;
