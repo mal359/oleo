@@ -1055,6 +1055,14 @@ main (int argc, char **argv)
 #ifdef SIGCONT
   signal (SIGCONT, continue_oleo);
 #endif
+#ifdef SIGPIPE
+  signal (SIGPIPE, got_sig);
+#endif
+
+  /*
+   * It makes little sense to block all signals when using X
+   */
+  if ((! using_x) && (! using_gtk)) {
 #ifdef SIGINT
   signal (SIGINT, got_sig);
 #endif
@@ -1073,9 +1081,7 @@ main (int argc, char **argv)
 #ifdef SIGSEGV
   signal (SIGSEGV, got_sig);
 #endif
-#ifdef SIGPIPE
-  signal (SIGPIPE, got_sig);
-#endif
+  }
 
   /* Read the init file. */
   {

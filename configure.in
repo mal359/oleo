@@ -1,4 +1,9 @@
+dnl
+dnl This is the configuration file for GNU oleo.
+dnl $Id: configure.in,v 1.20 1998/08/18 05:02:57 danny Exp $
+dnl
 dnl Process this file with autoconf to produce a configure script.
+dnl
 AC_INIT(src/init.c)
 
 AM_INIT_AUTOMAKE([oleo], [1.6.6])
@@ -30,6 +35,8 @@ AC_CHECK_LIB(ncurses, main, ,
 	AC_CHECK_LIB(curses, main, ,
 		AC_CHECK_LIB(termlib, tgetent, ,
 			AC_CHECK_LIB(termcap, tgetend))))
+
+AC_CHECK_LIB(mytinfo, tputs)
 
 dnl Replace `main' with a function in -lm:
 AC_CHECK_LIB(m, main)
@@ -74,9 +81,31 @@ AC_ARG_WITH(gtk,
 		  * )			usegtk=yes ;;
 		esac],
 [		with_gtk=yes])
+dnl
+dnl remaining GTK check moved after Motif stuff
+dnl
+
+dnl dnl
+dnl dnl Motif (LessTif)
+dnl dnl
+dnl dnl If user selects Motif, deselect GTK even if the user requested it.
+dnl dnl
+dnl AC_ARG_WITH(motif,
+dnl [  --without-motif		  Do not use Motif, even if detected],
+dnl [		case "${withval}" in
+dnl 		  y | ye | yes )	usemotif=yes ;;
+dnl 		  n | no )		usemotif=no ;;
+dnl 		  * )			usemotif=yes ;;
+dnl 		esac],
+dnl [		with_motif=yes])
+dnl 
+dnl if test $with_motif = yes; then
+dnl 	usegtk=no
+dnl fi
+dnl dnl AC_FIND_MOTIF
 
 if test $with_gtk = yes; then
-	AM_PATH_GTK(1.0.0, AC_DEFINE(HAVE_LIBGTK))
+AM_PATH_GTK(1.0.0, AC_DEFINE(HAVE_LIBGTK))
 fi
 
 dnl Checks for header files.

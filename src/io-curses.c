@@ -22,7 +22,13 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "proto.h"
 #include "funcdef.h"
 #include <stdio.h>
+
+#if HAVE_LIBNCURSES
+#include <ncurses.h>
+#else
 #include <curses.h>
+#endif
+
 #include <fcntl.h>
 #include <errno.h>
 #include <ctype.h>

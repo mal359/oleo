@@ -51,7 +51,7 @@
    host does not conform to Posix.  */
 #define ISDIGIT(c) ((unsigned) (c) - '0' <= 9)
 
-#include "getdate.h"
+#include "get_date.h"
 
 #if defined (STDC_HEADERS) || defined (USG)
 # include <string.h>
