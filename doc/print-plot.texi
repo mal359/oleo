@@ -126,7 +126,7 @@ Plotting in Oleo is done using Gnuplot.  Only line plots and
 scatterplots are available.  The simplest plotting sequence
 consists of
 
-@itemize
+@itemize bullet
 @item @bullet{}
 Select a range to plot 
 @item @bullet{}
@@ -211,7 +211,7 @@ For an example, assume that the spreadsheet looks like
 
 
 and that we are in the graph menu.
-@itemize
+@itemize bullet
 @item
 If we type @kbd{d 4 RET B2.F3 RET h r}, then when we print there will be
 three line segments:

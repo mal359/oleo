@@ -101,7 +101,7 @@ M-x set-option @key{RET} input -1
 @unnumberedsubsec The status line
 
         The status line describes the current status.  This includes:
-@itemize
+@itemize bullet
 @item 
         The cell number (e.g. @code{A1} or @code{R1C1}), or the current
 range (cursor to mark) if the mark is set
