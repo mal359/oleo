@@ -1,5 +1,5 @@
 /*
- * $Id: io-utils.c,v 1.37 2001/02/04 00:01:53 pw Exp $
+ * $Id: io-utils.c,v 1.38 2001/02/05 00:14:08 pw Exp $
  *
  * Copyright © 1990, 1992, 1993, 2000 Free Software Foundation, Inc.
  *
@@ -1525,6 +1525,8 @@ void FileCloseCurrentFile(void)
 
 void OleoSetEncoding(char *s)
 {
+	extern void PrintSetEncoding(char *encoding);  /* in print.c */
+
 	if (Global && Global->encoding)
 		free(Global->encoding);
 	Global->encoding = strdup(s);
