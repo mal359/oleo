@@ -1,10 +1,41 @@
-	* The Motif splash window gets popped down after three seconds so a human
-	  has time to see it. Previously it got popped down when the main window
-	  appeared; on some systems (350 MHz Pentium II will do) this period is
-	  extremely short.
+	* Remove m4/emx.m4 from CVS; it's obsolete because we're using
+	  automake 1.4 and autoconf 2.13.
+	* Fixed po/{en,nl,fr}.po - some messages from the source weren't here
+	  yet.
+	* Manually reduced the colour consumption of oleo_icon.xpm to the six
+	  colours that I intended to be in there, not to the 124 that crept in.
+	* Preliminary support printing to a real printer, and a program (pipe).
+	  X resources to support this :
+		oleo*defaultPrinter: printer, program, or file.
+		oleo*printer: the name of a printer
+		oleo*program: the command to pipe stuff to for printing.
+	* Add menu items to be able to print XY and bar charts as well.
+	* Splash now consists of buttons, not labels. Clicking them dismisses
+	  the splash.
+	* Splash only appears if oleo*showVersion is a positive number. The
+	  number indicates the time (milliseconds, default 3000) the splash
+	  remains visible by default.
+	  Set to 0 for no splash.
+
+Fri Mar 5 09:57:20 CST 1999 Art Haas (ahaas@neosoft.com)
+	* cells.h: Get rid of troublesome 'PRC_FLT' definition
+	  new macros to make cell formatting work, reorganize
+	  format definitions
+	* format.c: Use new macros and definitions
+	* io-edit.c: Use new macros
+	* io-motif.c: Sync up with new definitions
+	* io-utils.c: Destroy 'PRC_FLT' and its weirdness
+	* oleofile.c: Remove 'PRC_FLT'
+	* regions.c: Use new macros
+	* sylk.c: Destroy 'PRC_FLT'
+
+Thu 4 Mar 23:53:00 CET 1999, Danny Backx
+	* The Motif splash window gets popped down after three seconds so a
+	  human has time to see it. Previously it got popped down when the main
+	  window appeared; on some systems (350 MHz Pentium II will do) this
+	  period is extremely short.
 	* The splash window is extended with a simple XPM icon which is also the
-	  icon Oleo installs as icon pixmap. Only if we find XPM at configuration
-	  time.
+	  icon Oleo installs as icon pixmap. Only if we find XPM when building.
 	* Printing of Plotutils stuff now pops up a dialog asking you to specify
 	  the file type and a file.
 
@@ -16,12 +47,12 @@ Wed  3 Mar 21:56:22 1999 , Danny Backx
 	* Call io_info_msg also when printing to stderr; this gets oleo startup
 	  error messages in the Motif status area as well.
 	* Added examples/ directory and some files in it.
-	* Added hooks so io_error_msg does sensible things with Motif, even before
-	  Motif is initialised.
+	* Added hooks so io_error_msg does sensible things with Motif, even
+	  before Motif is initialised.
 
 Tue  2 Mar 20:59:24 1999, Danny Backx
-	* Fix both io-motif.c and plot.c so the XY and bar charts now do sensible
-	  things, including display of multiple data sets.
+	* Fix both io-motif.c and plot.c so the XY and bar charts now do
+	  sensible things, including display of multiple data sets.
 	  Beware: this is all still quite simplistic.
 	* Add data labels to bar chart.
 

@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.26 1999/03/04 22:55:52 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.27 1999/03/06 13:44:27 danny Exp $
 #
 localedir = $(prefix)/share/locale
 
@@ -32,7 +32,7 @@ MYCFL = ${X_CFLAGS}
 gpl.h:	$(top_srcdir)/COPYING $(srcdir)/gpl.sed
 	sed -f $(srcdir)/gpl.sed <$(top_srcdir)/COPYING >gpl.h
 
-io-motif.o:	gpl.h $(top_srcdir)/configure
+io-motif.o:	gpl.h $(top_srcdir)/configure oleo_icon.xpm
 
 else
 # MYLD = @GTK_LIBS@

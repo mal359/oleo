@@ -198,14 +198,14 @@ PuPieChart(char *plotter, FILE *outfile)
  * Stacked and unstacked bar charts
  */
 void
-PuBarChart(char *plotter, FILE *outfile, int stacked)
+PuBarChart(char *plotter, FILE *outfile)
 {
 	int		i, num, r, nsets, dsvalid[NUM_DATASETS + 1];
 	double		x, y, y1, y2, ymin, ymax, *ys;
 	struct rng	rngx;
 	CELL		*cp;
 
-	stacked = 1;					/* FIX ME only stacked for now */
+	int		stacked = 1;				/* FIX ME only stacked for now */
 
 	PuOpen(plotter, outfile);
 

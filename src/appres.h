@@ -1,5 +1,5 @@
 /*
- *  $Id: appres.h,v 1.5 1999/03/04 22:54:08 danny Exp $
+ *  $Id: appres.h,v 1.6 1999/03/06 13:44:28 danny Exp $
  *
  *  This file is part of GnuSheet, a free spreadsheet.
  *
@@ -24,7 +24,7 @@
 #include <Xm/Xm.h>
 
 typedef struct GnuSheetAppres {
-	Boolean		show_version;
+	int		show_version;
 	Boolean		quiet;
 	Boolean		ignore_init_file;
 	String		init_file;
@@ -33,7 +33,7 @@ typedef struct GnuSheetAppres {
 	XmString	quit_message;
 	String		save_as_title, load_title;
 	int		columnWidth;
-	String		paper, printer, program;
+	String		paper, printer, program, defaultPrintTo;
 	String		puPlotters;
 } GnuSheetAppres;
 

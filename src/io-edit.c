@@ -639,7 +639,7 @@ insert_cell_attr (struct rng * rng, char * attr)
 	set_line (&line, "def");
       else
 	{
-	  int fmt = GET_FORMAT (cp);
+	  int fmt = GET_FORM_PREC (cp);
 	  set_line (&line, fmt_to_str (fmt));
 	}
     }

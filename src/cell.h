@@ -120,32 +120,51 @@ typedef struct cell CELL;
 #define JST_CNT		3
 
 /*
- * Actually get/set both Format *and* precision
+ * Actually get/set either the format or precision
  */
-#define GET_FORMAT(p)	((p)->cell_flags.cell_format)
-#define SET_FORMAT(p,x)	((p)->cell_flags.cell_format = (x))
 
-// #define GET_FMT(p)	((p)->cell_flags.cell_format & 0x007F)
-// #define SET_FMT(p,x)	((p)->cell_flags &= ~0x007F,(p)->cell_flags|=(x))
+#define GET_FORMAT(p)	((p)->cell_flags.cell_format)
+#define SET_FORMAT(p,x)	(((p)->cell_flags.cell_format) = (x & FMT_MASK) >> FMT_SHIFT)
 
 #define GET_PRECISION(p)	((p)->cell_flags.cell_precision)
-#define SET_PRECISION(p,x)	((p)->cell_flags.cell_precision = (x))
+#define SET_PRECISION(p,x)	((p)->cell_flags.cell_precision = (x & PREC_MASK))
 
-#define PRC_FLT	0x0F	/* What is this ??? */
+/*
+ * Get both the format and precision
+ */
+
+#define GET_FORM_PREC(p) ((GET_FORMAT(p) << FMT_SHIFT) | GET_PRECISION(p))
+
+#define PREC_MASK	0x0F	/* Precision bits mask */
+#define FMT_MASK	0xF0	/* Format mask */
+
+#define FMT_SHIFT	4	/* Bit shifting */
+
+#define FORM_PREC_MASK (FMT_MASK | PREC_MASK)	/* Get format and precision */ 
+
+/* The various formats for the cells */
 
 #define FMT_DEF		0	/* Default */
 #define FMT_HID		1	/* Hidden */
 #define FMT_GPH		2	/* Graph */
-#define FMT_DOL		3	/* Dollar */
-#define FMT_CMA		4	/* Comma */
-#define FMT_PCT		5	/* Percent */
+#define FMT_INT		3	/* Integer */
+#define FMT_DEC		4	/* Decimal */
+#define FMT_FLT		5	/* Floating point */
 #define FMT_USR		6	/* User defined */
-#define FMT_FXT		7
-#define FMT_EXP		8
-#define FMT_GEN		9
-#define	FMT_DATE	10	/* Date */
+#define FMT_DOL		7	/* Dollar */
+#define FMT_CMA		8	/* Comma */
+#define FMT_PCT		9	/* Percent */
+#define FMT_FXT		10	/* Fixed */
+#define FMT_EXP		11	/* Exponents */
+#define FMT_GEN		12	/* General */
+#define	FMT_DATE	13	/* Date */
 
-#define FMT_MAX 15
+#define FMT_MAX 15 		/* Maximum number of formats that fit */
+				/* in 4 bits */
+
+/* Defined precisions */
+
+#define FLOAT_PREC	0x0F	/* Floating point precision */
 
 /* README README README
  *

@@ -121,7 +121,10 @@ format_region (struct rng *where, int fmt, int just)
   while ((cp = next_row_col_in_range (&rr, &cc)))
     {
       if (fmt != -1)
-	SET_FORMAT (cp, fmt);	/* Only the format, not the precision !! */
+        {
+	  SET_FORMAT (cp, fmt);
+	  SET_PRECISION (cp, fmt);
+        }
       if (just != -1)
 	SET_JST (cp, just);
       io_pr_cell (rr, cc, cp);

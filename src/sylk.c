@@ -108,28 +108,28 @@ sylk_read_file (fp, ismerge)
 		  switch (*ptr++)
 		    {
 		    case 'G':
-		      default_fmt = FMT_GEN - PRC_FLT;
+		      default_fmt = FMT_GEN;
 		      break;
 		    case 'E':
-		      default_fmt = FMT_EXP - PRC_FLT;
+		      default_fmt = FMT_EXP;
 		      break;
 		    case 'F':
-		      default_fmt = FMT_FXT - PRC_FLT;
+		      default_fmt = FMT_FXT;
 		      break;
 		    case '$':
-		      default_fmt = FMT_DOL - PRC_FLT;
+		      default_fmt = FMT_DOL;
 		      break;
 		    case '*':	/* * format implemented as +- format */
 		      default_fmt = FMT_GPH;
 		      break;
 		    case ',':	/* JF */
-		      default_fmt = FMT_CMA - PRC_FLT;
+		      default_fmt = FMT_CMA;
 		      break;
 		    case 'U':
-		      default_fmt = FMT_USR - PRC_FLT;
+		      default_fmt = FMT_USR;
 		      break;
 		    case '%':
-		      default_fmt = FMT_PCT - PRC_FLT;
+		      default_fmt = FMT_PCT;
 		      break;
 		    case 'H':
 		      default_fmt = FMT_HID;
@@ -142,7 +142,7 @@ sylk_read_file (fp, ismerge)
 		    }
 		  if (*ptr == 'F')
 		    {
-		      default_fmt += PRC_FLT;
+		      default_fmt += FMT_FLT;
 		      ptr++;
 		    }
 		  else
@@ -173,28 +173,28 @@ sylk_read_file (fp, ismerge)
 		      fmt = FMT_DEF;
 		      break;
 		    case 'G':
-		      fmt = FMT_GEN - PRC_FLT;
+		      fmt = FMT_GEN;
 		      break;
 		    case 'E':
-		      fmt = FMT_EXP - PRC_FLT;
+		      fmt = FMT_EXP;
 		      break;
 		    case 'F':
-		      fmt = FMT_FXT - PRC_FLT;
+		      fmt = FMT_FXT;
 		      break;
 		    case '$':
-		      fmt = FMT_DOL - PRC_FLT;
+		      fmt = FMT_DOL;
 		      break;
 		    case '*':	/* JF implemented as +- format */
 		      fmt = FMT_GPH;
 		      break;
 		    case ',':	/* JF */
-		      fmt = FMT_CMA - PRC_FLT;
+		      fmt = FMT_CMA;
 		      break;
 		    case 'U':
-		      fmt = FMT_USR - PRC_FLT;
+		      fmt = FMT_USR;
 		      break;
 		    case '%':
-		      fmt = FMT_PCT - PRC_FLT;
+		      fmt = FMT_PCT;
 		      break;
 		    case 'H':
 		      fmt = FMT_HID;
@@ -207,7 +207,7 @@ sylk_read_file (fp, ismerge)
 		    }
 		  if (*ptr == 'F')
 		    {
-		      fmt += PRC_FLT;
+		      fmt += FMT_FLT;
 		      ptr++;
 		    }
 		  else
@@ -511,14 +511,14 @@ sylk_fmt_to_str (int f1, int p1)
       p_buf[0] = '*';
       break;
     default:
-      if (p1 == PRC_FLT)
+      if (p1 == FMT_FLT)
 	{
 	  p_buf[1] = 'F';
 	  p_buf[2] = '\0';
 	}
       else
 	sprintf (&p_buf[1], "%d", p1);
-      switch (f1 | PRC_FLT)
+      switch (f1)
 	{
 	case FMT_USR:
 	  p_buf[0] = 'U';

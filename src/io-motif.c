@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.28 1999/03/04 22:54:08 danny Exp $
+ *  $Id: io-motif.c,v 1.29 1999/03/06 13:44:29 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.28 1999/03/04 22:54:08 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.29 1999/03/06 13:44:29 danny Exp $";
 
 #include "config.h"
 
@@ -60,6 +60,10 @@ static char rcsid[] = "$Id: io-motif.c,v 1.28 1999/03/04 22:54:08 danny Exp $";
 #if	HAVE_LIBXPM
 #include <X11/xpm.h>
 #include	"oleo_icon.xpm"
+#endif
+
+#ifdef	HAVE_LIBPLOT
+#include "plot.h"
 #endif
 
 #include "global.h"
@@ -125,6 +129,8 @@ static int	chars_buffered = 0;
 /* Forward declarations */
 void CancelTemplate(Widget w, XtPointer client, XtPointer call);
 static void FixA0();
+static void PopDownSplash();
+Widget ConfigureXYChart(Widget parent);
 
 /*
  * This is used in two places.
@@ -495,6 +501,7 @@ void CreateGraph(Widget w, XtPointer client, XtPointer call)
 /*
  * Pop up a window with a graph (from SciPlot).
  */
+#ifdef	HAVE_SciPlot_H
 void ShowGraph(Widget w, XtPointer client, XtPointer call)
 {
 	CreateGraph(w, client, call);
@@ -507,14 +514,12 @@ void ShowGraph(Widget w, XtPointer client, XtPointer call)
  */
 void ReallyPrintGraph(Widget w, XtPointer client, XtPointer call)
 {
-#ifdef	HAVE_SciPlot_H
 	if (gs == NULL)
 		CreateGraph(w, client, call);
 	else
 		UpdateGraph();
 	if (plot)
 		SciPlotPSCreateColor(plot, "plot.ps");
-#endif
 }
 
 /*
@@ -527,6 +532,7 @@ void PrintGraph(Widget w, XtPointer client, XtPointer call)
 {
 	ReallyPrintGraph(w, client, call);
 }
+#endif
 
 /*
  * Create a widget tree to configure a graph with.
@@ -663,6 +669,8 @@ void ConversionError(char *s, char *t)
 
 /*
  * Ok handler
+ *	This reads everything from the widgets in the dialog and copies
+ *	the information into variables.
  */
 void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 {
@@ -792,8 +800,6 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
  *	This is needed for popping up the dialog after it's been changed by
  *	the user but he's hit Cancel.
  *	Or for values read from a file. (new to 1.6.14)
- *
- * FIX ME incomplete.
  */
 void ConfigureGraphReset(Widget f)
 {
@@ -840,18 +846,43 @@ void ConfigureGraphReset(Widget f)
 	XmTextFieldSetString(cw->ytitle, s);
 }
 
+/*
+ * Pop up the dialog for configuring graphs.
+ * If necessary, create the widgets first.
+ */
 void ConfigureGraph(Widget w, XtPointer client, XtPointer call)
 {
-	Widget		ok, cancel, help;
+	Widget		ok, cancel, help, xy, nb, p;
 	static Widget	configureGraph = NULL, inside = NULL;
 
 	if (! configureGraph) {
 		configureGraph = XmCreateTemplateDialog(mw, "configureGraph",
 			NULL, 0);
 
-		inside = CreateConfigureGraph(configureGraph);
+		nb = XmCreateNotebook(configureGraph, "configureGraphNotebook",
+			NULL, 0);
+		XtManageChild(nb);
+
+		/* The data */
+		inside = CreateConfigureGraph(nb);
 		XtManageChild(inside);
 
+		p = XtVaCreateManagedWidget("datatab", xmPushButtonGadgetClass,
+			nb,
+				XmNnotebookChildType, XmMAJOR_TAB,
+			NULL);
+
+		/* XY Chart specific stuff */
+		xy = ConfigureXYChart(nb);
+		XtManageChild(xy);
+
+		p = XtVaCreateManagedWidget("XYtab", xmPushButtonGadgetClass,
+			nb,
+				XmNnotebookChildType, XmMAJOR_TAB,
+			NULL);
+
+
+		/* Buttons */
 		ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass,
 			configureGraph,
 			NULL);
@@ -884,14 +915,14 @@ void PuShowPie(Widget w, XtPointer client, XtPointer call)
 void PuShowBarChart(Widget w, XtPointer client, XtPointer call)
 {
 #ifdef	HAVE_LIBPLOT
-	PuBarChart("X", stdout, 0);
+	PuBarChart("X", stdout);
 #endif
 }
 
 void PuShowXYChart(Widget w, XtPointer client, XtPointer call)
 {
 #ifdef	HAVE_LIBPLOT
-	PuXYChart("X", stdout, 0);
+	PuXYChart("X", stdout);
 #endif
 }
 
@@ -899,8 +930,6 @@ void PuShowXYChart(Widget w, XtPointer client, XtPointer call)
  * Printing
  *	need to pop up a dialog to select a file and a GNU PlotUtils plotter
  *	then actually doit
- *
- * FIX ME
  */
 #define	PLOTLEN	32
 
@@ -910,6 +939,8 @@ static int	PuPlotter = 0;
 static struct {
 	char *plotter, *pusymb, *ext;
 } PuPlotters[32];
+
+PuFunction ThisPuFunction = NULL;	/* The function to plot with */
 
 void PuSelectPlotter(Widget w, XtPointer client, XtPointer call)
 {
@@ -994,7 +1025,7 @@ void PuPrintOk(Widget w, XtPointer client, XtPointer call)
 
 	x = fopen(fn, "w");
 	if (x) {
-		PuPieChart(PuPlotters[PuPlotter].pusymb, x);
+		(*ThisPuFunction)(PuPlotters[PuPlotter].pusymb, x);
 		fclose(x);
 	} else {
 		/* FIX ME */
@@ -1027,17 +1058,136 @@ void PuPrintDialog(Widget w, XtPointer client, XtPointer call)
 
 void PuPrintPie(Widget w, XtPointer client, XtPointer call)
 {
-#if 0
 #ifdef	HAVE_LIBPLOT
-	FILE	*x = fopen("x.ps", "w");
-	PuPieChart("ps", x);
-	fclose(x);
-#endif
-#endif
+	ThisPuFunction = PuPieChart;
+
 	if (! pufsd) PuPrintDialog(w, client, call);
 	XtManageChild(pufsd);
+#endif
 }
 
+
+void PuPrintBar(Widget w, XtPointer client, XtPointer call)
+{
+#ifdef	HAVE_LIBPLOT
+	ThisPuFunction = PuBarChart;
+
+	if (! pufsd) PuPrintDialog(w, client, call);
+	XtManageChild(pufsd);
+#endif
+}
+
+void PuPrintXY(Widget w, XtPointer client, XtPointer call)
+{
+#ifdef	HAVE_LIBPLOT
+	ThisPuFunction = PuXYChart;
+
+	if (! pufsd) PuPrintDialog(w, client, call);
+	XtManageChild(pufsd);
+#endif
+}
+
+
+/*
+ * A piece of dialog for configuring XY chars
+ *	Needs to be managed by the caller.
+ */
+Widget ConfigureXYChart(Widget parent)
+{
+	Widget	frame, form, w, te, l, t;
+	Arg	al[10];
+	int	ac;
+
+	ac = 0;
+	frame = XmCreateFrame(parent, "puselectfile", al, ac);
+
+	w = XtVaCreateManagedWidget("configureXYChartFrameTitle",
+			xmLabelGadgetClass,		frame,
+			XmNchildType,			XmFRAME_TITLE_CHILD,
+			XmNchildVerticalAlignment,	XmALIGNMENT_CENTER,
+		NULL);
+
+	form = XtVaCreateManagedWidget("configureXYChartForm", xmFormWidgetClass,
+		frame,
+		NULL);
+	t = XtVaCreateManagedWidget("xAutoToggle", xmToggleButtonGadgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_FORM,
+			XmNtopOffset,		10,
+			XmNleftAttachment,	XmATTACH_FORM,
+			XmNleftOffset,		10,
+		NULL);
+	l = XtVaCreateManagedWidget("xMinLabel", xmLabelGadgetClass, form,
+			XmNtopAttachment,	XmATTACH_FORM,
+			XmNtopOffset,		10,
+			XmNleftAttachment,	XmATTACH_WIDGET,
+			XmNleftWidget,		t,
+			XmNleftOffset,		10,
+		NULL);
+	te = XtVaCreateManagedWidget("xMinText", xmTextFieldWidgetClass, form,
+			XmNtopAttachment,	XmATTACH_FORM,
+			XmNtopOffset,		10,
+			XmNleftAttachment,	XmATTACH_WIDGET,
+			XmNleftWidget,		l,
+			XmNleftOffset,		10,
+		NULL);
+	l = XtVaCreateManagedWidget("xMaxLabel", xmLabelGadgetClass, form,
+			XmNtopAttachment,	XmATTACH_FORM,
+			XmNtopOffset,		10,
+			XmNleftAttachment,	XmATTACH_WIDGET,
+			XmNleftWidget,		te,
+			XmNleftOffset,		10,
+		NULL);
+	te = XtVaCreateManagedWidget("xMaxText", xmTextFieldWidgetClass, form,
+			XmNtopAttachment,	XmATTACH_FORM,
+			XmNtopOffset,		10,
+			XmNleftAttachment,	XmATTACH_WIDGET,
+			XmNleftWidget,		l,
+			XmNleftOffset,		10,
+		NULL);
+	t = XtVaCreateManagedWidget("yAutoToggle", xmToggleButtonGadgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_WIDGET,
+			XmNtopWidget,		te,
+			XmNtopOffset,		10,
+			XmNleftAttachment,	XmATTACH_FORM,
+			XmNleftOffset,		10,
+		NULL);
+	l = XtVaCreateManagedWidget("yMinLabel", xmLabelGadgetClass, form,
+			XmNtopAttachment,	XmATTACH_OPPOSITE_WIDGET,
+			XmNtopOffset,		0,
+			XmNtopWidget,		t,
+			XmNleftAttachment,	XmATTACH_WIDGET,
+			XmNleftWidget,		t,
+			XmNleftOffset,		10,
+		NULL);
+	te = XtVaCreateManagedWidget("yMinText", xmTextFieldWidgetClass, form,
+			XmNtopAttachment,	XmATTACH_OPPOSITE_WIDGET,
+			XmNtopOffset,		0,
+			XmNtopWidget,		t,
+			XmNleftAttachment,	XmATTACH_WIDGET,
+			XmNleftWidget,		l,
+			XmNleftOffset,		10,
+		NULL);
+	l = XtVaCreateManagedWidget("yMaxLabel", xmLabelGadgetClass, form,
+			XmNtopAttachment,	XmATTACH_OPPOSITE_WIDGET,
+			XmNtopOffset,		0,
+			XmNtopWidget,		t,
+			XmNleftAttachment,	XmATTACH_WIDGET,
+			XmNleftWidget,		te,
+			XmNleftOffset,		10,
+		NULL);
+	te = XtVaCreateManagedWidget("yMaxText", xmTextFieldWidgetClass, form,
+			XmNtopAttachment,	XmATTACH_OPPOSITE_WIDGET,
+			XmNtopOffset,		0,
+			XmNtopWidget,		t,
+			XmNleftAttachment,	XmATTACH_WIDGET,
+			XmNleftWidget,		l,
+			XmNleftOffset,		10,
+		NULL);
+
+	return frame;
+}
 
 /*
  * Print
@@ -1112,9 +1262,29 @@ Widget MotifCreatePrintDialog(Widget s)
 	int		npages, i, ac;
 	Arg		al[5];
 	XmString	xms;
+	int		defaultprint = 0;
 
 	ac = 0;
 	form = XmCreateForm(s, "printForm", al, ac);
+
+	/* Check value of resource */
+#ifdef	HAVE_STRCASECMP
+	if (strcasecmp(AppRes.defaultPrintTo, "printer") != 0
+	    && strcasecmp(AppRes.defaultPrintTo, "program") != 0
+	    && strcasecmp(AppRes.defaultPrintTo, "file") != 0)
+#else
+	if (strcmp(AppRes.defaultPrintTo, "printer") != 0
+	    && strcmp(AppRes.defaultPrintTo, "program") != 0
+	    && strcmp(AppRes.defaultPrintTo, "file") != 0)
+#endif
+	{
+		defaultprint = 1;
+
+		MessageAppend(True, _("Value of defaultPrintTo resource is invalid, "
+			"should be one of %s, %s, or %s\n"),
+			"printer", "file", "program");
+			
+	}
 
 	/* Destination */
 	frame = XtVaCreateManagedWidget("printDestinationFrame",
@@ -1143,8 +1313,13 @@ Widget MotifCreatePrintDialog(Widget s)
 
 	w = XtVaCreateManagedWidget("printer", xmToggleButtonGadgetClass,
 		radio, NULL);
-	/* FIX ME - this is a hardcoded default */
-	XmToggleButtonGadgetSetState(w, True, False);
+#ifdef	HAVE_STRCASECMP
+	if (strcasecmp(AppRes.defaultPrintTo, "printer") == 0 || defaultprint)
+#else
+	if (strcmp(AppRes.defaultPrintTo, "printer") == 0 || defaultprint)
+#endif
+		XmToggleButtonGadgetSetState(w, True, False);
+
 	PrintWidgets.printerTF = 
 	w = XtVaCreateManagedWidget("printerTF", xmTextFieldWidgetClass,
 			radio, NULL);
@@ -1154,6 +1329,12 @@ Widget MotifCreatePrintDialog(Widget s)
 
 	w = XtVaCreateManagedWidget("file", xmToggleButtonGadgetClass,
 		radio, NULL);
+#ifdef	HAVE_STRCASECMP
+	if (strcasecmp(AppRes.defaultPrintTo, "file") == 0)
+#else
+	if (strcmp(AppRes.defaultPrintTo, "file") == 0)
+#endif
+		XmToggleButtonGadgetSetState(w, True, False);
 	PrintWidgets.fileTF = 
 	w = XtVaCreateManagedWidget("fileTF", xmTextFieldWidgetClass,
 			radio, NULL);
@@ -1161,6 +1342,12 @@ Widget MotifCreatePrintDialog(Widget s)
 			radio, NULL);
 	w = XtVaCreateManagedWidget("program", xmToggleButtonGadgetClass,
 		radio, NULL);
+#ifdef	HAVE_STRCASECMP
+	if (strcasecmp(AppRes.defaultPrintTo, "program") == 0)
+#else
+	if (strcmp(AppRes.defaultPrintTo, "program") == 0)
+#endif
+		XmToggleButtonGadgetSetState(w, True, False);
 	PrintWidgets.programTF = 
 	w = XtVaCreateManagedWidget("programTF", xmTextFieldWidgetClass,
 			radio, NULL);
@@ -2418,24 +2605,23 @@ int formats_list[] = {
 	/* 0 */		FMT_DEF,
 	/* 1 */		FMT_HID,
 	/* 2 */		FMT_GPH,
-	/* 3 */		PRC_FLT,
-	/* 4 */		FMT_GEN,
-	/* 5 */		FMT_DOL,
-	/* 6 */		FMT_CMA,
-	/* 7 */		FMT_PCT,
-	/* 8 */		FMT_DEF,
-	/* 9 */		FMT_DEF,
-	/* 10 */	FMT_DEF,
-	/* 11 */	FMT_DEF,
+	/* 3 */		FMT_INT,
+	/* 4 */		FMT_DEC,
+	/* 5 */		FMT_FLT,
+	/* 6 */		FMT_USR,
+	/* 7 */		FMT_DOL,
+	/* 8 */		FMT_CMA,
+	/* 9 */		FMT_PCT,
+	/* 10 */	FMT_FXT,
+	/* 11 */	FMT_EXP,
+	/* 12 */	FMT_GEN,
 #ifdef	FMT_DATE
-	/* 12 */	FMT_DATE,
+	/* 13 */	FMT_DATE,
 #else
-	/* 12 */	FMT_DEF,
-#endif
 	/* 13 */	FMT_DEF,
+#endif
 	/* 14 */	FMT_DEF,
 	/* 15 */	FMT_DEF,
-	/* 16 */	FMT_DEF
 };
 
 /*
@@ -2791,8 +2977,9 @@ GscBuildSplash(Widget parent)
 	XtSetArg(al[ac], XmNrightAttachment,	XmATTACH_NONE); ac++;
 	XtSetArg(al[ac], XmNtopAttachment,	XmATTACH_FORM); ac++;
 	XtSetArg(al[ac], XmNtopOffset,		0); ac++;
-	iconlabel = XmCreateLabel(form, "iconsplash", al, ac);
+	iconlabel = XmCreatePushButtonGadget(form, "iconsplash", al, ac);
 	XtManageChild(iconlabel);
+	XtAddCallback(iconlabel, XmNactivateCallback, PopDownSplash, NULL);
 #endif
 
 	ac = 0;
@@ -2814,8 +3001,9 @@ GscBuildSplash(Widget parent)
 	XtSetArg(al[ac], XmNrightOffset,	0); ac++;
 	XtSetArg(al[ac], XmNtopAttachment,	XmATTACH_FORM); ac++;
 	XtSetArg(al[ac], XmNtopOffset,		0); ac++;
-	textlabel = XmCreateLabel(form, "textsplash", al, ac);
+	textlabel = XmCreatePushButtonGadget(form, "textsplash", al, ac);
 	XtManageChild(textlabel);
+	XtAddCallback(textlabel, XmNactivateCallback, PopDownSplash, NULL);
 
 	XmStringFree(x1);
 	XmStringFree(x2);
@@ -3145,6 +3333,14 @@ GscBuildMainWindow(Widget parent)
 		graphmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, PuPrintPie, NULL);
+	w = XtVaCreateManagedWidget("puprintbar", xmPushButtonGadgetClass,
+		graphmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, PuPrintBar, NULL);
+	w = XtVaCreateManagedWidget("puprintxy", xmPushButtonGadgetClass,
+		graphmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, PuPrintXY, NULL);
 #endif
 
 
@@ -3406,65 +3602,11 @@ xio_over (char * str, int len)
 static void
 xio_scan_for_input (int blockp)
 {
-	XEvent	ev;
-
-	if (blockp) {
-#ifdef	VERBOSE
-		Debug(__FILE__, "xio_scan_for_input ...");
-#endif
-
-		while (XtAppPending(app)) {
-			XtAppNextEvent(app, &ev);
-			(void) XtDispatchEvent(&ev);
-
-			if (ev.type == KeyPress || ev.type == KeyRelease) {
-#ifdef	VERBOSE
-				Debug(__FILE__, " done\n");
-#endif
-				break;
-			}
-		}
-	} else {
-#ifdef	VERBOSE
-		Debug(__FILE__, "xio_scan_for_input\n");
-#endif
-	}
-		
 }
 
 static int
 xio_input_avail (void)
 {
-	XEvent	ev;
-
-/*
- * FIX ME
- *
- * This sucker causes response to be bumpy.
- */
-#if 1
-#ifdef	VERBOSE
-	Debug(__FILE__, "xio_input_avail ");
-#endif
-
-	while (XtAppPending(app)) {
-		XtAppNextEvent(app, &ev);
-		(void) XtDispatchEvent(&ev);
-
-		if (ev.type == KeyPress || ev.type == KeyRelease) {
-#ifdef	VERBOSE
-			Debug(__FILE__, "... done\n");
-#endif
-			break;
-		}
-	}
-#else
-#ifdef	VERBOSE
-	Debug(__FILE__, "xio_input_avail\n");
-#endif
-#endif
-
-	return chars_buffered;
 }
 
 static void
@@ -3813,11 +3955,15 @@ void motif_init(int *argc, char **argv)
 		resources, num_resources,
 		NULL);
 
-	SplashShell = GscBuildSplash(toplevel);
-	XtPopup(SplashShell, XtGrabNone);
+	if (AppRes.show_version > 0) {
+		long	t = AppRes.show_version;
 
-	/* Splash remains on screen for 3 seconds */
-	XtAppAddTimeOut(app, 3000L, PopDownSplash, 0);
+		SplashShell = GscBuildSplash(toplevel);
+		XtPopup(SplashShell, XtGrabNone);
+
+		/* Splash remains on screen for configurable time (milliseconds) */
+		XtAppAddTimeOut(app, t, PopDownSplash, 0);
+	}
 
 	/* Without this we have NULL in cwin. */
 	io_init_windows(AppRes.rows, AppRes.columns, 1, 2, 1, 1, 1, 1);
@@ -3840,8 +3986,10 @@ void motif_build_gui(void)
 	XtVaSetValues(toplevel, XmNiconPixmap, oleo_icon_pm, NULL);
 #endif
 
-	/* 30ms is an arbitrary short value. 1 probably works as well. */
-	XtAppAddTimeOut(app, 30L, RaiseSplash, 0);
+	if (AppRes.show_version > 0) {
+		/* 30ms is an arbitrary short value. 1 probably works as well. */
+		XtAppAddTimeOut(app, 30L, RaiseSplash, 0);
+	}
 
 	if (! XmProcessTraversal(mat, XmTRAVERSE_CURRENT)) {
 		fprintf(stderr, _("XmProcessTraversal failed\n"));

@@ -1,5 +1,5 @@
 /*
- *  $Id: appres.c,v 1.7 1999/03/04 22:54:08 danny Exp $
+ *  $Id: appres.c,v 1.8 1999/03/06 13:44:28 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: appres.c,v 1.7 1999/03/04 22:54:08 danny Exp $";
+static char rcsid[] = "$Id: appres.c,v 1.8 1999/03/06 13:44:28 danny Exp $";
 
 #include <X11/Intrinsic.h>
 #include <X11/StringDefs.h>
@@ -29,8 +29,8 @@ static char rcsid[] = "$Id: appres.c,v 1.7 1999/03/04 22:54:08 danny Exp $";
 #include "appres.h"
 
 XtResource resources[] = {
-    {	"showVersion", "ShowVersion", XtRBoolean, sizeof(Boolean),
-	XtOffsetOf(GnuSheetAppres, show_version), XtRString, False },
+    {	"showVersion", "ShowVersion", XtRInt, sizeof(int),
+	XtOffsetOf(GnuSheetAppres, show_version), XtRImmediate, (XtPointer)3000 },
     {	"quiet", "Quiet", XtRBoolean, sizeof(Boolean),
 	XtOffsetOf(GnuSheetAppres, quiet), XtRString, False },
     {	"ignoreInitFile", "IgnoreInitFile", XtRBoolean, sizeof(Boolean),
@@ -50,7 +50,9 @@ XtResource resources[] = {
     {	"printer", "Printer", XtRString, sizeof(String),
 	XtOffsetOf(GnuSheetAppres, printer), XtRImmediate, (XtPointer)"ps" },
     {	"program", "Program", XtRString, sizeof(String),
-	XtOffsetOf(GnuSheetAppres, program), XtRImmediate, (XtPointer)"" },
+	XtOffsetOf(GnuSheetAppres, program), XtRImmediate, (XtPointer)"nenscript -2Gr" },
+    {	"defaultPrintTo", "DefaultPrintTo", XtRString, sizeof(String),
+	XtOffsetOf(GnuSheetAppres, defaultPrintTo), XtRImmediate, (XtPointer)"printer" },
     {	"puPlotters", "PuPlotters", XtRString, sizeof(String),
 	XtOffsetOf(GnuSheetAppres, puPlotters), XtRImmediate,
 				(XtPointer)"PostScript,ps,ps;GNU MetaPlot,meta,meta"},
