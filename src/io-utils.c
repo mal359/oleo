@@ -1,5 +1,5 @@
 /*
- * $Id: io-utils.c,v 1.36 2000/08/10 21:02:50 danny Exp $
+ * $Id: io-utils.c,v 1.37 2001/02/04 00:01:53 pw Exp $
  *
  * Copyright © 1990, 1992, 1993, 2000 Free Software Foundation, Inc.
  *
@@ -175,7 +175,8 @@ struct user_fmt fxt =
 
 /* Variables */
 
-struct user_fmt u[16] =
+#define NUM_USER_FMT (16)
+struct user_fmt u[NUM_USER_FMT] =
 {
   {"user1", 0, "-", 0, 0, "0", 0, ".", FLOAT_PRECISION, 1},
   {"user2", 0, "-", 0, 0, "0", 0, ".", FLOAT_PRECISION, 1},
@@ -969,7 +970,7 @@ usr_set_fmts (void)
   int n;
   int ret = 0;
 
-  for (n = 0; n < 16; n++)
+  for (n = 0; n < NUM_USER_FMT; n++)
     if (u[n].p_hdr)
       ret |= 1 << n;
   return ret;
@@ -1193,7 +1194,7 @@ clear_spreadsheet (void)
   flush_everything ();
   /* flush_widths(); */
   flush_all_timers ();
-  for (n = 0; n < 16; n++)
+  for (n = 0; n < NUM_USER_FMT; n++)
     {
       if (u[n].p_hdr)
 	{
