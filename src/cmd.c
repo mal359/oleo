@@ -1,5 +1,5 @@
 /*
- * $Id: cmd.c,v 1.19 2000/11/22 19:33:00 danny Exp $
+ * $Id: cmd.c,v 1.20 2001/01/10 20:16:32 danny Exp $
  *
  * Copyright © 1993, 1999, 2000 Free Software Foundation, Inc.
  *
@@ -2242,7 +2242,7 @@ page_info_backwards (int rep)
     page_info (-rep);
   else if (the_cmd_frame->cmd && the_cmd_arg.prompt_info)
     {
-      int vis_lines = (scr_lines - input_rows) / info_rows;
+      int vis_lines = (Global->scr_lines - input_rows) / info_rows;
       int next = the_cmd_arg.info_line - vis_lines * rep;
       the_cmd_arg.info_line = ((next >= 0) ? next : 0);
     }
@@ -2260,7 +2260,7 @@ page_info (int rep)
     page_info_backwards (-rep);
   else if (the_cmd_frame->cmd && the_cmd_arg.prompt_info)
     {
-      int vis_lines = (scr_lines - input_rows) / info_rows;
+      int vis_lines = (Global->scr_lines - input_rows) / info_rows;
       int next = the_cmd_arg.info_line + vis_lines * rep;
       the_cmd_arg.info_line =
 	((next >= the_cmd_arg.prompt_info->len)

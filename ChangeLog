@@ -1,11 +1,12 @@
 
-$Id: ChangeLog,v 1.136 2000/12/20 20:00:38 danny Exp $
+$Id: ChangeLog,v 1.137 2001/01/10 20:16:32 danny Exp $
 
 	* Added bunches of .cvsignore files to allow working more
 	  transparently with a directory accessing CVS and holding
 	  a build at the same time.
 	* A contributed fix for outputting localised stuff in
 	  PostScript. Gnats (bugs.gnu.org) bug #1946.
+	* Fix for curses and a documentation bug by Pete Wyckoff.
 
 Wed Nov 22 00:24:12 CET 2000, Danny
 

@@ -1,5 +1,5 @@
 /*
- * $Id: window.h,v 1.5 2000/08/10 21:02:51 danny Exp $
+ * $Id: window.h,v 1.6 2001/01/10 20:16:32 danny Exp $
  *
  * Copyright © 1992, 1993, 1999 Free Software Foundation, Inc.
  * 
@@ -113,11 +113,10 @@ struct mouse_event
 #define WIN_EDGES	0x10
 #define WIN_EDGE_REV	0x20
 
+#if 0
 #define	scr_lines	Global->scr_lines
 #define	scr_cols	Global->scr_cols
-
-#define LINES scr_lines
-#define COLS scr_cols
+#endif
 
 /* These control the layout of input and status lines. */
 #define	user_input	Global->user_input

@@ -1,5 +1,5 @@
 /*
- * $Id: io-term.c,v 1.46 2000/12/20 20:00:39 danny Exp $
+ * $Id: io-term.c,v 1.47 2001/01/10 20:16:32 danny Exp $
  *
  * Copyright © 1990, 1992, 1993, 1999, 2000 Free Software Foundation, Inc.
  * 
@@ -20,7 +20,7 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char *rcsid = "$Id: io-term.c,v 1.46 2000/12/20 20:00:39 danny Exp $";
+static char *rcsid = "$Id: io-term.c,v 1.47 2001/01/10 20:16:32 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -850,9 +850,10 @@ void InitializeGlobals(void)
   Global->topclear = 0;
   Global->alarm_seconds = 1;
   Global->alarm_active = 1;
+
   /* From window.c */
-  scr_lines = 24;
-  scr_cols = 80;
+  Global->scr_lines = 24;
+  Global->scr_cols = 80;
   user_input = 1;
   user_status = 2;
   Global->input = 0;

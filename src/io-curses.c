@@ -1,5 +1,5 @@
 /*
- * $Id: io-curses.c,v 1.17 2000/08/10 21:02:50 danny Exp $
+ * $Id: io-curses.c,v 1.18 2001/01/10 20:16:32 danny Exp $
  *
  * Copyright © 1992, 1993, 1999 Free Software Foundation, Inc.
  *
@@ -139,7 +139,7 @@ redraw_info (void)
     return;
   {
     int ipos = input_view.info_pos;
-    int stop = MIN (input_view.current_info->len, scr_lines - 1 + ipos);
+    int stop = MIN (input_view.current_info->len, Global->scr_lines - 1 + ipos);
     while (ipos < stop)
       {
 	move (1 + ipos - input_view.info_pos, 0);
@@ -384,9 +384,10 @@ _io_open_display (void)
   noecho ();
   nonl ();
   /* Must be after initscr() */
-  io_init_windows (LINES, COLS - 1, 1, 2, 1, 1, 1, 1);
+  io_init_windows (LINES, COLS, 1, 2, 1, 1, 1, 1);
+  // io_init_windows (Global->scr_lines, Global->scr_cols, 1, 2, 1, 1, 1, 1);
   info_rows = 1;
-  print_width = COLS;		/* Make ascii print width == terminal width. */
+  print_width = columns;		/* Make ascii print width == terminal width. */
 }
 
 void
@@ -695,7 +696,7 @@ _io_update_status (void)
     return;
   getyx (stdscr, yy, xx);
   move (Global->status, 0);
-  wid = COLS - 2;
+  wid = columns - 2;
   
   if (mkrow != NON_ROW)
     {

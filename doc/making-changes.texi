@@ -176,8 +176,8 @@ several rows. (@code{insert-row}) For instance, to add 5 rows above
 the cell cursor, type @code{C-u 5 C-o}.
 @item M-o
         Insert a column to the left of the cell cursor.  With an
-argument count it adds several columns. (@code{insert-column}) For instance,
-@cmindex insert-column
+argument count it adds several columns. (@code{insert-col}) For instance,
+@cmindex insert-col
 to add 4 rows to the left of  the cell cursor, type @code{C-u 4 M-o}.
 @end table
 @kindex  M-o

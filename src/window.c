@@ -1,5 +1,5 @@
 /*
- * $Id: window.c,v 1.9 2000/08/10 21:02:51 danny Exp $
+ * $Id: window.c,v 1.10 2001/01/10 20:16:32 danny Exp $
  *
  * Copyright © 1992, 1993, 1999 Free Software Foundation, Inc.
  * 
@@ -291,7 +291,7 @@ recenter_window (struct window *win)
 
 /*
  * RESIZE_SCREEN adjusts the windows list after a screen size change.
- * It presumes that LINES and COLS are the new values.  DR and DC
+ * It presumes that Global->scr_lines and Global->scr_cols are the new values.  DR and DC
  * are the changes that just occured to those values.
  */
 static void 
@@ -307,7 +307,7 @@ resize_screen (int dr, int dc)
   if (!nwin)
     return;
 
-  lines = scr_lines - (!!user_status * status_rows) - input_rows;
+  lines = Global->scr_lines - (!!user_status * status_rows) - input_rows;
   old_lines = lines - dr;
   firstln = (user_input > 0) * input_rows + (user_status > 0) * status_rows;
 
@@ -347,7 +347,7 @@ resize_screen (int dr, int dc)
 
   /* then columns */
   firstcol = 0;
-  ncols = COLS;
+  ncols = Global->scr_cols;
   ncols -= dc;
 
   /* First, delete windows that will shrink too much. */
@@ -567,11 +567,11 @@ io_set_label_size (int r, int c)
 void 
 io_set_scr_size (int lines, int cols)
 {
-  int dl = lines - scr_lines;
-  int dc = cols - scr_cols;
+  int dl = lines - Global->scr_lines;
+  int dc = cols - Global->scr_cols;
 
-  scr_lines = lines;
-  scr_cols = cols;
+  Global->scr_lines = lines;
+  Global->scr_cols = cols;
 
   resize_screen (dl, dc);
 }
@@ -616,11 +616,11 @@ io_set_input_status (int inp, int stat, int redraw)
 	  if (inpsgn > 0)
 	    {
 	      new_inp = 0;
-	      new_stat = LINES - status_rows;
+	      new_stat = Global->scr_lines - status_rows;
 	    }
 	  else
 	    {
-	      new_inp = LINES - input_rows;
+	      new_inp = Global->scr_lines - input_rows;
 	      new_stat = 0;
 	    }
 	}
@@ -638,8 +638,8 @@ io_set_input_status (int inp, int stat, int redraw)
 	    }
 	  if (inpsgn < 0)
 	    {
-	      new_stat = LINES - new_stat - status_rows;
-	      new_inp = LINES - new_inp - input_rows;
+	      new_stat = Global->scr_lines - new_stat - status_rows;
+	      new_inp = Global->scr_lines - new_inp - input_rows;
 	    }
 	}
       if (redraw)
@@ -1287,8 +1287,8 @@ io_init_windows (int sl, int sc, int ui, int us, int ir, int sr,
 		 int lr, int lc) 
 {
   print_width = 80;		/* default ascii print width */
-  scr_lines = sl;
-  scr_cols = sc;
+  Global->scr_lines = sl;
+  Global->scr_cols = sc;
   input_rows = ir;
   status_rows = sr;
   label_rows = lr;
@@ -1302,9 +1302,9 @@ io_init_windows (int sl, int sc, int ui, int us, int ir, int sr,
 		    + (user_status > 0) * status_rows
 		    + (user_input > 0) * input_rows);
   wins->flags = WIN_EDGES | WIN_EDGE_REV;
-  wins->numr = (scr_lines - label_rows - !!user_status * status_rows
+  wins->numr = (Global->scr_lines - label_rows - !!user_status * status_rows
 		- input_rows - default_bottom_border);
-  wins->numc = scr_cols - default_right_border;
+  wins->numc = Global->scr_cols - default_right_border;
   wins->bottom_edge_r = default_bottom_border;
   wins->right_edge_c = default_right_border;
   wins->link = -1;

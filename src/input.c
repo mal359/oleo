@@ -1,5 +1,5 @@
 /*
- * $Id: input.c,v 1.9 2000/08/10 21:02:50 danny Exp $
+ * $Id: input.c,v 1.10 2001/01/10 20:16:32 danny Exp $
  * 
  * Copyright © 1993 Free Software Foundation, Inc.
  * 
@@ -229,14 +229,14 @@ iv_reset_input (struct input_view * this_iv)
 #ifdef DEBUG
 	  fprintf(stderr, "input.c: Before scr_cols loop\n");
 #endif
-	  if ((scr_cols - Prompt_wid) < Input_metric ("M", 1))
+	  if ((Global->scr_cols - Prompt_wid) < Input_metric ("M", 1))
 	    Prompt += find_vis_begin (&Prompt_wid,
-				      scr_cols - Input_metric("M", 1),
+				      Global->scr_cols - Input_metric("M", 1),
 				      Prompt, strlen(Prompt) - 1,
 				      Prompt_metric);
 	  
 	  {
-	    int wid_avail = scr_cols - Prompt_wid;
+	    int wid_avail = Global->scr_cols - Prompt_wid;
 #ifdef DEBUG
 	    fprintf(stderr, "input.c: Inside scr_cols loop\n");
 #endif
@@ -257,10 +257,6 @@ iv_reset_input (struct input_view * this_iv)
     fprintf(stderr, "input.c: Leaving iv_reset_input\n");
 #endif
 }
-
-
-
-
 
 /* This is called strategicly from the command loop and whenever
  * the input area is changed by beginning a complex command.
@@ -320,7 +316,7 @@ iv_move_cursor (struct input_view * this_iv)
       || (Visibility_begin > the_cmd_arg.cursor)
       || (   ((Visibility_end + 1) < the_cmd_arg.cursor)
 	  || (((Visibility_end + 1) == the_cmd_arg.cursor)
-	      && ((Vis_wid + Prompt_wid) < scr_cols))))
+	      && ((Vis_wid + Prompt_wid) < Global->scr_cols))))
 
     Must_fix_input = 1;
   else if (Redraw_needed != FULL_REDRAW)
@@ -354,7 +350,7 @@ iv_erase (struct input_view * this_iv, int len)
       if ((Redraw_needed == NO_REDRAW) || (Redraw_needed > the_cmd_arg.cursor))
 	{
 	  Redraw_needed = the_cmd_arg.cursor;
-	  Visibility_end = find_vis_end (0, scr_cols - Prompt_wid,
+	  Visibility_end = find_vis_end (0, Global->scr_cols - Prompt_wid,
 					 Input_area->buf, Visibility_begin,
 					 Input_metric);
 	  Input_cursor = the_cmd_arg.cursor;
@@ -374,7 +370,7 @@ iv_insert (struct input_view * this_iv, int len)
       int new_end;
       int cursor_past_end = (Input_cursor + len == strlen (Input_area->buf));
       
-      new_end = find_vis_end (0, scr_cols - Prompt_wid,
+      new_end = find_vis_end (0, Global->scr_cols - Prompt_wid,
 			      Input_area->buf, Visibility_begin,
 			      Input_metric);
       

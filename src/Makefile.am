@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.53 2000/11/25 10:02:04 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.54 2001/01/10 20:16:32 danny Exp $
 #
 # CPPFLAGS = -Wall
 
@@ -102,8 +102,8 @@ noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  print.h pcl.h postscript.h epson.h prtext.h afm.h \
  mdi.h
 
-io-term.o:	$(top_srcdir)/configure
-utils.o:	$(top_srcdir)/configure
+io-term.o:	../config.h
+utils.o:	../config.h
 io-utils.o:	../config.h
 plot.o:		../config.h
 io-term.o:	../config.h
@@ -111,12 +111,13 @@ cmd.o:		../config.h
 io-x11.o:	../config.h
 lists.o:	../config.h
 afm.o:		../config.h $(srcdir)/afm.h
+cells.o:	../config.h
 print.o:	$(srcdir)/afm.h
 
 ref.o:		parse.h
 sc.o:		parse.h
 
-plot.o:		oleo_plot.h
+plot.o:		oleo_plot.h ../config.h
 graph.o:	oleo_plot.h
 
 cmd.o funcs.o:	defun.h defuns.h
@@ -124,3 +125,4 @@ cmd.o funcs.o:	defun.h defuns.h
 cmd.o stub.o:	stubs.h
 
 io-term.o io-motif.o:	mdi.h
+mdi.o:		../config.h
