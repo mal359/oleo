@@ -1,5 +1,10 @@
 
-$Id: ChangeLog,v 1.161 2001/11/23 21:28:44 pw Exp $
+$Id: ChangeLog,v 1.162 2002/03/06 18:48:39 danny Exp $
+
+Wed Mar  6 19:51:51 2002, Danny Backx
+	* src/oleofile.c : save and read while in the C locale,
+	  otherwise e.g. a pl_PL value of $LANG creates incompatible
+	  files.
 
 Fri Nov 23 16:24:08 EST 2001  Pete Wyckoff  <pw@osc.edu>
 	* doc/basics.texi doc/options.texi: Clean up information
