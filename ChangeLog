@@ -1,4 +1,5 @@
 Wed  7 Oct 21:54:38 1998 Danny Backx (danny@gnu.org)
+	* Release version 1.6.8
 	* configure.in, doc/Makefile.am : check whether we have texi2html
 	  and cope with failure on that test.
 	  Note that texi2html is widely available on the Internet
