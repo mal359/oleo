@@ -11,7 +11,7 @@
 # PARTICULAR PURPOSE.
 
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Attic/Makefile.in,v 1.21 1999/01/21 23:28:16 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Attic/Makefile.in,v 1.22 1999/01/23 10:15:01 danny Exp $
 #
 
 
@@ -91,6 +91,8 @@ U = @U@
 USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
 USE_NLS = @USE_NLS@
 VERSION = @VERSION@
+XLT_CFLAGS = @XLT_CFLAGS@
+XLT_LIBS = @XLT_LIBS@
 YACC = @YACC@
 include_motif = @include_motif@
 include_sciplot = @include_sciplot@

@@ -1,3 +1,5 @@
+	* Build can handle SciPlot in Xlt. Xlt is a library of contributed
+	  widgets that comes with LessTif.
 
 Fri Jan 22 00:25:32 1999, Danny Backx (danny@gnu.org)
 	* Arrow keys bugfix for traditional X11 interface by 
