@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
-AUTOMAKE_OPTIONS = gnu 1.2d
+AUTOMAKE_OPTIONS = gnu 1.2f
 
-SUBDIRS = doc lib src po intl
+SUBDIRS = doc lib po intl src
 
 EXTRA_DIST = oleobug.in
 

@@ -27,3 +27,6 @@ Short-term TODO's:
 * Fix sort routines (Nov 15/97 - Steve Fisk)
 
 * Get a useful copy of Ansi2Knr going (Nov 29/97 - JB)
+
+# Figure out why sort.c requires functions passed as args to a function
+(03-14/1998 - JB)

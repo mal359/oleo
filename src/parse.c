@@ -1,5 +1,5 @@
 
-/*  A Bison parser, made from /root/oleo/src/parse.y
+/*  A Bison parser, made from /home/jbailey/oleo/src/parse.y
  by  GNU Bison version 1.25
   */
 
@@ -28,7 +28,7 @@
 #define	L_NE	278
 #define	L_GE	279
 
-#line 1 "/root/oleo/src/parse.y"
+#line 1 "/home/jbailey/oleo/src/parse.y"
 
 /*	Copyright (C) 1990, 1992, 1993 Free Software Foundation, Inc.
 
@@ -47,7 +47,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Oleo; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-#line 41 "/root/oleo/src/parse.y"
+#line 41 "/home/jbailey/oleo/src/parse.y"
 
 #include "funcdef.h"
 
@@ -877,84 +877,84 @@ yyreduce:
   switch (yyn) {
 
 case 1:
-#line 87 "/root/oleo/src/parse.y"
+#line 87 "/home/jbailey/oleo/src/parse.y"
 { parse_return=yyvsp[0]; ;
     break;}
 case 2:
-#line 88 "/root/oleo/src/parse.y"
+#line 88 "/home/jbailey/oleo/src/parse.y"
 {
 		if(!parse_error)
 			parse_error=PARSE_ERR;
 		parse_return=0; ;
     break;}
 case 5:
-#line 96 "/root/oleo/src/parse.y"
+#line 96 "/home/jbailey/oleo/src/parse.y"
 {
 		yyval=yyvsp[-2]; ;
     break;}
 case 6:
-#line 98 "/root/oleo/src/parse.y"
+#line 98 "/home/jbailey/oleo/src/parse.y"
 {
 		(yyvsp[-3])->n_x.v_subs[0]=yyvsp[-1];
 		(yyvsp[-3])->n_x.v_subs[1]=(struct node *)0;
 		yyval=yyvsp[-3]; ;
     break;}
 case 7:
-#line 102 "/root/oleo/src/parse.y"
+#line 102 "/home/jbailey/oleo/src/parse.y"
 {
 		(yyvsp[-5])->n_x.v_subs[0]=yyvsp[-3];
 		(yyvsp[-5])->n_x.v_subs[1]=yyvsp[-1];
 		yyval=yyvsp[-5]; ;
     break;}
 case 8:
-#line 106 "/root/oleo/src/parse.y"
+#line 106 "/home/jbailey/oleo/src/parse.y"
 {
 		(yyvsp[-7])->n_x.v_subs[0]=make_list(yyvsp[-5],yyvsp[-3]);
  		(yyvsp[-7])->n_x.v_subs[1]=yyvsp[-1];
  		yyval=yyvsp[-7];;
     break;}
 case 9:
-#line 110 "/root/oleo/src/parse.y"
+#line 110 "/home/jbailey/oleo/src/parse.y"
 {
 		(yyvsp[-9])->n_x.v_subs[0]=make_list(yyvsp[-7],yyvsp[-5]);
  		(yyvsp[-9])->n_x.v_subs[1]=make_list(yyvsp[-3],yyvsp[-1]);
  		yyval=yyvsp[-9];;
     break;}
 case 10:
-#line 114 "/root/oleo/src/parse.y"
+#line 114 "/home/jbailey/oleo/src/parse.y"
 {
 		(yyvsp[-3])->n_x.v_subs[0]=(struct node *)0;
 		(yyvsp[-3])->n_x.v_subs[1]=yyvsp[-1];
 		yyval=yyvsp[-3]; ;
     break;}
 case 11:
-#line 118 "/root/oleo/src/parse.y"
+#line 118 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-3]->n_x.v_subs[0]=yyvsp[-1];
 		yyval=yyvsp[-3]; ;
     break;}
 case 12:
-#line 121 "/root/oleo/src/parse.y"
+#line 121 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-3]->n_x.v_subs[0]=yyvsp[-1];
 		yyval=yyvsp[-3]; ;
     break;}
 case 13:
-#line 125 "/root/oleo/src/parse.y"
+#line 125 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-5]->n_x.v_subs[0]=yyvsp[-3];
 		yyvsp[-5]->n_x.v_subs[1]=yyvsp[-1];
 		yyval=yyvsp[-5]; ;
     break;}
 case 14:
-#line 129 "/root/oleo/src/parse.y"
+#line 129 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-5]->n_x.v_subs[0]=yyvsp[-3];
 		yyvsp[-5]->n_x.v_subs[1]=yyvsp[-1];
 		yyval=yyvsp[-5]; ;
     break;}
 case 15:
-#line 135 "/root/oleo/src/parse.y"
+#line 135 "/home/jbailey/oleo/src/parse.y"
 {
 		if(yyvsp[-7]->comp_value!=F_INDEX)
 			parse_error=PARSE_ERR;
@@ -964,7 +964,7 @@ case 15:
 		yyval=yyvsp[-7]; ;
     break;}
 case 16:
-#line 142 "/root/oleo/src/parse.y"
+#line 142 "/home/jbailey/oleo/src/parse.y"
 {
 		if(yyvsp[-7]->comp_value!=F_INDEX)
 			parse_error=PARSE_ERR;
@@ -974,28 +974,28 @@ case 16:
 		yyval=yyvsp[-7]; ;
     break;}
 case 17:
-#line 150 "/root/oleo/src/parse.y"
+#line 150 "/home/jbailey/oleo/src/parse.y"
 {
 		(yyvsp[-7])->n_x.v_subs[0]=make_list(yyvsp[-5],yyvsp[-3]);
  		(yyvsp[-7])->n_x.v_subs[1]=yyvsp[-1];
  		yyval=yyvsp[-7];;
     break;}
 case 18:
-#line 154 "/root/oleo/src/parse.y"
+#line 154 "/home/jbailey/oleo/src/parse.y"
 {
 		(yyvsp[-7])->n_x.v_subs[0]=make_list(yyvsp[-5],yyvsp[-3]);
  		(yyvsp[-7])->n_x.v_subs[1]=yyvsp[-1];
  		yyval=yyvsp[-7];;
     break;}
 case 19:
-#line 159 "/root/oleo/src/parse.y"
+#line 159 "/home/jbailey/oleo/src/parse.y"
 {
 		(yyvsp[-3])->n_x.v_subs[0]=(struct node *)0;
 		(yyvsp[-3])->n_x.v_subs[1]=yyvsp[-1];
 		yyval=yyvsp[-3]; ;
     break;}
 case 20:
-#line 163 "/root/oleo/src/parse.y"
+#line 163 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-3]->comp_value=IF;
 		yyvsp[-3]->n_x.v_subs[0]=yyvsp[-1];
@@ -1005,98 +1005,98 @@ case 20:
 		yyval=yyvsp[-3]; ;
     break;}
 case 21:
-#line 174 "/root/oleo/src/parse.y"
+#line 174 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 22:
-#line 178 "/root/oleo/src/parse.y"
+#line 178 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 23:
-#line 182 "/root/oleo/src/parse.y"
+#line 182 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 24:
-#line 186 "/root/oleo/src/parse.y"
+#line 186 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 25:
-#line 190 "/root/oleo/src/parse.y"
+#line 190 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 26:
-#line 194 "/root/oleo/src/parse.y"
+#line 194 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 27:
-#line 198 "/root/oleo/src/parse.y"
+#line 198 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 28:
-#line 202 "/root/oleo/src/parse.y"
+#line 202 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 29:
-#line 206 "/root/oleo/src/parse.y"
+#line 206 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 30:
-#line 210 "/root/oleo/src/parse.y"
+#line 210 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 31:
-#line 214 "/root/oleo/src/parse.y"
+#line 214 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 32:
-#line 218 "/root/oleo/src/parse.y"
+#line 218 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 33:
-#line 222 "/root/oleo/src/parse.y"
+#line 222 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[-2];
 		yyvsp[-1]->n_x.v_subs[1]=yyvsp[0];
 		yyval = yyvsp[-1]; ;
     break;}
 case 34:
-#line 226 "/root/oleo/src/parse.y"
+#line 226 "/home/jbailey/oleo/src/parse.y"
 {
 		if(yyvsp[0]->comp_value==CONST_FLT) {
 			yyvsp[0]->n_x.v_float= -(yyvsp[0]->n_x.v_float);
@@ -1114,48 +1114,48 @@ case 34:
 		} ;
     break;}
 case 35:
-#line 241 "/root/oleo/src/parse.y"
+#line 241 "/home/jbailey/oleo/src/parse.y"
 {
 		yyvsp[-1]->n_x.v_subs[0]=yyvsp[0];
 		yyvsp[-1]->n_x.v_subs[1]=(struct node *)0;
 		yyval = yyvsp[-1]; ;
     break;}
 case 36:
-#line 246 "/root/oleo/src/parse.y"
+#line 246 "/home/jbailey/oleo/src/parse.y"
 { yyval = yyvsp[-1]; ;
     break;}
 case 37:
-#line 247 "/root/oleo/src/parse.y"
+#line 247 "/home/jbailey/oleo/src/parse.y"
 {
 		if(!parse_error)
 			parse_error=NO_CLOSE;
 		;
     break;}
 case 38:
-#line 255 "/root/oleo/src/parse.y"
+#line 255 "/home/jbailey/oleo/src/parse.y"
 {
 		if(!parse_error)
 			parse_error=NO_CLOSE;
 		;
     break;}
 case 39:
-#line 263 "/root/oleo/src/parse.y"
+#line 263 "/home/jbailey/oleo/src/parse.y"
 { yyval = make_list(yyvsp[0], 0); ;
     break;}
 case 40:
-#line 265 "/root/oleo/src/parse.y"
+#line 265 "/home/jbailey/oleo/src/parse.y"
 { yyval = make_list(yyvsp[0], yyvsp[-2]); ;
     break;}
 case 43:
-#line 273 "/root/oleo/src/parse.y"
+#line 273 "/home/jbailey/oleo/src/parse.y"
 { yyval=make_list(yyvsp[0], 0); ;
     break;}
 case 44:
-#line 275 "/root/oleo/src/parse.y"
+#line 275 "/home/jbailey/oleo/src/parse.y"
 { yyval=make_list(yyvsp[0],yyvsp[-2]); ;
     break;}
 case 45:
-#line 279 "/root/oleo/src/parse.y"
+#line 279 "/home/jbailey/oleo/src/parse.y"
 { yyval=yyvsp[0]; ;
     break;}
 }
@@ -1356,7 +1356,7 @@ yyerrhandle:
   yystate = yyn;
   goto yynewstate;
 }
-#line 282 "/root/oleo/src/parse.y"
+#line 282 "/home/jbailey/oleo/src/parse.y"
 
 
 void

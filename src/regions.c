@@ -1,4 +1,4 @@
-/*	Copyright (C) 1990, 1992, 1993 Free Software Foundation, Inc.
+/*	Copyright (C) 1990, 1992, 1993 Free Software Foundation, Inc.)
 
 This file is part of Oleo, the GNU Spreadsheet.
 
@@ -34,6 +34,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "io-term.h"
 #include "window.h"
 #include "cmd.h"
+#include "sort.h"
 
 
 struct rng all_rng = {MIN_ROW, MIN_COL, MAX_ROW, MAX_COL};
@@ -76,7 +77,7 @@ delete_region (struct rng *where)
   modified = 1;
 
   find_cells_in_range (where);
-  while (pp = next_row_col_in_range (&rr, &cc))
+  while ((pp = next_row_col_in_range (&rr, &cc)))
     {
       if (!pp->cell_formula && !GET_TYP (pp))
 	{
@@ -105,7 +106,7 @@ lock_region (struct rng *where, int locked)
 
   modified = 1;
   make_cells_in_range (where);
-  while (cp = next_cell_in_range ())
+  while ((cp = next_cell_in_range ()))
     SET_LCK (cp, locked);
 }
 
@@ -117,7 +118,7 @@ format_region (struct rng *where, int fmt, int just)
 
   modified = 1;
   make_cells_in_range (where);
-  while (cp = next_row_col_in_range (&rr, &cc))
+  while ((cp = next_row_col_in_range (&rr, &cc)))
     {
       if (fmt != -1)
 	SET_FMT (cp, fmt);

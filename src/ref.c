@@ -632,7 +632,7 @@ copy_cell (CELLREF rf, CELLREF cf, CELLREF rt, CELLREF ct)
       cpf->cell_formula = ck_malloc (hi - cpf->cell_formula);
       if (len)
 	bcopy (my_cell->cell_formula, cpf->cell_formula, len);
-      while (fp = pop_stack (moving))
+      while ((fp = pop_stack (moving)))
 	{
 	  byte = fp[-1];
 	  if ((byte | ROWREL | COLREL) == (R_CELL | ROWREL | COLREL))
@@ -847,7 +847,7 @@ add_range_ref (struct rng *rng)
 
   add_ref_fm (&(other_cell->cell_refs_from), cur_row, cur_col);
   newref = other_cell->cell_refs_from;
-  while (other_cell = next_cell_in_range ())
+  while ((other_cell = next_cell_in_range ()))
     {
       if (other_cell->cell_refs_from == oldref)
 	{
@@ -902,7 +902,7 @@ flush_range_ref (struct rng *rng, CELLREF rr, CELLREF cc)
 
   flush_ref_fm (&(other_cell->cell_refs_from), rr, cc);
   newref = other_cell->cell_refs_from;
-  while (other_cell = next_cell_in_range ())
+  while ((other_cell = next_cell_in_range ()))
     {
       if (other_cell->cell_refs_from == oldref)
 	{
@@ -1571,7 +1571,7 @@ shift_outside (struct rng *fm, int dn, int ov)
 
   find_cells_in_range (fm);
 
-  while (cp = next_row_col_in_range (&rr, &cc))
+  while ((cp = next_row_col_in_range (&rr, &cc)))
     {
       /* cp/rr/cc is a cell in FM. */
 
@@ -1918,7 +1918,7 @@ shift_outside (struct rng *fm, int dn, int ov)
 	}
     }
 
-  while (ptr = pop_stack (moving))
+  while ((ptr = pop_stack (moving)))
     {
       if (ptr == DEF_REF)
 	{
@@ -2313,7 +2313,7 @@ int
 eval_next_cell (void)
 {
   CELL *cp;
-  static loop_counter = 40;
+  static int loop_counter = 40;
 
   if (cell_buffer.pop_frm_here == cell_buffer.push_to_here)
     return 0;

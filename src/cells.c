@@ -223,7 +223,7 @@ do_member (p)
   CELL *cell_ptr;
 
   find_cells_in_range (&(p->Rng));
-  while (cell_ptr = next_row_col_in_range (&crow, &ccol))
+  while ((cell_ptr = next_row_col_in_range (&crow, &ccol)))
     {
       if (GET_TYP (cell_ptr) != (p + 1)->type)
 	continue;
@@ -276,7 +276,7 @@ do_smember (p)
 
   string = (p + 1)->String;
   find_cells_in_range (&(p->Rng));
-  while (cell_ptr = next_row_col_in_range (&crow, &ccol))
+  while ((cell_ptr = next_row_col_in_range (&crow, &ccol)))
     {
       if (((GET_TYP (cell_ptr) == 0) && (string[0] == '\0'))
 	  || (cell_ptr && (GET_TYP (cell_ptr) == TYP_STR)
@@ -304,7 +304,7 @@ do_members (p)
 
   string = (p + 1)->String;
   find_cells_in_range (&(p->Rng));
-  while (cell_ptr = next_row_col_in_range (&crow, &ccol))
+  while ((cell_ptr = next_row_col_in_range (&crow, &ccol)))
     {
       if (GET_TYP (cell_ptr) != TYP_STR)
 	continue;
@@ -332,7 +332,7 @@ do_pmember (p)
 
   string = (p + 1)->String;
   find_cells_in_range (&(p->Rng));
-  while (cell_ptr = next_row_col_in_range (&crow, &ccol))
+  while ((cell_ptr = next_row_col_in_range (&crow, &ccol)))
     {
       if ((GET_TYP (cell_ptr) == 0 && string[0] == '\0')
 	  || (cell_ptr && GET_TYP (cell_ptr) == TYP_STR && !strncmp (string, cell_ptr->cell_str, strlen (cell_ptr->cell_str))))
@@ -361,7 +361,7 @@ do_memberp (p)
   string = (p + 1)->String;
   find_cells_in_range (&(p->Rng));
   tmp = strlen (string);
-  while (cell_ptr = next_row_col_in_range (&crow, &ccol))
+  while ((cell_ptr = next_row_col_in_range (&crow, &ccol)))
     {
       if (GET_TYP (cell_ptr) != TYP_STR)
 	continue;

@@ -26,6 +26,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
    on sparse arrays, where some or all of the elements may not exist
  */
 
+#include "sort.h"
+
 /* Envoke the comparison function, returns either 0, < 0, or > 0. */
 #define CMP(A,B) ((*cmp)((A),(B)))
 

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1998-01-16 10:49-0800\n"
+"POT-Creation-Date: 1998-03-14 18:33-0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,7 +14,20 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: ENCODING\n"
 
-#: src/io-term.c:866
+#: src/io-term.c:859
 #, c-format
-msgid "Usage: %s "
+msgid "Usage: %s [OPTION]... [FILE]...\n"
+msgstr ""
+
+#: src/io-term.c:862
+msgid ""
+"\n"
+"  -h, --help               display this help and exit\n"
+"  -V, --version            output version information and exit\n"
+"  -q, --quiet              do not display startup messages\n"
+"  -f, --ignore-init-file   ignore settings defined in init file\n"
+"  -t, --no-toolkit         disable X toolkit\n"
+"  -x, --nw                 disable graphics and fallback to curses\n"
+"\n"
+"Report bugs to <bug-oleo@gnu.org>.\n"
 msgstr ""

@@ -277,7 +277,7 @@ sylk_read_file (fp, ismerge)
 	      rng.hr = mx_row;
 	      rng.hc = czcol;
 	      make_cells_in_range (&rng);
-	      while (cp = next_cell_in_range ())
+	      while ((cp = next_cell_in_range ()))
 		{
 		  SET_FMT (cp, fmt);
 		  SET_JST (cp, jst);
@@ -289,7 +289,7 @@ sylk_read_file (fp, ismerge)
 	      rng.hr = czrow;
 	      rng.hc = mx_col;
 	      make_cells_in_range (&rng);
-	      while (cp = next_cell_in_range ())
+	      while ((cp = next_cell_in_range ()))
 		{
 		  SET_FMT (cp, fmt);
 		  SET_JST (cp, jst);
@@ -710,7 +710,7 @@ sylk_write_file (fp, rng)
   sylk_rng = rng;
   for_all_vars (sylk_write_var);
   find_cells_in_range (rng);
-  while (cp = next_row_col_in_range (&r, &c))
+  while ((cp = next_row_col_in_range (&r, &c)))
     {
       char *ptr;
       int f1, j1;

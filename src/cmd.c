@@ -23,6 +23,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include <errno.h>
 #include <stdarg.h>
 #include "sysdef.h"
+#include <termios.h>
+
 #ifndef _DEBUG_MALLOC_INC
 #define local_free free
 #else 

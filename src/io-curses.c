@@ -44,6 +44,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "key.h"
 #include "input.h"
 #include "info.h"
+#include <term.h>
 
 #define MIN_WIN_HEIGHT	(cwin->flags&WIN_EDGES ? 2 : 1)
 #define MIN_WIN_WIDTH	(cwin->flags&WIN_EDGES ? 6 : 1)
@@ -533,7 +534,7 @@ _io_repaint (void)
 	}
       flush_slops (win->win_slops);
       find_cells_in_range (&(win->screen));
-      while (cp = next_row_col_in_range (&rr, &cc))
+      while ((cp = next_row_col_in_range (&rr, &cc)))
 	if (GET_TYP (cp))
 	  io_pr_cell_win (win, rr, cc, cp);
     }
@@ -574,7 +575,7 @@ _io_wait_for_input (void)
 }
 
 static int 
-_io_read_kbd (VOLATILE char *buf, int size)
+_io_read_kbd (char *buf, int size)
 {
   int r = read (0, buf, size);
   FD_CLR (0, &read_pending_fd_set);
@@ -898,11 +899,12 @@ _io_pr_cell_win (struct window *win, CELLREF r, CELLREF c, CELL *cp)
 	    }
 	}
       
-      if (lenstr > wwid - 1)
+      if (lenstr > wwid - 1) {  /* FIXME: This construct needs to be checked */
 	if (GET_TYP (cp) == TYP_FLT)
 	  ptr = adjust_prc (ptr, cp, wwid - 1, wid - 1, j);
 	else if (GET_TYP (cp) == TYP_INT)
 	  ptr = (char *) numb_oflo;
+      }
       
       if (wwid == 1)
 	{
@@ -955,13 +957,13 @@ _io_pr_cell_win (struct window *win, CELLREF r, CELLREF c, CELL *cp)
 	{
 	  change_slop (win->win_slops, r, ccl, cch, c, cc);
 	  for (; cch > cc; --cch)
-	    if (wwid = get_width (cch))
+	    if ((wwid = get_width (cch)))
 	      {
 		move_cursor_to (win, r, cch, 0);
 		printw ("%*s", wwid, "");
 	      }
 	  for (cch = c - 1; cch > ccl; --cch)
-	    if (wwid = get_width (cch))
+	    if ((wwid = get_width (cch)))
 	      {
 		move_cursor_to (win, r, cch, 0);
 		printw ("%*s", wwid, "");

@@ -128,7 +128,7 @@ list_write_file (fp, rng)
   rMax = rng->lr;
   cMax = rng->lc;
   find_cells_in_range (rng);
-  while (cp = next_row_col_in_range (&row, &col)) {
+  while ((cp = next_row_col_in_range (&row, &col))) {
     if (row > rMax) rMax = row;
     if (col > cMax) cMax = col;
   }

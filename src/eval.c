@@ -1186,7 +1186,7 @@ deal_area (cmd, num_args, p)
 
 	case TYP_RNG:
 	  find_cells_in_range (&(p[num_args].Rng));
-	  while (cell_ptr = next_cell_in_range ())
+	  while ((cell_ptr = next_cell_in_range ()))
 	    {
 	      if (GET_TYP (cell_ptr) == TYP_FLT)
 		add_flt (cell_ptr->cell_flt);

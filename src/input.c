@@ -154,13 +154,17 @@ iv_reset_input (struct input_view * this_iv)
   char * km = desired_keymap_prompt (this_iv);
   if (km && (km == Keymap_prompt))
     return;
-  printf("input.c: iv_reset_input\n");
+#ifdef DEBUG
+  fprintf(stderr, "input.c: iv_reset_input\n");
+#endif
 
   Redraw_needed = FULL_REDRAW;
   Keymap_prompt = km;
   if (km)
     {
-      printf("input.c: inside if (km) loop\n");
+#ifdef DEBUG
+      fprintf(stderr, "input.c: inside if (km) loop\n");
+#endif
       /* A keymap prompt should be displayed. */
       Expanded_keymap_prompt = expand_prompt (Keymap_prompt);
       Prompt_wid = Prompt_metric (Expanded_keymap_prompt,
@@ -174,10 +178,14 @@ iv_reset_input (struct input_view * this_iv)
     }
   else
     {
-      printf("input.c: inside if!(km) loop\n");
+#ifdef DEBUG
+      fprintf(stderr, "input.c: inside if!(km) loop\n");
+#endif
       if (Expanded_keymap_prompt)
 	{
-	  printf("input.c: inside Expanded_keymap_prompt\n");
+#ifdef DEBUG
+	  fprintf(stderr, "input.c: inside Expanded_keymap_prompt\n");
+#endif
 	  ck_free (Expanded_keymap_prompt);
 	  Expanded_keymap_prompt = 0;
 	}
@@ -193,17 +201,27 @@ iv_reset_input (struct input_view * this_iv)
 	}
       else
 	{
-	  printf("input.c: inside else of ~the_cmd_frame, etc...\n");
+#ifdef DEBUG
+	  fprintf(stderr, "input.c: inside else of ~the_cmd_frame, etc...\n");
+#endif
 	  Prompt_wid = Prompt_metric (the_cmd_arg.expanded_prompt,
 				       strlen (the_cmd_arg.expanded_prompt));
-          printf("step1\n");
+#ifdef DEBUG
+          fprintf(stderr, "step1\n");
+#endif
 	  Must_fix_input = 0;
-	  printf("step2\n");
+#ifdef DEBUG
+	  fprintf(stderr, "step2\n");
+#endif
 	  Input_area = &the_cmd_arg.text;
-	  printf("step3\n");
+#ifdef DEBUG
+	  fprintf(stderr, "step3\n");
+#endif
 	  Prompt = the_cmd_arg.expanded_prompt;
 
-	  printf("input.c: Before scr_cols loop\n");
+#ifdef DEBUG
+	  fprintf(stderr, "input.c: Before scr_cols loop\n");
+#endif
 	  if ((scr_cols - Prompt_wid) < Input_metric ("M", 1))
 	    Prompt += find_vis_begin (&Prompt_wid,
 				      scr_cols - Input_metric("M", 1),
@@ -212,7 +230,9 @@ iv_reset_input (struct input_view * this_iv)
 	  
 	  {
 	    int wid_avail = scr_cols - Prompt_wid;
-	    printf("input.c: Inside scr_cols loop\n");
+#ifdef DEBUG
+	    fprintf(stderr, "input.c: Inside scr_cols loop\n");
+#endif
 	    Visibility_begin =
 	      find_vis_begin (0, wid_avail / 2, Input_area->buf,
 			      the_cmd_arg.cursor, Input_metric);
@@ -226,7 +246,9 @@ iv_reset_input (struct input_view * this_iv)
 	  set_vis_wid (this_iv);
 	}
     }
-    printf("input.c: Leaving iv_reset_input\n");
+#ifdef DEBUG
+    fprintf(stderr, "input.c: Leaving iv_reset_input\n");
+#endif
 }
 
 

@@ -687,7 +687,7 @@ adjust_prc (char *oldp, CELL * cp, int width, int smallwid, int just)
       bptr = (char *) strstr (oldp, ufmt->decpt);
       if (!bptr)
 	return numb_oflo;
-      while (eptr = (char *) strstr (bptr + 1, ufmt->decpt))
+      while ((eptr = (char *) strstr (bptr + 1, ufmt->decpt)))
 	bptr = eptr;
 
       if (width < bptr - oldp)
@@ -782,7 +782,7 @@ set_usr_stats (int usr_n, char **usr_buf)
   if (usr_buf[0][0])
     {
       p_in = usr_buf[0];
-      while (*p_out++ = *p_in++)
+      while ((*p_out++ = *p_in++))
 	;
     }
   else
@@ -792,7 +792,7 @@ set_usr_stats (int usr_n, char **usr_buf)
     {
       p_in = usr_buf[1];
       u[usr_n].n_hdr = p_out;
-      while (*p_out++ = *p_in++)
+      while ((*p_out++ = *p_in++))
 	;
     }
   else
@@ -802,7 +802,7 @@ set_usr_stats (int usr_n, char **usr_buf)
     {
       p_in = usr_buf[2];
       u[usr_n].p_trl = p_out;
-      while (*p_out++ = *p_in++)
+      while ((*p_out++ = *p_in++))
 	;
     }
   else
@@ -812,7 +812,7 @@ set_usr_stats (int usr_n, char **usr_buf)
     {
       p_in = usr_buf[3];
       u[usr_n].n_trl = p_out;
-      while (*p_out++ = *p_in++)
+      while ((*p_out++ = *p_in++))
 	;
     }
   else
@@ -822,7 +822,7 @@ set_usr_stats (int usr_n, char **usr_buf)
     {
       p_in = usr_buf[4];
       u[usr_n].zero = p_out;
-      while (*p_out++ = *p_in++)
+      while ((*p_out++ = *p_in++))
 	;
     }
   else
@@ -832,7 +832,7 @@ set_usr_stats (int usr_n, char **usr_buf)
     {
       p_in = usr_buf[5];
       u[usr_n].comma = p_out;
-      while (*p_out++ = *p_in++)
+      while ((*p_out++ = *p_in++))
 	;
     }
   else
@@ -842,7 +842,7 @@ set_usr_stats (int usr_n, char **usr_buf)
     {
       p_in = usr_buf[6];
       u[usr_n].decpt = p_out;
-      while (*p_out++ = *p_in++)
+      while ((*p_out++ = *p_in++))
 	;
     }
   else
@@ -899,7 +899,7 @@ char *
 cell_name (CELLREF rr, CELLREF cc)
 {
   static char strs[2][20];
-  static num = 0;
+  static int num = 0;
   char *ptr;
 
   num = num ? 0 : 1;
@@ -957,7 +957,7 @@ range_name (struct rng *rng)
 {
   CELLREF lr, lc, hr, hc;
   static char buf[2][40];
-  static num;
+  static int num;
   char *ptr;
 
   ptr = &buf[num][0];
@@ -1026,7 +1026,7 @@ char *
 col_to_str (CELLREF col)
 {
   static char strs[2][10];
-  static num;
+  static int num;
   char *ptr;
 
   ptr = &strs[num][9];

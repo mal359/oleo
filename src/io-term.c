@@ -128,23 +128,16 @@ static char * disclaimer[] =
   0
 };
 
-static char short_options[] = "Vqfxh";
+static char short_options[] = "Vqfxth";
 static struct option long_options[] =
 {
   {"version", 0, NULL, 'V'},
   {"quiet", 0, NULL, 'q'},
   {"ignore-init-file", 0, NULL, 'f'},
   {"nw", 0, NULL, 'x'},
+  {"no-toolkit", 0, NULL, 't'},
   {"help", 0, NULL, 'h'},
   {NULL, 0, NULL, 0}
-};
-
-
-static char * usage[] = 
-{
-  " [--version] [--quiet] [--ignore-init-file] [--nw] [--help] \n",
-  " [-Vqfh] [file]\n",
-  0
 };
 
 /* Avoid needless messages to stdout. */
@@ -862,13 +855,21 @@ add_usr_maps (struct keymap **new_maps)
 static void
 show_usage (void)
 {
-  char ** use = usage;
-  printf (_("Usage: %s "), PACKAGE);
-  while (*use)
-    {
-      fprintf (stderr, "%s\n", *use);
-      ++use;
-    }
+
+  printf(_("\
+Usage: %s [OPTION]... [FILE]...\n\
+"), PACKAGE);
+  printf(_("\
+\n\
+  -h, --help               display this help and exit\n\
+  -V, --version            output version information and exit\n\
+  -q, --quiet              do not display startup messages\n\
+  -f, --ignore-init-file   ignore settings defined in init file\n\
+  -t, --no-toolkit         disable X toolkit\n\
+  -x, --nw                 disable graphics and fallback to curses\n\
+\n\
+Report bugs to <bug-oleo@gnu.org>.\n\
+"));
 }
 
 static RETSIGTYPE
@@ -926,6 +927,9 @@ main (int argc, char **argv)
 	  case 'x':
 	    no_x = 1;
 	    break;
+          case 't':
+            no_gtk = 1;
+            break;
 	  case 'h':
 	    show_usage ();
 	    exit (0);
@@ -992,7 +996,7 @@ main (int argc, char **argv)
   FD_ZERO (&exception_pending_fd_set);
 
 #ifdef HAVE_LIBGTK
-   if (!no_gtk) {
+   if ((!no_gtk)&&(!no_x)) {
 
 	gtk_init(&argc, &argv);
 
@@ -1089,7 +1093,7 @@ main (int argc, char **argv)
       FILE * fp;
       /* fixme: record file name */
       ++optind;
-      if (fp = fopen (argv[1], "r"))
+      if ((fp = fopen (argv[1], "r")))
 	{
 	  if (setjmp (error_exception))
 	    fprintf (stderr, "  error occured reading %s", argv[1]);

@@ -28,6 +28,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "io-abstract.h"
 #include "basic.h"
 #include "io-gtk.h"
+#include "io-utils.h"
+#include "regions.h"
 
 /* FIXME - Put this in an .oleorc file */
 
@@ -63,7 +65,9 @@ g_input_metric (char *str, int len)
 void
 gfile_selection_ok (GtkWidget *widget, GtkFileSelection *file)
 {
-	printf("io-gtk.c: %s\n", gtk_file_selection_get_filename (GTK_FILE_SELECTION (file)));
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: %s\n", gtk_file_selection_get_filename (GTK_FILE_SELECTION (file)));
+#endif
 	gdestroy_window (NULL, &widget);
 }
 
@@ -72,7 +76,9 @@ gfile_selection ()
 {
 	GtkWidget *window = NULL;
 
-	printf("io-gtk.c: In gfile_selection\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: In gfile_selection\n");
+#endif
 	
 	window = gtk_file_selection_new ("file selection dialog");
 	gtk_window_position (GTK_WINDOW (window), GTK_WIN_POS_MOUSE);
@@ -112,8 +118,8 @@ gio_redraw_input_cursor (GtkWidget *widget, int on)
 {
 	struct input_view * iv = &gtkPort->input_view;
 	int offset = iv->input_cursor - iv->visibility_begin;
-	int start;
-	int cwid;
+	int start = 0;
+	int cwid = 0;
 	int ypos = (iv->current_info ? 0 : input);
 	char * inp;
 	gtkTextItem cursor_text;
@@ -126,7 +132,9 @@ gio_redraw_input_cursor (GtkWidget *widget, int on)
 	cursor_text.lentext = 1;
 	cursor_text.text = " ";
 
-	printf("io-gtk.c: Before gdraw_text_item\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: Before gdraw_text_item\n");
+#endif
 	gdraw_text_item((GtkWidget*)widget, start, ypos, cwid, input_rows,
 			gtkPort->input_font, &cursor_text, 1);
 } 
@@ -138,12 +146,16 @@ gio_redraw_input (GtkWidget *widget)
 	int ypos = (iv->current_info ? 0 : input);
 	gtkTextItem text;
 
-	printf("io-gtk.c: Beginning of gio_redraw_input\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: Beginning of gio_redraw_input\n");
+#endif
 
 	/* FIXME */
 	if (iv->redraw_needed == NO_REDRAW) return;
 	if (iv->redraw_needed == FULL_REDRAW) {
-		printf("io-gtk.c: In FULL_REDRAW\n");
+#ifdef DEBUG
+		fprintf(stderr, "io-gtk.c: In FULL_REDRAW\n");
+#endif
 		if (iv->expanded_keymap_prompt) {
 			text.text = iv->expanded_keymap_prompt;
 			text.lentext = strlen (iv->expanded_keymap_prompt);
@@ -154,7 +166,9 @@ gio_redraw_input (GtkWidget *widget)
 			gio_redraw_input_cursor ((GtkWidget*)widget, 1);
 			return;	
 		} else if (iv->prompt_wid) {
-			printf("io-gtk.c: Not FULL_REDRAW, Not NO_REDRAW\n");
+#ifdef DEBUG
+			fprintf(stderr, "io-gtk.c: Not FULL_REDRAW, Not NO_REDRAW\n");
+#endif
 			text.text = iv->prompt;
 			text.lentext = prompt_len (text.text);
 			gdraw_text_item((GtkWidget*)widget, 0, ypos,
@@ -170,7 +184,9 @@ gio_expose_backing (GtkWidget *widget, GdkEventExpose *event)
 {
 	gtkTextItem cursor_text;
 
-	printf("io-gtk.c: Beginning of gio_expose_backing\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: Beginning of gio_expose_backing\n");
+#endif
 
 	gdk_draw_pixmap(widget->window,
 			widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
@@ -233,9 +249,11 @@ gio_open_display()
 	GtkWidget *drawing_area;
 	GtkObject *adjustment;
 
-	printf("io-gtk.c: In gio_open_display\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: In gio_open_display\n");
+#endif
 	
-	gtkPort = (TgtkPort) xmalloc (sizeof (*gtkPort));
+	gtkPort = (TgtkPort) ck_malloc (sizeof (*gtkPort));
 
 	gtkPort->cursor_visible = 1;
 	gtkPort->redisp_needed = 1;
@@ -344,7 +362,9 @@ gio_open_display()
 	/* FIXME remove global variables!!! UGH!!*/
 	mainWindow = drawing_area;
 	
-	printf("io-gtk.c: Before first signal connect\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: Before first signal connect\n");
+#endif
 
 	gtk_signal_connect (GTK_OBJECT (drawing_area), "configure_event",
 			    (GtkSignalFunc) gio_configure_backing, NULL);
@@ -381,67 +401,90 @@ gio_inputize_cursor(void)
 void
 gio_cellize_cursor(void)
 {
-	printf("io-gtk.c: STUB gio_cellize_cursor\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_cellize_cursor\n");
+#endif
 }
 
 void
 gio_hide_cell_cursor(void)
 {
-	printf("io-gtk.c: STUB gio_hide_cell_cursor\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_hide_cell_cursor\n");
+#endif
 }
 
 void
-gio_pr_cell_win(void)
+gio_pr_cell_win(struct window *win, CELLREF r, CELLREF c, CELL *cp)
 {
-	printf("io-gtk.c: STUB gio_pr_cell_win\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_pr_cell_win\n");
+#endif
 }
 
 void
 gio_clear_input_after(void)
 {
-	printf("io-gtk.c: STUB gio_clear_input_after\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_clear_input_after\n");
+#endif
 }
 
 void
 gio_clear_input_before(void)
 {
-	printf("io-gtk.c: STUB gio_clear_input_before\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_clear_input_before\n");
+#endif
 }
 
 void
 gio_flush(void)
 {
-	printf("io-gtk.c: STUB gio_flush\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_flush\n");
+#endif
 }
 
 void
-gio_over(void)
+gio_over(char * str, int len)
 {
-	printf("io-gtk.c: STUB gio_over\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_over\n");
+#endif
+
 }
 
 void
-gio_insert(void)
+gio_insert(int len)
 {
-	printf("io-gtk.c: STUB gio_insert\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_insert\n");
+#endif
 }
 
 void
-gio_erase(void)
+gio_erase(int len)
 {
-	printf("io-gtk.c: STUB gio_erase\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_erase\n");
+#endif
 }
 
 void
 gio_move_cursor(void)
 {
-	printf("io-gtk.c: STUB gio_move_cursor\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_move_cursor\n");
+#endif
 }
 
 void
 gio_fix_input(void)
 {
-	printf("io-gtk.c: Entering gio_fix_input\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: Entering gio_fix_input\n");
+#endif
 	iv_fix_input (&gtkPort->input_view);
 }
 
@@ -519,7 +562,7 @@ gio_update_status(void)
 	ptr = cell_value_string (curow, cucol);
 	plen = strlen (ptr);
 
-	assembled = (char *) xmalloc (plen + dlen + mplen);
+	assembled = (char *) ck_malloc (plen + dlen + mplen);
 	if (pos - buf)
 	   bcopy (buf, assembled, pos - buf);
 	pos = assembled + (pos - buf);
@@ -531,51 +574,67 @@ gio_update_status(void)
 }
 
 int
-gio_get_chr(void)
+gio_get_chr(char *prompt)
 {
-	printf("io-gtk.c: STUB gio_get_chr\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_get_chr\n");
+#endif
 }
 
 void
 gio_bell(void)
 {
-	printf("io-gtk.c: STUB gio_bell\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_bell\n");
+#endif
 }
 
 int
 gio_getch(void)
 {
-	printf("io-gtk.c: STUB gio_getch\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_getch\n");
+#endif
 }
 
 void
-gio_nodelay(void)
+gio_nodelay(int delayp)
 {
-	printf("io-gtk.c: STUB gio_nodelay\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_nodelay\n");
+#endif
 }
 
 int
-gio_read_kbd(void)
+gio_read_kbd(VOLATILE char *buffer, int size)
 {
-	printf("io-gtk.c: STUB gio_read_kbd\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_read_kbd\n");
+#endif
 }
 
 void
 gio_wait_for_input(void)
 {
-	printf("io-gtk.c: STUB gio_wait_for_input\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_wait_for_input\n");
+#endif
 }
 
 void
-gio_scan_for_input(void)
+gio_scan_for_input(int blockp)
 {
-	printf("io-gtk.c: STUB gio_scan_for_input\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_scan_for_input\n");
+#endif
 }
 
 int
 gio_input_avail(void)
 {
-	printf("io-gtk.c: STUB gio_input_avail\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_input_avail\n");
+#endif
 }
 
 void
@@ -585,29 +644,37 @@ gio_close_display(void)
 }
 
 void
-gio_repaint_win(void)
+gio_repaint_win(struct window *win)
 {
 	/* FIXME - jb flush out */
-	printf("io-gtk.c: In gio_repaint_win\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: In gio_repaint_win\n");
+#endif
 	gtkPort->input_view.redraw_needed = FULL_REDRAW;	
 }
 
 void
 gio_repaint(void)
 {
-	printf("io-gtk.c: STUB gio_repaint\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_repaint\n");
+#endif
 }
 
 void
 gio_redisp(void)
 {
-	printf("io-gtk.c: STUB gio_redisp\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_redisp\n");
+#endif
 }
 
 void
 gio_display_cell_cursor(void)
 {
-	printf("io-gtk.c: STUB gio_display_cell_cursor\n");
+#ifdef DEBUG
+	fprintf(stderr, "io-gtk.c: STUB gio_display_cell_cursor\n");
+#endif
 }
 
 void

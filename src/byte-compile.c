@@ -690,7 +690,7 @@ loop:
 
   (void) obstack_1grow (&tmp_mem, 0);
 
-  while (node = pop_stack (str_stack))
+  while ((node = (pop_stack (str_stack))))
     {
       add_backpatch (node->add_byte, obstack_object_size (&tmp_mem));
       (void) obstack_grow (&tmp_mem, node->n_x.v_string, strlen (node->n_x.v_string) + 1);

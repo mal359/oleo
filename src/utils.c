@@ -24,6 +24,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include <errno.h>
 #include "sysdef.h"
 #include <stdarg.h>
+#include <fcntl.h>
 
 
 /* unistd.h defines _POSIX_VERSION on POSIX.1 systems.  */
@@ -129,7 +130,7 @@ backup_file_name (char *file_name)
     }
 
   max_fnum = 0;
-  while (dp = readdir (dir))
+  while ((dp = readdir (dir)))
     {
       if (!dp->d_ino
 	  || NLENGTH (dp) <= len

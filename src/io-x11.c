@@ -1963,7 +1963,7 @@ reasonable_font (Xport port, char *name)
   
   if (!f)
     {
-      printf("(warning) Font %s could not be loaded.\n", name);
+      fprintf(stderr, "(warning) Font %s could not be loaded.\n", name);
       f = XLoadQueryFont (port->dpy, default_font_name);
       if (!f)
 	{

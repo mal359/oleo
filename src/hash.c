@@ -745,7 +745,7 @@ hash_code (handle, string)
 
   n = (handle->hash_sizelog - 3);
   h = 0;
-  while (c = *string++)
+  while ((c = *string++))
     {
       h += c;
       h = (h << 3) + (h >> n) + c;

@@ -63,7 +63,7 @@ npv (rng, rate, putres)
   char *strptr;
 
   find_cells_in_range (rng);
-  for (i = 1, npv = 0.0; cell_ptr = next_cell_in_range (); i++)
+  for (i = 1, npv = 0.0; (cell_ptr = next_cell_in_range ()); i++)
     {
       switch (GET_TYP (cell_ptr))
 	{

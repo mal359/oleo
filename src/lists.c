@@ -520,7 +520,7 @@ next_cell_in_range (void)
 
   for (;;)
     {
-      if (ret = next_rng (fp->cols, 0))
+      if ((ret = next_rng (fp->cols, 0)))
 	return ret;
       new_row = next_rng (fp->rows, 0);
       if (!new_row)
@@ -545,7 +545,7 @@ next_row_col_in_range (CELLREF *rowp, CELLREF *colp)
 
   for (;;)
     {
-      if (ret = next_rng (fp->cols, rowp))
+      if ((ret = next_rng (fp->cols, rowp)))
 	{
 	  *colp = fp->rows->cur - 1;
 	  return ret;
@@ -615,7 +615,7 @@ highest_row (void)
   CELLREF hi = MIN;
 
   f = find_rng (&the_cols, MIN, MAX, sizeof (void *));
-  while (ptr = next_rng (f, 0))
+  while ((ptr = next_rng (f, 0)))
     {
       if (*ptr)
 	{

@@ -1,3 +1,40 @@
+Sat Mar 14 14:34:00 1997  Jeff Bailey  (jbailey@gnu.org)
+
+	* Makefile.am: Compile i18n stuff BEFORE source.
+	* src/io-term.c: Runtime options to disable GTK
+	* src/input.c: Make debug printf's print to stderr for redirection.
+	* src/io-term.c: ditto
+	* src/io-x11.c: ditto
+	* src/io-gtk.c: ditto
+	Patches by Scott Heavner
+	
+	* src/*.c: Make debugs only print on #ifdef DEBUG
+	* src/io-term.c: Pretty output of --help statement.
+	* configure: Fix to work with gtk-0.99.6,
+	Make -Wall on by default if GCC.
+	Add --with-debug option.
+	
+	* src/ref.c: Remove some warnings when compiled with -Wall
+	* src/eval.c: ditto
+	* src/byte-compile.c: ditto
+	* src/regions.c: ditto
+	* src/utils.c: ditto
+	* src/lists.c: ditto
+	* src/io-term.c: ditto
+	* src/io-utils.c: ditto
+	* src/hash.c: ditto
+	* src/io-curses.c: ditto
+	* src/sylk.c: ditto
+	* src/oleofile.c: ditto
+	* src/list.c: ditto
+	* src/busi.c: ditto
+	* src/cells.c: ditto
+	* src/cmd.c: ditto
+	* src/io-gtk.c: ditto
+
+	* src/sort.h: create
+	* src/Makefile.am: Include sort.h
+
 Fri Feb 27 22:35:00 1997  Jeff Bailey  (jbailey@gnu.org)
 
 	* src/input.c: Remove more debug notes.

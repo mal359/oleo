@@ -84,9 +84,9 @@ VERSION = @VERSION@
 YACC = @YACC@
 l = @l@
 
-AUTOMAKE_OPTIONS = gnu 1.2d
+AUTOMAKE_OPTIONS = gnu 1.2f
 
-SUBDIRS = doc lib src po intl
+SUBDIRS = doc lib po intl src
 
 EXTRA_DIST = oleobug.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
