@@ -1061,24 +1061,27 @@ range_name (struct rng *rng)
   hr = rng->hr;
   hc = rng->hc;
 
-  if ((lr == hr) && (lc == hc))
-    {
+  /* Return empty string when invalid */
+  if (lr == 0 || lc == 0 || hc == 0 || hr == 0 ||
+      lr >= MAX_ROW || lc >= MAX_COL || hc >= MAX_COL || hr >= MAX_ROW) {
+	ptr[0] = '\0';
+	return ptr;
+  }
+
+  if ((lr == hr) && (lc == hc)) {
       sprintf (ptr, "%s", cell_name (lr, lc));
-    }
-  else
-    {
+  } else {
       if (a0)
         sprintf (ptr, "%s:%s", cell_name (lr, lc), cell_name (hr, hc));
-      else
-        {
+      else {
           if (lr == hr && lc != hc)
             sprintf (ptr, "r%uc%u:%u", lr, lc, hc);
           else if (lr != hr && lc == hc)
             sprintf (ptr, "r%u:%uc%u", lr, hr, lc);
           else
             sprintf (ptr, "r%u:%uc%u:%u", lr, hr, lc, hc);
-        }
-    }
+      }
+  }
   return ptr;
 }
 

@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.39 1999/04/09 11:47:01 danny Exp $
+ *  $Id: io-motif.c,v 1.40 1999/04/12 13:50:23 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.39 1999/04/09 11:47:01 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.40 1999/04/12 13:50:23 danny Exp $";
 
 #include "config.h"
 
@@ -857,8 +857,6 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 		return;
 	}
 
-	MessageAppend(False, "ConfigureGraphOk\n");
-
 /* Plot title */
 	s = XmTextFieldGetString(cw->title);
 	graph_set_title(s);
@@ -884,18 +882,20 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 
 /* Data 1 */
 	p = s = XmTextFieldGetString(cw->x);
-	if ((r = parse_cell_or_range(&p, &rngx)) == 0)
-		ConversionError(s, _("range"));
-	else if (r & RANGE) {
-		graph_set_data(0, &rngx, 'h', 'r');
-	} else {
-		rngx.hr = rngx.lr;
-		rngx.hc = rngx.lc;
-		graph_set_data(0, &rngx, 'h', 'r');
-	}
+	if (strlen(s)) {
+		if ((r = parse_cell_or_range(&p, &rngx)) == 0)
+			ConversionError(s, _("range"));
+		else if (r & RANGE) {
+			graph_set_data(0, &rngx, 'h', 'r');
+		} else {
+			rngx.hr = rngx.lr;
+			rngx.hc = rngx.lc;
+			graph_set_data(0, &rngx, 'h', 'r');
+		}
 #ifdef	FREE_TF_STRING
-	XtFree(s);
+		XtFree(s);
 #endif
+	}
 
 	s = XmTextFieldGetString(cw->tb);
 	graph_set_data_title(0, s);
@@ -905,64 +905,71 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 
 /* Data 2 */
 	p = s = XmTextFieldGetString(cw->a);
-	if ((r = parse_cell_or_range(&p, &rngx)) == 0)
-		ConversionError(s, _("range"));
-	else if (r & RANGE) {
-		graph_set_data(1, &rngx, 'h', 'r');
-	} else {
-		rngx.hr = rngx.lr;
-		rngx.hc = rngx.lc;
-		graph_set_data(1, &rngx, 'h', 'r');
-	}
-
+	if (strlen(s)) {
+		if ((r = parse_cell_or_range(&p, &rngx)) == 0)
+			ConversionError(s, _("range"));
+		else if (r & RANGE) {
+			graph_set_data(1, &rngx, 'h', 'r');
+		} else {
+			rngx.hr = rngx.lr;
+			rngx.hc = rngx.lc;
+			graph_set_data(1, &rngx, 'h', 'r');
+		}
 #ifdef	FREE_TF_STRING
-	XtFree(s);
+		XtFree(s);
 #endif
+	}
 
 /* Data 3 */
 	p = s = XmTextFieldGetString(cw->b);
-	if ((r = parse_cell_or_range(&p, &rngx)) == 0)
-		ConversionError(s, _("range"));
-	else if (r & RANGE) {
-		graph_set_data(2, &rngx, 'h', 'r');
-	} else {
-		rngx.hr = rngx.lr;
-		rngx.hc = rngx.lc;
-		graph_set_data(2, &rngx, 'h', 'r');
-	}
+	if (strlen(s)) {
+		if ((r = parse_cell_or_range(&p, &rngx)) == 0)
+			ConversionError(s, _("range"));
+		else if (r & RANGE) {
+			graph_set_data(2, &rngx, 'h', 'r');
+		} else {
+			rngx.hr = rngx.lr;
+			rngx.hc = rngx.lc;
+			graph_set_data(2, &rngx, 'h', 'r');
+		}
 #ifdef	FREE_TF_STRING
-	XtFree(s);
+		XtFree(s);
 #endif
+	}
 
 	p = s = XmTextFieldGetString(cw->c);
-	if ((r = parse_cell_or_range(&p, &rngx)) == 0)
-		ConversionError(s, _("range"));
-	else if (r & RANGE) {
-		graph_set_data(3, &rngx, 'h', 'r');
-	} else {
-		rngx.hr = rngx.lr;
-		rngx.hc = rngx.lc;
-		graph_set_data(3, &rngx, 'h', 'r');
-	}
-	MessageAppend(False, s);
+	if (strlen(s)) {
+		if ((r = parse_cell_or_range(&p, &rngx)) == 0)
+			ConversionError(s, _("range"));
+		else if (r & RANGE) {
+			graph_set_data(3, &rngx, 'h', 'r');
+		} else {
+			rngx.hr = rngx.lr;
+			rngx.hc = rngx.lc;
+			graph_set_data(3, &rngx, 'h', 'r');
+		}
+		MessageAppend(False, s);
 #ifdef	FREE_TF_STRING
-	XtFree(s);
+		XtFree(s);
 #endif
+	}
 
 	p = s = XmTextFieldGetString(cw->d);
-	if ((r = parse_cell_or_range(&p, &rngx)) == 0)
-		ConversionError(s, _("range"));
-	else if (r & RANGE) {
-		graph_set_data(4, &rngx, 'h', 'r');
-	} else {
-		rngx.hr = rngx.lr;
-		rngx.hc = rngx.lc;
-		graph_set_data(4, &rngx, 'h', 'r');
-	}
-	MessageAppend(False, s);
+	if (strlen(s)) {
+		if ((r = parse_cell_or_range(&p, &rngx)) == 0)
+			ConversionError(s, _("range"));
+		else if (r & RANGE) {
+			graph_set_data(4, &rngx, 'h', 'r');
+		} else {
+			rngx.hr = rngx.lr;
+			rngx.hc = rngx.lc;
+			graph_set_data(4, &rngx, 'h', 'r');
+		}
+		MessageAppend(False, s);
 #ifdef	FREE_TF_STRING
-	XtFree(s);
+		XtFree(s);
 #endif
+	}
 
 	ConfigureXYOk();
 	ConfigurePieOk();
@@ -988,7 +995,6 @@ void ConfigureGraphReset(Widget f)
 		MessageAppend(True, _("Cannot find XmNuserData\n"));
 		return;
 	}
-	MessageAppend(False, "ConfigureGraphReset\n");
 
 	XtVaSetValues(ConfigureGraphNotebook, XmNcurrentPageNumber, 1, NULL);
 
@@ -2596,6 +2602,7 @@ HelpBuildWindow(void)
 		hd = XtVaCreatePopupShell("helpShell",
 				topLevelShellWidgetClass,
 				toplevel,
+				XmNdeleteResponse, XmUNMAP,
 			NULL);
 
 		f = XtVaCreateManagedWidget("form", xmFormWidgetClass, hd,
@@ -2618,7 +2625,6 @@ HelpBuildWindow(void)
 		sep = XtVaCreateManagedWidget("separator",
 			xmSeparatorGadgetClass, f,
 				XmNorientation,		XmHORIZONTAL,
-				XmNtopWidget,		html,
 				XmNleftAttachment,	XmATTACH_FORM,
 				XmNrightAttachment,	XmATTACH_FORM,
 				XmNleftOffset,		10,
@@ -2728,6 +2734,7 @@ void helpUsingCB(Widget w, XtPointer client, XtPointer call)
 	HelpBuildWindow();
 	HelpLoadFile("oleo.html", client);
 	XtPopup(hd, XtGrabNone);
+	XtManageChild(XtParent(html));		/* LessTif only, harmless otherwise */
 #endif
 }
 
@@ -2951,11 +2958,13 @@ void CreateCopyDialog(char *t, void (*cb)(Widget, XtPointer, XtPointer))
 			NULL);
 		w = XtVaCreateManagedWidget("r1", xmTextFieldWidgetClass, cap,
 			NULL);
+		RegisterRangeSelector(w);
 		cap = XtVaCreateManagedWidget("cap2", xbaeCaptionWidgetClass,
 			rc,
 			NULL);
 		w = XtVaCreateManagedWidget("r2", xmTextFieldWidgetClass, cap,
 			NULL);
+		RegisterRangeSelector(w);
 	}
 
 	XtRemoveAllCallbacks(copyDialog, XmNokCallback);
@@ -2976,8 +2985,6 @@ void ReallyCopyRegionCB(Widget w, XtPointer client, XtPointer call)
 
 	f = XmTextFieldGetString(ft);
 	t = XmTextFieldGetString(tt);
-
-	MessageAppend(False, "ReallyCopyRegionCB (%s -> %s)!!\n", f, t);
 
 	p = f;
 	if ((r = parse_cell_or_range(&p, &from)) == 0)
@@ -3065,8 +3072,6 @@ void ReallyCopyValuesCB(Widget w, XtPointer client, XtPointer call)
 
 	f = XmTextFieldGetString(ft);
 	t = XmTextFieldGetString(tt);
-
-	MessageAppend(False, "ReallyCopyValuesCB (%s -> %s)!!\n", f, t);
 
 	p = f;
 	if ((r = parse_cell_or_range(&p, &from)) == 0)

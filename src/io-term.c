@@ -688,6 +688,8 @@ static void
 show_usage (void)
 {
 
+  printf(_("This is %s %s\n\n"), PACKAGE, VERSION);
+
   printf(_("\
 Usage: %s [OPTION]... [FILE]...\n\
 "), PACKAGE);

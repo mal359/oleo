@@ -292,7 +292,9 @@ graph_set_logness (int axis_c, int explicit, int newval)
 		? "" : "no"),
 	       graph_logness [graph_x] ? "x" : "",
 	       graph_logness [graph_y] ? "y" : "");
+#if 0
   io_info_msg ("set %s", msg_buf.buf);
+#endif
 }
 
 int

@@ -38,7 +38,13 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "cmd.h"
 
 
-/* These functions read and write Microsoft Multiplan SYLK style files
+/* Forward declaration */
+static char * sylk_to_oleo_functions(char *f);
+
+#define	SYLK_LEN	1024
+
+/*
+ * These functions read and write Microsoft Multiplan SYLK style files
  * as well as SYLK-NOA0 files.  SYLK-NOA0 is the same as SYLK except that
  * cell references are in rc format instead of a0 format.
  */
@@ -53,8 +59,8 @@ sylk_read_file (fp, ismerge)
   char *ptr;
   CELLREF crow = 0, ccol = 0, czrow = 0, czcol = 0;
   int lineno;
-  char cbuf[1024];
-  char expbuf[1024];
+  char cbuf[SYLK_LEN];
+  char expbuf[SYLK_LEN];
   char *vname, *vval;
   int vlen = 0;
   int cprot;
@@ -257,6 +263,8 @@ sylk_read_file (fp, ismerge)
 		      break;
 		    case 'D':
 		      jst = JST_DEF;
+		      break;
+		    case 'G':
 		      break;
 		    default:
 		      io_error_msg ("Line %d: Alignment %c not supported", lineno, ptr[-1]);
@@ -491,6 +499,7 @@ sylk_read_file (fp, ismerge)
 	  *ptr = '\0';
 	  if (cexp && cval && strcmp (cexp, cval))
 	    {
+	      cexp = sylk_to_oleo_functions(cexp);
 	      ptr = read_new_value (crow, ccol, cexp, cval);
 	      if (ptr)
 		{
@@ -509,6 +518,7 @@ sylk_read_file (fp, ismerge)
 	    }
 	  else if (cexp)
 	    {
+	      cexp = sylk_to_oleo_functions(cexp);
 	      ptr = read_new_value (crow, ccol, cexp, 0);
 	      if (ptr)
 		{
@@ -897,4 +907,59 @@ void
 sylk_show_options ()
 {
   io_text_line ("File format: sylk  (Microsoft Multiplan interchange format)");
+}
+
+/*
+ * Function mapping table
+ *
+ * This table contains the conversion from SYLK to Oleo functions.
+ *
+ * FIX ME this is far from complete
+ */
+static struct {
+	char	*sylk,
+		*oleo;
+} sylk2oleo [] = {
+	{ "SUM",		"sum"	},
+	{ "PRODUCT",		"prod"	},
+	{ "AVERAGE",		"avg"	},
+	{ "AVERAGE",		"std"	},
+	{ "MAX",		"max"	},
+	{ "MIN",		"min"	},
+	{ "COUNT",		"count"	},
+	{ "COUNT",		"var"	},
+	{ "ABS",		"abs"	},
+	{ NULL,			NULL	}
+};
+
+static char *
+sylk_to_oleo_functions(char *f)
+{
+	static char	buf[SYLK_LEN];
+	char		*p, *q;
+	int		i, j, done;
+
+	for (p=f, q=buf; *p; p++) {
+		done = 0;
+		for (i=0; sylk2oleo[i].sylk; i++) {
+			int	ls = strlen(sylk2oleo[i].sylk);
+			if (strncmp(p, sylk2oleo[i].sylk, ls) == 0) {
+				int	lo = strlen(sylk2oleo[i].oleo);
+
+				p += ls - 1;
+				for (j=0; j<lo; j++)
+					*(q++) = sylk2oleo[i].oleo[j];
+				done = 1;
+				break;
+			}
+		}
+
+		if (! done)
+			*(q++) = *p;
+		*q = '\0';
+	}
+
+	fprintf(stderr, "Sylk2Oleo(%s) -> '%s'\n", f, buf);
+
+	return buf;
 }

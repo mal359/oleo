@@ -1,3 +1,11 @@
+===== Oleo 1.99.3 =====
+
+Noteworthy changes in Oleo 1.99.3 :
+- SYLK support is much better
+- Oleo now handles noa0 cell addresses of not only its own format
+  (such as RC[-2:-3]), but also RC[-2]:RC[-1] - which was needed for
+  reading SYLK files.
+
 ===== Oleo 1.99.1 =====
 
 This release is numbered 1.99.1 to indicate that we're working towards a

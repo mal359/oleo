@@ -1,4 +1,4 @@
-$Id: TODO,v 1.24 1999/04/09 11:46:30 danny Exp $
+$Id: TODO,v 1.25 1999/04/12 13:50:19 danny Exp $
 
 TODO's:
 
@@ -44,7 +44,7 @@ TODO's:
 * Use GNU PlotUtils instead of GnuPlot.
   This is being worked on : simple bar, pie, and XY charts are available.
   In the process, make the plotting user interface more transparent.
-	(todo) allow an empty range to be input without warnings
+	(done) allow an empty range to be input without warnings
 	(todo) port the plotutils user interface to curses (long term ?)
 	(todo) Allow manual setting of axis ranges in various plots.
 	(todo) 3D pie
@@ -61,10 +61,12 @@ TODO's:
  - SYLK
 	(done) don't flunk out on reading Excel files
 	(todo) translate SYLK options into Oleo options
-	(todo) translate SYLK functions into Oleo functions (SUM -> sum)
-	(todo) interpret SYLK ranges right
+	(done) translate SYLK functions into Oleo functions (SUM -> sum)
+	(todo) add all known functions to the function tranlation table
+	(done) interpret SYLK ranges right
 		SYLK says RC[-2]:RC[-1], Oleo says rc[-2:-1]
 	(todo) interpret boundaries
+	(todo) interpret fill patterns
 	(todo) ...
 	(todo) make this list more complete
 

@@ -1,4 +1,21 @@
 
+Mon 12 Apr 15:50:37 1999, Danny Backx
+	* Graph configure window deals better with empty ranges.
+	  Change to io-utils.c (range_name) was required too, it
+	  was converting struct rng {0,0,0,0} into "@0".
+	* DeleteResponse of help window changed so it can be popped
+	  down gracefully. Works in Motif, not LessTif so I need
+	  to fix that too :-)
+	* Rewrote parse_cell_or_range so it understands SYLK
+	  format regions as well.
+	* Copy (Range/Values) dialog now also accepts regions
+	  selected by the mouse.
+	* call a new function to translate SYLK functions into
+	  Oleo functions. The table that goes with this is still
+	  rather empty.
+	* configure.in - check for GSL (GNU Scientific Library)
+	* configure.in - bump version to 1.99.3
+
 Fri  9 Apr 13:43:59 1999, Danny Backx
 	* Release 1.99.2.
 	* (read_file_generic) For recalculation after reading a file.
