@@ -1,5 +1,5 @@
 /*
- *  $Id: epson.c,v 1.13 2000/08/10 21:02:50 danny Exp $
+ *  $Id: epson.c,v 1.14 2001/02/05 00:13:17 pw Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: epson.c,v 1.13 2000/08/10 21:02:50 danny Exp $";
+static char rcsid[] = "$Id: epson.c,v 1.14 2001/02/05 00:13:17 pw Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -40,6 +40,7 @@ static char rcsid[] = "$Id: epson.c,v 1.13 2000/08/10 21:02:50 danny Exp $";
 static float	border_width = 20.0,
 		border_height = 20.0;
 
+#if 0  /* unused */
 static char	*Escape = "\033";
 static char	*formfeed = "\f";
 
@@ -49,6 +50,7 @@ static char	*proportional = "\033p1";
 static char	*noproportional = "\033p0";
 static char	*Defaultfont = "\033k\002\033X\0\025\0";
 static char	*defaultfont = "\033k\002\033X\000\012\000";	/* play */
+#endif
 static char	*italic = "\0334";
 static char	*noitalic = "\0335";
 
