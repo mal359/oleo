@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.8 1998/09/12 14:34:09 danny Exp $
+ *  $Id: io-motif.c,v 1.9 1998/09/16 20:56:07 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.8 1998/09/12 14:34:09 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.9 1998/09/16 20:56:07 danny Exp $";
 
 #include "config.h"
 
@@ -32,14 +32,17 @@ static char rcsid[] = "$Id: io-motif.c,v 1.8 1998/09/12 14:34:09 danny Exp $";
 #include <sys/param.h>
 #include <stdarg.h>
 
+#ifdef	HAVE_LOCALE_H
+#include <locale.h>
+#endif
+#include <libintl.h>
+
 #include <X11/Intrinsic.h>
 #include <X11/Shell.h>
 
 #include <Xm/XmAll.h>
 #include <Xbae/Matrix.h>
 #include <Xbae/Caption.h>
-
-#include <libintl.h>
 
 #if	HAVE_SciPlot_H
 #include <SciPlot/SciPlot.h>
@@ -64,6 +67,7 @@ static char rcsid[] = "$Id: io-motif.c,v 1.8 1998/09/12 14:34:09 danny Exp $";
 #include "info.h"
 #include "eval.h"
 #include "basic.h"
+#include "graph.h"
 
 #include "io-motif.h"		/* To get warnings when inconsistent */
 
@@ -72,12 +76,13 @@ static char rcsid[] = "$Id: io-motif.c,v 1.8 1998/09/12 14:34:09 danny Exp $";
 #endif
 
 XtAppContext app;
-Widget	toplevel, splash, SplashShell;
+Widget	toplevel, splash, SplashShell, plot;
 Widget	mw, mat, mb, filemenu, editmenu, stylemenu,
 	optionsmenu, helpmenu, graphmenu;
 Widget	msgtext = NULL, statustf = NULL, formulatf = NULL;
 Widget	fsd = NULL;
 Widget	hd, html = NULL, gs;
+Widget	FormatD = NULL;
 
 static Widget	w;
 
@@ -215,14 +220,78 @@ struct ConfigureWidgets {
 		title, xtitle, ytitle;
 };
 
-/*
- * For testing purposes ...
- */
-void DoGraph(Widget w, XtPointer client, XtPointer call)
+void PrintGraph(Widget w, XtPointer client, XtPointer call)
 {
-	Widget	f, sw, plot, sep, ok;
+#ifdef	HAVE_SciPlot_H
+#endif
+}
+
+void UpdateGraph()
+{
+#ifdef	HAVE_SciPlot_H
+	int			i, ii, len, xx, xa, lst;
+	int			xlog, ylog;
+	double			*vx, *va;
+	struct rng		rngx, rnga;
+	char			*s, *t;
+	extern struct rng	graph_get_data(int);
+
+	xlog = graph_get_logness('x');
+	ylog = graph_get_logness('y');
+
+	XtVaSetValues(plot,
+			XtNchartType,		XtCARTESIAN,
+			XtNxLabel,		graph_get_axis_title('x'),
+			XtNyLabel,		graph_get_axis_title('y'),
+			XtNxLog,		xlog,
+			XtNyLog,		ylog,
+		NULL);
+
+
+	rngx = graph_get_data(0);
+	rnga = graph_get_data(1);
+
+	len = rngx.hr - rngx.lr + 1;
+
+	vx = (double *)XtCalloc(len, sizeof(double));
+	va = (double *)XtCalloc(len, sizeof(double));
+
+	for (ii=0, i=rngx.lr; i<=rngx.hr; i++, ii++) {
+		s = cell_value_string(i, rngx.lc, True);
+		vx[ii] = 0.0;
+		sscanf(s, "%lf", &vx[ii]);
+		s = cell_value_string(i, rnga.lc, True);
+		va[ii] = 0.0;
+		sscanf(s, "%lf", &va[ii]);
+	}
+
+	lst = SciPlotListCreateDouble(plot, 10, vx, va,
+			graph_get_data_title(0));
+	SciPlotListSetStyle(plot, lst, 1, XtMARKER_CIRCLE,
+		1, XtLINE_DOTTED);
+
+	s = graph_get_title();
+	if (s && strlen(s)) {
+		XtVaSetValues(plot, XtNplotTitle, s, NULL);
+	}
+
+	XtFree((XtPointer)vx);
+	XtFree((XtPointer)va);
+
+	SciPlotSetXAutoScale(plot);
+	SciPlotSetYAutoScale(plot);
+
+	SciPlotUpdate(plot);
+#endif
+}
+
+/*
+ * Pop up a window with a graph (from SciPlot).
+ */
+void ShowGraph(Widget w, XtPointer client, XtPointer call)
+{
+	Widget	f, sw, sep, ok;
 	int	i;
-	int	xlog, ylog;
 
 	gs = XtVaCreatePopupShell("graphShell",
 		topLevelShellWidgetClass,
@@ -243,24 +312,12 @@ void DoGraph(Widget w, XtPointer client, XtPointer call)
 			XmNrightOffset,		10,
 		NULL);
 
-	xlog = graph_get_logness('x');
-	ylog = graph_get_logness('y');
-
 	plot = XtVaCreateManagedWidget("plot",
 		sciplotWidgetClass, sw,
 			XmNmarginWidth,		20,
 			XmNmarginHeight,	20,
 			XmNwidth,		600,
 			XmNheight,		500,
-		/* test */
-#if 0
-			XtNplotTitle,		"Test [A:J][1:2]",
-#endif
-			XtNchartType,		XtCARTESIAN,
-			XtNxLabel,		graph_get_axis_title('x'),
-			XtNyLabel,		graph_get_axis_title('y'),
-			XtNxLog,		xlog,
-			XtNyLog,		ylog,
 		NULL);
 #else
 	/* Fallback if we don't have SciPlot */
@@ -291,56 +348,7 @@ void DoGraph(Widget w, XtPointer client, XtPointer call)
 		NULL);
 	XtAddCallback(ok, XmNactivateCallback, PopDownHelpCB, gs);
 
-#if	HAVE_SciPlot_H
-	/* use the newly created graph_get_data */
-{
-	int			i, ii, len, xx, xa, lst;
-	double			*vx, *va;
-	struct rng		rngx, rnga;
-	char			*s, *t;
-	extern struct rng	graph_get_data(int);
-
-	rngx = graph_get_data(0);
-	rnga = graph_get_data(1);
-
-	len = rngx.hr - rngx.lr + 1;
-
-	vx = (double *)XtCalloc(len, sizeof(double));
-	va = (double *)XtCalloc(len, sizeof(double));
-
-	for (ii=0, i=rngx.lr; i<=rngx.hr; i++, ii++) {
-		s = cell_value_string(i, rngx.lc, True);
-		vx[ii] = 0.0;
-		sscanf(s, "%lf", &vx[ii]);
-		s = cell_value_string(i, rnga.lc, True);
-		va[ii] = 0.0;
-		sscanf(s, "%lf", &va[ii]);
-	}
-
-	lst = SciPlotListCreateDouble(plot, 10, vx, va,
-			graph_get_data_title(0));
-	SciPlotListSetStyle(plot, lst, 1, XtMARKER_CIRCLE,
-		1, XtLINE_DOTTED);
-
-#if 0
-	s = XmTextFieldGetString(cw->title);
-	if (s && strlen(s)) {
-		XtVaSetValues(plot, XtNplotTitle, s, NULL);
-	}
-#ifdef	FREE_TF_STRING
-	XtFree(s);
-#endif
-#endif
-
-	XtFree((XtPointer)vx);
-	XtFree((XtPointer)va);
-}
-
-	SciPlotSetXAutoScale(plot);
-	SciPlotSetYAutoScale(plot);
-
-	SciPlotUpdate(plot);
-#endif
+	UpdateGraph();
 
 	XtPopup(gs, XtGrabNone);
 }
@@ -492,6 +500,13 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 	}
 
 	MessageAppend(False, "ConfigureGraphOk\n");
+
+/* Plot title */
+	s = XmTextFieldGetString(cw->title);
+	graph_set_title(s);
+#ifdef	FREE_TF_STRING
+	XtFree(s);
+#endif
 
 /* X Axis */
 	s = XmTextFieldGetString(cw->xtitle);
@@ -1053,6 +1068,7 @@ HelpBuildWindow(void)
 			(XtCallbackProc)anchorCB, NULL);
 	}
 }
+#endif
 
 /*
  * Load a file into the help window.
@@ -1067,6 +1083,7 @@ HelpBuildWindow(void)
 static void
 HelpLoadFile(char *fn, char *anchor)
 {
+#if	HAVE_XmHTML_H
 	char	*buffer = XtMalloc(HELP_FILE_LENGTH);
 	FILE	*fp = fopen("oleo.html", "r");
 	char	*n;
@@ -1119,25 +1136,31 @@ HelpLoadFile(char *fn, char *anchor)
 	if (anchor)
 		XmHTMLAnchorScrollToName(html, anchor);
 	XtFree(n);
+#endif
 }
 
 void helpUsingCB(Widget w, XtPointer client, XtPointer call)
 {
+#if	HAVE_XmHTML_H
 	HelpBuildWindow();
 	HelpLoadFile("oleo.html", client);
 	XtPopup(hd, XtGrabNone);
+#endif
 }
 
 void helpAboutCB(Widget w, XtPointer client, XtPointer call)
 {
+#if	HAVE_XmHTML_H
 	/* FIX ME */	versionCB(w, client, call);
+#endif
 }
 
 void helpVersionCB(Widget w, XtPointer client, XtPointer call)
 {
+#if	HAVE_XmHTML_H
 	/* FIX ME */	versionCB(w, client, call);
-}
 #endif
+}
 
 /*
  * Row and column labels
@@ -1445,6 +1468,113 @@ void MoveCB(Widget w, XtPointer client, XtPointer call)
 {
 	CreateCopyDialog(_("Move"), ReallyMoveCB);
 	XtManageChild(copyDialog);
+}
+
+/****************************************************************
+ *								*
+ *		Formats Dialog					*
+ *								*
+ ****************************************************************/
+void CreateFormatsDialog(Widget p)
+{
+	Widget	frame;
+	XmString	xms, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10,
+			x11, x12, x13, x14, x15, x16;
+
+	frame = XtVaCreateManagedWidget("formatsFrame", xmFrameWidgetClass, p,
+		NULL);
+
+	xms = XmStringCreateSimple(_("Formats :"));
+	x1 = XmStringCreateSimple(_("Default"));	/* FMT_DEF */
+	x2 = XmStringCreateSimple(_("Hidden"));		/* FMT_HID */
+	x3 = XmStringCreateSimple(_("Graph"));		/* FMT_GPH */
+	x4 = XmStringCreateSimple(_("Float"));		/* PRC_FLT */
+	x5 = XmStringCreateSimple(_("General"));	/* FMT_GEN */
+	x6 = XmStringCreateSimple(_("Dollar"));		/* FMT_DOL */
+	x7 = XmStringCreateSimple(_("Comma"));		/* FMT_CMA */
+	x8 = XmStringCreateSimple(_("Percent"));	/* FMT_PCT */
+	x9 = XmStringCreateSimple(_("Integer"));
+	x10 = XmStringCreateSimple(_("Decimal"));
+	x11 = XmStringCreateSimple(_("Fixed"));
+	x12 = XmStringCreateSimple(_("Exponent"));
+	x13 = XmStringCreateSimple(_("User-1"));
+	x14 = XmStringCreateSimple(_("User-2"));
+	x15 = XmStringCreateSimple(_("User-3"));
+	x16 = XmStringCreateSimple(_("User-4"));
+
+	w = XmVaCreateSimpleOptionMenu(frame, "formatsOption",
+		xms, /* mnemonic ? */NULL, /* initial selection */ 0, 
+		/* callback */ NULL,
+		XmVaPUSHBUTTON, x1, 'D', NULL, NULL,
+		XmVaPUSHBUTTON, x2, 'P', NULL, NULL,
+		XmVaPUSHBUTTON, x3, ' ', NULL, NULL,
+		XmVaPUSHBUTTON, x4, ' ', NULL, NULL,
+		XmVaPUSHBUTTON, x5, ' ', NULL, NULL,
+		XmVaPUSHBUTTON, x6, ' ', NULL, NULL,
+		XmVaPUSHBUTTON, x7, ' ', NULL, NULL,
+		XmVaPUSHBUTTON, x8, ' ', NULL, NULL,
+		XmVaPUSHBUTTON, x9, ' ', NULL, NULL,
+		XmVaPUSHBUTTON, x10, ' ', NULL, NULL,
+		XmVaPUSHBUTTON, x11, ' ', NULL, NULL,
+		XmVaPUSHBUTTON, x12, ' ', NULL, NULL,
+		XmVaPUSHBUTTON, x13, ' ', NULL, NULL,
+		XmVaPUSHBUTTON, x14, ' ', NULL, NULL,
+		XmVaPUSHBUTTON, x15, ' ', NULL, NULL,
+		XmVaPUSHBUTTON, x16, ' ', NULL, NULL,
+		NULL);
+	XtManageChild(w);
+
+	XmStringFree(xms);
+	XmStringFree(x1);
+	XmStringFree(x2);
+	XmStringFree(x3);
+	XmStringFree(x4);
+	XmStringFree(x5);
+	XmStringFree(x6);
+	XmStringFree(x7);
+	XmStringFree(x8);
+	XmStringFree(x9);
+	XmStringFree(x10);
+	XmStringFree(x11);
+	XmStringFree(x12);
+	XmStringFree(x13);
+	XmStringFree(x14);
+	XmStringFree(x15);
+	XmStringFree(x16);
+}
+
+void FormatsDialogOk(Widget w, XtPointer client, XtPointer call)
+{
+}
+
+void FormatsDialogReset(Widget d)
+{
+}
+
+void FormatsDialog(Widget w, XtPointer Client, XtPointer call)
+{
+	Widget	ok, cancel, help;
+
+	if (! FormatD) {
+		FormatD = XmCreateTemplateDialog(mw, "formatsDialog",
+			NULL, 0);
+		CreateFormatsDialog(FormatD);
+
+		ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass,
+			FormatD,
+			NULL);
+		cancel = XtVaCreateManagedWidget("cancel",
+			xmPushButtonGadgetClass, FormatD,
+			NULL);
+		help = XtVaCreateManagedWidget("help", xmPushButtonGadgetClass,
+			FormatD,
+			NULL);
+
+		XtAddCallback(ok, XmNactivateCallback, FormatsDialogOk, NULL);
+	}
+
+	FormatsDialogReset(FormatD);
+	XtManageChild(FormatD);
 }
 
 /****************************************************************
@@ -1790,11 +1920,11 @@ GscBuildMainWindow(Widget parent)
 
 	w = XtVaCreateManagedWidget("show", xmPushButtonGadgetClass, graphmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, DoGraph, NULL);
+	XtAddCallback(w, XmNactivateCallback, ShowGraph, NULL);
 
 	w = XtVaCreateManagedWidget("print", xmPushButtonGadgetClass, graphmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, PrintGraph, NULL);
 
 	/*
 	 *	Options Menu.
@@ -1826,22 +1956,20 @@ GscBuildMainWindow(Widget parent)
 	w = XtVaCreateManagedWidget("statusline", xmToggleButtonGadgetClass,
 		optionsmenu,
 		NULL);
-	XtAddCallback(w, XmNvalueChangedCallback, none, NULL);
-#if 0
 	XmToggleButtonGadgetSetState(w, a0, False);
-#endif
+	XtAddCallback(w, XmNvalueChangedCallback, none, NULL);
 
 	w = XtVaCreateManagedWidget("backup", xmToggleButtonGadgetClass,
 		optionsmenu,
 		NULL);
-	XtAddCallback(w, XmNvalueChangedCallback, none, NULL);
 	XmToggleButtonGadgetSetState(w, __make_backups, False);
+	XtAddCallback(w, XmNvalueChangedCallback, none, NULL);
 
 	w = XtVaCreateManagedWidget("backupcopy", xmToggleButtonGadgetClass,
 		optionsmenu,
 		NULL);
-	XtAddCallback(w, XmNvalueChangedCallback, none, NULL);
 	XmToggleButtonGadgetSetState(w, __backup_by_copying, False);
+	XtAddCallback(w, XmNvalueChangedCallback, none, NULL);
 
 	XtVaCreateManagedWidget("sep1", xmSeparatorGadgetClass, optionsmenu,
 		NULL);
@@ -1849,7 +1977,7 @@ GscBuildMainWindow(Widget parent)
 	w = XtVaCreateManagedWidget("formats", xmPushButtonGadgetClass,
 		optionsmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, FormatsDialog, NULL);
 
 	w = XtVaCreateManagedWidget("printoptions", xmPushButtonGadgetClass,
 		optionsmenu,
@@ -1883,13 +2011,6 @@ GscBuildMainWindow(Widget parent)
 		optionsmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, none, NULL);
-
-#if 0
-	w = XtVaCreateManagedWidget("Debug", xmPushButtonGadgetClass,
-		optionsmenu,
-		NULL);
-	XtAddCallback(w, XmNactivateCallback, PrintDebug, NULL);
-#endif
 
 	/*
 	 *	Help Menu.

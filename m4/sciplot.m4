@@ -15,8 +15,8 @@ dnl Treat --without-SciPlot like
 dnl --without-SciPlot-includes --without-SciPlot-libraries.
 if test "$with_SciPlot" = "no"
 then
-sciplot_includes=no
-sciplot_libraries=no
+sciplot_includes=none
+sciplot_libraries=none
 fi
 AC_ARG_WITH(SciPlot-includes,
 [  --with-SciPlot-includes=DIR    Motif include files are in DIR],
@@ -56,6 +56,7 @@ ice_cv_sciplot_includes=
 # /usr/dt is used on Solaris (Motif).
 # /usr/openwin is used on Solaris (X and Athena).
 # Other directories are just guesses.
+ice_cv_sciplot_includes="none"
 for dir in "$x_includes" "${prefix}/include" /usr/include /usr/local/include \
            /usr/include/Motif2.0 /usr/include/Motif1.2 /usr/include/Motif1.1 \
            /usr/include/X11R6 /usr/include/X11R5 /usr/include/X11R4 \
@@ -111,6 +112,7 @@ ice_cv_sciplot_libraries=
 # /usr/lesstif is used on Linux (Lesstif).
 # /usr/openwin is used on Solaris (X and Athena).
 # Other directories are just guesses.
+ice_cv_sciplot_libraries="none"
 for dir in "$x_libraries" "${prefix}/lib" /usr/lib /usr/local/lib \
            /usr/lib/Motif2.0 /usr/lib/Motif1.2 /usr/lib/Motif1.1 \
            /usr/lib/X11R6 /usr/lib/X11R5 /usr/lib/X11R4 /usr/lib/X11 \
@@ -136,26 +138,15 @@ LDFLAGS="$ice_sciplot_save_LDFLAGS"
 #
 sciplot_libraries="$ice_cv_sciplot_libraries"
 fi
-# Add Motif definitions to X flags
 #
-# if test "$sciplot_includes" != "" && test "$sciplot_includes" != "$x_includes" && test "$sciplot_includes" != "no"
-# then
-# X_CFLAGS="-I$sciplot_includes $X_CFLAGS"
-# fi
-# if test "$sciplot_libraries" != "" && test "$sciplot_libraries" != "$x_libraries" && test "$sciplot_libraries" != "no"
-# then
-# case "$X_LIBS" in
-#   *-R\ *) X_LIBS="-L$sciplot_libraries -R $sciplot_libraries $X_LIBS";;
-#   *-R*)   X_LIBS="-L$sciplot_libraries -R$sciplot_libraries $X_LIBS";;
-#   *)      X_LIBS="-L$sciplot_libraries $X_LIBS";;
-# esac
-# fi
 #
 # Provide an easier way to link
 #
-test "$sciplot_libraries" != "" && link_sciplot="-L$sciplot_libraries -lSciPlot"
-test "$sciplot_includes" != "" && include_sciplot="-I$sciplot_includes"
-test "$sciplot_includes" != "" && AC_DEFINE(HAVE_SciPlot_H)
+if test "$sciplot_includes" != "" && test "$sciplot_includes" != "$x_includes" && test "$sciplot_includes" != "none"; then
+	link_sciplot="-L$sciplot_libraries -lSciPlot"
+	include_sciplot="-I$sciplot_includes"
+	AC_DEFINE(HAVE_SciPlot_H)
+fi
 #
 AC_SUBST(include_sciplot)
 AC_SUBST(link_sciplot)
@@ -164,14 +155,10 @@ AC_SUBST(link_sciplot)
 #
 sciplot_libraries_result="$sciplot_libraries"
 sciplot_includes_result="$sciplot_includes"
-test "$sciplot_libraries_result" = "" &&
-  sciplot_libraries_result="in default path"
-test "$sciplot_includes_result" = "" &&
-  sciplot_includes_result="in default path"
-test "$sciplot_libraries_result" = "no" &&
-  sciplot_libraries_result="(none)"
-test "$sciplot_includes_result" = "no" &&
-  sciplot_includes_result="(none)"
+test "$sciplot_libraries_result" = "" && sciplot_libraries_result="in default path"
+test "$sciplot_includes_result" = "" && sciplot_includes_result="in default path"
+test "$sciplot_libraries_result" = "none" && sciplot_libraries_result="(none)"
+test "$sciplot_includes_result" = "none" && sciplot_includes_result="(none)"
 AC_MSG_RESULT(
   [libraries $sciplot_libraries_result, headers $sciplot_includes_result])
 ])dnl

@@ -193,7 +193,7 @@ line_to_q_char (struct line line)
       switch (*str)
 	{
 	case '"':
-/* gnupolot doesn't like escaped quotation marks in titles anyway.
+/* gnuplot doesn't like escaped quotation marks in titles anyway.
  * If you want to support them, you'll have to protect against
  * progressive buildup, since this stores the post-escaping string
  * back into the original char.
@@ -430,7 +430,7 @@ graph_set_data_title (int data_set, char * title)
 }
 
 char *
-graph_get_data_title (int data_set, char * title)
+graph_get_data_title(int data_set)
 {
   if ((data_set < 0) || (data_set >= NUM_DATASETS))
     return NULL;
@@ -1016,3 +1016,18 @@ graph_plot (void)
   plot_fn ();
 }
 
+static char *graph_plot_title = NULL;
+
+void
+graph_set_title(char *t)
+{
+	if (graph_plot_title)
+		XtFree(graph_plot_title);
+	graph_plot_title = strdup(t);
+}
+
+char *
+graph_get_title(void)
+{
+	return	graph_plot_title;
+}

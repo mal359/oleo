@@ -15,8 +15,8 @@ dnl Treat --without-Xbae like
 dnl --without-Xbae-includes --without-Xbae-libraries.
 if test "$with_Xbae" = "no"
 then
-xbae_includes=no
-xbae_libraries=no
+xbae_includes=none
+xbae_libraries=none
 fi
 AC_ARG_WITH(Xbae-includes,
 [  --with-Xbae-includes=DIR    Motif include files are in DIR],
@@ -56,6 +56,7 @@ ice_cv_xbae_includes=
 # /usr/dt is used on Solaris (Motif).
 # /usr/openwin is used on Solaris (X and Athena).
 # Other directories are just guesses.
+ice_cv_xbae_includes="none"
 for dir in "$x_includes" "${prefix}/include" /usr/include /usr/local/include \
            /usr/include/Motif2.0 /usr/include/Motif1.2 /usr/include/Motif1.1 \
            /usr/include/X11R6 /usr/include/X11R5 /usr/include/X11R4 \
@@ -111,6 +112,7 @@ ice_cv_xbae_libraries=
 # /usr/lesstif is used on Linux (Lesstif).
 # /usr/openwin is used on Solaris (X and Athena).
 # Other directories are just guesses.
+ice_cv_xbae_libraries="none"
 for dir in "$x_libraries" "${prefix}/lib" /usr/lib /usr/local/lib \
            /usr/lib/Motif2.0 /usr/lib/Motif1.2 /usr/lib/Motif1.1 \
            /usr/lib/X11R6 /usr/lib/X11R5 /usr/lib/X11R4 /usr/lib/X11 \
@@ -136,26 +138,14 @@ LDFLAGS="$ice_xbae_save_LDFLAGS"
 #
 xbae_libraries="$ice_cv_xbae_libraries"
 fi
-# Add Motif definitions to X flags
-#
-# if test "$xbae_includes" != "" && test "$xbae_includes" != "$x_includes" && test "$xbae_includes" != "no"
-# then
-# X_CFLAGS="-I$xbae_includes $X_CFLAGS"
-# fi
-# if test "$xbae_libraries" != "" && test "$xbae_libraries" != "$x_libraries" && test "$xbae_libraries" != "no"
-# then
-# case "$X_LIBS" in
-#   *-R\ *) X_LIBS="-L$xbae_libraries -R $xbae_libraries $X_LIBS";;
-#   *-R*)   X_LIBS="-L$xbae_libraries -R$xbae_libraries $X_LIBS";;
-#   *)      X_LIBS="-L$xbae_libraries $X_LIBS";;
-# esac
-# fi
 #
 # Provide an easier way to link
 #
-test "$xbae_libraries" != "" && link_xbae="-L$xbae_libraries -lXbae"
-test "$xbae_includes" != "" && include_xbae="-I$xbae_includes"
-test "$xbae_includes" != "" && AC_DEFINE(HAVE_Xbae)
+if test "$xbae_includes" != "" && test "$xbae_includes" != "$x_includes" && test "$xbae_includes" != "none" ; then
+	link_xbae="-L$xbae_libraries -lXbae"
+	include_xbae="-I$xbae_includes"
+	AC_DEFINE(HAVE_Xbae)
+fi
 #
 AC_SUBST(include_xbae)
 AC_SUBST(link_xbae)
@@ -168,9 +158,9 @@ test "$xbae_libraries_result" = "" &&
   xbae_libraries_result="in default path"
 test "$xbae_includes_result" = "" &&
   xbae_includes_result="in default path"
-test "$xbae_libraries_result" = "no" &&
+test "$xbae_libraries_result" = "none" &&
   xbae_libraries_result="(none)"
-test "$xbae_includes_result" = "no" &&
+test "$xbae_includes_result" = "none" &&
   xbae_includes_result="(none)"
 AC_MSG_RESULT(
   [libraries $xbae_libraries_result, headers $xbae_includes_result])

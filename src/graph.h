@@ -1,23 +1,25 @@
 #ifndef GRAPHH
 #define GRAPHH
 
-/*	Copyright (C) 1993 Free Software Foundation, Inc.
+/*
+	$Id: graph.h,v 1.2 1998/09/16 20:56:06 danny Exp $
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
+	Copyright (C) 1993-1998 Free Software Foundation, Inc.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this software; see the file COPYING.  If not, write to
-the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-/*  t. lord	Mon Mar  1 17:37:20 1993	*/
-
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2, or (at your option)
+	any later version.
+	
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	
+	You should have received a copy of the GNU General Public License
+	along with this software; see the file COPYING.  If not, write to
+	the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 #include "cell.h"
 
 enum graph_axis
@@ -98,15 +100,9 @@ enum graph_pair_ordering
 extern char *pair_order_name [graph_num_pair_orders];
 
 
-#ifdef __STDC__
 typedef void (*fpi_thunk) (void * rock, CELL * cp, CELLREF, CELLREF);
-#else
-typedef void (*fpi_thunk) ();
-#endif
 
 
-
-#ifdef __STDC__
 extern enum graph_axis chr_to_axis (int c);
 extern enum graph_ordering chr_to_graph_ordering (int c);
 extern enum graph_pair_ordering chrs_to_graph_pair_ordering (int pair, int dir);
@@ -133,35 +129,11 @@ extern void graph_make_info (void);
 extern void for_pairs_in (struct rng * rng, enum graph_pair_ordering order, fpi_thunk thunk, void * frame);
 extern void graph_plot (void);
 
-#else
-extern enum graph_axis chr_to_axis ();
-extern enum graph_ordering chr_to_graph_ordering ();
-extern enum graph_pair_ordering chrs_to_graph_pair_ordering ();
-extern char * graph_quoted_str ();
-extern void graph_x11_mono ();
-extern void graph_x11_color ();
-extern void graph_postscript ();
-extern void graph_set_axis_title ();
-extern void graph_set_logness ();
-extern void graph_check_range ();
-extern void graph_set_axis_lo ();
-extern void graph_set_axis_hi ();
-extern void graph_set_axis_symbolic ();
-extern void graph_set_axis_labels ();
-extern void graph_default_axis_labels ();
-extern int graph_check_style ();
-extern void graph_set_style ();
-extern void graph_set_data_title ();
-extern void graph_set_data ();
-extern void graph_presets ();
-extern void graph_clear_datasets ();
-extern void init_graphing ();
-extern void graph_make_info ();
-extern void for_pairs_in ();
-extern void graph_plot ();
-
-#endif
+extern char *graph_get_axis_title(int axis_c);
+extern void graph_set_title(char *);
+extern char *graph_get_title(void);
+extern int graph_get_logness(int axis_c);
+extern char *graph_get_data_title (int data_set);
+extern struct rng graph_get_data(int data_set);
 
 #endif  /* GRAPHH */
-
-
