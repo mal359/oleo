@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/afm/Makefile.am,v 1.1 1999/10/23 13:39:33 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/afm/Makefile.am,v 1.2 1999/10/24 12:18:45 danny Exp $
 #
 # Process this file with automake to produce Makefile.in
 #
@@ -13,3 +13,5 @@ afm_DATA =	Courier-Bold.afm Courier-BoldOblique.afm \
 		Symbol.afm \
 		Times-Bold.afm Times-BoldItalic.afm \
 		Times-Italic.afm Times-Roman.afm
+
+EXTRA_DIST=	$(afm_DATA)

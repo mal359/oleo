@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.69 1999/10/23 23:27:46 jbailey Exp $
+dnl $Id: configure.in,v 1.70 1999/10/24 12:18:39 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -276,7 +276,7 @@ AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(ftime gethostname gettimeofday mktime select strdup strstr)
 AC_CHECK_FUNCS(putenv strcasecmp strerror)
-AC_FUNC_MKTIME
+AM_FUNC_MKTIME
 AM_FUNC_OBSTACK
 
 dnl
@@ -295,6 +295,22 @@ dnl This used to cause all kinds of problems in an earlier revision
 dnl	of oleo. (Mostly because of using earlier auto* tools.)
 dnl
 AC_LINK_FILES($nls_cv_header_libgt, $nls_cv_header_intl)
+
+dnl
+dnl Pass information about where we install to the source, to be
+dnl	able to read AFM files. Note this doesn't work if you
+dnl	install via "make install DESTDIR=/xxx"
+dnl
+if test "$prefix" != "NONE"; then
+	BUILD_PREFIX=$prefix
+else
+	BUILD_PREFIX=$ac_default_prefix
+fi
+AC_SUBST(BUILD_PREFIX)
+
+dnl
+dnl
+dnl
 
 AC_SUBST(LIBOBJS)
 
