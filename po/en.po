@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU oleo 1.6.7\n"
-"POT-Creation-Date: 1998-08-30 17:17+0200\n"
+"POT-Creation-Date: 1998-09-16 22:56+0200\n"
 "PO-Revision-Date: 1998-08-27 17:50+0200\n"
 "Last-Translator: Danny Backx <danny@gnu.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,98 +41,208 @@ msgstr ""
 "\n"
 "Report bugs to <bug-oleo@gnu.org>.\n"
 
-#: src/io-motif.c:296
+#: src/io-term.c:934
 #, c-format
-msgid "Plotting X in %d [%d.%d], A in %d [%d.%d]\n"
-msgstr "Plotting X in %d [%d.%d], A in %d [%d.%d]\n"
+msgid "%s %s\n"
+msgstr ""
 
-#: src/io-motif.c:302
+#: src/io-term.c:935
+msgid "Copyright (C) 1997-1998 Free Software Foundation, Inc.\n"
+msgstr ""
+
+#: src/io-term.c:936
 #, c-format
-msgid "Graph X [%s] A [%s]\n"
-msgstr "Graph X [%s] A [%s]\n"
+msgid "%s comes with ABSOLUTELY NO WARRANTY.\n"
+msgstr ""
 
-#: src/io-motif.c:379
+#: src/io-term.c:937
+#, c-format
+msgid "You may redistribute copies of %s\n"
+msgstr ""
+
+#: src/io-term.c:938
+msgid "under the terms of the GNU General Public License.\n"
+msgstr ""
+
+#: src/io-term.c:939
+msgid "For more information about these matters, "
+msgstr ""
+
+#: src/io-term.c:940
+msgid "see the files named COPYING.\n"
+msgstr ""
+
+#: src/io-motif.c:478
 #, c-format
 msgid "Conversion error: cannot convert '%s' to a %s\n"
 msgstr "Conversion error: cannot convert '%s' to a %s\n"
 
-#: src/io-motif.c:399 src/io-motif.c:497
+#: src/io-motif.c:498 src/io-motif.c:597
 msgid "Cannot find XmNuserData\n"
 msgstr "Internal error: Cannot find XmNuserData\n"
 
-#: src/io-motif.c:407 src/io-motif.c:436
+#: src/io-motif.c:530 src/io-motif.c:550 src/io-motif.c:1343
+#: src/io-motif.c:1352 src/io-motif.c:1386 src/io-motif.c:1395
+#: src/io-motif.c:1429 src/io-motif.c:1438
 msgid "range"
 msgstr "range"
 
 #. Set window title
 #. enough
-#: src/io-motif.c:748
+#: src/io-motif.c:848
 #, c-format
 msgid "[Oleo: %s]"
 msgstr "[Oleo: %s]"
 
-#: src/io-motif.c:752
+#: src/io-motif.c:852
 #, c-format
 msgid "Read file '%s'\n"
 msgstr "Read file '%s'\n"
 
-#: src/io-motif.c:768
+#: src/io-motif.c:868
 msgid "*.oleo"
 msgstr ""
 
-#: src/io-motif.c:781
+#: src/io-motif.c:881
 msgid "File Format"
 msgstr ""
 
-#: src/io-motif.c:825
+#: src/io-motif.c:925
 msgid "Choose a file to load"
 msgstr ""
 
-#: src/io-motif.c:857
+#: src/io-motif.c:957
 #, c-format
 msgid "Saved file '%s'\n"
 msgstr "Saved file '%s'\n"
 
-#: src/io-motif.c:879
+#: src/io-motif.c:979
 msgid "Choose a file to save in"
 msgstr ""
 
-#: src/io-motif.c:991 src/io-motif.c:1022
+#: src/io-motif.c:1093 src/io-motif.c:1124
 msgid ""
 "<html><body>Can't find the requested help file\n"
 "</body></html>"
 msgstr ""
 
-#: src/io-motif.c:1030
+#: src/io-motif.c:1132
 #, c-format
 msgid "Help requested on '%s'"
 msgstr ""
 
-#: src/io-motif.c:1032
+#: src/io-motif.c:1134
 msgid "Help requested on using Oleo"
 msgstr ""
 
-#.
-#. * Do not change the string below,
-#. * it's in two places and changing it in one will screw
-#. * up the translation.
-#.
-#: src/io-motif.c:1232 src/io-motif.c:2273
-msgid ""
-"\n"
-"GNU Oleo is free software, you are welcome to\n"
-"distribute copies of it. See the file COPYING for the\n"
-"conditions.\n"
-"\n"
-"GNU Oleo comes with ABSOLUTELY NO WARRANTY."
+#: src/io-motif.c:1295
+msgid "OK"
 msgstr ""
 
-#: src/io-motif.c:2197
+#: src/io-motif.c:1296
+msgid "Cancel"
+msgstr ""
+
+#: src/io-motif.c:1457
+msgid "Copy a region"
+msgstr ""
+
+#: src/io-motif.c:1463
+msgid "Copy Values"
+msgstr ""
+
+#: src/io-motif.c:1469
+msgid "Move"
+msgstr ""
+
+#: src/io-motif.c:1487
+msgid "Formats :"
+msgstr ""
+
+#: src/io-motif.c:1488
+msgid "Default"
+msgstr ""
+
+#. FMT_DEF
+#: src/io-motif.c:1489
+msgid "Hidden"
+msgstr ""
+
+#. FMT_HID
+#: src/io-motif.c:1490
+msgid "Graph"
+msgstr ""
+
+#. FMT_GPH
+#: src/io-motif.c:1491
+msgid "Float"
+msgstr ""
+
+#. PRC_FLT
+#: src/io-motif.c:1492
+msgid "General"
+msgstr ""
+
+#. FMT_GEN
+#: src/io-motif.c:1493
+msgid "Dollar"
+msgstr ""
+
+#. FMT_DOL
+#: src/io-motif.c:1494
+msgid "Comma"
+msgstr ""
+
+#. FMT_CMA
+#: src/io-motif.c:1495
+msgid "Percent"
+msgstr ""
+
+#. FMT_PCT
+#: src/io-motif.c:1496
+msgid "Integer"
+msgstr ""
+
+#: src/io-motif.c:1497
+msgid "Decimal"
+msgstr ""
+
+#: src/io-motif.c:1498
+msgid "Fixed"
+msgstr ""
+
+#: src/io-motif.c:1499
+msgid "Exponent"
+msgstr ""
+
+#: src/io-motif.c:1500
+msgid "User-1"
+msgstr ""
+
+#: src/io-motif.c:1501
+msgid "User-2"
+msgstr ""
+
+#: src/io-motif.c:1502
+msgid "User-3"
+msgstr ""
+
+#: src/io-motif.c:1503
+msgid "User-4"
+msgstr ""
+
+#: src/io-motif.c:2592
 msgid "XmProcessTraversal failed\n"
 msgstr "Internal error: XmProcessTraversal failed\n"
 
-#: src/io-motif.c:2217
+#: src/io-motif.c:2612
 msgid ""
 "There are unsaved changes.\n"
 "Do you want to quit anyway ?"
 msgstr ""
+
+#~ msgid "Plotting X in %d [%d.%d], A in %d [%d.%d]\n"
+#~ msgstr "Plotting X in %d [%d.%d], A in %d [%d.%d]\n"
+
+#~ msgid "Graph X [%s] A [%s]\n"
+#~ msgstr "Graph X [%s] A [%s]\n"

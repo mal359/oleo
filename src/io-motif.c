@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.9 1998/09/16 20:56:07 danny Exp $
+ *  $Id: io-motif.c,v 1.10 1998/09/17 22:09:43 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.9 1998/09/16 20:56:07 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.10 1998/09/17 22:09:43 danny Exp $";
 
 #include "config.h"
 
@@ -81,7 +81,7 @@ Widget	mw, mat, mb, filemenu, editmenu, stylemenu,
 	optionsmenu, helpmenu, graphmenu;
 Widget	msgtext = NULL, statustf = NULL, formulatf = NULL;
 Widget	fsd = NULL;
-Widget	hd, html = NULL, gs;
+Widget	hd, html = NULL, gs = NULL;
 Widget	FormatD = NULL;
 
 static Widget	w;
@@ -220,10 +220,13 @@ struct ConfigureWidgets {
 		title, xtitle, ytitle;
 };
 
-void PrintGraph(Widget w, XtPointer client, XtPointer call)
+static void
+sciplot_thunk(void *p, CELL *cp, CELLREF r, CELLREF c)
 {
-#ifdef	HAVE_SciPlot_H
-#endif
+	char * str = char_to_q_char (print_cell (cp));
+
+	MessageAppend(False, "SciPlotThunk(r %d c %d) %s",
+		r, c, print_cell(find_cell(r, c)));
 }
 
 void UpdateGraph()
@@ -235,6 +238,7 @@ void UpdateGraph()
 	struct rng		rngx, rnga;
 	char			*s, *t;
 	extern struct rng	graph_get_data(int);
+	enum graph_pair_ordering order = graph_rows_hz;
 
 	xlog = graph_get_logness('x');
 	ylog = graph_get_logness('y');
@@ -256,6 +260,8 @@ void UpdateGraph()
 	vx = (double *)XtCalloc(len, sizeof(double));
 	va = (double *)XtCalloc(len, sizeof(double));
 
+	/* FIX ME */
+	/* This code is wrong: only works for vertical set of data */
 	for (ii=0, i=rngx.lr; i<=rngx.hr; i++, ii++) {
 		s = cell_value_string(i, rngx.lc, True);
 		vx[ii] = 0.0;
@@ -265,10 +271,33 @@ void UpdateGraph()
 		sscanf(s, "%lf", &va[ii]);
 	}
 
+/* Start test for_pairs_in() */
+	for_pairs_in(&rngx, order, (fpi_thunk)sciplot_thunk, NULL);
+	for_pairs_in(&rnga, order, (fpi_thunk)sciplot_thunk, NULL);
+/* End test for_pairs_in() */
+
 	lst = SciPlotListCreateDouble(plot, 10, vx, va,
 			graph_get_data_title(0));
+#if 1
+    {
+	/* Colour test */
+
+	int	fg, bg, lc, pc;
+
+	bg = SciPlotAllocNamedColor(plot, "seagreen");
+	fg = SciPlotAllocNamedColor(plot, "yellow");
+	lc = SciPlotAllocNamedColor(plot, "orange");
+	pc = SciPlotAllocNamedColor(plot, "light blue");
+
+	SciPlotListSetStyle(plot, lst, pc, XtMARKER_CIRCLE,
+		lc, XtLINE_DOTTED);
+	SciPlotSetForegroundColor(plot, fg);
+	SciPlotSetBackgroundColor(plot, bg);
+    }
+#else
 	SciPlotListSetStyle(plot, lst, 1, XtMARKER_CIRCLE,
 		1, XtLINE_DOTTED);
+#endif
 
 	s = graph_get_title();
 	if (s && strlen(s)) {
@@ -285,13 +314,13 @@ void UpdateGraph()
 #endif
 }
 
-/*
- * Pop up a window with a graph (from SciPlot).
- */
-void ShowGraph(Widget w, XtPointer client, XtPointer call)
+void CreateGraph(Widget w, XtPointer client, XtPointer call)
 {
 	Widget	f, sw, sep, ok;
 	int	i;
+
+	if (gs)
+		return;
 
 	gs = XtVaCreatePopupShell("graphShell",
 		topLevelShellWidgetClass,
@@ -349,8 +378,42 @@ void ShowGraph(Widget w, XtPointer client, XtPointer call)
 	XtAddCallback(ok, XmNactivateCallback, PopDownHelpCB, gs);
 
 	UpdateGraph();
+}
 
+/*
+ * Pop up a window with a graph (from SciPlot).
+ */
+void ShowGraph(Widget w, XtPointer client, XtPointer call)
+{
+	CreateGraph(w, client, call);
 	XtPopup(gs, XtGrabNone);
+}
+
+/*
+ * Needs to figure out to which file/printer to print, depending on
+ * the callback data passed from the dialog.
+ */
+void ReallyPrintGraph(Widget w, XtPointer client, XtPointer call)
+{
+#ifdef	HAVE_SciPlot_H
+	if (gs == NULL)
+		CreateGraph(w, client, call);
+	else
+		UpdateGraph();
+	if (plot)
+		SciPlotPSCreateColor(plot, "plot.ps");
+#endif
+}
+
+/*
+ * FIX ME
+ * This must first pop up a window asking whether to print to a file
+ * or a printer. Only after confirmation must ReallyPrintGraph be
+ * called.
+ */
+void PrintGraph(Widget w, XtPointer client, XtPointer call)
+{
+	ReallyPrintGraph(w, client, call);
 }
 
 /*
@@ -1503,7 +1566,7 @@ void CreateFormatsDialog(Widget p)
 	x16 = XmStringCreateSimple(_("User-4"));
 
 	w = XmVaCreateSimpleOptionMenu(frame, "formatsOption",
-		xms, /* mnemonic ? */NULL, /* initial selection */ 0, 
+		xms, /* mnemonic ? */0, /* initial selection */ 0, 
 		/* callback */ NULL,
 		XmVaPUSHBUTTON, x1, 'D', NULL, NULL,
 		XmVaPUSHBUTTON, x2, 'P', NULL, NULL,

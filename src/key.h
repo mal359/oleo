@@ -62,15 +62,12 @@ extern struct keymap **the_maps;
 extern char **map_names;
 extern char **map_prompts;
 
-#if 0 /* FIXME: Should this be removed? */
 #ifndef CTRL
 #define CTRL(X) ((X)&037)
 #endif
 #ifndef META
 #define META(X) ((X)|0200)
 #endif
-#endif /* 0 */
-
 
 /* String convention conversion. */
 

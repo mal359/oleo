@@ -284,8 +284,8 @@ dnl Treat --without-motif like
 dnl --without-motif-includes --without-motif-libraries.
 if test "$with_motif" = "no"
 then
-motif_includes=no
-motif_libraries=no
+motif_includes=none
+motif_libraries=none
 fi
 AC_ARG_WITH(motif-includes,
 [  --with-motif-includes=DIR    Motif include files are in DIR],
@@ -325,6 +325,7 @@ ac_cv_motif_includes=
 # /usr/dt is used on Solaris (Motif).
 # /usr/openwin is used on Solaris (X and Athena).
 # Other directories are just guesses.
+ac_cv_motif_includes="none"
 for dir in "$x_includes" "${prefix}/include" /usr/include /usr/local/include \
            /usr/include/Motif2.0 /usr/include/Motif1.2 /usr/include/Motif1.1 \
            /usr/include/X11R6 /usr/include/X11R5 /usr/include/X11R4 \
@@ -378,6 +379,7 @@ ac_cv_motif_libraries=
 # /usr/lesstif is used on Linux (Lesstif).
 # /usr/openwin is used on Solaris (X and Athena).
 # Other directories are just guesses.
+ac_cv_motif_libraries="none"
 for dir in "$x_libraries" "${prefix}/lib" /usr/lib /usr/local/lib \
            /usr/lib/Motif2.0 /usr/lib/Motif1.2 /usr/lib/Motif1.1 \
            /usr/lib/X11R6 /usr/lib/X11R5 /usr/lib/X11R4 /usr/lib/X11 \
@@ -404,9 +406,11 @@ fi
 #
 # Provide an easier way to link
 #
-test "$motif_libraries" != "" && link_motif="-L$motif_libraries -lXm"
-test "$motif_includes" != "" && include_motif="-I$motif_includes"
-test "$motif_includes" != "" && AC_DEFINE(HAVE_MOTIF)
+if test "$motif_includes" != "" && test "$motif_includes" != "$x_includes" && test "$motif_includes" != "none" ; then
+	link_motif="-L$motif_libraries -lXm"
+	include_motif="-I$motif_includes"
+	AC_DEFINE(HAVE_MOTIF)
+fi
 #
 AC_SUBST(link_motif)
 AC_SUBST(include_motif)
@@ -415,14 +419,10 @@ AC_SUBST(include_motif)
 #
 motif_libraries_result="$motif_libraries"
 motif_includes_result="$motif_includes"
-test "$motif_libraries_result" = "" &&
-  motif_libraries_result="in default path"
-test "$motif_includes_result" = "" &&
-  motif_includes_result="in default path"
-test "$motif_libraries_result" = "no" &&
-  motif_libraries_result="(none)"
-test "$motif_includes_result" = "no" &&
-  motif_includes_result="(none)"
+test "$motif_libraries_result" = "" && motif_libraries_result="in default path"
+test "$motif_includes_result" = "" && motif_includes_result="in default path"
+test "$motif_libraries_result" = "none" && motif_libraries_result="(none)"
+test "$motif_includes_result" = "none" && motif_includes_result="(none)"
 AC_MSG_RESULT(
   [libraries $motif_libraries_result, headers $motif_includes_result])
 ])dnl
@@ -444,8 +444,8 @@ dnl Treat --without-Xbae like
 dnl --without-Xbae-includes --without-Xbae-libraries.
 if test "$with_Xbae" = "no"
 then
-xbae_includes=no
-xbae_libraries=no
+xbae_includes=none
+xbae_libraries=none
 fi
 AC_ARG_WITH(Xbae-includes,
 [  --with-Xbae-includes=DIR    Motif include files are in DIR],
@@ -485,6 +485,7 @@ ice_cv_xbae_includes=
 # /usr/dt is used on Solaris (Motif).
 # /usr/openwin is used on Solaris (X and Athena).
 # Other directories are just guesses.
+ice_cv_xbae_includes="none"
 for dir in "$x_includes" "${prefix}/include" /usr/include /usr/local/include \
            /usr/include/Motif2.0 /usr/include/Motif1.2 /usr/include/Motif1.1 \
            /usr/include/X11R6 /usr/include/X11R5 /usr/include/X11R4 \
@@ -540,6 +541,7 @@ ice_cv_xbae_libraries=
 # /usr/lesstif is used on Linux (Lesstif).
 # /usr/openwin is used on Solaris (X and Athena).
 # Other directories are just guesses.
+ice_cv_xbae_libraries="none"
 for dir in "$x_libraries" "${prefix}/lib" /usr/lib /usr/local/lib \
            /usr/lib/Motif2.0 /usr/lib/Motif1.2 /usr/lib/Motif1.1 \
            /usr/lib/X11R6 /usr/lib/X11R5 /usr/lib/X11R4 /usr/lib/X11 \
@@ -565,26 +567,14 @@ LDFLAGS="$ice_xbae_save_LDFLAGS"
 #
 xbae_libraries="$ice_cv_xbae_libraries"
 fi
-# Add Motif definitions to X flags
-#
-# if test "$xbae_includes" != "" && test "$xbae_includes" != "$x_includes" && test "$xbae_includes" != "no"
-# then
-# X_CFLAGS="-I$xbae_includes $X_CFLAGS"
-# fi
-# if test "$xbae_libraries" != "" && test "$xbae_libraries" != "$x_libraries" && test "$xbae_libraries" != "no"
-# then
-# case "$X_LIBS" in
-#   *-R\ *) X_LIBS="-L$xbae_libraries -R $xbae_libraries $X_LIBS";;
-#   *-R*)   X_LIBS="-L$xbae_libraries -R$xbae_libraries $X_LIBS";;
-#   *)      X_LIBS="-L$xbae_libraries $X_LIBS";;
-# esac
-# fi
 #
 # Provide an easier way to link
 #
-test "$xbae_libraries" != "" && link_xbae="-L$xbae_libraries -lXbae"
-test "$xbae_includes" != "" && include_xbae="-I$xbae_includes"
-test "$xbae_includes" != "" && AC_DEFINE(HAVE_Xbae)
+if test "$xbae_includes" != "" && test "$xbae_includes" != "$x_includes" && test "$xbae_includes" != "none" ; then
+	link_xbae="-L$xbae_libraries -lXbae"
+	include_xbae="-I$xbae_includes"
+	AC_DEFINE(HAVE_Xbae)
+fi
 #
 AC_SUBST(include_xbae)
 AC_SUBST(link_xbae)
@@ -597,9 +587,9 @@ test "$xbae_libraries_result" = "" &&
   xbae_libraries_result="in default path"
 test "$xbae_includes_result" = "" &&
   xbae_includes_result="in default path"
-test "$xbae_libraries_result" = "no" &&
+test "$xbae_libraries_result" = "none" &&
   xbae_libraries_result="(none)"
-test "$xbae_includes_result" = "no" &&
+test "$xbae_includes_result" = "none" &&
   xbae_includes_result="(none)"
 AC_MSG_RESULT(
   [libraries $xbae_libraries_result, headers $xbae_includes_result])
@@ -622,8 +612,8 @@ dnl Treat --without-XmHTML like
 dnl --without-XmHTML-includes --without-XmHTML-libraries.
 if test "$with_XmHTML" = "no"
 then
-xmhtml_includes=no
-xmhtml_libraries=no
+xmhtml_includes=none
+xmhtml_libraries=none
 fi
 AC_ARG_WITH(xmhtml-includes,
 [  --with-xmhtml-includes=DIR    Motif include files are in DIR],
@@ -663,6 +653,7 @@ ice_cv_xmhtml_includes=
 # /usr/dt is used on Solaris (Motif).
 # /usr/openwin is used on Solaris (X and Athena).
 # Other directories are just guesses.
+ice_cv_xmhtml_includes="none"
 for dir in "$x_includes" "${prefix}/include" /usr/include /usr/local/include \
            /usr/include/Motif2.0 /usr/include/Motif1.2 /usr/include/Motif1.1 \
            /usr/include/X11R6 /usr/include/X11R5 /usr/include/X11R4 \
@@ -718,6 +709,7 @@ ice_cv_xmhtml_libraries=
 # /usr/lesstif is used on Linux (Lesstif).
 # /usr/openwin is used on Solaris (X and Athena).
 # Other directories are just guesses.
+ice_cv_xmhtml_libraries="none"
 for dir in "$x_libraries" "${prefix}/lib" /usr/lib /usr/local/lib \
            /usr/lib/Motif2.0 /usr/lib/Motif1.2 /usr/lib/Motif1.1 \
            /usr/lib/X11R6 /usr/lib/X11R5 /usr/lib/X11R4 /usr/lib/X11 \
@@ -729,8 +721,8 @@ for dir in "$x_libraries" "${prefix}/lib" /usr/lib /usr/local/lib \
            "${prefix}"/*/lib /usr/*/lib /usr/local/*/lib \
            "${prefix}"/lib/* /usr/lib/* /usr/local/lib/*; do
 if test -d "$dir" && test "`ls $dir/libXmHTML.* 2> /dev/null`" != ""; then
-ice_cv_xmhtml_libraries="$dir"
-break
+	ice_cv_xmhtml_libraries="$dir"
+	break
 fi
 done
 ])
@@ -743,26 +735,14 @@ LDFLAGS="$ice_xmhtml_save_LDFLAGS"
 #
 xmhtml_libraries="$ice_cv_xmhtml_libraries"
 fi
-# Add Motif definitions to X flags
-#
-# if test "$xmhtml_includes" != "" && test "$xmhtml_includes" != "$x_includes" && test "$xmhtml_includes" != "no"
-# then
-# X_CFLAGS="-I$xmhtml_includes $X_CFLAGS"
-# fi
-# if test "$xmhtml_libraries" != "" && test "$xmhtml_libraries" != "$x_libraries" && test "$xmhtml_libraries" != "no"
-# then
-# case "$X_LIBS" in
-#   *-R\ *) X_LIBS="-L$xmhtml_libraries -R $xmhtml_libraries $X_LIBS";;
-#   *-R*)   X_LIBS="-L$xmhtml_libraries -R$xmhtml_libraries $X_LIBS";;
-#   *)      X_LIBS="-L$xmhtml_libraries $X_LIBS";;
-# esac
-# fi
 #
 # Provide an easier way to link
 #
-test "$xmhtml_libraries" != "" && link_xmhtml="-L$xmhtml_libraries -lXmHTML -ljpeg"
-test "$xmhtml_includes" != "" && include_xmhtml="-I$xmhtml_includes"
-test "$xmhtml_includes" != "" && AC_DEFINE(HAVE_XmHTML_H)
+if test "$xmhtml_includes" != "" && test "$xmhtml_includes" != "$x_includes" && test "$xmhtml_includes" != "none"; then
+	link_xmhtml="-L$xmhtml_libraries -lXmHTML -ljpeg"
+	include_xmhtml="-I$xmhtml_includes"
+	AC_DEFINE(HAVE_XmHTML_H)
+fi
 #
 AC_SUBST(include_xmhtml)
 AC_SUBST(link_xmhtml)
@@ -771,14 +751,10 @@ AC_SUBST(link_xmhtml)
 #
 xmhtml_libraries_result="$xmhtml_libraries"
 xmhtml_includes_result="$xmhtml_includes"
-test "$xmhtml_libraries_result" = "" &&
-  xmhtml_libraries_result="in default path"
-test "$xmhtml_includes_result" = "" &&
-  xmhtml_includes_result="in default path"
-test "$xmhtml_libraries_result" = "no" &&
-  xmhtml_libraries_result="(none)"
-test "$xmhtml_includes_result" = "no" &&
-  xmhtml_includes_result="(none)"
+test "$xmhtml_libraries_result" = "" && xmhtml_libraries_result="in default path"
+test "$xmhtml_includes_result" = "" && xmhtml_includes_result="in default path"
+test "$xmhtml_libraries_result" = "none" && xmhtml_libraries_result="(none)"
+test "$xmhtml_includes_result" = "none" && xmhtml_includes_result="(none)"
 AC_MSG_RESULT(
   [libraries $xmhtml_libraries_result, headers $xmhtml_includes_result])
 ])dnl
@@ -800,8 +776,8 @@ dnl Treat --without-SciPlot like
 dnl --without-SciPlot-includes --without-SciPlot-libraries.
 if test "$with_SciPlot" = "no"
 then
-sciplot_includes=no
-sciplot_libraries=no
+sciplot_includes=none
+sciplot_libraries=none
 fi
 AC_ARG_WITH(SciPlot-includes,
 [  --with-SciPlot-includes=DIR    Motif include files are in DIR],
@@ -841,6 +817,7 @@ ice_cv_sciplot_includes=
 # /usr/dt is used on Solaris (Motif).
 # /usr/openwin is used on Solaris (X and Athena).
 # Other directories are just guesses.
+ice_cv_sciplot_includes="none"
 for dir in "$x_includes" "${prefix}/include" /usr/include /usr/local/include \
            /usr/include/Motif2.0 /usr/include/Motif1.2 /usr/include/Motif1.1 \
            /usr/include/X11R6 /usr/include/X11R5 /usr/include/X11R4 \
@@ -896,6 +873,7 @@ ice_cv_sciplot_libraries=
 # /usr/lesstif is used on Linux (Lesstif).
 # /usr/openwin is used on Solaris (X and Athena).
 # Other directories are just guesses.
+ice_cv_sciplot_libraries="none"
 for dir in "$x_libraries" "${prefix}/lib" /usr/lib /usr/local/lib \
            /usr/lib/Motif2.0 /usr/lib/Motif1.2 /usr/lib/Motif1.1 \
            /usr/lib/X11R6 /usr/lib/X11R5 /usr/lib/X11R4 /usr/lib/X11 \
@@ -921,26 +899,15 @@ LDFLAGS="$ice_sciplot_save_LDFLAGS"
 #
 sciplot_libraries="$ice_cv_sciplot_libraries"
 fi
-# Add Motif definitions to X flags
 #
-# if test "$sciplot_includes" != "" && test "$sciplot_includes" != "$x_includes" && test "$sciplot_includes" != "no"
-# then
-# X_CFLAGS="-I$sciplot_includes $X_CFLAGS"
-# fi
-# if test "$sciplot_libraries" != "" && test "$sciplot_libraries" != "$x_libraries" && test "$sciplot_libraries" != "no"
-# then
-# case "$X_LIBS" in
-#   *-R\ *) X_LIBS="-L$sciplot_libraries -R $sciplot_libraries $X_LIBS";;
-#   *-R*)   X_LIBS="-L$sciplot_libraries -R$sciplot_libraries $X_LIBS";;
-#   *)      X_LIBS="-L$sciplot_libraries $X_LIBS";;
-# esac
-# fi
 #
 # Provide an easier way to link
 #
-test "$sciplot_libraries" != "" && link_sciplot="-L$sciplot_libraries -lSciPlot"
-test "$sciplot_includes" != "" && include_sciplot="-I$sciplot_includes"
-test "$sciplot_includes" != "" && AC_DEFINE(HAVE_SciPlot_H)
+if test "$sciplot_includes" != "" && test "$sciplot_includes" != "$x_includes" && test "$sciplot_includes" != "none"; then
+	link_sciplot="-L$sciplot_libraries -lSciPlot"
+	include_sciplot="-I$sciplot_includes"
+	AC_DEFINE(HAVE_SciPlot_H)
+fi
 #
 AC_SUBST(include_sciplot)
 AC_SUBST(link_sciplot)
@@ -949,14 +916,10 @@ AC_SUBST(link_sciplot)
 #
 sciplot_libraries_result="$sciplot_libraries"
 sciplot_includes_result="$sciplot_includes"
-test "$sciplot_libraries_result" = "" &&
-  sciplot_libraries_result="in default path"
-test "$sciplot_includes_result" = "" &&
-  sciplot_includes_result="in default path"
-test "$sciplot_libraries_result" = "no" &&
-  sciplot_libraries_result="(none)"
-test "$sciplot_includes_result" = "no" &&
-  sciplot_includes_result="(none)"
+test "$sciplot_libraries_result" = "" && sciplot_libraries_result="in default path"
+test "$sciplot_includes_result" = "" && sciplot_includes_result="in default path"
+test "$sciplot_libraries_result" = "none" && sciplot_libraries_result="(none)"
+test "$sciplot_includes_result" = "none" && sciplot_includes_result="(none)"
 AC_MSG_RESULT(
   [libraries $sciplot_libraries_result, headers $sciplot_includes_result])
 ])dnl

@@ -27,6 +27,10 @@
 
 #include <stdio.h>
 
+#ifdef HAVE_LOCALE_H
+#include <locale.h>
+#endif
+
 #if HAVE_VPRINTF || HAVE_DOPRNT || _LIBC
 # if __STDC__
 #  include <stdarg.h>
