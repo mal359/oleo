@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.25 2000/07/03 16:33:02 danny Exp $
+ *  $Id: fallback.c,v 1.26 2000/07/08 15:22:35 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -302,6 +302,7 @@ char *fallback[] = {
 	"*showLabels.labelString:		Show Labels",
 	"*showBorders.labelString:		Show Border",
 	"*showRaster.labelString:		Show Raster",
+	"*PrintZoomScale.titleString:		Zoom Percentage :",
 /* Quit Dialog */
 	"*quitMB_popup.title:			Quit Oleo ?",
 	"*quitMB*OK.labelString:		Quit",

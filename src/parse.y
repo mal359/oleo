@@ -1052,8 +1052,9 @@ noa0_parse_cell_or_range(char **ptr, struct rng *retp)
  *		HCREL	(8)	high column is relative
  */
 unsigned char
-parse_cell_or_range (char **ptr, struct rng *retp)
+parse_cell_or_range(char **ptr, struct rng *retp)
 {
+	char		*p = *ptr;	/* Only for the printing */
 	unsigned char	r;
 
 	if (Global->a0)

@@ -1,5 +1,5 @@
 /*
- *  $Id: pcl.c,v 1.13 2000/02/22 23:29:33 danny Exp $
+ *  $Id: pcl.c,v 1.14 2000/07/08 15:22:35 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: pcl.c,v 1.13 2000/02/22 23:29:33 danny Exp $";
+static char rcsid[] = "$Id: pcl.c,v 1.14 2000/07/08 15:22:35 danny Exp $";
 
 #include <stdio.h>
 
@@ -51,9 +51,9 @@ struct OleoGlobal	*Global;
 
 #include "print.h"
 
-#define	INITIAL_Y	10
-
 static int	y;	/* absolute position on page */
+static float	border_width = 20.0,
+		border_height = 20.0;
 
 struct {
 	char	*e;
@@ -114,7 +114,7 @@ void PCLPageHeader(char *str, FILE *fp)
 		Global->need_formfeed = 0;
 	}
 
-	y = INITIAL_Y;
+	y = border_height;
 }
 
 void PCLPageFooter(char *str, FILE *fp)
@@ -254,6 +254,12 @@ void PCLSetEncoding(char *encoding)
 	pcl_encoding = strdup(encoding);
 }
 
+void PCLSetBorder(int width, int height, FILE *fp)
+{
+	border_width = width;
+	border_height = height;
+}
+
 struct PrintDriver PCLPrintDriver = {
 	"PCL",
 	&PCLJobHeader,
@@ -265,7 +271,8 @@ struct PrintDriver PCLPrintDriver = {
 	&PCLFont,
 	&PCLNewLine,
 	&PCLPaperSize,
-	&PCLSetEncoding
+	&PCLSetEncoding,
+	&PCLSetBorder
 };
 
 #ifdef	TEST

@@ -6,9 +6,9 @@
 @defcodeindex cm
 @c %**end of header
 
-@set version 1.99.8
-@set update-date December 1 1999
-@set update-month December 1999
+@set version 1.99.12
+@set update-date July 8 2000
+@set update-month July 2000
 
 @clear smallbook
 
@@ -33,7 +33,7 @@ This file documents Oleo, the GNU spreadsheet.
 
 This file is part of GNU Oleo.
 
-Copyright (C) 1993-1999 Free Software Foundation, Inc.
+Copyright (C) 1993-2000 Free Software Foundation, Inc.
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -70,7 +70,7 @@ Tom Lord, Kai Getrost, Steve Fisk, Danny Backx
 @c Put it inside the titlepage to turn off headings:
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1993-1999 Free Software Foundation, Inc.
+Copyright @copyright{} 1993-2000 Free Software Foundation, Inc.
 Published by the Free Software Foundation @*
 675 Massachusetts Avenue, @*
 Cambridge, MA 02139 USA @*

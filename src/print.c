@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
+ * Copyright © 1992, 1993, 1999, 2000 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.29 2000/04/08 12:20:05 danny Exp $
+ * $Id: print.c,v 1.30 2000/07/08 15:22:35 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -281,12 +281,16 @@ print_region_cmd (struct rng *print, FILE *fp)
 	/* Font heights */
 	int	*heights = NULL, i;
 
+#if 0
+	Global->zoom = 0.5;
+#endif
+
 	/* Figure out page width and height */
 	print_width = default_pswid;
 	print_height = default_pshgt;
 
 	/* Set default font */
-	AfmSetFont(default_font_family, default_font_slant, default_font_size);
+	AfmSetFont(default_font_family, default_font_slant, Global->zoom * default_font_size);
 
 	/* Figure out #pages */
 		/* Depends on all fonts used, but also on zoom options chosen */
@@ -304,8 +308,10 @@ print_region_cmd (struct rng *print, FILE *fp)
 			cp = find_cell(rr, cc);
 
 			if (cp && cp->cell_font && cp->cell_font->names) {
-				if (current_size < cp->cell_font->scale * default_font_size) {
-					current_size = cp->cell_font->scale * default_font_size;
+				if (current_size < cp->cell_font->scale * Global->zoom
+								* default_font_size) {
+					current_size = Global->zoom *
+						cp->cell_font->scale * default_font_size;
 
 					AfmSetFont(cp->cell_font->names->ps_name,
 						default_font_slant,
@@ -314,7 +320,7 @@ print_region_cmd (struct rng *print, FILE *fp)
 			}
 		}
 		heights[i] += get_height(rr) * AfmFontHeight();
-		totht += heights[i] + Global->interline;
+		totht += heights[i] + Global->interline * Global->zoom;
 	}
 	for (cc = print->lc; cc <= print->hc; cc++) {
 		totwid += get_width(cc) * AfmFontWidth();;
@@ -340,8 +346,9 @@ print_region_cmd (struct rng *print, FILE *fp)
 	/* Start Printing */
 	Global->CurrentPrintDriver->job_header(title, npages, fp);
 	Global->CurrentPrintDriver->paper_size(print_width, print_height, fp);
+	Global->CurrentPrintDriver->set_border(20.0, 20.0, fp);
 	Global->CurrentPrintDriver->font(default_font_family, default_font_slant,
-		default_font_size, fp);
+		Global->zoom * default_font_size, fp);
 
 	/* Adapted from txt_print_region */
 	npages = 1;
@@ -385,17 +392,18 @@ print_region_cmd (struct rng *print, FILE *fp)
 				next = 0;
 				w = get_width(cc);	/* in spaces */
 				if (!w) {
-					xpoints += 10;
+					xpoints += 10 * Global->zoom;
 					continue;
 				}
 				cp = find_cell(rr, cc);
 
 				/* Font */
 				if (cp && cp->cell_font && cp->cell_font->names) {
-					current_size = cp->cell_font->scale * default_font_size;
+					current_size = cp->cell_font->scale * default_font_size
+						* Global->zoom;
 
 					if (current_size == 0)
-						current_size = default_font_size;
+						current_size = default_font_size * Global->zoom;
 
 					Global->CurrentPrintDriver->font(
 						cp->cell_font->names->ps_name,
@@ -408,11 +416,11 @@ print_region_cmd (struct rng *print, FILE *fp)
 				} else {
 					Global->CurrentPrintDriver->font(default_font_family,
 						default_font_slant,
-						default_font_size,
+						default_font_size * Global->zoom,
 						fp);
 					AfmSetFont(default_font_family, default_font_slant,
-						default_font_size);
-					current_size = default_font_size;
+						default_font_size * Global->zoom);
+					current_size = default_font_size * Global->zoom;
 				}
 
 				w = w * current_size;
@@ -448,7 +456,7 @@ print_region_cmd (struct rng *print, FILE *fp)
 						if (!cp || GET_FORMAT(cp) == FMT_HID ||
 								GET_TYP(cp) == 0) {
 							wtot += get_width(i) * current_size;
-							xpointsafter += 10;
+							xpointsafter += 10 * Global->zoom;
 							next = i+1;
 						} else {
 							i = c_hi;
@@ -501,17 +509,17 @@ print_region_cmd (struct rng *print, FILE *fp)
 					}
 					free(s);
 
-					xpoints += w + 10 + xpointsafter;
+					xpoints += w + (10 + xpointsafter) * Global->zoom;
 					xpointsafter = 0;
 				}
 
 				if (next)
 					cc = next-1;
 			}
-			Global->CurrentPrintDriver->newline(ht + Global->interline, fp);
-			totht += ht + Global->interline;
+			Global->CurrentPrintDriver->newline(ht + Global->zoom * Global->interline, fp);
+			totht += ht + Global->interline * Global->zoom;
 
-			if (totht + Global->BottomBorderHeight >= print_height) {
+			if (totht + Global->BottomBorderHeight * Global->zoom >= print_height) {
 				totht = 0;
 
 				sprintf(pg, "page %d", npages);

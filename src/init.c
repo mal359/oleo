@@ -1,19 +1,23 @@
-/*	Copyright (C) 1993 Free Software Foundation, Inc.
+/*
+ * $Id: init.c,v 1.4 2000/07/08 15:22:35 danny Exp $
+ *
+ * Copyright (C) 1993 Free Software Foundation, Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this software; see the file COPYING.  If not, write to
-the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -468,6 +472,19 @@ char *init_cmds[] =
   "bind-key generic-menu exit-minibuffer ^m",
   "bind-key generic-menu exit-minibuffer ^j",
   "",
+#ifdef	HAVE_LIBPLOT
+  "# Graphing with GNU Plotutils",
+  "",
+  "create-keymap plotutils-commands generic-menu",
+  "name-macro-string plotutils-setup \\",
+  " {with-keymap plotutils-commands}{builtin-help plotutils}",
+  "bind-key generic-meta plotutils-setup g",
+  "set-map-prompt plotutils-commands \\",
+  "(R C o x y t d s p Esc)? ",
+  "",
+#else
+/* Don't use gnuplot if you also have plotutils */
+# ifdef	WITH_GNUPLOT
   "# Graphing with gnuplot",
   "",
   "create-keymap graph-commands generic-menu",
@@ -543,6 +560,8 @@ char *init_cmds[] =
   "name-macro-string graph-default-y-labels {graph-default-axis-labels y}",
   "bind-key graph-y-axis-commands graph-default-y-labels L",
   "",
+# endif
+#endif
   "# printing",
   "",
   "create-keymap print-commands universal",

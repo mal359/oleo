@@ -182,6 +182,9 @@
 #undef	HAVE_LIBPLOT_2_2
 #undef	HAVE_LIBSCIPLOT
 
+/* GNU scientific library */
+#undef	HAVE_GSL
+
 #if ENABLE_NLS
 # define _(Text) gettext (Text)
 #else

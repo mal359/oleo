@@ -1,4 +1,4 @@
-$Id: TODO,v 1.35 2000/07/03 19:28:34 danny Exp $
+$Id: TODO,v 1.36 2000/07/08 15:22:35 danny Exp $
 
 TODO's:
 
@@ -12,7 +12,6 @@ TODO's:
 	- open file ok ? (MDI)
 	- Motif GUI
 	- @button in Motif
-	- remove GNUPLOT dependency
 --------
 
 * Internationalisation
@@ -108,7 +107,7 @@ TODO's:
 	(todo) Allow manual setting of axis ranges in various plots.
 	(todo) 3D pie
 	(todo) exploding pie
-	(todo) implement plotutils in XmScrolledWindow
+	(done) implement plotutils in XmScrolledWindow
 	(todo) ticks on axes in several plot types
 	(todo) figure out how to print on monochrome printers
 

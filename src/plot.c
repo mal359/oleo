@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: plot.c,v 1.21 2000/07/03 19:28:34 danny Exp $
+ * $Id: plot.c,v 1.22 2000/07/08 15:22:35 danny Exp $
  *
  * This file contains the code to draw plots from the Oleo data
  * layered on top of the libsciplot functions.
@@ -274,11 +274,6 @@ PuBarChart(char *plotter, FILE *outfile)
 
 	sp_begin_plot(mg, 1.0, 0.0, 0.0);
 
-#if 0
-	for (i=0; i<4; i++)
-		fprintf(stderr, "Oleo data label %d - %s\n", i, graph_get_data_title(i));
-#endif
-
 	sp_first_dataset(mg);
 	for (r = 1; r < NUM_DATASETS; r++) {
 		rngx = graph_get_data(r);
@@ -371,11 +366,6 @@ PuXYChart(char *plotter, FILE *outfile)
 		ymax = XYyMax;
 	}
 
-#if 0
-	fprintf(stderr, "Axis ranges - X [%f..%f], Y [%f..%f]\n",
-		xmin, xmax, ymin, ymax);
-#endif
-
 	mg = sp_create_plot(handle, SP_PLOT_XY);
 
 	sp_set_title(mg, graph_get_title());
@@ -397,22 +387,8 @@ PuXYChart(char *plotter, FILE *outfile)
 	} else if (Global->PlotGlobal->ticktype[1] == SP_TICK_PRINTF) {
 		/* FIX ME need more API for this */
 	}
-#if 0
-	/*
-	 * This is experimental code to force dates to be used for the X axis tick marks.
-	 */
-	sp_set_axis_ticktype_date(mg, X_AXIS,
-		/* round_to */		1.0,
-		/* incr */		1.0,
-		/* format_string */	"%b\n%Y");
-#endif
 
 	sp_draw_frame(mg, 1);
-
-#if 0
-	for (i=0; i<4; i++)
-		fprintf(stderr, "Oleo data label %d - %s\n", i, graph_get_data_title(i));
-#endif
 
 	for (r = 1; r < NUM_DATASETS; r++) {
 	    rngx = graph_get_data(r);

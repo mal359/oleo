@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1993, 1999 Free Software Foundation, Inc.
  * 
- * $Id: print.h,v 1.11 1999/12/01 21:12:48 danny Exp $
+ * $Id: print.h,v 1.12 2000/07/08 15:22:35 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +79,10 @@ struct PrintDriver {
 	 * Set the encoding (the character set), usually ISOLatin1.
 	 */
 	void	(*set_encoding)(char *encoding);
+	/*
+	 * Set border width and height.
+	 */
+	void	(*set_border)(int width, int height, FILE *fp);
 };
 
 char *PrintGetType(int);

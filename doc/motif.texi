@@ -11,6 +11,7 @@
 * Using the keyboard shortcuts::
 * Using Help::
 * Fallback::
+* Motif Buttons in a Spreadsheet Cell::
 @end menu
 
 @node Motif Introduction, LessTif, , Motif
@@ -131,10 +132,26 @@ can in itself be triggered by pressing the Alt key and depressing the F key.
 
 
 
-@node Fallback, , Using Help, Motif
+@node Fallback, Motif Buttons in a Spreadsheet Cell, Using Help, Motif
 @section Fallback
 
 If you have a version of oleo that has been built with Motif support,
 but you don't currently have an X Window System display
 (for instance you're using a dialup connection),
 then it is still possible to use the curses based character user interface.
+
+The command @code{oleo -t} should start Oleo with a curses based user interface,
+even if you're running in an X environment.
+
+@node Motif Buttons in a Spreadsheet Cell, , Fallback, Motif
+@section Motif Buttons in a Spreadsheet Cell
+
+You can put a button in a cell in the Motif version.
+The formula of the cell that you want to have a button should be
+@code{@ button("text", "cell-specification")}
+
+The first argument is the text that the button will show, the second argument
+is the cell whose content will be executed. That cell will typically contain a
+command like @code{psprint-region r3:45c8:13 invoice.ps}
+
+Note that this is currently an experimental feature.

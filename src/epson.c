@@ -1,5 +1,5 @@
 /*
- *  $Id: epson.c,v 1.11 2000/04/08 12:20:05 danny Exp $
+ *  $Id: epson.c,v 1.12 2000/07/08 15:22:35 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: epson.c,v 1.11 2000/04/08 12:20:05 danny Exp $";
+static char rcsid[] = "$Id: epson.c,v 1.12 2000/07/08 15:22:35 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -36,6 +36,9 @@ static char rcsid[] = "$Id: epson.c,v 1.11 2000/04/08 12:20:05 danny Exp $";
 #include "global.h"
 
 #include "print.h"
+
+static float	border_width = 20.0,
+		border_height = 20.0;
 
 static char	*Escape = "\033";
 static char	*formfeed = "\f";
@@ -179,6 +182,12 @@ void EpsonSetEncoding(char *encoding)
 {
 }
 
+void EpsonSetBorder(int width, int height, FILE *fp)
+{
+	border_width = width;
+	border_height = height;
+}
+
 struct PrintDriver EpsonStylusColorPrintDriver = {
 	"Epson Stylus Color",
 	&EpsonJobHeader,
@@ -190,7 +199,8 @@ struct PrintDriver EpsonStylusColorPrintDriver = {
 	&EpsonFont,
 	&EpsonNewLine,
 	&EpsonPaperSize,
-	&EpsonSetEncoding
+	&EpsonSetEncoding,
+	&EpsonSetBorder
 };
 
 #ifdef	TEST

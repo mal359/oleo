@@ -1,20 +1,21 @@
-/*	Copyright (C) 1993 Free Software Foundation, Inc.
+/*
+ * Copyright (C) 1993 Free Software Foundation, Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this software; see the file COPYING.  If not, write to
-the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -76,7 +77,6 @@ char * formula_info[] =
 "			stores expressions in a byte-compiled form, excess",
 "			parens will mysteriously vanish.",
 0,
-
 
 	/* Error values. */
 
@@ -163,7 +163,6 @@ char * formula_info[] =
 "On some machines this may be indistinguishable from other values.",
 0,
 
-
 
 		/* Functions releated to boolean values. */
 
@@ -206,7 +205,6 @@ char * formula_info[] =
 "#TRUE if the VAL is a number, or can be automatically converted to a number.",
 "Thus `isnum(\"12\")' is #TRUE, while `isnum(\"dsfjbk\") is #FALSE.",
 0,
-
 
 	/* Functions that reflect the structure of the spreadsheet. */
 "row",
@@ -353,7 +351,6 @@ char * formula_info[] =
 "columns from the upper left corner of the range.",
 0,
 
-
 
 	/* General arithmetic*/
 
@@ -397,7 +394,6 @@ char * formula_info[] =
 0,
 
 
-
 
 "exp",
 "Exponential				exp(num)",
@@ -420,7 +416,6 @@ char * formula_info[] =
 "The square-root of NUM.",
 0,
 
-
 
 /* Trig functions */
 
@@ -494,7 +489,6 @@ char * formula_info[] =
 "Calling `hypot' may succeed in cases when the equivalent expression",
 "might underflow or overflow.",
 0,
-
 "oneof",
 "Case expression				oneof(choice,val1,val2,val3...)",
 "",
@@ -502,7 +496,6 @@ char * formula_info[] =
 "If CHOICE is not a valid integer in the appropriate range, the value is",
 "#OUT_OF_RANGE.  If no value arguments are supplied, the value is #NO_VALUES.",
 0,
-
 "sum",
 "Sum of values				sum(vr1, vr2, ...)",
 "",
@@ -531,7 +524,6 @@ char * formula_info[] =
 "provide a default value as an extra argument to product (e.g. `prod(1,",
 "r1:10c1)').",
 0,
-
 "avg",
 "Average					avg(vr1...)",
 "",
@@ -600,7 +592,6 @@ char * formula_info[] =
 "",
 "To get the sample variance, use std(...)^2",
 0,
-
   	/* string functions */
 "len",
 "String length				len(str)",
@@ -666,7 +657,6 @@ char * formula_info[] =
 "An argument may be a range, in which case the cell values in the range are",
 "concatenated.",
 0,
-
 
 	/* busy-ness functions */
 "pmt",
@@ -772,7 +762,6 @@ char * formula_info[] =
 "",
 "(undocumented -- documentation from volunteers welcome).",
 0, 
-
 			     /* Date functions */
 "hms_to_time",
 "hms_to_time(hours, minutes, seconds)",
@@ -995,7 +984,6 @@ char * formula_info[] =
 
 0,
 
-
 "help-with-help",
 "",
 "Valid help characters are:",
@@ -1378,4 +1366,3 @@ forminfo_text (char * name)
       while (*pos++) ;
   return 0;
 }
-

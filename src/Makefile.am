@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.49 2000/07/03 19:28:34 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.50 2000/07/08 15:22:35 danny Exp $
 #
 # CPPFLAGS = -Wall
 
@@ -55,7 +55,7 @@ oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
  forminfo.c posixtm.y date.c xrdb.c \
  $(GUI) $(XBSRC) $(MYSQL) \
  print.c postscript.c pcl.c epson.c prtext.c afm.c \
- mdi.c \
+ mdi.c gsl.c \
  ${SCIPLOT_SRC}
 
 if UseMotif

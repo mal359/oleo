@@ -1,10 +1,10 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.60 2000/07/03 19:28:34 danny Exp $
+ *  $Id: io-motif.c,v 1.61 2000/07/08 15:22:35 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
- *  Copyright (C) 1998, 1999 by the Free Software Foundation, Inc.
+ *  Copyright © 1998-2000 by the Free Software Foundation, Inc.
  *  Written by Danny Backx <danny@gnu.org>.
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.60 2000/07/03 19:28:34 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.61 2000/07/08 15:22:35 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -632,17 +632,36 @@ void PrintGraph(Widget w, XtPointer client, XtPointer call)
  */
 void PrintOptionsOk(Widget w, XtPointer client, XtPointer call)
 {
-	MotifSelectGlobal(w);
+	int	scale;
+	float	f;
 
+	MotifSelectGlobal(w);
+	XtUnmanageChild(optionsDialog);
+
+	XtVaGetValues(Global->MotifGlobal->ZoomScale,
+			XmNvalue, &scale,
+		NULL);
+	f = scale;
+
+	f = f / 100.0;
+	Global->zoom = f;
+
+	MessageAppend(False, "Set zoom to %2.0f%%", 100 * Global->zoom);
 }
 
 void PrintOptionsReset(Widget w)
 {
+	float	f = Global->zoom * 100.0;
+	int	s = f;
+
+	XtVaSetValues(Global->MotifGlobal->ZoomScale,
+			XmNvalue,	s,
+		NULL);
 }
 
 void PrintOptionsCB(Widget w, XtPointer client, XtPointer call)
 {
-	Widget		ok, cancel, help, t, rc, nb, b, cb, menu;
+	Widget		ok, cancel, help, t, rc, nb, b, cb, menu, f;
 	XmString	xms;
 	Arg		al[5];
 	int		ac;
@@ -681,8 +700,16 @@ void PrintOptionsCB(Widget w, XtPointer client, XtPointer call)
 			NULL);
 
 		/* Choose a scale for the print */
+		f = XtVaCreateManagedWidget("scaleForm", xmFormWidgetClass,
+			nb,
+			NULL);
+
 		rc = XtVaCreateManagedWidget("scaleRC", xmRowColumnWidgetClass,
-			nb, NULL);
+			f,
+				XmNtopAttachment,	XmATTACH_FORM,
+				XmNtopOffset,		10,
+				XmNleftAttachment,	XmATTACH_FORM,
+			NULL);
 
 		menu = XmCreatePulldownMenu(rc, "optionMenu", NULL, 0);
 		ac = 0;
@@ -693,6 +720,9 @@ void PrintOptionsCB(Widget w, XtPointer client, XtPointer call)
 		XtManageChild(cb);
 		XmStringFree(xms);
 
+		b = XtVaCreateManagedWidget("PrintScaleZoom", xmPushButtonGadgetClass,
+			menu,
+			NULL);
 		b = XtVaCreateManagedWidget("PrintScaleAsIs", xmPushButtonGadgetClass,
 			menu,
 			NULL);
@@ -704,6 +734,21 @@ void PrintOptionsCB(Widget w, XtPointer client, XtPointer call)
 			NULL);
 		b = XtVaCreateManagedWidget("PrintScaleAllOnOne", xmPushButtonGadgetClass,
 			menu,
+			NULL);
+
+		Global->MotifGlobal->ZoomScale = XtVaCreateManagedWidget("PrintZoomScale",
+			xmScaleWidgetClass, f,
+				XmNtopAttachment,	XmATTACH_WIDGET,
+				XmNtopWidget,		rc,
+				XmNtopOffset,		10,
+				XmNleftAttachment,	XmATTACH_FORM,
+				XmNleftOffset,		10,
+				XmNrightAttachment,	XmATTACH_FORM,
+				XmNrightOffset,		10,
+				XmNorientation,		XmHORIZONTAL,
+				XmNminimum,		10,
+				XmNmaximum,		400,
+				XmNshowValue,		True,
 			NULL);
 
 		(void)XtVaCreateManagedWidget("scaleLabel", xmPushButtonWidgetClass,
@@ -733,6 +778,18 @@ void PrintOptionsCB(Widget w, XtPointer client, XtPointer call)
 	XtManageChild(optionsDialog);
 }
 
+void ConversionError(char *s, char *t)
+{
+	char *r = XtMalloc(strlen(s) + strlen(t) + 100);
+
+	sprintf(r,
+		_("Conversion error: cannot convert '%s' to a %s\n"),
+		s, t);
+	MessageAppend(True, r);
+	XtFree(r);
+}
+
+#ifdef	HAVE_LIBPLOT
 /*
  * Create a widget tree to configure a graph with.
  *	The result is a widget that isn't managed yet.
@@ -855,17 +912,6 @@ Widget CreateConfigureGraph(Widget parent)
 		NULL);
 
 	return toprc;
-}
-
-void ConversionError(char *s, char *t)
-{
-	char *r = XtMalloc(strlen(s) + strlen(t) + 100);
-
-	sprintf(r,
-		_("Conversion error: cannot convert '%s' to a %s\n"),
-		s, t);
-	MessageAppend(True, r);
-	XtFree(r);
 }
 
 /*
@@ -1178,6 +1224,7 @@ void ConfigureGraph(Widget w, XtPointer client, XtPointer call)
 	ConfigureGraphReset(ConfigureGraphInside);
 	XtManageChild(configureGraph);
 }
+#endif
 
 /*
  * Plotutils
@@ -1446,6 +1493,7 @@ void PuPrintXY(Widget w, XtPointer client, XtPointer call)
 #endif
 }
 
+#ifdef	HAVE_LIBPLOT
 static void TickTypeCB(Widget w, XtPointer client, XtPointer call)
 {
 	int	n = (int)client;
@@ -1830,6 +1878,7 @@ void ConfigureBarOk(void)
 void ConfigureBarReset(void)
 {
 }
+#endif
 
 /*
  * Print
@@ -1924,7 +1973,12 @@ void ReallyPrintCB(Widget w, XtPointer client, XtPointer call)
 	else
 		pclose(fp);
 
-	MessageAppend(False, "Printed %s to %s\n", range_name(&rng), fn);
+	if (Global->zoom < 0.90 || Global->zoom > 1.1) {
+		int	z = Global->zoom * 100;
+		MessageAppend(False, "Printed %s to %s, at %d percent size\n",
+			range_name(&rng), fn, z);
+	} else
+		MessageAppend(False, "Printed %s to %s\n", range_name(&rng), fn);
 
 #ifdef	FREE_TF_STRING
 	XtFree(fn);
@@ -4970,7 +5024,11 @@ GscBuildMainWindow(Widget parent)
 	w = XtVaCreateManagedWidget("define", xmPushButtonGadgetClass,
 		graphmenu,
 		NULL);
+#ifdef	HAVE_LIBPLOT
 	XtAddCallback(w, XmNactivateCallback, ConfigureGraph, NULL);
+#else
+	XtAddCallback(w, XmNactivateCallback, NoPlotutils, NULL);
+#endif
 
 #ifdef	HAVE_SciPlot_H
 	w = XtVaCreateManagedWidget("show", xmPushButtonGadgetClass, graphmenu,

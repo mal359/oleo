@@ -1,5 +1,5 @@
 /*
- *  $Id: postscript.c,v 1.15 2000/02/22 23:29:33 danny Exp $
+ *  $Id: postscript.c,v 1.16 2000/07/08 15:22:35 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -28,7 +28,7 @@
  * There shouldn't be much spreadsheet functionality here...
  */
 
-static char rcsid[] = "$Id: postscript.c,v 1.15 2000/02/22 23:29:33 danny Exp $";
+static char rcsid[] = "$Id: postscript.c,v 1.16 2000/07/08 15:22:35 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -181,9 +181,9 @@ void PostScriptJobTrailer(int npages, FILE *fp)
  * These variables hold the position we're printing at
  */
 static float	x, y;
-
-#define	INITIAL_X	10.0
-#define	INITIAL_Y	760.0
+static float	paper_width, paper_height;
+static float	border_width = 20.0,
+		border_height = 20.0;
 
 /*
  * MULTIPLY_WIDTH should provide the mapping between string length (in chars)
@@ -199,8 +199,9 @@ static float	x, y;
 void PostScriptPageHeader(char *str, FILE *fp)
 {
 	fprintf(fp, "%%%%Page: %s\n", str);
-	x = INITIAL_X;
-	y = INITIAL_Y;
+
+	x = border_width;
+	y = paper_height - border_height;
 }
 
 void PostScriptPageFooter(char *str, FILE *fp)
@@ -221,7 +222,7 @@ void PostScriptField(char *str, int wid, int rightborder,
 		float	tw = strlen(str) * CurrentFontSize;
 
 
-		fprintf(fp, "%3.1f %3.1f moveto ", INITIAL_X + xpoints, y);
+		fprintf(fp, "%3.1f %3.1f moveto ", border_width + xpoints, y);
 
 		put_ps_string(str, fp);
 		fprintf(fp, " show\n");
@@ -270,12 +271,20 @@ void PostScriptFont(char *family, char *slant, int size, FILE *fp)
 
 void PostScriptNewLine(int ht, FILE *fp)
 {
-	x = INITIAL_X;
+	x = border_width;
 	y -= ht;
 }
 
 void PostScriptPaperSize(int wid, int ht, FILE *fp)
 {
+	paper_width = wid;
+	paper_height = ht;
+}
+
+void PostScriptSetBorder(int width, int height, FILE *fp)
+{
+	border_width = width;
+	border_height = height;
 }
 
 struct PrintDriver PostScriptPrintDriver = {
@@ -289,5 +298,6 @@ struct PrintDriver PostScriptPrintDriver = {
 	&PostScriptFont,
 	&PostScriptNewLine,
 	&PostScriptPaperSize,
-	&PostScriptEncoding
+	&PostScriptEncoding,
+	&PostScriptSetBorder
 };

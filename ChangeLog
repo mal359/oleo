@@ -1,4 +1,16 @@
-$Id: ChangeLog,v 1.128 2000/07/03 19:28:34 danny Exp $
+$Id: ChangeLog,v 1.129 2000/07/08 15:22:35 danny Exp $
+
+Sat  8 Jul 17:15:57 2000, Danny
+	* Make sure Oleo compiles without GNU plotutils also.
+	* Fix detection of GSL (GNU scientific library).
+	* Add src/gsl.c - a file containing hooks to call most
+	  of GSL's gsl_stats_*() functions. For now.
+	  Adding more should just be work, not really hard to do.
+	* Add documentation of Motif Button command.
+	* Add documentation of GSL functions.
+	* Implement zoom in the printing code.
+	* Add a scale to the Print Options dialog to be able to set
+	  a zoom percentage.
 
 Mon  3 Jul 18:49:04 2000, Danny
 	* This is oleo 1.99.11 .

@@ -16,6 +16,7 @@ the standard value types, some arguments may be cell ranges.
 * Search functions::            Search for cells by value, string, etc.
 * Business functions::          Business stuff.
 * Date functions::              Time and date manipulation.
+* Gsl functions::               GSL (GNU Scientific Library) functions.
 @end menu
 
 
@@ -683,7 +684,7 @@ be sold for $@var{scrap} and lasts @var{life}, in period @var{per}.
 
 
 @page
-@node   Date functions,  , Business functions, Functions
+@node   Date functions, Gsl functions, Business functions, Functions
 @section Date Functions
 @cindex Date and time functions
 @cindex Time and date functions
@@ -909,3 +910,47 @@ Date fields:
   year (@samp{1970}...)
 @end table
 @end table
+
+@page
+@node   Gsl functions,  , Date functions, Functions
+@section GSL Functions
+@cindex GSL functions
+@cindex Scientific functions (GSL)
+@cindex GNU Scientific Library
+
+The GNU Scientific Library (GSL) is a collection of routines for
+numerical computing.  The routines are written from scratch by the GSL
+team in C, and are meant to present a
+modern Applications Programming Interface (API) for C programmers, while
+allowing wrappers to be written for very high level languages.
+
+More information about GSL is available from @url{http://sources.redhat.com/gsl/}
+
+Currently only a small subset of the GSL functions (as they are in GSL 0.6) are
+made available in Oleo. They're most of the statistical functions :
+@table @samp
+@item gsl_stats_mean
+@item gsl_stats_variance
+@item gsl_stats_sd
+@item gsl_stats_absdev
+@item gsl_stats_skew
+@item gsl_stats_kurtosis
+@item gsl_stats_lag1_autocorrelation
+@item gsl_stats_median_from_sorted_data
+@item gsl_stats_quantile_from_sorted_data
+@item gsl_stats_variance_m
+@item gsl_stats_sd_m
+@item gsl_stats_variance_with_fixed_mean
+@item gsl_stats_sd_with_fixed_mean
+@item gsl_stats_absdev_m
+@item gsl_stats_skew_m_sd
+@item gsl_stats_kurtosis_m_sd
+@end table
+
+The API made available in Oleo for these functions differs slightly from
+the native C API of GSL. The C API provides for a @code{stride} and a @code{number}
+parameter when passing a data array. In Oleo, both of these are not explicitly passed.
+
+For example, the @code{gsl_stats_mean} function has just one parameter in Oleo,
+which is a range of cells from which it calculates the mean. @code{oleo_gsl_stats_kurtosis_m_sd}
+has three parameters : a range of cells, and two numbers.
