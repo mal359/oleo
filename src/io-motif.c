@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.27 1999/03/04 10:02:36 danny Exp $
+ *  $Id: io-motif.c,v 1.28 1999/03/04 22:54:08 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.27 1999/03/04 10:02:36 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.28 1999/03/04 22:54:08 danny Exp $";
 
 #include "config.h"
 
@@ -55,6 +55,11 @@ static char rcsid[] = "$Id: io-motif.c,v 1.27 1999/03/04 10:02:36 danny Exp $";
 
 #if	HAVE_XBASE_H
 #include "oleo_xb.h"
+#endif
+
+#if	HAVE_LIBXPM
+#include <X11/xpm.h>
+#include	"oleo_icon.xpm"
 #endif
 
 #include "global.h"
@@ -95,6 +100,8 @@ Widget	hd, html = NULL, gs = NULL;
 Widget	FormatD = NULL;
 Widget	PrintDialog = NULL;
 Widget	DefaultFileDialog, DefaultFileShell = NULL;
+
+Pixmap	oleo_icon_pm = (Pixmap)0;
 
 static char	*early_msg_text = NULL;
 
@@ -890,16 +897,145 @@ void PuShowXYChart(Widget w, XtPointer client, XtPointer call)
 
 /*
  * Printing
+ *	need to pop up a dialog to select a file and a GNU PlotUtils plotter
+ *	then actually doit
  *
  * FIX ME
  */
+#define	PLOTLEN	32
+
+static Widget	pufsd = NULL;
+static int	PuPlotter = 0;
+
+static struct {
+	char *plotter, *pusymb, *ext;
+} PuPlotters[32];
+
+void PuSelectPlotter(Widget w, XtPointer client, XtPointer call)
+{
+	XmString	xms;
+	char		p[PLOTLEN+20];
+
+	PuPlotter = (int)client;
+
+#if 0
+	fprintf(stderr, "PuSelectPlotter(%s)\n", PuPlotters[PuPlotter].plotter);
+#endif
+
+	strcpy(p, "*.");
+	strcat(p, PuPlotters[PuPlotter].ext);
+	xms = XmStringCreateSimple(p);
+
+	XtVaSetValues(pufsd, XmNpattern, xms, NULL);
+	XmStringFree(xms);
+}
+
+Widget CreatePlotterOption(Widget parent, XtCallbackProc f)
+{
+	Arg		al[10];
+	int		ac = 0, r, i;
+	XmString	xms;
+	Widget		cb, menu, b;
+	char		*pl, pl1[PLOTLEN], pl2[PLOTLEN], pl3[PLOTLEN], *sc, *p;
+
+	menu = XmCreatePulldownMenu(parent, "optionMenu", NULL, 0);
+	ac = 0;
+	XtSetArg(al[ac], XmNsubMenuId, menu); ac++;
+	xms = XmStringCreateSimple(_("Plotter Type"));
+	XtSetArg(al[ac], XmNlabelString, xms); ac++;
+	cb = XmCreateOptionMenu(parent, "optionCB", al, ac);
+	XtManageChild(cb);
+	XmStringFree(xms);
+
+	/*
+	 * The resource is a sequence of name,symbol,extension
+	 * triplets, separated by semicolons.
+	 */
+	pl = AppRes.puPlotters;
+
+	i = 0;
+	while (1) {
+		r = sscanf(pl, "%[^;,],%[^;,],%[^;,]", &pl1, &pl2, &pl3);
+		if (r < 3)
+			break;
+		b = XtVaCreateManagedWidget(pl1, xmPushButtonGadgetClass,
+			menu,
+			NULL);
+
+		PuPlotters[i].plotter = strdup(pl1);
+		PuPlotters[i].pusymb = strdup(pl2);
+		PuPlotters[i].ext = strdup(pl3);
+
+		XtAddCallback(b, XmNactivateCallback, f, (XtPointer)i);
+
+		i++;
+		PuPlotters[i].plotter = PuPlotters[i].pusymb = PuPlotters[i].ext = NULL;
+
+		sc = strchr(pl, ';');
+		if (sc == NULL)
+			break;
+		pl = sc + 1;
+	}
+
+	return menu;
+}
+
+void PuPrintOk(Widget w, XtPointer client, XtPointer call)
+{
+#ifdef	HAVE_LIBPLOT
+	FILE					*x;
+	XmFileSelectionBoxCallbackStruct	*cbp = (XmFileSelectionBoxCallbackStruct *)call;
+	char					*fn;
+
+	if (! XmStringGetLtoR(cbp->value, XmFONTLIST_DEFAULT_TAG, &fn)) {
+		/* FIX ME */
+		return;
+	}
+
+	x = fopen(fn, "w");
+	if (x) {
+		PuPieChart(PuPlotters[PuPlotter].pusymb, x);
+		fclose(x);
+	} else {
+		/* FIX ME */
+	}
+#endif
+}
+
+void PuPrintDialog(Widget w, XtPointer client, XtPointer call)
+{
+	Arg		al[10];
+	int		ac = 0;
+	XmString	xms;
+	Widget		cb, menu, b;
+
+	ac = 0;
+	XtSetArg(al[ac], XmNautoUnmanage, True); ac++;
+	xms = XmStringCreateSimple(_("*.oleo"));
+	XtSetArg(al[ac], XmNpattern, xms); ac++;
+
+	pufsd = XmCreateFileSelectionDialog(toplevel, "puselectfile",
+		al, ac);
+	XtDestroyWidget(
+		XmFileSelectionBoxGetChild(pufsd, XmDIALOG_HELP_BUTTON));
+	XmStringFree(xms);
+	XtAddCallback(pufsd, XmNokCallback, PuPrintOk, NULL);
+
+	/* Option menu */
+	menu = CreatePlotterOption(pufsd, PuSelectPlotter);
+}
+
 void PuPrintPie(Widget w, XtPointer client, XtPointer call)
 {
+#if 0
 #ifdef	HAVE_LIBPLOT
 	FILE	*x = fopen("x.ps", "w");
 	PuPieChart("ps", x);
 	fclose(x);
 #endif
+#endif
+	if (! pufsd) PuPrintDialog(w, client, call);
+	XtManageChild(pufsd);
 }
 
 
@@ -2610,12 +2746,15 @@ GscBuildSplash(Widget parent)
 {
 	Arg		al[10];
 	int		ac;
-	Pixmap		pm = (Pixmap)0;
 	Pixel		bg, fg;
 	Display		*dpy = XtDisplay(parent);
 	int		depth;
-	Widget		sh, rc;
+	Widget		sh, rc, iconlabel, textlabel, form;
 	XmString	x1, x2, xms;
+#ifdef	HAVE_LIBXPM
+	XpmAttributes	attrib;
+	Pixmap		mask;
+#endif
 
 	sh = XtVaCreatePopupShell("splashShell", xmMenuShellWidgetClass, parent,
 #if 0
@@ -2626,41 +2765,63 @@ GscBuildSplash(Widget parent)
 		NULL);
 
 	/* MenuShell wants an RC child */
-	rc = XtVaCreateManagedWidget("junk", xmRowColumnWidgetClass, sh, NULL);
+	rc = XtVaCreateManagedWidget("splash", xmRowColumnWidgetClass, sh, NULL);
 
-	ac = 0;
-	XtSetArg(al[ac], XmNshadowThickness, 0); ac++;
-	splash = XmCreateLabel(rc, "splash", al, ac);
-
-	XtVaGetValues(splash,
-			XmNforeground,	&fg,
-			XmNbackground,	&bg,
-			XmNdepth,	&depth,
-		NULL);
+	form = XtVaCreateWidget("form", xmFormWidgetClass, rc, NULL);
 
 	ac = 0;
 
-#if	HAVE_XPM
-	pm = XCreatePixmapFromBitmapData(dpy,
-		RootWindowOfScreen(XtScreen(parent)),
-		(char *)splash_bits, splash_width, splash_height,
-		fg, bg, depth);
-	XtSetArg(al[ac], XmNlabelPixmap, pm); ac++;
-	XtSetArg(al[ac], XmNlabelType, XmPIXMAP); ac++;
-	XtSetValues(splash, al, ac);
-#else
+#if	HAVE_LIBXPM
+	attrib.valuemask = 0;
+
+	XpmCreatePixmapFromData(XtDisplay(rc),
+		XRootWindowOfScreen(XtScreen(rc)),
+		oleo_icon,
+		&oleo_icon_pm,
+		&mask,
+		&attrib);
+
+	XpmFreeAttributes(&attrib);
+
+	XtSetArg(al[ac], XmNlabelPixmap,	oleo_icon_pm); ac++;
+	XtSetArg(al[ac], XmNlabelType,		XmPIXMAP); ac++;
+	XtSetArg(al[ac], XmNshadowThickness,	0); ac++;
+	XtSetArg(al[ac], XmNleftAttachment,	XmATTACH_FORM); ac++;
+	XtSetArg(al[ac], XmNleftOffset,		0); ac++;
+	XtSetArg(al[ac], XmNrightAttachment,	XmATTACH_NONE); ac++;
+	XtSetArg(al[ac], XmNtopAttachment,	XmATTACH_FORM); ac++;
+	XtSetArg(al[ac], XmNtopOffset,		0); ac++;
+	iconlabel = XmCreateLabel(form, "iconsplash", al, ac);
+	XtManageChild(iconlabel);
+#endif
+
+	ac = 0;
 	x1 = XmStringCreateLtoR(GNU_PACKAGE " " VERSION "\n",
 		"large");
 	x2 = XmStringCreateLtoR(CopyRightString, "small");
 	xms = XmStringConcat(x1, x2);
-	XtSetArg(al[ac], XmNlabelString, xms); ac++;
-	XtSetArg(al[ac], XmNlabelType, XmSTRING); ac++;
-	XtSetValues(splash, al, ac);
+	XtSetArg(al[ac], XmNlabelString,	xms); ac++;
+	XtSetArg(al[ac], XmNlabelType,		XmSTRING); ac++;
+	XtSetArg(al[ac], XmNshadowThickness,	0); ac++;
+#if	HAVE_LIBXPM
+	XtSetArg(al[ac], XmNleftAttachment,	XmATTACH_WIDGET); ac++;
+	XtSetArg(al[ac], XmNleftWidget,		iconlabel); ac++;
+#else
+	XtSetArg(al[ac], XmNleftAttachment,	XmATTACH_FORM); ac++;
+#endif
+	XtSetArg(al[ac], XmNleftOffset,		0); ac++;
+	XtSetArg(al[ac], XmNrightAttachment,	XmATTACH_FORM); ac++;
+	XtSetArg(al[ac], XmNrightOffset,	0); ac++;
+	XtSetArg(al[ac], XmNtopAttachment,	XmATTACH_FORM); ac++;
+	XtSetArg(al[ac], XmNtopOffset,		0); ac++;
+	textlabel = XmCreateLabel(form, "textsplash", al, ac);
+	XtManageChild(textlabel);
+
 	XmStringFree(x1);
 	XmStringFree(x2);
 	XmStringFree(xms);
-#endif
-	XtManageChild(splash);
+
+	XtManageChild(form);
 
 	return sh;
 }
@@ -3582,6 +3743,11 @@ xio_command_loop (int i)
 	XtAppMainLoop(app);
 }
 
+void PopDownSplash()
+{
+	XtPopdown(SplashShell);
+}
+
 void motif_init(int *argc, char **argv)
 {
 	io_command_loop = xio_command_loop;
@@ -3650,16 +3816,32 @@ void motif_init(int *argc, char **argv)
 	SplashShell = GscBuildSplash(toplevel);
 	XtPopup(SplashShell, XtGrabNone);
 
+	/* Splash remains on screen for 3 seconds */
+	XtAppAddTimeOut(app, 3000L, PopDownSplash, 0);
+
 	/* Without this we have NULL in cwin. */
 	io_init_windows(AppRes.rows, AppRes.columns, 1, 2, 1, 1, 1, 1);
 }
 
+void RaiseSplash()
+{
+	/* This needs to be triggered by a timeout because otherwise it won't work */
+
+	XRaiseWindow(XtDisplay(SplashShell), XtWindow(SplashShell));
+}
+
 void motif_build_gui(void)
 {
-	XtPopdown(SplashShell);
 	w = GscBuildMainWindow(toplevel);
 	XtManageChild(w);
 	XtRealizeWidget(toplevel);
+
+#ifdef	HAVE_LIBXPM
+	XtVaSetValues(toplevel, XmNiconPixmap, oleo_icon_pm, NULL);
+#endif
+
+	/* 30ms is an arbitrary short value. 1 probably works as well. */
+	XtAppAddTimeOut(app, 30L, RaiseSplash, 0);
 
 	if (! XmProcessTraversal(mat, XmTRAVERSE_CURRENT)) {
 		fprintf(stderr, _("XmProcessTraversal failed\n"));

@@ -1,5 +1,5 @@
 /*
- *  $Id: appres.c,v 1.6 1998/11/29 12:48:59 danny Exp $
+ *  $Id: appres.c,v 1.7 1999/03/04 22:54:08 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: appres.c,v 1.6 1998/11/29 12:48:59 danny Exp $";
+static char rcsid[] = "$Id: appres.c,v 1.7 1999/03/04 22:54:08 danny Exp $";
 
 #include <X11/Intrinsic.h>
 #include <X11/StringDefs.h>
@@ -51,6 +51,9 @@ XtResource resources[] = {
 	XtOffsetOf(GnuSheetAppres, printer), XtRImmediate, (XtPointer)"ps" },
     {	"program", "Program", XtRString, sizeof(String),
 	XtOffsetOf(GnuSheetAppres, program), XtRImmediate, (XtPointer)"" },
+    {	"puPlotters", "PuPlotters", XtRString, sizeof(String),
+	XtOffsetOf(GnuSheetAppres, puPlotters), XtRImmediate,
+				(XtPointer)"PostScript,ps,ps;GNU MetaPlot,meta,meta"},
 };
 
 int num_resources = XtNumber(resources);

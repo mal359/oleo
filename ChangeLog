@@ -1,3 +1,12 @@
+	* The Motif splash window gets popped down after three seconds so a human
+	  has time to see it. Previously it got popped down when the main window
+	  appeared; on some systems (350 MHz Pentium II will do) this period is
+	  extremely short.
+	* The splash window is extended with a simple XPM icon which is also the
+	  icon Oleo installs as icon pixmap. Only if we find XPM at configuration
+	  time.
+	* Printing of Plotutils stuff now pops up a dialog asking you to specify
+	  the file type and a file.
 
 Wed  3 Mar 21:56:22 1999 , Danny Backx
 	* Release 1.6.14.

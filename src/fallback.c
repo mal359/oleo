@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.3 1999/03/04 10:02:35 danny Exp $
+ *  $Id: fallback.c,v 1.4 1999/03/04 22:54:08 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -39,9 +39,9 @@ char *fallback[] = {
 	"*background:			#AAAAAA",
 	"*bae.background:		#CCCCCC",
 	"*formula.columns:		80",
-	"*splash.fontList:		-b&h-lucidatypewriter-bold-r-normal-sans-64-*-*-*-*-*-iso8859-1=large,-b&h-lucida-medium-i-normal-sans-18-*-*-*-*-*-iso8859-1=small",
-	"*splash.background:		#AAAAAA",
-	"*splash.foreground:		red",
+	"*splash*fontList:		-b&h-lucidatypewriter-bold-r-normal-sans-24-*-*-*-*-*-iso8859-1=large,-b&h-lucida-medium-i-normal-sans-18-*-*-*-*-*-iso8859-1=small",
+	"*splash*background:		#AAAAAA",
+	"*splash*foreground:		red",
 	"*messagesSW.height:		70",		/* FIX ME */
 /* Menu System */
 /* File */
@@ -228,6 +228,14 @@ char *fallback[] = {
 	"*quitMB_popup.title:			Quit Oleo ?",
 	"*quitMB*OK.labelString:		Quit",
 	"*quitMB*Cancel.labelString:	Don't quit",
+/* GNU Plotutils : list of known plotters */
+	"*puPlotters:			PostScript,ps,ps;"
+				"GNU MetaPlot,gmp,meta;"
+				"Adobe Illustrator,ai,ai;"
+				"Fig,fig,fig;"
+				"PCL,pcl,pcl;"
+				"HP-GL,hpgl,hpgl;"
+				"Tektronix,tek,tek",
 /* End */
 	NULL
 };
