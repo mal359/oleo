@@ -1,6 +1,17 @@
 
-$Id: ChangeLog,v 1.137 2001/01/10 20:16:32 danny Exp $
+$Id: ChangeLog,v 1.138 2001/02/04 00:06:02 pw Exp $
 
+Sat Feb  3 18:55:19 EST 2000  Pete Wyckoff  (pw@osc.edu)
+	* Add documentation for business functions, and clean up
+	  some typos.
+	* Add fmrr() business function, fix looping in irr(), change
+	  npv() to start from year 0.
+	* Remove uninitilized characters in default cell_format_string(),
+	  still needs real fix.
+	* Convert io-x11 to use Global->scr_(lines|cols) now that #define
+	  is gone.
+
+Wed Jan 10 20:16:32 CET 2000, Danny
 	* Added bunches of .cvsignore files to allow working more
 	  transparently with a directory accessing CVS and holding
 	  a build at the same time.
@@ -9,7 +20,6 @@ $Id: ChangeLog,v 1.137 2001/01/10 20:16:32 danny Exp $
 	* Fix for curses and a documentation bug by Pete Wyckoff.
 
 Wed Nov 22 00:24:12 CET 2000, Danny
-
 	* This is Oleo 1.99.14.
 
 	* Add a way to specify GIF, PNG output format in curses.
