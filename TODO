@@ -35,3 +35,5 @@ Short-term TODO's:
 
 # Figure out why sort.c requires functions passed as args to a function
 (03-14/1998 - JB)
+
+* Make autoconf/automake stuff work : more portable build scripts. (DB)
