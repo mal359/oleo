@@ -1,2 +1,4 @@
 # List of sources containing translatable strings
 
+src/io-term.c
+
