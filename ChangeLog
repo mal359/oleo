@@ -1,5 +1,12 @@
 
-$Id: ChangeLog,v 1.160 2001/08/31 09:12:52 danny Exp $
+$Id: ChangeLog,v 1.161 2001/11/23 21:28:44 pw Exp $
+
+Fri Nov 23 16:24:08 EST 2001  Pete Wyckoff  <pw@osc.edu>
+	* doc/basics.texi doc/options.texi: Clean up information
+	  about file formats.
+	* src/basic.c: Straighten confusing logic.
+	* src/io-term.c: Set default file format for Meta-x set-option
+	  file <format>.
 
 Fri Aug 31 11:15:22 CEST 2001, Danny Backx
 	* Changes for autoconf 2.50

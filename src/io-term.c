@@ -1,5 +1,5 @@
 /*
- * $Id: io-term.c,v 1.55 2001/06/26 00:36:35 pw Exp $
+ * $Id: io-term.c,v 1.56 2001/11/23 21:28:44 pw Exp $
  *
  * Copyright © 1990, 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 
@@ -20,7 +20,7 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char *rcsid = "$Id: io-term.c,v 1.55 2001/06/26 00:36:35 pw Exp $";
+static char *rcsid = "$Id: io-term.c,v 1.56 2001/11/23 21:28:44 pw Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -293,6 +293,7 @@ do_set_option (char *ptr)
 	  write_file = oleo_write_file;
 	  set_file_opts = oleo_set_options;
 	  show_file_opts = oleo_show_options;
+	  file_set_default_format(ptr);
 	}
       else if (!stricmp ("sylk", ptr))
 	{
@@ -301,6 +302,7 @@ do_set_option (char *ptr)
 	  write_file = sylk_write_file;
 	  set_file_opts = sylk_set_options;
 	  show_file_opts = sylk_show_options;
+	  file_set_default_format(ptr);
 	}
       else if (!stricmp ("sylk-noa0", ptr))
 	{
@@ -309,6 +311,7 @@ do_set_option (char *ptr)
 	  write_file = sylk_write_file;
 	  set_file_opts = sylk_set_options;
 	  show_file_opts = sylk_show_options;
+	  file_set_default_format(ptr);
 	}
       else if (!stricmp ("sc", ptr))
 	{
@@ -316,6 +319,7 @@ do_set_option (char *ptr)
 	  write_file = sc_write_file;
 	  set_file_opts = sc_set_options;
 	  show_file_opts = sc_show_options;
+	  file_set_default_format(ptr);
 	}
       else if (!stricmp ("list", ptr))
 	{
@@ -323,6 +327,7 @@ do_set_option (char *ptr)
 	  write_file = list_write_file;
 	  set_file_opts = list_set_options;
 	  show_file_opts = list_show_options;
+	  file_set_default_format(ptr);
 	  /*if (ptr[4])
 	    {
 	    ptr+=4;
