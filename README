@@ -1,86 +1,99 @@
-Welcome to GNU Oleo!  Aiming to be the FREE-world's hottest spreadsheet
-package.  By free world, of course, I am referring to the freedom that
-comes with the GNU Copyleft.  For more information see the file 
-COPYING included with this distribution.
+Welcome to GNU Oleo!
 
-This distribution tries to meet the GNU standards for package distribution,
-and as such you can expect to find files such as NEWS, ChangeLog, README,
-COPYING, etc. in their usual places.  Official(tm) released versions can
-also be found at ftp.gnu.org, or some nearby mirror.
+Oleo is a spreadsheet program covered by the GNU Copyleft (see the file
+COPYING included with this distribution for more information).
 
-If this package has README-alpha file in it's top level, you are looking
-at an ALPHA version of Oleo.  This means that unless you're brave and
-_really_ need to test my bugs on your system, you should find a release
-version.  Otherwise, please consult the README-alpha file for up-to-date
-information as to what's going on.
+As of this writing (February 1999), Oleo is in active development.  Major
+changes are being made to the user interface, and lower-level changes
+affecting the Oleo file format, expression syntax and macro language will
+almost certainly follow in due course.  This is good news and bad news: On
+the positive side, it does mean that someone besides yourself will be
+concerned if you have problems compiling or running Oleo on a particular
+architecture; but it also means that you cannot expect the Oleo of tomorrow
+to behave in exactly the same way as the Oleo of today.
 
-Why a Spreadsheet
--=-=-=-=-=-=-=-=-
+We therefore encourage you to download and compile this program, and to use
+it, but for ephemeral tasks. If you have any problems, please send mail to
+bug-oleo@gnu.org.  User feedback is extremely important to Oleo development.
 
-Most people don't remember back to the gold old days of computers.  I'm
-not referring to when you had to use that *extremely* slow 14.4k modem, 
-but back when computers began to become popular in business environments.
-Most history books that I've read (which, adminitedly, is three), say that
-accountants brought computers into business with the creation of spreadsheet
-packages.  Being able to map out formulas on a grid was too much for the 'ol
-bean counters to pass up, and so out the machines came.  
+At present, Oleo has the following features and (un-features):
 
-Year 2000
--=-=-=-=-
+Features
+--------
+	* Works on character terminals and under X
+	* Macro language
+	    (still a bit untidy in places, but it works)
+	* Charts generated from spreadsheet data
+	    (interface is not yet stable, but the capability is in there)
+	* Sizeable library of expressions
+	    (these have not been extensively tested, and do not include
+	    statistical regressions)
+	* File format conversions
+	    (support of this is still pretty primitive; don't plan
+	    on importing E*cel files anytime soon)
+	* Confirmed to compile and run out of the box on: Linux, FreeBSD
 
-As GNU Oleo is free software, there is no guarantee that this package
-is year-2000 safe.  There are several places where 2-digit dates may
-indeed be used internally.  However, being based on the GNU Libc, it
-is likely that it will be year 2000 safe once a quick pass is made to
-ensure that it uses standard date functions.  Most unix systems use a
-32-bit date field, which give us until the year 2030 or so to find a better
-solution.  The likely hood is that all systems will be _at least_ 64 bit
-by then, alleviating all the pressure.
+As the above list shows, much work needs to be done to get Oleo to fulfill
+its potential utility.  The framework is in place for collaboration and the
+work has begun; to find out more, send a message to bug-oleo@gnu.org, with
+"subscribe" as the only word in the subject line, and your email address in
+the body of the message.  The list is the forum through which developers
+confer and keep one another posted about what's happening.  Everyone with an
+interest in the future of this application is encouraged to subscribe.
 
-This still poses an interesting problem for future modelling, as this means
-that you should NOT expect this version of Oleo to be able to calculate, say,
-50 or 100 year investment bonds.  This is a serious limitation, and is being
-looked at.
+Even if you just want to take Oleo out for a spin around the block, however,
+your comments will be welcomed by the developers.
 
-Components Required
--=-=-=-=-=-=-=-=-=-
+Before compiling, be sure that you have the necessary building blocks
+installed on your system:
 
-GNU Oleo is what I like to refer to as a "top of the food chain" application.
-Many other packages are required to ensure full functionality.  Among those
-that are required:
+System Requirements
+-------------------
 
-* some version of curses (NCurses or Termcap/curses)
-* GNU Gettext 0.10.32 (currently included in oleo)
-* Motif or LessTif if you want the Motif GUI (incomplete)
-* GNU texinfo (3.12) to build the documentation
-* texi2html to convert the documentation to html
+The system requirements for Oleo depend upon the user interface or
+interfaces that you intend to compile into the binary.
 
-That GNU Oleo is strongly dependant on those applications is a clear
-indication of my lack of desire to support these applications myself.
-I have not included these by default, and expect the installer to have
-them on hand, or accept that Oleo's functionality may be decreased.
 
-Parlez-Vous francais?
--=-=-=-=-=-=-=-=-=-=-
+(1) Character Terminal Interface Only
 
-GNU Oleo is going international!  Internationalization is complete,
-and localization is on it's way.  If you want to help, please read
-ABOUT-NLS, and consider getting involved in a GNU translation effort.
+For the no-frills interface, try building with the following command line:
 
-Getting Help and Reporting Bugs
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  ./configure --without-motif --without-x && make
 
-There is a mailing list set up for your convenience:
+This no-frills character terminal interface does not offer support
+for plotting, but otherwise it has the same capabilities as the
+other versions.  This basic Oleo requires the following libraries:
 
-	bug-oleo@gnu.org
+	* some version of curses (NCurses or Termcap/curses)
+	* GNU Gettext 0.10.32 (currently included in oleo)
+	* GNU texinfo (3.12) to build the documentation
 
-Please remember a couple quick points when emailing these lists:
 
-	o We're all volunteers, be nice =)
+(2) Simple X11 Interface
 
-	o More detail is good.  Suggestions as to what you think the problem
-	  might be are also good.
+For very basic X11 support, try building with the following:
 
-	o Please make sure you're running a recent version before reporting the
-	  bug. Excessively old version won't be patched if the fix already
-	  exists in a more recent version.
+  ./configure --without-motif --with-x && make
+
+This interface provides very little beyond the basic character terminal
+interface built with the previous command, but it will allow you to select a
+cell with the mouse and use the cursor keys in an Xterm.  Like the no-frills
+interface, this offers no support for plotting.  It of course requires the
+basic X11 libraries to compile.
+
+
+(3) Motif Interface
+
+To build an Oleo with Motif support, try building with the following:
+
+  ./configure --with-motif && make
+
+The Motif interface is still incomplete, but you can run an Oleo compiled in
+this way with the -x or --nw option, to go back to the basic character
+interface.  To compile with Motif support, you will need the following
+libraries on your system:
+
+	* Motif or LessTif, Xlt (from LessTif) and Xbae 4.6.2
+	* SciPlot (for charts, if Xlt not used)
+	* GNU plotutils (optional, for charts)
+	* XmHTML (optional, for still-incomplete online documentation)
