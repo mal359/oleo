@@ -210,7 +210,7 @@ get_x11_args (argc_p, argv)
   RetKeySym = XStringToKeysym("Return");
 
   /* Load the resource databases in a manner not unlike emacs :). */
-  /* FIXME rdb = x_load_resources (theDisplay, 0, rdb_class_name); */
+  rdb = x_load_resources (theDisplay, 0, rdb_class_name);
   
 #if 0
   /* Merge in the command line database.  */
@@ -221,18 +221,18 @@ get_x11_args (argc_p, argv)
   {
     char * val;
     
-    /* FIXME val = x_get_string_resource (rdb, class_of ("Foreground"), 
-				 name_of("foreground")); */
+    val = x_get_string_resource (rdb, class_of ("Foreground"), 
+				 name_of("foreground"));
     if (val)
       default_fg_color_name = val;
     
-    /* FIXME val = x_get_string_resource (rdb, class_of ("Background"), 
-				 name_of("background")); */
+    val = x_get_string_resource (rdb, class_of ("Background"), 
+				 name_of("background"));
     if (val)
       default_bg_color_name = val;
     
-    /* FIXME val = x_get_string_resource (rdb, class_of ("Geometry"),
-				 name_of("geometry")); */
+    val = x_get_string_resource (rdb, class_of ("Geometry"),
+				 name_of("geometry"));
     if (val)
       XGeometry (theDisplay, DefaultScreen(theDisplay), val, geom_string,
 		 0, 1, 1, 0, 0, &geom_x, &geom_y, &geom_w, &geom_h);
@@ -1859,7 +1859,7 @@ draw_cell (xwin, cd_passed, cursor)
     char *str;
     struct xx_sIntRectangle *strbox;
     
-    /* FIXME isclipped = !xx_IRencloses_width (&cd->layout, &cd->goal); */
+    isclipped = !xx_IRencloses_width (&cd->layout, &cd->goal); 
     if (!isclipped)
       {
 	str = cd->unclipped;
@@ -1888,7 +1888,7 @@ draw_cell (xwin, cd_passed, cursor)
       struct xx_sIntRectangle tofill[4];
       int fillc;
       
-      /* FIXME fillc = xx_IRsubtract (tofill, &cd->layout, strbox); */
+      fillc = xx_IRsubtract (tofill, &cd->layout, strbox); 
       {
 	XGCValues v;
 	v.foreground = cursor ? port->fg_color_pixel : port->bg_color_pixel;
