@@ -82,14 +82,8 @@ static int win_id = 1;
 #define MIN_CWIN_WIDTH  MIN_WIN_WIDTH(cwin)
 
 
-#ifdef __STDC__
 static void 
 do_close_window (int num)
-#else
-static void 
-do_close_window (num)
-     int num;
-#endif
 {
   int n;
   struct window *win, *kwin;
@@ -204,15 +198,8 @@ do_close_window (num)
   return;
 }
 
-#ifdef __STDC__
 int
 win_label_cols (struct window * win, CELLREF hr)
-#else
-int
-win_label_cols (win, hr)
-     struct window * win;
-     CELLREF hr;
-#endif
 {
   int lh;
 
@@ -237,27 +224,14 @@ win_label_cols (win, hr)
   return lh;
 }
 
-#ifdef __STDC__
 int
 win_label_rows (struct window * win)
-#else
-int
-win_label_rows (win)
-     struct window * win;
-#endif
 {
   return (win->flags & WIN_EDGES) ? label_rows : 0;
 }
 
-#ifdef __STDC__
 static void 
 set_numcols (struct window *win, CELLREF hr)
-#else
-static void 
-set_numcols (win, hr)
-     struct window *win;
-     CELLREF hr;
-#endif
 {
   int lh = win_label_cols (win, hr);
   win->win_over -= win->lh_wid - lh;
@@ -266,19 +240,9 @@ set_numcols (win, hr)
 }
 
 
-#ifdef __STDC__
 static void 
 page_axis (CELLREF cur, int (*get) (CELLREF), int total,
 	   CELLREF *loP, CELLREF *hiP)
-#else
-static void 
-page_axis (cur, get, total, loP, hiP)
-     CELLREF cur;
-     int (*get) ();
-     int total;
-     CELLREF *loP;
-     CELLREF *hiP;
-#endif
 {
   CELLREF lo, hi;
   int w, ww;
@@ -307,19 +271,9 @@ page_axis (cur, get, total, loP, hiP)
 }
 
 
-#ifdef __STDC__
 static void 
 recenter_axis (CELLREF cur, int (*get) (CELLREF), int total,
 	       CELLREF *loP, CELLREF *hiP)
-#else
-static void 
-recenter_axis (cur, get, total, loP, hiP)
-     CELLREF cur;
-     int (*get) ();
-     int total;
-     CELLREF *loP;
-     CELLREF *hiP;
-#endif
 {
   CELLREF lo, hi;
   int tot;
@@ -350,14 +304,8 @@ recenter_axis (cur, get, total, loP, hiP)
   *hiP = hi;
 }
 
-#ifdef __STDC__
 static void 
 recenter_window (struct window *win)
-#else
-static void 
-recenter_window (win)
-     struct window *win;
-#endif
 {
   if (win->flags & WIN_PAG_VT)
     page_axis (win->win_curow, get_scaled_height, win->numr,
@@ -380,15 +328,8 @@ recenter_window (win)
  * It presumes that LINES and COLS are the new values.  DR and DC
  * are the changes that just occured to those values.
  */
-#ifdef __STDC__
 static void 
 resize_screen (int dr, int dc)
-#else
-static void 
-resize_screen (dr, dc)
-     int dr;
-     int dc;
-#endif
 {
   int x, n;
   int lines;
@@ -477,15 +418,8 @@ resize_screen (dr, dc)
   io_repaint ();
 }
 
-#ifdef __STDC__
 static void
 shift_linked_window (long dn, long ov)
-#else
-static void
-shift_linked_window (dn, ov)
-     long dn;
-     long ov;
-#endif
 {
   struct window *win;
 
@@ -506,18 +440,9 @@ shift_linked_window (dn, ov)
 }
 
 
-#ifdef __STDC__
 static void 
 find_nonzero (CELLREF *curp, CELLREF lo, CELLREF hi,
 	      int (*get) (CELLREF))
-#else
-static void 
-find_nonzero (curp, lo, hi, get)
-     CELLREF *curp;
-     CELLREF lo;
-     CELLREF hi;
-     int (*get) ();
-#endif
 {
   CELLREF cc;
   int n;
@@ -556,21 +481,9 @@ find_nonzero (curp, lo, hi, get)
     }
 }
 
-#ifdef __STDC__
 static int 
 scroll_axis (CELLREF cur, int over, int total, int (*get) (CELLREF),
 	     CELLREF *ret1, CELLREF *ret2, int *offp) 
-#else
-static int 
-scroll_axis (cur, over, total, get, ret1, ret2, offp)
-     CELLREF cur;
-     int over;
-     int total;
-     int (*get) ();
-     CELLREF *ret1;
-     CELLREF *ret2;
-     int *offp;
-#endif
 {
   int tot; 
 
@@ -622,21 +535,9 @@ scroll_axis (cur, over, total, get, ret1, ret2, offp)
   return 0;
 }
 
-#ifdef __STDC__
 static int 
 page_scroll_axis (CELLREF cur, int over, int total, int (*get) (CELLREF),
 		  CELLREF *ret1, CELLREF *ret2, int *offp)
-#else
-static int 
-page_scroll_axis (cur, over, total, get, ret1, ret2, offp)
-     CELLREF cur;
-     int over;
-     int total;
-     int (*get) ();
-     CELLREF *ret1;
-     CELLREF *ret2;
-     int *offp;
-#endif
 {
   int n_over;
   CELLREF lo, hi;
@@ -691,28 +592,14 @@ page_scroll_axis (cur, over, total, get, ret1, ret2, offp)
 
 /* External window interface */
 
-#ifdef __STDC__
 void 
 io_set_label_size (int r, int c)
-#else
-void 
-io_set_label_size (r, c)
-     int r;
-     int c;
-#endif
 {
   /* fixme */
 }
 
-#ifdef __STDC__
 void 
 io_set_scr_size (int lines, int cols)
-#else
-void 
-io_set_scr_size (lines, cols)
-     int lines;
-     int cols;
-#endif
 {
   int dl = lines - scr_lines;
   int dc = cols - scr_cols;
@@ -723,42 +610,22 @@ io_set_scr_size (lines, cols)
   resize_screen (dl, dc);
 }
 
-#ifdef __STDC__
 void 
 io_set_input_rows (int n)
-#else
-void 
-io_set_input_rows (n)
-     int n;
-#endif
 {
   input_rows = n;
   io_set_input_status (user_input, user_status, 1);
 }
 
-#ifdef __STDC__
 void 
 io_set_status_rows (int n)
-#else
-void 
-io_set_status_rows (n)
-     int n;
-#endif
 {
   status_rows = n;
   io_set_input_status (user_input, user_status, 1);
 }
 
-#ifdef __STDC__
 void 
 io_set_input_status (int inp, int stat, int redraw)
-#else
-void 
-io_set_input_status (inp, stat, redraw)
-     int inp;
-     int stat;
-     int redraw;
-#endif
 {
   int inpv = inp < 0 ? -inp : inp;
   int inpsgn = inp == inpv ? 1 : -1;
@@ -864,14 +731,8 @@ io_set_input_status (inp, stat, redraw)
     }
 }
 
-#ifdef __STDC__
 void 
 io_set_cwin (struct window *win)
-#else
-void 
-io_set_cwin (win)
-     struct window *win;
-#endif
 {
   io_hide_cell_cursor ();
   cwin->win_curow = curow;
@@ -883,16 +744,8 @@ io_set_cwin (win)
 }
 
 
-#ifdef __STDC__
 void 
 io_pr_cell (CELLREF r, CELLREF c, CELL *cp)
-#else
-void 
-io_pr_cell (r, c, cp)
-     CELLREF r;
-     CELLREF c;
-     CELL *cp;
-#endif
 {
   struct window *win;
 
@@ -905,14 +758,8 @@ io_pr_cell (r, c, cp)
     }
 }
 
-#ifdef __STDC__
 void
 io_redo_region (struct rng * rng)
-#else
-void
-io_redo_region (rng)
-     struct rng * rng;
-#endif
 {
   CELL * cp;
   CELLREF r, c;
@@ -926,15 +773,8 @@ io_redo_region (rng)
 }
 
 /* Create a new window by splitting the current one. */
-#ifdef __STDC__
 void 
 io_win_open (int hv, int where)
-#else
-void 
-io_win_open (hv, where)
-     int hv;
-     int where;
-#endif
 {
   int tmp;
   struct window *win;
@@ -988,27 +828,14 @@ io_win_open (hv, where)
   io_repaint ();
 }
 
-#ifdef __STDC__
 void 
 io_win_close (struct window *win)
-#else
-void 
-io_win_close (win)
-     struct window *win;
-#endif
 {
   do_close_window (win - wins);
 }
 
-#ifdef __STDC__
 void 
 io_move_cell_cursor (CELLREF rr, CELLREF cc)
-#else
-void 
-io_move_cell_cursor (rr, cc)
-     CELLREF rr;
-     CELLREF cc;
-#endif
 {
   if (cwin->link != -1)
     shift_linked_window ((long) rr - curow, (long) cc - cucol);
@@ -1036,15 +863,8 @@ io_move_cell_cursor (rr, cc)
     find_nonzero (&curow, cwin->screen.lr, cwin->screen.hr, get_scaled_height);
 }
 
-#ifdef __STDC__
 void 
 io_shift_cell_cursor (int dirn, int repeat)
-#else
-void 
-io_shift_cell_cursor (dirn, repeat)
-     int dirn;
-     int repeat;
-#endif
 {
   CELLREF c;
   CELLREF r;
@@ -1122,15 +942,8 @@ io_shift_cell_cursor (dirn, repeat)
   io_move_cell_cursor (r, c);
 }
 
-#ifdef __STDC__
 void 
 io_scroll_cell_cursor (int magic, int repeat)
-#else
-void 
-io_scroll_cell_cursor (magic, repeat)
-     int magic;
-     int repeat;
-#endif
 {
   int off_dn, off_rt;
 
@@ -1200,13 +1013,8 @@ io_scroll_cell_cursor (magic, repeat)
     io_repaint_win (&wins[cwin->link]);
 }
 
-#ifdef __STDC__
 void 
 io_recenter_cur_win (void)
-#else
-void 
-io_recenter_cur_win ()
-#endif
 {
   cwin->win_curow = curow;
   cwin->win_cucol = cucol;
@@ -1216,13 +1024,8 @@ io_recenter_cur_win ()
     io_repaint_win (&wins[cwin->link]);
 }
 
-#ifdef __STDC__
 void 
 io_recenter_all_win (void)
-#else
-void 
-io_recenter_all_win ()
-#endif
 {
   int n;
   if (!nwin)
@@ -1234,15 +1037,8 @@ io_recenter_all_win ()
   io_repaint ();
 }
 
-#ifdef __STDC__
 void 
 io_set_win_flags (struct window *w, int f)
-#else
-void 
-io_set_win_flags (w, f)
-     struct window *w;
-     int f;
-#endif
 {
   if ((f & WIN_EDGES) && !(w->flags & WIN_EDGES))
     {
@@ -1263,14 +1059,8 @@ io_set_win_flags (w, f)
   w->flags = f;
 }
 
-#ifdef __STDC__
 void 
 io_write_window_config (struct line * out)
-#else
-void 
-io_write_window_config (out)
-     struct line *out;
-#endif
 {
   int n;
   char buf[90];
@@ -1310,14 +1100,8 @@ io_write_window_config (out)
     }
 }
 
-#ifdef __STDC__
 void 
 io_read_window_config (char * line)
-#else
-void 
-io_read_window_config (line)
-     char *line;
-#endif
 {
   int wnum = 0;
   char *text;
@@ -1484,13 +1268,8 @@ static struct mouse_event *current_mouse;
 static struct mouse_event *free_mouse;
 static int mouse_id = 0;
 
-#ifdef __STDC__
 static void 
 init_mouse (void)
-#else
-static void 
-init_mouse ()
-#endif
 {
   current_mouse = free_mouse =
   (struct mouse_event *) ck_malloc (sizeof (struct mouse_event));
@@ -1500,17 +1279,8 @@ init_mouse ()
 
 static int mouse_location ();
 
-#ifdef __STDC__
 int 
 enqueue_mouse_event (int r, int c, int button, int downp)
-#else
-int 
-enqueue_mouse_event (r, c, button, downp)
-     int r;
-     int c;
-     int button;
-     int downp;
-#endif
 {
   struct mouse_event *m = free_mouse;
   if (m->next == current_mouse)
@@ -1533,15 +1303,8 @@ enqueue_mouse_event (r, c, button, downp)
   return m->seq;
 }
 
-#ifdef __STDC__
 void 
 dequeue_mouse_event (struct mouse_event *out, int seq)
-#else
-void 
-dequeue_mouse_event (out, seq)
-     struct mouse_event *out;
-     int seq;
-#endif
 {
   free_mouse->seq = seq;
   while (current_mouse->seq != seq)
@@ -1559,18 +1322,9 @@ dequeue_mouse_event (out, seq)
 
 
 
-#ifdef __STDC__
 void 
 io_init_windows (int sl, int sc, int ui, int us, int ir, int sr,
 		 int lr, int lc) 
-#else
-void 
-io_init_windows (sl, sc, ui, us, ir, sr, lr, lc)
-     int sl, sc;
-     int ui, us;
-     int ir, sr;
-     int lr, lc;
-#endif
 {
   print_width = 80;		/* default ascii print width */
   scr_lines = sl;
@@ -1601,16 +1355,8 @@ io_init_windows (sl, sc, ui, us, ir, sr, lr, lc)
   init_mouse ();
 }
 
-#ifdef __STDC__
 static int 
 mouse_location (CELLREF *cr, CELLREF *cc, struct mouse_event *ev)
-#else
-static int 
-mouse_location (cr, cc, ev)
-     CELLREF *cr;
-     CELLREF *cc;
-     struct mouse_event *ev;
-#endif
 {
   int n;
   if (ev->row >= input && ev->row <= input + input_rows)

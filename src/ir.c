@@ -21,15 +21,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 #include "ir.h"
 
-#ifdef __STDC__
 int
 xx_IRencloses (xx_IntRectangle r1, xx_IntRectangle r2)
-#else
-int
-xx_IRencloses (r1, r2)
-     xx_IntRectangle r1;
-     xx_IntRectangle r2;
-#endif
 {
   return (xx_IRhits_point (r1, xx_IRllx (r2), xx_IRlly (r2))
 	  && (!xx_IRw (r2) || !xx_IRh (r2)
@@ -38,15 +31,8 @@ xx_IRencloses (r1, r2)
 		  && xx_IRhits_point (r1, xx_IRurx (r2), xx_IRury (r2)))));
 }
 
-#ifdef __STDC__
 int
 xx_IRencloses_width (xx_IntRectangle r1, xx_IntRectangle r2)
-#else
-int
-xx_IRencloses_width (r1, r2)
-     xx_IntRectangle r1;
-     xx_IntRectangle r2;
-#endif
 {
   return (xx_IRhits_point (r1, xx_IRllx (r2), xx_IRlly (r1))
 	  && (!xx_IRw (r2)
@@ -54,15 +40,8 @@ xx_IRencloses_width (r1, r2)
 }
 
 
-#ifdef __STDC__
 int
 xx_IRequiv (xx_IntRectangle r1, xx_IntRectangle r2)
-#else
-int
-xx_IRequiv (r1, r2)
-     xx_IntRectangle r1;
-     xx_IntRectangle r2;
-#endif
 {
   return (xx_IRllx (r2) == xx_IRllx (r1) &&
 	  xx_IRlly (r2) == xx_IRlly (r1) &&
@@ -75,15 +54,8 @@ xx_IRequiv (r1, r2)
 #define MIN(A,B)	((A) < (B) ? (A) : (B))
 #define ROUND(F) 	(int)((F) + 0.5)
 
-#ifdef __STDC__
 void
 xx_IRbound (xx_IntRectangle r1, xx_IntRectangle r2)
-#else
-void
-xx_IRbound (r1, r2)
-     xx_IntRectangle r1;
-     xx_IntRectangle r2;
-#endif
 {
   int x, y;
   int X, Y;
@@ -100,29 +72,15 @@ xx_IRbound (r1, r2)
 }
 
 
-#ifdef __STDC__
 int
 xx_IRarea (xx_IntRectangle r)
-#else
-int
-xx_IRarea (r)
-     xx_IntRectangle r;
-#endif
 {
   return r->w * r->h;
 }
 
 
-#ifdef __STDC__
 int
 xx_IRhits_point (xx_IntRectangle rect, int x, int y)
-#else
-int
-xx_IRhits_point (rect, x, y)
-     xx_IntRectangle rect;
-     int x;
-     int y;
-#endif
 {
   return (x >= rect->x
 	  && y >= rect->y
@@ -131,15 +89,8 @@ xx_IRhits_point (rect, x, y)
 }
 
 
-#ifdef __STDC__
 void
 xx_IRclip (xx_IntRectangle r1, xx_IntRectangle r2)
-#else
-void
-xx_IRclip (r1, r2)
-     xx_IntRectangle r1;
-     xx_IntRectangle r2;
-#endif
 {
   int x = MAX (r1->x, r2->x);
   int y = MAX (r1->y, r2->y);
@@ -163,16 +114,8 @@ xx_IRclip (r1, r2)
 
 
 
-#ifdef __STDC__
 int
 xx_IRsubtract (xx_IntRectangle outv, xx_IntRectangle a, xx_IntRectangle b)
-#else
-int
-xx_IRsubtract (outv, a, b)
-     xx_IntRectangle outv;
-     xx_IntRectangle a;
-     xx_IntRectangle b;
-#endif
 {
   struct xx_sIntRectangle arect;
   struct xx_sIntRectangle brect;

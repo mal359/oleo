@@ -88,13 +88,8 @@ struct input_stream * the_input_stream = 0;
 
 
 
-#ifdef __STDC__
 static struct input_stream *
 default_input_stream (void)
-#else
-static struct input_stream *
-default_input_stream ()
-#endif
 {
   if (!the_input_stream)
     {
@@ -119,18 +114,9 @@ default_input_stream ()
  */
 
 
-#ifdef __STDC__
 static struct input_stream *
 macro_only_input_stream (struct rng * rng, char * first_line, int len,
 			 struct command_frame * frame)
-#else
-static struct input_stream *
-macro_only_input_stream (rng, first_line, len, frame)
-     struct rng * rng;
-     char * first_line;
-     int len;
-     struct command_frame * frame;
-#endif
 {
   struct input_stream * ret;
   ret = (struct input_stream *)ck_malloc (sizeof (struct input_stream));
@@ -163,14 +149,8 @@ macro_only_input_stream (rng, first_line, len, frame)
   return ret;
 }
 
-#ifdef __STDC__
 void
 free_input_stream (struct input_stream * stream)
-#else
-void
-free_input_stream (stream)
-     struct input_stream * stream;
-#endif
 {
   if (stream->_macro_start)
     free (stream->_macro_start);
@@ -184,13 +164,8 @@ free_input_stream (stream)
  * It fixes the INPUT fields of pending command frames.
  */
 
-#ifdef __STDC__
 void
 pop_input_stream (void)
-#else
-void
-pop_input_stream ()
-#endif
 {
   if (the_cmd_frame->input->prev_stream)
     {
@@ -211,13 +186,8 @@ pop_input_stream ()
  * These are the commands the user has to interact with macros.
  */
 
-#ifdef __STDC__
 void
 start_entering_macro (void)
-#else
-void
-start_entering_macro ()
-#endif
 {
   if (making_macro)
     {
@@ -228,14 +198,8 @@ start_entering_macro ()
   making_macro = making_macro_start = ck_malloc (5 + making_macro_size);
 }
 
-#ifdef __STDC__
 void
 bound_macro (int num)
-#else
-void
-bound_macro (num)
-     int num;
-#endif
 {
   struct macro *old;
   CELL *cp;
@@ -255,14 +219,8 @@ bound_macro (num)
     (unsigned char *) obstack_finish (&macro_stack);
 }
 
-#ifdef __STDC__
 void
 run_string_as_macro (char * macro)
-#else
-void
-run_string_as_macro (macro)
-     char * macro;
-#endif
 {
   struct rng rng;
   /* This is going to continue the command loop
@@ -279,14 +237,8 @@ run_string_as_macro (macro)
   command_loop (1);
 }
 
-#ifdef __STDC__
 void
 call_last_kbd_macro (int count)
-#else
-void
-call_last_kbd_macro (count)
-     int count;
-#endif
 {
   if (!last_macro)
     io_error_msg ("No keyboard macro entered.");
@@ -297,13 +249,8 @@ call_last_kbd_macro (count)
 /* This command is automaticly inserted into the command stream
  * when the end of a macro is reached.  
  */
-#ifdef __STDC__
 void
 end_macro (void)
-#else
-void
-end_macro ()
-#endif
 {
   CELL *cp;
   struct macro *old;
@@ -350,13 +297,8 @@ end_macro ()
 
 /* This command is executed by the user to stop entering a macro.
  */
-#ifdef __STDC__
 void
 stop_entering_macro (void)
-#else
-void
-stop_entering_macro ()
-#endif
 {
   if (!making_macro)
     {
@@ -375,14 +317,8 @@ stop_entering_macro ()
   free (making_macro_start);
 }
 
-#ifdef __STDC__
 void
 store_last_macro (struct rng * rng)
-#else
-void
-store_last_macro (rng)
-     struct rng * rng;
-#endif
 {
   union vals z;
   z.c_s = (char *)last_macro;
@@ -435,13 +371,8 @@ struct alarm_entry alarm_table [3] =
 
 /* Function that get called whenever blocking times out. */
 
-#ifdef __STDC__
 static void
 alarm_hooks (void)
-#else
-static void
-alarm_hooks ()
-#endif
 {
   int x;
   time_t now = time(0);
@@ -455,13 +386,8 @@ alarm_hooks ()
 }
 
 
-#ifdef __STDC__
 static void
 select_hooks (void)
-#else
-static void
-select_hooks ()
-#endif
 {
   int x;
   for (x = 0; x < SELECT_SET_SIZE; ++x)
@@ -483,14 +409,8 @@ select_hooks ()
  * can do i/o or, until we timeout (timeout is specified in seconds,
  * 0 means block indefinately).  (Front end to select)
  */
-#ifdef __STDC__
 static void
 block_until_excitment (int timeout_seconds)
-#else
-static void
-block_until_excitment (timeout_seconds)
-     int timeout_seconds;
-#endif
 {
   int ret;
   struct timeval timeout;
@@ -525,13 +445,8 @@ block_until_excitment (timeout_seconds)
  * this function save characters in the macro.
  */
 
-#ifdef __STDC__
 int 
 real_get_chr (void)
-#else
-int 
-real_get_chr ()
-#endif
 {
   int ch = EOF;			/* The char that will be returned. */
 
@@ -703,16 +618,8 @@ struct command_frame * running_frames = 0;
  *
  */
 
-#ifdef __STDC__
 void
 push_command_frame (struct rng * rng, char * first_line, int len)
-#else
-void
-push_command_frame (rng, first_line, len)
-     struct rng * rng;
-     struct line * first_line;
-     int len;
-#endif
 {
   struct command_frame * new_cf =
     (struct command_frame *)ck_malloc (sizeof (*new_cf));
@@ -806,14 +713,8 @@ push_command_frame (rng, first_line, len)
 }
 
 /* Remove a frame from the queue/stack. */
-#ifdef __STDC__
 void
 remove_cmd_frame (struct command_frame * frame)
-#else
-void
-remove_cmd_frame (frame)
-     struct command_frame * frame;
-#endif
 {
   frame->next->prev = frame->prev;
   frame->prev->next = frame->next;
@@ -831,14 +732,8 @@ remove_cmd_frame (frame)
 /* This frees all of the memory allocated to FRAME (including
  * the frame itself. 
  */
-#ifdef __STDC__
 void
 free_cmd_frame (struct command_frame * frame)
-#else
-void
-free_cmd_frame (frame)
-     struct command_frame * frame;
-#endif
 {
   if (frame->next)
     remove_cmd_frame (frame);
@@ -864,13 +759,8 @@ free_cmd_frame (frame)
 /* Discard the current frame if it contains an unexecuted commnand. 
  * This is used, for example, to handle break.
  */
-#ifdef __STDC__
 void
 pop_unfinished_command (void)
-#else
-void
-pop_unfinished_command ()
-#endif
 {
   if (the_cmd_frame->cmd)
     {
@@ -895,13 +785,8 @@ pop_unfinished_command ()
  * generating an error message for the user and longjmp to error_exception.
  */
 
-#ifdef __STDC__
 void
 recover_from_error (void)
-#else
-void
-recover_from_error ()
-#endif
 {
   /* pop input streams until the bottom is reached. */
   while (the_cmd_frame->input->prev_stream)
@@ -949,15 +834,8 @@ recover_from_error ()
  *
  * The return value is 1 if the user must be prompted, 0 otherwise.
  */
-#ifdef __STDC__
 static int
 get_argument (char * prompt, struct prompt_style * style)
-#else
-static int
-get_argument (prompt, style)
-     char * prompt;
-     struct prompt_style * style;
-#endif
 {
   the_cmd_arg.style = style;
   the_cmd_arg.prompt = prompt;
@@ -1014,13 +892,8 @@ get_argument (prompt, style)
   return 1;
 }
 
-#ifdef __STDC__
 void
 exit_minibuffer (void)
-#else
-void
-exit_minibuffer ()
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -1054,30 +927,15 @@ exit_minibuffer ()
 
 
 
-#ifdef __STDC__
 void
 setn_arg_text (struct command_arg * arg, char * text, int len)
-#else
-void
-setn_arg_text (arg, text, len)
-     struct command_arg * arg;
-     char * text;
-     int len;
-#endif
 {
   setn_line (&arg->text, text, len);
   arg->cursor = len;
 }
 
-#ifdef __STDC__
 void
 init_arg_text (struct command_arg * arg, char * text)
-#else
-void
-init_arg_text (arg, text)
-     struct command_arg * arg;
-     char * text;
-#endif
 {
   setn_arg_text (arg, text, strlen (text));
 }
@@ -1087,16 +945,8 @@ init_arg_text (arg, text)
  * differently.  
  */
 
-#ifdef __STDC__
 void
 set_default_arg (struct command_arg * arg, char * text, int len)
-#else
-void
-set_default_arg (arg, text, len)
-     struct command_arg * arg;
-     char * text;
-     int len;
-#endif
 {
   setn_arg_text (arg, text, len);
 }
@@ -1110,14 +960,8 @@ set_default_arg (arg, text, len)
  *  (see execute_command).
  */
 
-#ifdef __STDC__
 void
 command_loop (int prefix)
-#else
-void
-command_loop (prefix)
-     int prefix;
-#endif
 {
 
   /* We might be re-entering after a longjmp caused by an error.
@@ -1936,14 +1780,8 @@ quote_macro_args (args)
     }
 }
 
-#ifdef __STDC__
 void 
 execute_command (char *str)
-#else
-void 
-execute_command (str)
-     char *str;
-#endif
 {
   char *ptr = str;
   char * run;			/* The first string to execute. */
@@ -2036,13 +1874,8 @@ execute_command (str)
 
 
 /* Read a character.  If we're in a macro, read from the macro. . . */
-#ifdef __STDC__
 int
 get_chr (void)
-#else
-int
-get_chr ()
-#endif
 {
   int ch;
 
@@ -2079,32 +1912,21 @@ get_chr ()
  * typed to cause the error message to go away.
  */
 
-#ifdef __STDC__
 void
 display_error_msg (char * msg, int c)
-#else
-void
-display_error_msg (msg, c)
-     char * msg;
-     int c;
-#endif
 {
   if (c > 0)
     pushed_back_char = c;
 }
 
-#ifdef __STDC__
 void
 pushback_keystroke (int c)
-#else
-void
-pushback_keystroke (c)
-     int c;
-#endif
 {
   if (c > 0)
     pushed_back_char = c;
 }
+
+/* FIXME - ANSIfication Req' for good ansi2knr run */
 
 #ifdef __STDC__
 void
@@ -2138,6 +1960,7 @@ io_error_msg (str, va_alist)
 }
 
 
+/* FIXME - ANSIfication req'd for good ansi2knr run */
 #ifdef __STDC__
 void
 io_info_msg (char *str,...)
@@ -2169,14 +1992,8 @@ io_info_msg (str, va_alist)
  * malloced memory is returned.
  */
 
-#ifdef __STDC__
 char *
 expand_prompt (char * str)
-#else
-char *
-expand_prompt (str)
-     char * str;
-#endif
 {
   struct line expanded;
   init_line (&expanded);
@@ -2248,14 +2065,8 @@ expand_prompt (str)
 
 /* Info commands */
 
-#ifdef __STDC__
 void
 set_info (char * name)
-#else
-void
-set_info (name)
-     char * name;
-#endif
 {
   struct info_buffer * ib = (name ? find_or_make_info (name) : 0);
   
@@ -2269,14 +2080,8 @@ set_info (name)
 }
 
 
-#ifdef __STDC__
 void
 page_info_backwards (int rep)
-#else
-void
-page_info_backwards (rep)
-     int rep;
-#endif
 {
   if (rep < 0)
     page_info (-rep);
@@ -2293,14 +2098,8 @@ page_info_backwards (rep)
 #undef MAX
 #define MAX(A,B) (((A) >= (B)) ? (A) : (B))
 
-#ifdef __STDC__
 void
 page_info (int rep)
-#else
-void
-page_info (rep)
-     int rep;
-#endif
 {
   if (rep < 0)
     page_info_backwards (-rep);
@@ -2317,15 +2116,8 @@ page_info (rep)
     io_error_msg ("No info to page.");
 }
 
-#ifdef __STDC__
 void
 view_info (char * name, int ignore)
-#else
-void
-view_info (name, ignore)
-     char * name;
-     int ignore;
-#endif
 {}
 
 
@@ -2334,6 +2126,7 @@ view_info (name, ignore)
  * is in defun.h.
  */
 
+/* FIXME - ANSIfication needed for good ansi2knr conversion */
 #ifdef __STDC__
 void
 with_keymap (char * mapname)
@@ -2344,15 +2137,8 @@ with_keymap (mapname)
 #endif
 {}
 
-#ifdef __STDC__
 void
 one_cmd_with_keymap (char * mapname, struct key_sequence * keyseq)
-#else
-void
-one_cmd_with_keymap (mapname, keyseq)
-     char * mapname;
-     struct key_sequence * keyseq;
-#endif
 {
   if (keyseq->cmd.vector < 0 && keyseq->cmd.code < 0)
     io_bell ();

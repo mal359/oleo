@@ -42,15 +42,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
  * everything after that. 
  */
 
-#ifdef __STDC__
 char *
 char_verify (char ** end, struct command_arg * arg)
-#else
-char *
-char_verify (end, arg)
-     char ** end;
-     struct command_arg * arg;
-#endif
 {
   if (!**end)
     return "No character specified";
@@ -70,15 +63,8 @@ char_verify (end, arg)
     }
 }
 
-#ifdef __STDC__
 char *
 symbol_verify (char ** end, struct command_arg * arg)
-#else
-char *
-symbol_verify (end, arg)
-     char ** end;
-     struct command_arg * arg;
-#endif
 {
   char * e = *end;
   char * start = *end;
@@ -133,28 +119,15 @@ word_verify (end, arg)
     return "Invalid symbol name.";
 }
 
-#ifdef __STDC__
 void
 symbol_destroy (struct command_arg * arg)
-#else
-void
-symbol_destroy (arg)
-     struct command_arg * arg;
-#endif
 {
   if (arg->val.string)
     ck_free (arg->val.string);
 }
 
-#ifdef __STDC__
 char *
 command_verify (char ** end, struct command_arg * arg)
-#else
-char *
-command_verify (end, arg)
-     char ** end;
-     struct command_arg * arg;
-#endif
 {
   char * error = symbol_verify (end, arg);
   char * str;
@@ -168,15 +141,8 @@ command_verify (end, arg)
     return "Not a command or macro address.";
 }
 
-#ifdef __STDC__
 char * 
 read_file_verify (char ** end, struct command_arg * arg)
-#else
-char * 
-read_file_verify (end, arg)
-     char ** end;
-     struct command_arg * arg;
-#endif
 {
   FILE * fp = xopen_with_backup (arg->text.buf, "r");
   *end = 0;
@@ -192,14 +158,8 @@ read_file_verify (end, arg)
     }
 }
 
-#ifdef __STDC__
 void
 read_file_destroy (struct command_arg * arg)
-#else
-void
-read_file_destroy (arg)
-     struct command_arg * arg;
-#endif
 {
   int num;
   num = xclose (arg->val.fp);
@@ -209,15 +169,8 @@ read_file_destroy (arg)
 }
 
 
-#ifdef __STDC__
 char * 
 write_file_verify (char ** end, struct command_arg * arg)
-#else
-char * 
-write_file_verify (end, arg)
-     char ** end;
-     struct command_arg * arg;
-#endif
 {
   FILE * fp = xopen_with_backup (arg->text.buf, "w");
   *end = 0;
@@ -233,14 +186,8 @@ write_file_verify (end, arg)
     }
 }
 
-#ifdef __STDC__
 void
 write_file_destroy (struct command_arg * arg)
-#else
-void
-write_file_destroy (arg)
-     struct command_arg * arg;
-#endif
 {
   int num;
 
@@ -254,30 +201,16 @@ write_file_destroy (arg)
  * interactively.
  */
 
-#ifdef __STDC__
 char *
 keyseq_verify (char ** end, struct command_arg * arg)
-#else
-char *
-keyseq_verify (end, arg)
-     char ** end;
-     struct command_arg * arg;
-#endif
 {
   *end = 0;
   return 0;
 }
 
 
-#ifdef __STDC__
 char *
 keymap_verify (char ** end, struct command_arg * arg)
-#else
-char *
-keymap_verify (end, arg)
-     char ** end;
-     struct command_arg * arg;
-#endif
 {
   char * start = *end;
   char * error = symbol_verify (end, arg);
@@ -291,15 +224,8 @@ keymap_verify (end, arg)
 }
 
 
-#ifdef __STDC__
 char *
 number_verify (char ** end, struct command_arg * arg)
-#else
-char *
-number_verify (end, arg)
-     char ** end;
-     struct command_arg * arg;
-#endif
 {
   char * e = *end;
 
@@ -333,15 +259,8 @@ number_verify (end, arg)
 }
 
 
-#ifdef __STDC__
 char *
 double_verify (char ** end, struct command_arg * arg)
-#else
-char *
-double_verify (end, arg)
-     char ** end;
-     struct command_arg * arg;
-#endif
 {
   char * e = *end;
 
@@ -357,15 +276,8 @@ double_verify (end, arg)
 }
 
 
-#ifdef __STDC__
 char * 
 range_verify (char ** end, struct command_arg * arg)
-#else
-char * 
-range_verify (end, arg)
-     char ** end;
-     struct command_arg * arg;
-#endif
 {
   union command_arg_val * val = &arg->val;
   *end = arg->text.buf;
@@ -375,15 +287,8 @@ range_verify (end, arg)
     return 0;
 }
 
-#ifdef __STDC__
 char * 
 string_verify (char ** end, struct command_arg * arg)
-#else
-char * 
-string_verify (end, arg)
-     char ** end;
-     struct command_arg * arg;
-#endif
 {
   arg->val.string = arg->text.buf;
   *end = 0;
@@ -395,15 +300,8 @@ string_verify (end, arg)
  * operating on.  It's purpose is to allow user's
  * to abort commands. 
  */
-#ifdef __STDC__
 char * 
 yes_verify (char ** end, struct command_arg * arg)
-#else
-char * 
-yes_verify (end, arg)
-     char ** end;
-     struct command_arg * arg;
-#endif
 {
   if (words_imatch (end, "no"))
     {
@@ -419,29 +317,15 @@ yes_verify (end, arg)
     }
 }
 
-#ifdef __STDC__
 char *
 incremental_cmd_verify (char ** end, struct command_arg * arg)
-#else
-char *
-incremental_cmd_verify (end, arg)
-     char ** end;
-     struct command_arg * arg;
-#endif
 {
   return 0;
 }
 
 
-#ifdef __STDC__
 char *
 menu_verify (char ** end, struct command_arg * arg)
-#else
-char *
-menu_verify (end, arg)
-     char ** end;
-     struct command_arg * arg;
-#endif
 {
   char * error = char_verify (end, arg);
   if (error)
@@ -469,15 +353,8 @@ menu_verify (end, arg)
 }
 
 
-#ifdef __STDC__
 char *
 format_verify (char ** end, struct command_arg * arg)
-#else
-char *
-format_verify (end, arg)
-     char ** end;
-     struct command_arg * arg;
-#endif
 {
   arg->val.integer = str_to_fmt (*end);
   if (arg->val.integer < 0)
@@ -487,15 +364,8 @@ format_verify (end, arg)
 }
 
 
-#ifdef __STDC__
 char *
 noop_verify (char ** end, struct command_arg * arg)
-#else
-char *
-noop_verify (end, arg)
-     char ** end;
-     struct command_arg * arg;
-#endif
 {
   return 0;
 }

@@ -93,27 +93,16 @@ const int boundrymagic[3] = { MIN_ROW, NON_ROW, MAX_ROW };
 
 /* A very basic command. */
 
-#ifdef __STDC__
 void
 noop (void)
-#else
-void
-noop ()
-#endif
 {}
 
 
 
 /* Commands that inser/delete rows/columns. */
 
-#ifdef __STDC__
 void
 insert_row (int repeat)
-#else
-void
-insert_row (repeat)
-     int repeat;
-#endif
 {
   struct rng from;
   struct rng to;
@@ -133,14 +122,8 @@ insert_row (repeat)
   move_region (&from, &to);
 }
 
-#ifdef __STDC__
 void
 insert_col (int repeat)
-#else
-void
-insert_col (repeat)
-     int repeat;
-#endif
 {
   struct rng from;
   struct rng to;
@@ -160,14 +143,8 @@ insert_col (repeat)
   move_region (&from, &to);
 }
 
-#ifdef __STDC__
 void
 delete_row (int repeat)
-#else
-void
-delete_row (repeat)
-     int repeat;
-#endif
 {
   struct rng from;
   struct rng to;
@@ -187,14 +164,8 @@ delete_row (repeat)
   move_region (&from, &to);
 }
 
-#ifdef __STDC__
 void
 delete_col (int repeat)
-#else
-void
-delete_col (repeat)
-     int repeat;
-#endif
 {
   struct rng from;
   struct rng to;
@@ -218,14 +189,8 @@ delete_col (repeat)
 
 /* Front end to the window functions. */
 
-#ifdef __STDC__
 void 
 open_window (char *text)
-#else
-void 
-open_window (text)
-     char *text;
-#endif
 {
   int hv;
   int where;
@@ -259,38 +224,22 @@ open_window (text)
   io_win_open (hv, where);
 }
 
-#ifdef __STDC__
 void
 hsplit_window (void)
-#else
-void
-hsplit_window ()
-#endif
 {
   open_window ("h50%");
 }
 
 
-#ifdef __STDC__
 void
 vsplit_window (void)
-#else
-void
-vsplit_window ()
-#endif
 {
   open_window ("v50%");
 }
 
 
-#ifdef __STDC__
 void 
 close_window (char *text)
-#else
-void 
-close_window (text)
-     char *text;
-#endif
 {
   int num;
 
@@ -309,24 +258,14 @@ close_window (text)
   io_win_close (&wins[num]);
 }
 
-#ifdef __STDC__
 void 
 delete_window (void)
-#else
-void 
-delete_window ()
-#endif
 {
   io_win_close (cwin);
 }
 
-#ifdef __STDC__
 void
 delete_other_windows (void)
-#else
-void
-delete_other_windows ()
-#endif
 {
   if (nwin > 1)
     {
@@ -338,14 +277,8 @@ delete_other_windows ()
     }
 }
 
-#ifdef __STDC__
 void 
 nicely_goto_window (int n)
-#else
-void 
-nicely_goto_window (n)
-     int n;
-#endif
 {
   if (input_active)
     {
@@ -373,13 +306,8 @@ nicely_goto_window (n)
     }
 }
 
-#ifdef __STDC__
 void
 goto_minibuffer (void)
-#else
-void
-goto_minibuffer ()
-#endif
 {
   if (window_after_input < 0)
     {
@@ -391,14 +319,8 @@ goto_minibuffer ()
 }
 
 
-#ifdef __STDC__
 void
 goto_window (char *text)
-#else
-void
-goto_window (text)
-     char *text;
-#endif
 {
   int n;
   n = atoi (text) - 1;
@@ -412,13 +334,8 @@ goto_window (text)
 }
 
 
-#ifdef __STDC__
 void 
 other_window (void)
-#else
-void 
-other_window ()
-#endif
 {
   int n = cwin - wins;
   if (!input_active)
@@ -426,15 +343,8 @@ other_window ()
   nicely_goto_window (n);
 }
 
-#ifdef __STDC__
 int
 set_window_option (int set_opt, char *text)
-#else
-int
-set_window_option (set_opt, text)
-     int set_opt;
-     char *text;
-#endif
 {
   int n;
   int stat;
@@ -528,13 +438,8 @@ set_window_option (set_opt, text)
   return 1;
 }
 
-#ifdef __STDC__
 void
 show_window_options (void)
-#else
-void
-show_window_options ()
-#endif
 {
   int n;
 
@@ -564,13 +469,8 @@ show_window_options ()
     }
 }
 
-#ifdef __STDC__
 void
 recenter_window (void)
-#else
-void
-recenter_window ()
-#endif
 {
   io_recenter_cur_win ();
 }
@@ -580,13 +480,8 @@ recenter_window ()
 /* Trivial front-end commands. */
 
 
-#ifdef __STDC__
 void
 suspend_oleo (void)
-#else
-void
-suspend_oleo ()
-#endif
 {
   if (using_curses)
     {
@@ -602,14 +497,8 @@ suspend_oleo ()
     }
 }
 
-#ifdef __STDC__
 void
 recalculate (int all)
-#else
-void
-recalculate (all)
-     int all;
-#endif
 {
   current_cycle++;
   if (all)
@@ -630,38 +519,23 @@ recalculate (all)
 }
 
 
-#ifdef __STDC__
 void
 kill_oleo (void)
-#else
-void
-kill_oleo ()
-#endif
 {
   io_close_display ();
   exit (0);
 }
 
 
-#ifdef __STDC__
 void
 kill_all_cmd (void)
-#else
-void
-kill_all_cmd ()
-#endif
 {
   clear_spreadsheet ();
   io_repaint ();
 }
 
-#ifdef __STDC__
 void
 redraw_screen (void)
-#else
-void
-redraw_screen ()
-#endif
 {
   io_repaint ();
 }
@@ -670,43 +544,23 @@ redraw_screen ()
 
 /* Motion commands. */
 
-#ifdef __STDC__
 void
 shift_cell_cursor (int dir, int repeat)
-#else
-void
-shift_cell_cursor (dir, repeat)
-     int dir;
-     int repeat;
-#endif
 {
   io_shift_cell_cursor (dir, repeat);
 }
 
 
-#ifdef __STDC__
 void
 scroll_cell_cursor (int dir, int repeat)
-#else
-void
-scroll_cell_cursor (dir, repeat)
-     int dir;
-     int repeat;
-#endif
 {
   io_scroll_cell_cursor (dir, repeat);
 }
 
 
 
-#ifdef __STDC__
 void
 goto_region (struct rng *r)
-#else
-void
-goto_region (r)
-     struct rng *r;
-#endif
 {
   (void) io_move_cell_cursor (r->lr, r->lc);
 
@@ -720,28 +574,16 @@ goto_region (r)
   io_update_status ();
 }
 
-#ifdef __STDC__
 void
 goto_cell (struct rng * rng)
-#else
-void
-goto_cell (rng)
-     struct rng * rng;
-#endif
 {
   rng->hr = mkrow;
   rng->hc = mkcol;
   goto_region (rng);
 }
 
-#ifdef __STDC__
 void
 exchange_point_and_mark (int clrmk)
-#else
-void
-exchange_point_and_mark (clrmk)
-     int clrmk;
-#endif
 {
   struct rng rng;
   if (clrmk)
@@ -762,14 +604,8 @@ exchange_point_and_mark (clrmk)
     }
 }
 
-#ifdef __STDC__
 static CELLREF
 first_filled_col (CELLREF row)
-#else
-static CELLREF
-first_filled_col (row)
-     CELLREF row;
-#endif
 {
   struct rng rng;
   CELLREF r;
@@ -794,14 +630,8 @@ first_filled_col (row)
   return NON_COL;
 }
 
-#ifdef __STDC__
 static CELLREF
 last_filled_col (CELLREF row)
-#else
-static CELLREF
-last_filled_col (row)
-     CELLREF row;
-#endif
 {
   struct rng rng;
   CELLREF r;
@@ -824,14 +654,8 @@ last_filled_col (row)
   return bestc;
 }
 
-#ifdef __STDC__
 static CELLREF
 first_filled_row (CELLREF col)
-#else
-static CELLREF
-first_filled_row (col)
-     CELLREF col;
-#endif
 {
   struct rng rng;
   CELLREF r;
@@ -856,14 +680,8 @@ first_filled_row (col)
   return NON_ROW;
 }
 
-#ifdef __STDC__
 static CELLREF
 last_filled_row (CELLREF col)
-#else
-static CELLREF
-last_filled_row (col)
-     CELLREF col;
-#endif
 {
   struct rng rng;
   CELLREF r;
@@ -886,13 +704,8 @@ last_filled_row (col)
   return bestr;
 }
 
-#ifdef __STDC__
 static CELLREF
 max_filled_row (void)
-#else
-static CELLREF
-max_filled_row ()
-#endif
 {
   CELLREF max_r = highest_row ();
   while (max_r != MIN_ROW)
@@ -906,13 +719,8 @@ max_filled_row ()
 }
 
 
-#ifdef __STDC__
 static CELLREF
 max_filled_col (void)
-#else
-static CELLREF
-max_filled_col ()
-#endif
 {
   CELLREF max_c = highest_col ();
   while (max_c != MIN_COL)
@@ -925,14 +733,8 @@ max_filled_col ()
   return max_c;
 }
 
-#ifdef __STDC__
 static void 
 mk_for_extreme (struct rng * rng)
-#else
-static void 
-mk_for_extreme (rng)
-     struct rng * rng;
-#endif
 {
   if (mkrow != NON_ROW)
     {
@@ -946,13 +748,8 @@ mk_for_extreme (rng)
     }
 }
 
-#ifdef __STDC__
 void
 upper_left (void)
-#else
-void
-upper_left ()
-#endif
 {
   struct rng rng;
   rng.lr = MIN_ROW;
@@ -961,13 +758,8 @@ upper_left ()
   goto_region (&rng);
 }
 
-#ifdef __STDC__
 void
 lower_left (void)
-#else
-void
-lower_left ()
-#endif
 {
   struct rng rng;
   rng.lr = max_filled_row ();
@@ -976,13 +768,8 @@ lower_left ()
   goto_region (&rng);
 }
 
-#ifdef __STDC__
 void
 upper_right (void)
-#else
-void
-upper_right ()
-#endif
 {
   struct rng rng;
   rng.lr = MIN_ROW;
@@ -991,13 +778,8 @@ upper_right ()
   goto_region (&rng);
 }
 
-#ifdef __STDC__
 void
 lower_right (void)
-#else
-void
-lower_right ()
-#endif
 {
   struct rng rng;
   rng.lr = max_filled_row ();
@@ -1006,14 +788,8 @@ lower_right ()
   goto_region (&rng);
 }
 
-#ifdef __STDC__
 void
 mark_cell_cmd (int popmk)
-#else
-void
-mark_cell_cmd (popmk)
-     int popmk;
-#endif
 {
   if (popmk)
     {
@@ -1035,13 +811,8 @@ mark_cell_cmd (popmk)
     }
 }
 
-#ifdef __STDC__
 void
 unmark_cmd (void)
-#else
-void
-unmark_cmd ()
-#endif
 {
   mkrow = NON_ROW;
   mkcol = NON_COL;
@@ -1056,13 +827,8 @@ unmark_cmd ()
  */
 struct mouse_event last_mouse_event;
 
-#ifdef __STDC__
 void
 do_mouse_goto (void)
-#else
-void
-do_mouse_goto ()
-#endif
 {
   if (!last_mouse_event.downp)
     return;
@@ -1090,13 +856,8 @@ do_mouse_goto ()
     io_bell ();
 }
 
-#ifdef __STDC__
 void
 do_mouse_mark (void)
-#else
-void
-do_mouse_mark ()
-#endif
 {
   if (last_mouse_event.location >= 0 && last_mouse_event.downp)
     {
@@ -1106,13 +867,8 @@ do_mouse_mark ()
 }
 
 
-#ifdef __STDC__
 void
 do_mouse_mark_and_goto (void)
-#else
-void
-do_mouse_mark_and_goto ()
-#endif
 {
   if (last_mouse_event.location >= 0 && last_mouse_event.downp)
     {
@@ -1122,50 +878,29 @@ do_mouse_mark_and_goto ()
   do_mouse_goto ();
 }
 
-#ifdef __STDC__
 void
 do_mouse_cmd (void (*fn) ())
-#else
-void
-do_mouse_cmd (fn)
-     void (*fn) ();
-#endif
 {
   int seq = real_get_chr ();
   dequeue_mouse_event (&last_mouse_event, seq);
   fn ();
 }
 
-#ifdef __STDC__
 void
 mouse_mark_cmd (void)
-#else
-void
-mouse_mark_cmd ()
-#endif
 {
   do_mouse_cmd (do_mouse_mark);
 }
 
 
-#ifdef __STDC__
 void
 mouse_goto_cmd (void)
-#else
-void
-mouse_goto_cmd ()
-#endif
 {
   do_mouse_cmd (do_mouse_goto);
 }
 
-#ifdef __STDC__
 void
 mouse_mark_and_goto_cmd (void)
-#else
-void
-mouse_mark_and_goto_cmd ()
-#endif
 {
   do_mouse_cmd (do_mouse_mark_and_goto);
 }
@@ -1174,13 +909,8 @@ mouse_mark_and_goto_cmd ()
 
 /* Commands used to modify cell formulas. */
 
-#ifdef __STDC__
 void 
 kill_cell_cmd (void)
-#else
-void 
-kill_cell_cmd ()
-#endif
 {
   CELL *cp;
 
@@ -1203,14 +933,8 @@ kill_cell_cmd ()
 
 /* A front end to sorting. */
 
-#ifdef __STDC__
 void
 sort_region_cmd (char *ptr)
-#else
-void
-sort_region_cmd (ptr)
-     char *ptr;
-#endif
 {
   struct rng tmp_rng;
 
@@ -1306,15 +1030,8 @@ sort_region_cmd (ptr)
 
 
 
-#ifdef __STDC__
 void
 imove (struct rng * rng, int ch)
-#else
-void
-imove (rng, ch)
-     struct rng * rng;
-     int ch;
-#endif
 {
   if ((ch > 0) && (ch != 27))
     pushed_back_char = ch;
@@ -1337,16 +1054,8 @@ imove (rng, ch)
  *    		   -1: don't page at all.
  */
 
-#ifdef __STDC__
 void
 inc_direction (int count, int page_rule, int hack_magic)
-#else
-void
-inc_direction (count, page_rule, hack_magic)
-     int count;
-     int page_rule;
-     int hack_magic;
-#endif
 {
   if (check_editting_mode ())
     return;
@@ -1386,15 +1095,8 @@ inc_direction (count, page_rule, hack_magic)
  * MAX_ROW == MAX_COL.
  */
 
-#ifdef __STDC__
 static CELLREF
 extreme_cmd_orth_motion (int count, CELLREF current)
-#else
-static CELLREF
-extreme_cmd_orth_motion (count, current)
-     int count;
-     CELLREF current;
-#endif
 {
   --count;
   if (count > (MAX_ROW - current))
@@ -1405,14 +1107,8 @@ extreme_cmd_orth_motion (count, current)
 }
 
 
-#ifdef __STDC__
 void
 beginning_of_row (int count)
-#else
-void
-beginning_of_row (count)
-     int count;
-#endif
 {
   struct rng rng;
   rng.lr = extreme_cmd_orth_motion (count, curow);
@@ -1422,14 +1118,8 @@ beginning_of_row (count)
   goto_region (&rng);
 }
 
-#ifdef __STDC__
 void
 end_of_row (int count)
-#else
-void
-end_of_row (count)
-     int count;
-#endif
 {
   struct rng rng;
   rng.lr = extreme_cmd_orth_motion (count, curow);
@@ -1439,14 +1129,8 @@ end_of_row (count)
   goto_region (&rng);
 }
 
-#ifdef __STDC__
 void
 beginning_of_col (int count)
-#else
-void
-beginning_of_col (count)
-     int count;
-#endif
 {
   struct rng rng;
   rng.lr = MIN_ROW;
@@ -1456,14 +1140,8 @@ beginning_of_col (count)
   goto_region (&rng);
 }
 
-#ifdef __STDC__
 void
 end_of_col (int count)
-#else
-void
-end_of_col (count)
-     int count;
-#endif
 {
   struct rng rng;
   rng.lc = extreme_cmd_orth_motion (count, cucol);
@@ -1474,16 +1152,8 @@ end_of_col (count)
 }
 
 
-#ifdef __STDC__
 static void
 skip_empties (CELLREF * rout, CELLREF * cout, int magic)
-#else
-static void
-skip_empties (rout, cout, magic)
-     CELLREF * rout;
-     CELLREF * cout;
-     int magic;
-#endif
 {
   CELLREF r = *rout;
   CELLREF c = *cout;
@@ -1506,15 +1176,8 @@ skip_empties (rout, cout, magic)
   *cout = c;
 }
 
-#ifdef __STDC__
 void
 scan_cell_cursor (int magic, int count)
-#else
-void
-scan_cell_cursor (magic, count)
-     int magic;
-     int count;
-#endif
 {
   CELLREF r = curow;
   CELLREF c = cucol;
@@ -1569,14 +1232,8 @@ scan_cell_cursor (magic, count)
 }
 
 
-#ifdef __STDC__
 void
 edit_cell (char * new_formula)
-#else
-void
-edit_cell (new_formula)
-     char * new_formula;
-#endif
 {
   char * fail;
   fail = new_value (setrow, setcol, new_formula);
@@ -1587,15 +1244,8 @@ edit_cell (new_formula)
 }
 
 
-#ifdef __STDC__
 void
 set_region_formula (struct rng * rng, char * str)
-#else
-void
-set_region_formula (rng, str)
-     struct rng * rng;
-     char * str;
-#endif
 {
   CELLREF row, col;
 
@@ -1613,14 +1263,8 @@ set_region_formula (rng, str)
       }
 }
 
-#ifdef __STDC__
 void
 goto_edit_cell (int c)
-#else
-void
-goto_edit_cell (c)
-     int c;
-#endif
 {
   pushed_back_char = c;
   execute_command ("edit-cell");
@@ -1631,14 +1275,8 @@ goto_edit_cell (c)
 
 int sneaky_linec = 0;	/* for error reporting for now (see io-term.c) */
 
-#ifdef __STDC__
 void 
 read_cmds_cmd (FILE *fp)
-#else
-void 
-read_cmds_cmd (fp)
-     FILE *fp;
-#endif
 {
   struct line line;
   char *ptr;
@@ -1657,16 +1295,8 @@ read_cmds_cmd (fp)
 static int run_load_hooks = 1;
 static char load_hooks_string[] = "load_hooks";
 
-#ifdef __STDC__
 void
 read_file_and_run_hooks (FILE * fp, int ismerge, char * name)
-#else
-void
-read_file_and_run_hooks (fp, ismerge, name)
-     FILE * fp;
-     int ismerge;
-     char * name;
-#endif
 {
   if (!ismerge)
     {
@@ -1688,14 +1318,8 @@ read_file_and_run_hooks (fp, ismerge, name)
  * Otherwise, it turns load hooks on.
  */
 
-#ifdef __STDC__
 void
 toggle_load_hooks (int turn_on)
-#else
-void
-toggle_load_hooks (turn_on)
-     int turn_on;
-#endif
 {
   if (!turn_on && run_load_hooks)
     {
@@ -1709,15 +1333,8 @@ toggle_load_hooks (turn_on)
     }
 }
 
-#ifdef __STDC__
 void
 write_cmd (FILE *fp, char * name)
-#else
-void
-write_cmd (fp, name)
-     FILE *fp;
-     char * name;
-#endif
 {
   if (current_filename)
     free (current_filename);
@@ -1726,40 +1343,20 @@ write_cmd (fp, name)
   modified = 0;
 }
 
-#ifdef __STDC__
 void
 read_cmd (FILE *fp, char * name)
-#else
-void
-read_cmd (fp, name)
-     FILE *fp;
-     char * name;
-#endif
 {
   read_file_and_run_hooks (fp, 0, name);
 }
 
-#ifdef __STDC__
 void
 read_merge_cmd (FILE *fp)
-#else
-void
-read_merge_cmd (fp)
-     FILE *fp;
-#endif
 {
   (*read_file) (fp, 1);
 }
 
-#ifdef __STDC__
 void
 write_reg_cmd (FILE *fp, struct rng *rng)
-#else
-void
-write_reg_cmd (fp, rng)
-     FILE *fp;
-     struct rng *rng;
-#endif
 {
   (*write_file) (fp, rng);
 }
@@ -1768,15 +1365,8 @@ write_reg_cmd (fp, rng)
 
 
 /* Cell attributes. */
-#ifdef __STDC__
 void
 set_region_height (struct rng * rng, char * height)
-#else
-void
-set_region_height (rng, height)
-     struct rng * rng;
-     char * height;
-#endif
 {
   int hgt;
   char * saved_height = height;
@@ -1814,15 +1404,8 @@ set_region_height (rng, height)
   }
 }
 
-#ifdef __STDC__
 void
 set_region_width (struct rng * rng, char * width)
-#else
-void
-set_region_width (rng, width)
-     struct rng * rng;
-     char * width;
-#endif
 {
   char * saved_width = width;
   int wid;
@@ -1863,15 +1446,8 @@ set_region_width (rng, width)
 
 /* PROT may be `d', `p', or `u'. */
 
-#ifdef __STDC__
 void
 set_region_protection (struct rng * rng, int prot)
-#else
-void
-set_region_protection (rng, prot)
-     struct rng * rng;
-     int prot;
-#endif
 {
   if (isupper (prot))
     prot = tolower (prot);
@@ -1892,15 +1468,8 @@ set_region_protection (rng, prot)
     }
 }
 
-#ifdef __STDC__
 void
 set_region_alignment (struct rng * rng, int align)
-#else
-void
-set_region_alignment (rng, align)
-     struct rng * rng;
-     int align;
-#endif
 {
   int fun = chr_to_jst (align);
   if (fun != -1)
@@ -1909,15 +1478,8 @@ set_region_alignment (rng, align)
     io_error_msg ("Unknown Justify '%s'", char_to_string (align));
 }
 
-#ifdef __STDC__
 void
 set_region_format (struct rng * rng, int fmt)
-#else
-void
-set_region_format (rng, fmt)
-     struct rng * rng;
-     int fmt;
-#endif
 {
   format_region (rng, fmt, -1); 
 }
@@ -1925,14 +1487,8 @@ set_region_format (rng, fmt)
 
 
 
-#ifdef __STDC__
 void
 set_def_height (char * height)
-#else
-void
-set_def_height (height)
-     char * height;
-#endif
 {
   char * saved_height = height;
   int hgt;
@@ -1962,14 +1518,8 @@ set_def_height (height)
   io_recenter_all_win ();
 }
 
-#ifdef __STDC__
 void
 set_def_width (char * width)
-#else
-void
-set_def_width (width)
-     char * width;
-#endif
 {
   char * saved_width = width;
   int wid;
@@ -2001,14 +1551,8 @@ set_def_width (width)
 
 /* PROT may be `d', `p', or `u'. */
 
-#ifdef __STDC__
 void
 set_def_protection (int prot)
-#else
-void
-set_def_protection (prot)
-     int prot;
-#endif
 {
   if (isupper (prot))
     prot = tolower (prot);
@@ -2026,14 +1570,8 @@ set_def_protection (prot)
     }
 }
 
-#ifdef __STDC__
 void
 set_def_alignment (int align)
-#else
-void
-set_def_alignment (align)
-     int align;
-#endif
 {
   int fun = chr_to_jst (align);
   if (fun == -1)
@@ -2043,14 +1581,8 @@ set_def_alignment (align)
   io_repaint ();
 }
 
-#ifdef __STDC__
 void
 set_def_format (int fmt)
-#else
-void
-set_def_format (fmt)
-     int fmt;
-#endif
 {
   default_fmt = fmt;
   io_repaint ();
@@ -2058,26 +1590,10 @@ set_def_format (fmt)
 
 
 
-#ifdef __STDC__
 void
 define_usr_fmt (int fmt, char * pos_h, char * neg_h, char * pos_t,
 		char * neg_t, char * zero, char * comma, char * decimal,
 		char * precision, char * scale)
-#else
-void
-define_usr_fmt (fmt, pos_h, neg_h, pos_t, neg_t, zero,
-		comma, decimal, precision, scale)
-     int fmt;
-     char * pos_h;
-     char * neg_h;
-     char * pos_t;
-     char * neg_t;
-     char * zero;
-     char * comma;
-     char * decimal;
-     char * precision;
-     char * scale;
-#endif
 {
   char * usr_buf[9];
   if (fmt < 1 || fmt > 16)
@@ -2108,37 +1624,21 @@ define_usr_fmt (fmt, pos_h, neg_h, pos_t, neg_t, zero,
 
 static int auto_motion_direction = magic_down;
 
-#ifdef __STDC__
 void
 set_auto_direction (enum motion_magic magic)
-#else
-void
-set_auto_direction (magic)
-     enum motion_magic magic;
-#endif
 {
   auto_motion_direction = magic;
   io_info_msg ("Auto-motion direction = %s.", motion_name[magic]);
 }
 
-#ifdef __STDC__
 void
 auto_move (void)
-#else
-void
-auto_move ()
-#endif
 {
   shift_cell_cursor (auto_motion_direction, 1);
 }
 
-#ifdef __STDC__
 void
 auto_next_set (void)
-#else
-void
-auto_next_set ()
-#endif
 {
   scan_cell_cursor (opposite_motion[auto_motion_direction], 1);
   {
@@ -2156,13 +1656,8 @@ auto_next_set ()
  * made your formulas produce parse errors.
  */
 
-#ifdef __STDC__
 void
 recompile_spreadsheet (void)
-#else
-void
-recompile_spreadsheet ()
-#endif
 {
   struct rng rng;
   CELL * cp;
