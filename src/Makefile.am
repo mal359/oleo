@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.23 1999/01/21 23:28:15 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.24 1999/01/27 23:23:45 danny Exp $
 #
 localedir = $(prefix)/share/locale
 
@@ -29,8 +29,8 @@ MYLD = @link_motif@ @link_xmhtml@ @link_xbae@ @link_sciplot@
 MYINC = @include_motif@ @include_xbae@ @include_xmhtml@ @include_sciplot@
 MYCFL = ${X_CFLAGS}
 
-gpl.h:	$(top_srcdir)/COPYING gpl.sed
-	sed -f gpl.sed <$(top_srcdir)/COPYING >gpl.h
+gpl.h:	$(top_srcdir)/COPYING $(srcdir)/gpl.sed
+	sed -f $(srcdir)/gpl.sed <$(top_srcdir)/COPYING >gpl.h
 
 io-motif.o:	gpl.h $(top_srcdir)/configure
 
@@ -40,7 +40,7 @@ else
 # MYCFL = @GTK_CFLAGS@
 endif
 
-oleo_LDADD = ${MYLD} @INTLLIBS@ ../lib/liboleo.a ${X_LIBS} -lXt -lX11
+oleo_LDADD = ${X_PRE_LIBS} ${MYLD} @INTLLIBS@ ../lib/liboleo.a ${X_LIBS} -lXt -lX11
 INCLUDES = -I.. -I$(srcdir) -I$(top_srcdir)/lib -I../intl ${MYINC}
 CFLAGS = @CFLAGS@ -DLOCALEDIR=\"$(localedir)\" ${MYCFL}
 

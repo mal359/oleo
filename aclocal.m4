@@ -125,32 +125,6 @@ for am_file in <<$1>>; do
 done<<>>dnl>>)
 changequote([,]))])
 
-# Check to see if we're running under EMX, without using
-# AC_CANONICAL_*.  If so, set output variable EXEEXT to ".exe".
-# Otherwise set it to "".
-
-dnl AM_EMX()
-dnl This lines were done with a quick look to the cygwin neighbour
-dnl
-AC_DEFUN(AM_EMX,  
-[AC_CACHE_CHECK(for EMX environment, am_cv_emx,
-[cat > conftest.$ac_ext << 'EOF' 
-int main () { 
-/* Nothing.  */
-return 0; }
-EOF
-if AC_TRY_EVAL(ac_link -Zexe) && test -s conftest.exe; then
-   am_cv_emx=yes
-   x_includes=$X11ROOT/XFree86/include
-   x_libraries=$X11ROOT/XFree86/lib
-else
-   am_cv_emx=no
-fi
-rm -f conftest*])
-EXEEXT=
-test "$am_cv_emx" = yes && EXEEXT=.exe
-AC_SUBST(EXEEXT)])
-
 # Define a conditional.
 
 AC_DEFUN(AM_CONDITIONAL,
@@ -290,7 +264,7 @@ dnl
 dnl The link_motif and include_motif variables should be fit to put on
 dnl your application's link line in your Makefile.
 dnl
-dnl Oleo CVS $Id: aclocal.m4,v 1.22 1999/01/27 20:32:50 danny Exp $
+dnl Oleo CVS $Id: aclocal.m4,v 1.23 1999/01/27 23:23:38 danny Exp $
 dnl
 AC_DEFUN(AC_FIND_MOTIF,
 [
@@ -427,7 +401,9 @@ fi
 #
 if test "$motif_includes" != "" && test "$motif_includes" != "$x_includes" && test "$motif_includes" != "none" ; then
 	link_motif="-L$motif_libraries -lXm"
+	MOTIF_LIBS="-L$motif_libraries -lXm"
 	include_motif="-I$motif_includes"
+	MOTIF_CFLAGS="-I$motif_includes"
 	AC_DEFINE(HAVE_MOTIF)
 else
 	with_motif="no"
@@ -799,6 +775,7 @@ dnl your application's link line in your Makefile.
 dnl
 AC_DEFUN(AC_FIND_XLT,
 [
+AC_REQUIRE([AC_PATH_XTRA])
 AC_REQUIRE([AC_FIND_MOTIF])
 xlt_includes=
 xlt_libraries=

@@ -1,10 +1,15 @@
 dnl
 dnl This is the configuration file for GNU oleo.
-dnl $Id: configure.in,v 1.36 1999/01/27 20:32:51 danny Exp $
+dnl $Id: configure.in,v 1.37 1999/01/27 23:23:39 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
 AC_INIT(src/init.c)
+
+dnl
+dnl Need to be processed with Autoconf >= 2.13
+dnl
+AC_PREREQ(2.13)
 
 AM_INIT_AUTOMAKE([oleo], [1.6.14])
 GNU_PACKAGE="GNU $PACKAGE"
@@ -34,7 +39,7 @@ dnl
 AC_AIX
 AC_ISC_POSIX
 AC_CYGWIN
-AM_EMX
+AC_EXEEXT
 
 dnl
 dnl Now at last we can do checks for programs.
@@ -46,6 +51,14 @@ AC_PROG_RANLIB
 
 AC_CHECK_PROG(HAVE_TEXI2HTML, texi2html, yes)
 AM_CONDITIONAL(HaveTexi2Html, test x$HAVE_TEXI2HTML = xyes)
+
+dnl
+dnl Dirty trick
+dnl
+if test -d /usr/local ; then
+	CFLAGS="$CFLAGS -I/usr/local/include"
+	LIBS="$LIBS -L/usr/local/lib"
+fi
 
 dnl
 dnl How good is the C compiler ?
@@ -96,11 +109,13 @@ if test "$with_motif" = "yes"; then
   ICE_FIND_XmHTML
   AC_FIND_XLT
   if test "$have_xlt" = "yes"; then
-    CFLAGS="$XLT_CFLAGS $CFLAGS"
-    LIBS="$XLT_LIBS $LIBS"
+    CFLAGS="$XLT_CFLAGS $MOTIF_CFLAGS $X_CFLAGS $CFLAGS"
+    LIBS="$X_PRE_LIBS $XLT_LIBS $MOTIF_LIBS $X_LIBS $LIBS"
     AC_DEFINE(HAVE_SciPlot_H)
   else
     ICE_FIND_SciPlot
+    CFLAGS="$MOTIF_CFLAGS $X_CFLAGS $CFLAGS"
+    LIBS="$X_PRE_LIBS $MOTIF_LIBS $X_LIBS $LIBS"
   fi
 fi
 
@@ -185,12 +200,6 @@ dnl
 dnl if test $usexbase = yes; then
 dnl 	AC_DEFINE(USE_XBASE)
 dnl fi
-
-dnl
-dnl This is already done by AM_WITH_NLS, which is called by AM_GNU_GETTEXT.
-dnl
-dnl AC_LINK_FILES($nls_cv_header_libgt, $nls_cv_header_intl)
-dnl
 
 AC_SUBST(LIBOBJS)
 

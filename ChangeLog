@@ -1,3 +1,8 @@
+	* Rule to build gpl.h should reference $(srcdir)/gpl.sed, not just
+	  gpl.sed.
+	* Remove lib/error.c lib/error.h lib/xmalloc.c, they're not used.
+	* Remove AM_EMX macro: autoconf 2.13 has AC_EXEEXT.
+
 Wed Jan 27 21:21:31 1999, Danny Backx (danny@gnu.org)
 	* Clean up a number of files that don't belong in CVS: Makefile.in
 	  in several places, configure, gtk.m4 .
