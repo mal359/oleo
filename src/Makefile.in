@@ -75,9 +75,9 @@ oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
  hash.c panic.c line.c key.c format.c funcs.c \
  ir.c io-curses.c font.c display.c print.c init.c \
  sylk.c oleofile.c sc.c list.c busi.c string.c cells.c \
- random.c cmd.c basic.c args.c \
+ cmd.c basic.c args.c \
  stub.c input.c info.c help.c graph.c forminfo.c \
- posixtm.y date.c xmalloc.c xrdb.c
+ posixtm.y date.c xrdb.c
 
 noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  defun.h defuns.h display.h errors.h eval.h font.h format.h forminfo.h \
@@ -114,9 +114,9 @@ decompile$U.o sort$U.o regions$U.o utils$U.o lists$U.o io-term$U.o \
 io-utils$U.o io-x11$U.o window$U.o io-edit$U.o hash$U.o panic$U.o \
 line$U.o key$U.o format$U.o funcs$U.o ir$U.o io-curses$U.o font$U.o \
 display$U.o print$U.o init$U.o sylk$U.o oleofile$U.o sc$U.o list$U.o \
-busi$U.o string$U.o cells$U.o random$U.o cmd$U.o basic$U.o args$U.o \
-stub$U.o input$U.o info$U.o help$U.o graph$U.o forminfo$U.o posixtm$U.o \
-date$U.o xmalloc$U.o xrdb$U.o
+busi$U.o string$U.o cells$U.o cmd$U.o basic$U.o args$U.o stub$U.o \
+input$U.o info$U.o help$U.o graph$U.o forminfo$U.o posixtm$U.o date$U.o \
+xrdb$U.o
 oleo_DEPENDENCIES =  ../lib/liboleo.a
 oleo_LDFLAGS = 
 YLWRAP = $(srcdir)/ylwrap
@@ -140,9 +140,9 @@ DEP_FILES =  .deps/args.P .deps/basic.P .deps/busi.P \
 .deps/io-curses.P .deps/io-edit.P .deps/io-term.P .deps/io-utils.P \
 .deps/io-x11.P .deps/ir.P .deps/key.P .deps/line.P .deps/list.P \
 .deps/lists.P .deps/oleofile.P .deps/panic.P .deps/parse.P \
-.deps/posixtm.P .deps/print.P .deps/random.P .deps/ref.P \
-.deps/regions.P .deps/sc.P .deps/sort.P .deps/string.P .deps/stub.P \
-.deps/sylk.P .deps/utils.P .deps/window.P .deps/xmalloc.P .deps/xrdb.P
+.deps/posixtm.P .deps/print.P .deps/ref.P .deps/regions.P .deps/sc.P \
+.deps/sort.P .deps/string.P .deps/stub.P .deps/sylk.P .deps/utils.P \
+.deps/window.P .deps/xrdb.P
 SOURCES = $(oleo_SOURCES)
 OBJECTS = $(oleo_OBJECTS)
 
@@ -285,8 +285,6 @@ posixtm_.c: posixtm.c $(ANSI2KNR)
 	$(ANSI2KNR) `if test -f $(srcdir)/posixtm.c; then echo $(srcdir)/posixtm.c; else echo posixtm.c; fi` posixtm_.c
 print_.c: print.c $(ANSI2KNR)
 	$(ANSI2KNR) `if test -f $(srcdir)/print.c; then echo $(srcdir)/print.c; else echo print.c; fi` print_.c
-random_.c: random.c $(ANSI2KNR)
-	$(ANSI2KNR) `if test -f $(srcdir)/random.c; then echo $(srcdir)/random.c; else echo random.c; fi` random_.c
 ref_.c: ref.c $(ANSI2KNR)
 	$(ANSI2KNR) `if test -f $(srcdir)/ref.c; then echo $(srcdir)/ref.c; else echo ref.c; fi` ref_.c
 regions_.c: regions.c $(ANSI2KNR)
@@ -305,8 +303,6 @@ utils_.c: utils.c $(ANSI2KNR)
 	$(ANSI2KNR) `if test -f $(srcdir)/utils.c; then echo $(srcdir)/utils.c; else echo utils.c; fi` utils_.c
 window_.c: window.c $(ANSI2KNR)
 	$(ANSI2KNR) `if test -f $(srcdir)/window.c; then echo $(srcdir)/window.c; else echo window.c; fi` window_.c
-xmalloc_.c: xmalloc.c $(ANSI2KNR)
-	$(ANSI2KNR) `if test -f $(srcdir)/xmalloc.c; then echo $(srcdir)/xmalloc.c; else echo xmalloc.c; fi` xmalloc_.c
 xrdb_.c: xrdb.c $(ANSI2KNR)
 	$(ANSI2KNR) `if test -f $(srcdir)/xrdb.c; then echo $(srcdir)/xrdb.c; else echo xrdb.c; fi` xrdb_.c
 args_.o basic_.o busi_.o byte-compile_.o cells_.o cmd_.o date_.o \
@@ -314,8 +310,8 @@ decompile_.o display_.o eval_.o font_.o format_.o forminfo_.o funcs_.o \
 graph_.o hash_.o help_.o info_.o init_.o input_.o io-curses_.o \
 io-edit_.o io-term_.o io-utils_.o io-x11_.o ir_.o key_.o line_.o \
 list_.o lists_.o oleofile_.o panic_.o parse_.o posixtm_.o print_.o \
-random_.o ref_.o regions_.o sc_.o sort_.o string_.o stub_.o sylk_.o \
-utils_.o window_.o xmalloc_.o xrdb_.o : $(ANSI2KNR)
+ref_.o regions_.o sc_.o sort_.o string_.o stub_.o sylk_.o utils_.o \
+window_.o xrdb_.o : $(ANSI2KNR)
 
 tags: TAGS
 

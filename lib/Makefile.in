@@ -67,9 +67,10 @@ YACC = @YACC@
 
 noinst_LIBRARIES = liboleo.a
 
-liboleo_a_SOURCES = getdate.y getopt.c getopt1.c
+liboleo_a_SOURCES = getdate.y getopt.c getopt1.c xmalloc.c error.c \
+	random.c
 
-noinst_HEADERS = getopt.h
+noinst_HEADERS = getopt.h error.h
 
 liboleo_a_LIBADD = 
 liboleo_a_DEPENDENCIES = $(libfu_a_LIBADD)
@@ -87,7 +88,8 @@ X_CFLAGS = @X_CFLAGS@
 X_LIBS = @X_LIBS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
 X_PRE_LIBS = @X_PRE_LIBS@
-liboleo_a_OBJECTS =  getdate.o getopt.o getopt1.o
+liboleo_a_OBJECTS =  getdate.o getopt.o getopt1.o xmalloc.o error.o \
+random.o
 AR = ar
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
@@ -101,7 +103,8 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP = --best
-DEP_FILES =  .deps/getdate.P .deps/getopt.P .deps/getopt1.P
+DEP_FILES =  .deps/error.P .deps/getdate.P .deps/getopt.P \
+.deps/getopt1.P .deps/random.P .deps/xmalloc.P
 SOURCES = $(liboleo_a_SOURCES)
 OBJECTS = $(liboleo_a_OBJECTS)
 

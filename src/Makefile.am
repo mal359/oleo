@@ -8,9 +8,9 @@ oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
  hash.c panic.c line.c key.c format.c funcs.c \
  ir.c io-curses.c font.c display.c print.c init.c \
  sylk.c oleofile.c sc.c list.c busi.c string.c cells.c \
- random.c cmd.c basic.c args.c \
+ cmd.c basic.c args.c \
  stub.c input.c info.c help.c graph.c forminfo.c \
- posixtm.y date.c xmalloc.c xrdb.c
+ posixtm.y date.c xrdb.c
 
 noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  defun.h defuns.h display.h errors.h eval.h font.h format.h forminfo.h \

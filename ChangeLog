@@ -1,3 +1,15 @@
+Sun Oct 5  19:03:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
+
+	* xmalloc.c: Update from Glibc 2.0.5
+
+	* xmalloc.c: Move to lib/
+	* random.c: ""
+	* lib/error.[ch]: Add
+
+	* error.c: Rely on system header files for sys_siglist def'n
+
+	* BUGS, EIGHTBIT: remove
+
 Sun Oct 5  13:55:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
 
 	* getopt.[ch]: Update from Glibc 2.0.5
