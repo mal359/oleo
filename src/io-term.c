@@ -100,7 +100,7 @@ void (*write_file) (FILE *, struct rng *) = oleo_write_file;
 int (*set_file_opts) (int, char *) = oleo_set_options;
 void (*show_file_opts) () = oleo_show_options;
 
-static int	option_separator = '\t';
+static char	option_separator = '\t';
 static char	*option_format = NULL;
 int		option_filter = 0;
 
@@ -113,7 +113,7 @@ static struct option long_options[] =
 	{"nw",			0,	NULL,			'x'},
 	{"no-toolkit",		0,	NULL,			't'},
 	{"help",		0,	NULL,			'h'},
-	{"separator",		1,	&option_separator,	's'},
+	{"separator",		1,	NULL,			's'},
 	{"space",		0,	NULL,			'S'},
 	{"format",		1,	NULL,			'F'},
 	{"filter",		0,	NULL,			'-'},
@@ -789,6 +789,10 @@ main (int argc, char **argv)
 	    exit (0);
 	    break;
 	  case 's':
+	    option_separator = argv[optind][0];
+#if 0
+	fprintf(stderr, PACKAGE " set list file separator to %c\n", option_separator);
+#endif
 	    optind++;
 	    list_set_separator(option_separator);
 	    break;
@@ -806,9 +810,6 @@ main (int argc, char **argv)
 	    optind++;
 	    break;
 	  case '-':
-#if 0
-		fprintf(stderr, "Filter mode\n");
-#endif
 		option_filter = 1;
 		break;
 	  }

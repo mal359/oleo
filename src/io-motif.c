@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.31 1999/03/09 21:29:38 danny Exp $
+ *  $Id: io-motif.c,v 1.32 1999/03/16 21:21:43 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.31 1999/03/09 21:29:38 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.32 1999/03/16 21:21:43 danny Exp $";
 
 #include "config.h"
 
@@ -46,14 +46,16 @@ static char rcsid[] = "$Id: io-motif.c,v 1.31 1999/03/09 21:29:38 danny Exp $";
 
 #if	HAVE_XLT
 #include <Xlt/SciPlot.h>
+#ifndef HAVE_SciPlot_H
 #define	HAVE_SciPlot_H
+#endif
 #else
 #if	HAVE_SciPlot_H
 #include <SciPlot/SciPlot.h>
 #endif
 #endif
 
-#if	HAVE_XBASE_H
+#ifdef	HAVE_XBASE_H
 #include "oleo_xb.h"
 #endif
 
@@ -1694,6 +1696,29 @@ void DefaultFileFormatCB(Widget w, XtPointer client, XtPointer call)
 	file_set_default_format(f);
 }
 
+void DefaultFileDialogReset(void)
+{
+	Widget	tw, menu, b;
+	char	s[2], ffs[16], *ff;
+
+	s[0] = list_get_separator();
+	s[1] = '\0';
+
+	tw = XtNameToWidget(DefaultFileDialog, "*listSeparatorTF");
+	if (tw) XmTextFieldSetString(tw, s);
+
+	menu = XtNameToWidget(DefaultFileDialog, "*optionCB");
+	ff = file_get_default_format();
+	strcpy(ffs, "*");
+	if (ff)
+		strcat(ffs, ff);
+	else
+		strcat(ffs, "oleo");
+
+	b = XtNameToWidget(DefaultFileDialog, ffs);
+	XtVaSetValues(menu, XmNmenuHistory, b, NULL);
+}
+
 Widget CreateFileFormatOption(Widget parent, XtCallbackProc f)
 {
 	Arg		al[10];
@@ -1830,6 +1855,8 @@ void DefaultFileCB(Widget w, XtPointer client, XtPointer call)
 			NULL);
 		DefaultFileDialog = MotifCreateDefaultFileDialog(DefaultFileShell);
 	}
+
+	DefaultFileDialogReset();
 
 	XtManageChild(DefaultFileDialog);
 	XtPopup(DefaultFileShell, XtGrabNone);

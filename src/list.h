@@ -23,5 +23,6 @@ extern void list_write_file (FILE *, struct rng *);
 extern int list_set_options (int, char *);
 extern void list_show_options (void);
 extern list_set_separator(char sep);
+extern char list_get_separator(void);
 
 #endif

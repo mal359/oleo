@@ -56,7 +56,7 @@ list_read_file (fp, ismerge)
   char tchar;
   int endit;
   unsigned lineno;
-  int string;
+  int string, dosstyle = 0;
 
   lineno = 0;
   if (!ismerge)
@@ -67,8 +67,27 @@ list_read_file (fp, ismerge)
   while (fgets (&cbuf[1], sizeof (cbuf) - 3, fp))
     {
       lineno++;
+
+      /* Remove DOS style CR when present */
+      ptr = strchr(cbuf, '\r');
+      if (ptr) {
+	*ptr = '\n';
+
+	if (*(ptr+1) == '\n') {	/* This is good */
+	  if (! dosstyle)
+		io_info_msg("Discarding <CR> (DOS line end) in input file\n");
+	  dosstyle = 1;
+	} else {
+		/* This isn't; FIX ME */
+	  io_info_msg("Discard <CR> (DOS line end) at line %d, "
+		"this discards some input !\n", lineno);
+	}
+      }
+
+      /* Be loud after every 50 line read. Useless. */
       if (lineno % 50 == 0)
 	io_info_msg ("Line %d", lineno);
+
       endit = 0;
       for (bptr = &cbuf[1];; bptr = eptr + 1)
 	{
@@ -212,6 +231,11 @@ list_set_options (set_opt, option)
 void list_set_separator(char sep)
 {
       sl_sep = sep;
+}
+
+char list_get_separator(void)
+{
+	return sl_sep;
 }
 
 void

@@ -48,5 +48,6 @@ extern int says_default (char * str);
 extern void file_set_current(const char *s);
 extern char *file_get_current(void);
 extern void file_close_current(void);
+extern char *file_get_default_format(void);
 
 #endif
