@@ -20,7 +20,7 @@
 
 #line 1 "/phydeaux/ni/lord/unsupported/oleo/getdate.y"
 
-/* $Revision: 1.1 $
+/* $Revision: 1.1.1.1 $
 **
 **  Originally written by Steven M. Bellovin <smb@research.att.com> while
 **  at the University of North Carolina at Chapel Hill.  Later tweaked by
@@ -119,7 +119,7 @@ extern struct tm	*localtime();
 
 #if	!defined(lint) && !defined(SABER)
 static char RCS[] =
-	"$Header: /home/matt/cvs/oleo/oleo/Attic/getdate.c,v 1.1 1997/06/01 17:34:51 jbailey Exp $";
+	"$Header: /home/matt/cvs/oleo/oleo/Attic/getdate.c,v 1.1.1.1 1997/06/01 17:34:51 jbailey Exp $";
 #endif	/* !defined(lint) && !defined(SABER) */
 
 
