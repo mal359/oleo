@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.35 1999/03/18 23:55:08 danny Exp $
+ *  $Id: io-motif.c,v 1.36 1999/03/21 16:19:36 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.35 1999/03/18 23:55:08 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.36 1999/03/21 16:19:36 danny Exp $";
 
 #include "config.h"
 
@@ -53,10 +53,6 @@ static char rcsid[] = "$Id: io-motif.c,v 1.35 1999/03/18 23:55:08 danny Exp $";
 #if	HAVE_SciPlot_H
 #include <SciPlot/SciPlot.h>
 #endif
-#endif
-
-#ifdef HAVE_LIBXBASE
-#include "oleo_xb.h"
 #endif
 
 #if	HAVE_LIBXPM
@@ -1419,14 +1415,21 @@ void ReallyPrintCB(Widget w, XtPointer client, XtPointer call)
 			return;
 		}
 	} else {
-		MessageAppend(True, _("Internal error: can find what to print to\n"));
+		MessageAppend(True, _("Internal error: can't find what to print to\n"));
 		return;
 	}
 
 	p = s = XmTextFieldGetString(PrintWidgets.rangeTF);
-	if ((r = parse_cell_or_range(&p, &rng)) == 0)
+	if ((r = parse_cell_or_range(&p, &rng)) == 0) {
 		ConversionError(s, _("range"));
-	else if (r & RANGE) {
+
+		/* FIX ME Which range is the complete spreadsheet ? */
+		rng.lr = 1;
+		rng.lc = 1;
+		rng.hc = 40;
+		rng.hr = 80;
+
+	} else if (r & RANGE) {
 		;
 	} else {
 		rng.hr = rng.lr;
@@ -1457,6 +1460,51 @@ static void MotifSetPrintPage(Widget w, XtPointer client, XtPointer call)
 	PrintSetPage(PrintGetPageName(i));
 }
 
+/*
+ * Select a file to print into
+ */
+void PrintBrowseFileCBOk(Widget w, XtPointer client, XtPointer call)
+{
+	char	*fn;
+	XmFileSelectionBoxCallbackStruct *cbp = (XmFileSelectionBoxCallbackStruct *)call;
+
+	if (! XmStringGetLtoR(cbp->value, XmFONTLIST_DEFAULT_TAG, &fn))
+		return;
+
+	XmTextFieldSetString(PrintWidgets.fileTF, fn);
+}
+
+void PrintBrowseFileCB(Widget w, XtPointer client, XtPointer call)
+{
+	static Widget	fsd = NULL;
+
+	if (! fsd) {
+		XmString	xms;
+		Arg		al[5];
+		int		ac = 0;
+
+		xms = XmStringCreateSimple(_("*.out"));
+		XtSetArg(al[ac], XmNpattern, xms); ac++;
+		XtSetArg(al[ac], XmNautoUnmanage, True); ac++;
+
+		fsd = XmCreateFileSelectionDialog(toplevel, "selectfile",
+			al, ac);
+		XtDestroyWidget(
+			XmFileSelectionBoxGetChild(fsd, XmDIALOG_HELP_BUTTON));
+		XtAddCallback(fsd, XmNokCallback, PrintBrowseFileCBOk, NULL);
+
+		XmStringFree(xms);
+	}
+
+	XtManageChild(fsd);
+}
+
+/*
+ * The print dialog :
+ *	- select where to print to (program, printer, file)
+ *	- paper size
+ *	- print range
+ */
 Widget MotifCreatePrintDialog(Widget s)
 {
 	Widget		form, menu, cb, w, frame, radio;
@@ -1543,6 +1591,7 @@ Widget MotifCreatePrintDialog(Widget s)
 			radio, NULL);
 	w = XtVaCreateManagedWidget("fileTFBrowse", xmPushButtonGadgetClass,
 			radio, NULL);
+	XtAddCallback(w, XmNactivateCallback, PrintBrowseFileCB, NULL);
 
 	PrintWidgets.ProgramToggle =
 	w = XtVaCreateManagedWidget("program", xmToggleButtonGadgetClass,
@@ -1725,9 +1774,10 @@ void DefaultFileDialogReset(void)
 Widget CreateFileFormatOption(Widget parent, XtCallbackProc f)
 {
 	Arg		al[10];
-	int		ac = 0;
+	int		ac = 0, i;
 	XmString	xms;
 	Widget		cb, menu, b;
+	char		*ff;
 
 	menu = XmCreatePulldownMenu(parent, "optionMenu", NULL, 0);
 	ac = 0;
@@ -1738,30 +1788,19 @@ Widget CreateFileFormatOption(Widget parent, XtCallbackProc f)
 	XtManageChild(cb);
 	XmStringFree(xms);
 
-	b = XtVaCreateManagedWidget("oleo", xmPushButtonGadgetClass,
-		menu,
-		NULL);
-	XtAddCallback(b, XmNactivateCallback, f, "oleo");
+	i=1;
+	while (1) {
+		ff = file_get_format(i);
+		if (ff == NULL)
+			break;
+		
+		b = XtVaCreateManagedWidget(ff, xmPushButtonGadgetClass,
+			menu,
+			NULL);
+		XtAddCallback(b, XmNactivateCallback, f, ff);
 
-	b = XtVaCreateManagedWidget("SYLK", xmPushButtonGadgetClass,
-		menu,
-		NULL);
-	XtAddCallback(b, XmNactivateCallback, f, "sylk");
-
-	b = XtVaCreateManagedWidget("SC", xmPushButtonGadgetClass,
-		menu,
-		NULL);
-	XtAddCallback(b, XmNactivateCallback, f, "sc");
-
-	b = XtVaCreateManagedWidget("list", xmPushButtonGadgetClass,
-		menu,
-		NULL);
-	XtAddCallback(b, XmNactivateCallback, f, "list");
-
-	b = XtVaCreateManagedWidget("panic", xmPushButtonGadgetClass,
-		menu,
-		NULL);
-	XtAddCallback(b, XmNactivateCallback, f, "panic");
+		i++;
+	}
 
 	return menu;
 }
@@ -3658,16 +3697,6 @@ GscBuildMainWindow(Widget parent)
 		optionsmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, none, NULL);
-
-	/* FIX ME */
-	w = XtVaCreateManagedWidget("loadxbase", xmPushButtonGadgetClass,
-		optionsmenu,
-		NULL);
-#ifdef HAVE_LIBXBASE
-	XtAddCallback(w, XmNactivateCallback, ReadXbaseFile, NULL);
-#else
-	XtSetSensitive(w, False);
-#endif
 
 	/*
 	 *	Help Menu.

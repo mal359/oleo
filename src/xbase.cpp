@@ -1,5 +1,5 @@
 /*
- *  $Id: xbase.cpp,v 1.3 1999/03/18 23:55:10 danny Exp $
+ *  $Id: xbase.cpp,v 1.4 1999/03/21 16:19:41 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -23,10 +23,11 @@
 
 extern "C" {
 
-static char rcsid[] = "$Id: xbase.cpp,v 1.3 1999/03/18 23:55:10 danny Exp $";
+static char rcsid[] = "$Id: xbase.cpp,v 1.4 1999/03/21 16:19:41 danny Exp $";
 
 #include "config.h"
 
+#include <stdio.h>
 #ifdef	HAVE_LOCALE_H
 #include <locale.h>
 #endif
@@ -42,8 +43,6 @@ static char rcsid[] = "$Id: xbase.cpp,v 1.3 1999/03/18 23:55:10 danny Exp $";
 
 #if defined(HAVE_LIBXBASE)
 
-#include <stdio.h>
-
 /*
  * Avoid Xbase madness
  */
@@ -57,7 +56,7 @@ static char rcsid[] = "$Id: xbase.cpp,v 1.3 1999/03/18 23:55:10 danny Exp $";
 #include <xbase/xbase.h>
 
 void
-CppReadXbaseFile(char *fn)
+CppReadXbaseFile(char *fn, int ismerge)
 {
 	xbXBase	x;
 	xbDbf	db(&x);
@@ -132,39 +131,21 @@ CppReadXbaseFile(char *fn)
 		j++;
 	}
 
+	db.CloseDatabase();
+
 	modified = 1;
 	recalculate(1);
-
-	db.CloseDatabase();
 }
 
 extern "C" {
-	void ReadXbaseFile(char *name, int ismerge)
-	{
-		CppReadXbaseFile(name);
-	}
-}
 
-#ifdef	TEST
-main()
+/*
+ * The C interface
+ */
+void ReadXbaseFile(char *name, int ismerge)
 {
-	XBASE	x;
-	DBF	db(&x);
-	int	i, fc;
-
-	db.OpenDatabase("ZIPCODES");
-
-	fc = db.FieldCount();
-	fprintf(stderr, "FieldCount %d\n", fc);
-
-	for (i=0; i<fc; i++)
-		fprintf(stderr, "Field %d '%s' length %d.%d type %c\n",
-			i,
-			db.GetFieldName(i),
-			db.GetFieldLen(i),
-			db.GetFieldDecimal(i),
-			db.GetFieldType(i));
-	db.CloseDatabase();
+	CppReadXbaseFile(name, ismerge);
 }
-#endif	/* TEST */
+
+}
 #endif	/* HAVE_LIBXBASE */

@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.50 1999/03/18 23:54:54 danny Exp $
+dnl $Id: configure.in,v 1.51 1999/03/21 16:19:11 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -114,6 +114,18 @@ dnl
 dnl If you ask not to have Xbae then you can't have Motif either.
 dnl And the other way around.
 dnl
+dnl To make sure people know about this, we'll be harsh and abort.
+dnl
+if test "$with_Xbae" = "no" -a "$with_motif" = "yes" ; then
+	AC_MSG_ERROR(Cannot build Motif/LessTif interface without Xbae)
+fi
+if test "$with_Xbae" = "yes" -a "$with_motif" = "no" ; then
+	AC_MSG_ERROR(Cannot use Xbae without Motif/LessTif)
+fi
+
+dnl
+dnl Just in case I misunderstood something - make sure nothing slips through.
+dnl
 test "$with_Xbae" = "no" && with_motif="no"
 test "$with_motif" = "no" && with_Xbae="no"
 
@@ -187,8 +199,10 @@ dnl
 dnl Do we have xbase library ?
 dnl
 AC_PROG_CXX
-AC_CHECK_LIB(xbase, main)
-AM_CONDITIONAL(HaveXbase, test x$ac_cv_lib_xbase_main = xyes)
+if test "$ac_cv_prog_cxx_works" = "yes"; then
+	AC_CHECK_LIB(xbase, main)
+	AM_CONDITIONAL(HaveXbase, test x$ac_cv_lib_xbase_main = xyes)
+fi
 
 dnl
 dnl Checks for typedefs, structures, and compiler characteristics.

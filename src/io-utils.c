@@ -1398,6 +1398,22 @@ read_file_generic_2(FILE *fp, int ismerge, char *format, char *name)
 	return 0;
 }
 
+static char *file_formats[] = {
+	"oleo", "sylk", "sc", "list", "csv", "dbf", "panic",
+	"sylk-noa0",
+	NULL
+};
+
+char *
+file_get_format(int i)
+{
+	int	m = sizeof(file_formats) / sizeof(char *) - 1;
+
+	if (i > m || i <= 0)
+		return NULL;
+	return file_formats[i-1];
+}
+
 void
 read_file_generic(FILE *fp, int ismerge, char *format, char *name)
 {
@@ -1424,7 +1440,7 @@ fmt_set_format()
 }
 
 void
-fmt_fet_format()
+fmt_get_format()
 {
 }
 

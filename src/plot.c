@@ -52,21 +52,21 @@ PuOpen(const char *plotter, FILE *outfile)
 {
 	int	r;
 
-	handle = newpl(plotter, NULL, outfile, stderr);
-	selectpl(handle);
-	r = openpl();
+	handle = pl_newpl(plotter, NULL, outfile, stderr);
+	pl_selectpl(handle);
+	r = pl_openpl();
 
-	filltype(1);
-	joinmod("round");
-	flinewidth(2);
-	pencolorname(defaultcolor);
+	pl_filltype(1);
+	pl_joinmod("round");
+	pl_flinewidth(2);
+	pl_pencolorname(defaultcolor);
 }
 
 static void
 PuClose()
 {
-	selectpl(0);
-	deletepl(handle);
+	pl_selectpl(0);
+	pl_deletepl(handle);
 }
 
 /*
@@ -120,7 +120,7 @@ PuPieChart(char *plotter, FILE *outfile)
 
 	rngx = graph_get_data(0);
 	PuOpen(plotter, outfile);
-	fspace(-10., -10., 10., 10.);			/* FIX ME */
+	pl_fspace(-10., -10., 10., 10.);			/* FIX ME */
 
 	/* Compute total */
 	num = 0;
@@ -145,17 +145,17 @@ PuPieChart(char *plotter, FILE *outfile)
 		f = float_cell(cp);
 		incr = f/total*360.;
 
-		fmove(0.0,0.0);
-		fillcolorname(colors[c]);
-		fcont(XY(r,curr));
+		pl_fmove(0.0,0.0);
+		pl_fillcolorname(colors[c]);
+		pl_fcont(XY(r,curr));
 		if (incr > 179) {
-			farc(0.0,0.0,XY(r,curr),XY(r,curr+179.));
+			pl_farc(0.0,0.0,XY(r,curr),XY(r,curr+179.));
 			curr += 179.;
 			incr -= 179;
 		}
-		farc(0.0,0.0,XY(r,curr),XY(r,incr+curr));
-		fcont(0.0,0.0);
-		endpath();
+		pl_farc(0.0,0.0,XY(r,curr),XY(r,incr+curr));
+		pl_fcont(0.0,0.0);
+		pl_endpath();
 
 		la = curr + incr / 2.0;
 		lx[i] = X(8.0, RAD(la));
@@ -168,17 +168,17 @@ PuPieChart(char *plotter, FILE *outfile)
 
 	/* Title */
 	s = graph_get_title();
-	fmove(0.,-9.);					/* FIX ME */
-	alabel(1, 1, s);
+	pl_fmove(0.,-9.);					/* FIX ME */
+	pl_alabel(1, 1, s);
 
 	/* Place labels */
 	i=0;
 	rngx = graph_get_data(1);
 	make_cells_in_range(&rngx);
 	while ((cp = next_cell_in_range())) {
-		fmove(lx[i], ly[i]);
+		pl_fmove(lx[i], ly[i]);
 		if (GET_TYP (cp) == TYP_STR) {
-		    alabel(1, 1, cp->cell_str);
+		    pl_alabel(1, 1, cp->cell_str);
 		}
 		i++;
 	}
@@ -292,14 +292,14 @@ PuBarChart(char *plotter, FILE *outfile)
 		}
 	}
 
-	fspace(-1., -1., 11., 11.);			/* FIX ME */
-	pencolorname(defaultcolor);
-	fline(0., 0., 0., 10.);
-	fline(0., 0., 10., 0.);
+	pl_fspace(-1., -1., 11., 11.);			/* FIX ME */
+	pl_pencolorname(defaultcolor);
+	pl_fline(0., 0., 0., 10.);
+	pl_fline(0., 0., 10., 0.);
 
 	for (i=0; i<num; i++) {
 		for (r = 1; r < NUM_DATASETS; r++) {
-			fillcolorname(colors[r % ncolors]);
+			pl_fillcolorname(colors[r % ncolors]);
 #define	TO_X(ii)	(1.5 + 10.0 * ((double)ii) / ((double)num))
 			x = TO_X(i);
 			if (ymax) {
@@ -310,16 +310,16 @@ PuBarChart(char *plotter, FILE *outfile)
 					for (ii=1; ii<r; ii++)
 						s += YS(ii,i);
 						
-					fbox(TO_X(i - 0.6), s / ymax * 10., TO_X(i), (s + YS(r,i)) / ymax * 10.);
+					pl_fbox(TO_X(i - 0.6), s / ymax * 10., TO_X(i), (s + YS(r,i)) / ymax * 10.);
 				} else
-					fbox(TO_X(i - 0.6), 0.0, TO_X(i), YS(r,i) / ymax * 10.);
+					pl_fbox(TO_X(i - 0.6), 0.0, TO_X(i), YS(r,i) / ymax * 10.);
 			}
 		}
 	}
 
 	/* General Title */
-	fmove(5.0, -0.75);
-	alabel(1, 1, graph_get_title());
+	pl_fmove(5.0, -0.75);
+	pl_alabel(1, 1, graph_get_title());
 
 	/* X Axis Labels */
 	rngx = graph_get_data(0);
@@ -329,8 +329,8 @@ PuBarChart(char *plotter, FILE *outfile)
 		x = TO_X(i - 0.6);
 		if (GET_TYP(cp) == TYP_STR)
 			if (cp->cell_str) {
-				fmove(x, -0.3);
-				alabel(1, 1, cp->cell_str);
+				pl_fmove(x, -0.3);
+				pl_alabel(1, 1, cp->cell_str);
 			}
 		else
 			/* ??? */ ;
@@ -340,10 +340,10 @@ PuBarChart(char *plotter, FILE *outfile)
 	
 
 	/* Data titles */
-	fmove(10.0, -0.75);
-	alabel(1, 1, graph_get_axis_title('x'));
-	fmove(0.0, 10.5);
-	alabel(1, 1, graph_get_axis_title('y'));
+	pl_fmove(10.0, -0.75);
+	pl_alabel(1, 1, graph_get_axis_title('x'));
+	pl_fmove(0.0, 10.5);
+	pl_alabel(1, 1, graph_get_axis_title('y'));
 
 	PuClose();
 	free(ys);
@@ -361,12 +361,12 @@ PuXYChart(char *plotter, FILE *outfile)
 	CELL		*cp;
 
 	PuOpen(plotter, outfile);
-	fspace(-1., -1., 11., 11.);			/* FIX ME */
+	pl_fspace(-1., -1., 11., 11.);			/* FIX ME */
 
-	pencolorname(defaultcolor);
+	pl_pencolorname(defaultcolor);
 
-	fline(0., 0., 0., 10.);
-	fline(0., 0., 10., 0.);
+	pl_fline(0., 0., 0., 10.);
+	pl_fline(0., 0., 10., 0.);
 
 	/* Figure out X axis borders */
 	rngx = graph_get_data(0);
@@ -432,7 +432,7 @@ PuXYChart(char *plotter, FILE *outfile)
 	}
 }
 
-	    pencolorname(colors[r % ncolors]);
+	    pl_pencolorname(colors[r % ncolors]);
 
 	    make_cells_in_range(&rngx);
 	    i = 0;
@@ -441,16 +441,16 @@ PuXYChart(char *plotter, FILE *outfile)
 		    y = float_cell(cp);
 #if 1
 		    if (i > 0) {
-			fline(10.0 * (oldx - xmin) / (xmax - xmin),
+			pl_fline(10.0 * (oldx - xmin) / (xmax - xmin),
 				10.0 * (oldy - ymin) / (ymax - ymin),
 				10.0 * (x - xmin) / (xmax - xmin),
 				10.0 * (y - ymin) / (ymax - ymin));
-			fmove(
+			pl_fmove(
 				10.0 * (x - xmin) / (xmax - xmin),
 				10.0 * (y - ymin) / (ymax - ymin));
 		    }
 #else
-			fmarker(10.0 * (x - xmin) / (xmax - xmin),
+			pl_fmarker(10.0 * (x - xmin) / (xmax - xmin),
 				10.0 * (y - ymin) / (ymax - ymin),
 				2 /* + marker */,
 				0.2);
@@ -458,7 +458,7 @@ PuXYChart(char *plotter, FILE *outfile)
 #if 0
 			{ char txt[30];
 			sprintf(txt, " (%1.1f,%1.1f)", x, y);
-			alabel('l', 'c', txt);
+			pl_alabel('l', 'c', txt);
 			}
 #endif
 
@@ -468,19 +468,19 @@ PuXYChart(char *plotter, FILE *outfile)
 		    i++;
 	    }
 #if 1
-	    endpath();
+	    pl_endpath();
 #endif
 	}
 
 	/* Title */
-	fmove(5.0, -0.5);
-	alabel(1, 1, graph_get_title());
+	pl_fmove(5.0, -0.5);
+	pl_alabel(1, 1, graph_get_title());
 
 	/* Data titles */
-	fmove(10.0, -0.5);
-	alabel(1, 1, graph_get_axis_title('x'));
-	fmove(0.0, 10.5);
-	alabel(1, 1, graph_get_axis_title('y'));
+	pl_fmove(10.0, -0.5);
+	pl_alabel(1, 1, graph_get_axis_title('x'));
+	pl_fmove(0.0, 10.5);
+	pl_alabel(1, 1, graph_get_axis_title('y'));
 
 	PuClose();
 	free((void *)xes);

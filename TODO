@@ -1,7 +1,10 @@
+$Id: TODO,v 1.19 1999/03/21 16:19:09 danny Exp $
+
 TODO's:
 
 * Configuration
-	fail on funky options --with-motif --without-Xbae
+ 	(done) fail on funky options --with-motif --without-Xbae
+	(todo) make sure C++ stuff doesn't break non-Xbase compiles
 
 * Get our stuff together for an upcoming 2.0 release of Oleo.
 
@@ -18,6 +21,10 @@ TODO's:
 	(busy) printing
 	(busy) GNU Plotutils dialogs
 	(todo) print dialog
+	 ****  which range is the complete spreadsheet
+		-> (io-motif.c ReallyPrintCB)
+	 ****  allow selecting what format to print (not only PostScript ?)
+	(todo) make selecting cells and ranges more user friendly
 
 * Include texi2html in the oleo source, and enhance it so it can
   process all the texinfo commands used in the documentation.
@@ -29,6 +36,18 @@ TODO's:
 	(todo) allow an empty range to be input without warnings
 	(todo) port the plotutils user interface to curses (long term ?)
 
+* Integrate GSL (Gnu Scientific Library).
+  The GSL is a collection of routines for numerical analysis,
+  which we happen to be lacking in Oleo.
+
+* Import/Export Filters.
+ - Sylk may need fixing.
+ - CSV would be nice (DB 17/3/1999: LIST format can do this,
+	now also recognizes CSV file name suffix)
+ - DBII or DBIII is useful.
+	(db 19/3/1999: XBASE library can do this. Somewhat implemented.)
+ - Fixed width.
+
 * Make io_error_msg work right in Motif.
 	(done)
 
@@ -39,21 +58,19 @@ TODO's:
 * Get character mode oleo to work from a Motif executable.
 	Exact bug description ?
 
-
-
+* Build a graph to figure out in which order to recalculate, then
+  also use it to speed up recalculation.
+  In the process, make sure we update a cell a determinable number of
+  times (1 for instance) per recalculation.
+	(todo) build graph
+	(todo) use graph in recalculation
+	(todo) examples/loop.oleo : cell A3 increases with 123, not 1,
+		at every recalculation.
 
 
 
 
 Longer term or obsolete TODO's :
-
-* Import/Export Filters. (June 1/97 - JB)
- - Sylk may need fixing.
- - CSV would be nice (DB 17/3/1999: LIST format can do this,
-	now also recognizes CSV file name suffix)
- - DBII or DBIII is useful.
-	(db 19/3/1999: XBASE library can do this. Somewhat implemented.)
- - Fixed width.
 
 * Fix sort routines
 	(Nov 15/97 - Steve Fisk)

@@ -1,3 +1,23 @@
+
+Sun 21 Mar 17:18:47 1999, Danny Backx
+	* Add examples/loop.oleo to clarify TODO.
+	* Print Dialog now contains file selection box.
+	* Changed all the calls to GNU PlotUtils in src/plot.c so they
+	  call the API that comes with version 2.2 of plotutils.
+	  They all have a pl_ prefix now (alabel becomes pl_alabel).
+	* Fix all i18n warning messages coming from the build in po/ .
+	* Motif: src/fallback.c now contains lines saying buttons in the
+	  menus that don't work are set to insensitive by default.
+	* Configuration: don't build when asked to include Motif but not
+	  Xbae, or the other way around.
+	* Configuration: don't even look for Xbase library if we don't
+	  have a C++ compiler.
+	* Add note to TODO: integration with GNU Scientific Library (GSL),
+	  a library for numerical analysis.
+	* List of file formats we can handle is now in io-utils.c and
+	  can be queried. This is the basis for making the option menu
+	  in io-motif.c which is now decently dynamic, not hardcoded.
+
 Fri 19 Mar 00:49:19 1999, Danny Backx
 	* Xbase file read works for the first time; you need the latest
 	  and greatest Xbase library (1.8.0c or later) for this to work.
