@@ -22,6 +22,9 @@
 #include "sysdef.h"
 #include "utils.h"
 
+#include <setjmp.h>
+#include "oleo_plot.h"
+
 /*
  * All kinds of other global stuff
  */
@@ -150,7 +153,6 @@ extern int default_fmt, default_prc;
 extern int default_lock;
 
 extern unsigned short current_cycle;
-extern int a0;
 extern int ioerror;
 extern int errno;
 extern const char oleo_version_string[];
@@ -202,12 +204,43 @@ struct	DatabaseGlobalType;
  * around all over.
  */
 struct OleoGlobal {
+	int				valid;
 	char				*FileName;	/* current_file in io-utils.c */
 	int				modified;
 	CELLREF				cur_row, cur_col;
+/* User settable options */
+	int				bkgrnd_recalc, auto_recalc, a0, topclear, sylk_a0;
+/* This is how frequently the alarm should go off. */
+	unsigned int			alarm_seconds;
+/* This is whether the alarm should go off at all. */
+	unsigned int			alarm_active;
+
+/* Jump here on error.  This simply restarts the top 
+ * level command loop.  User state should have been 
+ * reset appropriately before the longjmp.
+ */
+	jmp_buf				error_exception;
+/* From Window.c */
+	int				scr_lines, scr_cols, user_input, user_status, input,
+					status, input_rows, status_rows, label_rows, label_emcols;
+	struct info_buffer		*current_info;
+	int				info_rows, info_line, info_over;
+	int				default_right_border, default_bottom_border;
+	int				nwin;
+	struct window			*cwin, *wins;
+	int				win_id;
+
 	struct MotifGlobalType		*MotifGlobal;
 	struct CursesGlobalType		*CursesGlobal;
 	struct DatabaseGlobalType	*DatabaseGlobal;
+	struct PlotGlobalType		*PlotGlobal;
+
+/* From lists.c */
+	float				user_height_scale, user_width_scale,
+					height_scale, width_scale;
+
+	int				cell_font_point_size, block_on_getch;
+	char				*io_x11_display_name;
 };
 
 extern struct OleoGlobal *Global;

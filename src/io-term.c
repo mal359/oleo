@@ -57,6 +57,7 @@
 #include "window.h"
 #include "funcs.h"
 #include "graph.h"
+#include "mdi.h"
 
 #include "userpref.h"
 
@@ -80,35 +81,12 @@
 /*
  * The ultimate global variable
  */
-#if 0
+#if 1
 struct OleoGlobal *Global = NULL;
-#endif
+#else
 struct OleoGlobal	__tempGlobal,
 			*Global = &__tempGlobal;
-
-#if 0
-/* This variable is non-zero if the spreadsheet has been changed in any way */ 
-/* Moved to Global */
-int modified = 0;
 #endif
-
-/* User settable options */
-int bkgrnd_recalc = 1;
-int auto_recalc = 1;
-int a0 = 0;
-int topclear = 0;
-
-/* This is how frequently the alarm should go off. */
-unsigned int alarm_seconds = 1;
-
-/* This is whether the alarm should go off at all. */
-unsigned int alarm_active = 1;
-
-/* Jump here on error.  This simply restarts the top 
- * level command loop.  User state should have been 
- * reset appropriately before the longjmp.
- */
-jmp_buf error_exception;
 
 /* These are the hooks used to do file-io. */
 void (*read_file) (FILE *, int) = oleo_read_file;
@@ -253,17 +231,17 @@ do_set_option (char *ptr)
     }
   if (!stricmp ("auto", ptr))
     {
-      auto_recalc = set_opt;
+      Global->auto_recalc = set_opt;
       return 0;
     }
   if (!stricmp ("bkgrnd", ptr) || !stricmp ("background", ptr))
     {
-      bkgrnd_recalc = set_opt;
+      Global->bkgrnd_recalc = set_opt;
       return 0;
     }
   if (!stricmp ("a0", ptr))
     {
-      a0 = set_opt;
+      Global->a0 = set_opt;
       io_repaint ();
       return 0;
     }
@@ -301,7 +279,7 @@ do_set_option (char *ptr)
 	}
       else if (!stricmp ("sylk", ptr))
 	{
-	  sylk_a0 = 1;
+	  Global->sylk_a0 = 1;
 	  read_file = sylk_read_file;
 	  write_file = sylk_write_file;
 	  set_file_opts = sylk_set_options;
@@ -309,7 +287,7 @@ do_set_option (char *ptr)
 	}
       else if (!stricmp ("sylk-noa0", ptr))
 	{
-	  sylk_a0 = 0;
+	  Global->sylk_a0 = 0;
 	  read_file = sylk_read_file;
 	  write_file = sylk_write_file;
 	  set_file_opts = sylk_set_options;
@@ -416,11 +394,11 @@ show_options (void)
   int fmts;
   char *data_buf[9];
 
-  n = auto_recalc;
+  n = Global->auto_recalc;
   io_text_start ();
 
   io_text_line ("auto-recalculation: %s        Recalculate in background: %s",
-		n ? " on" : "off", bkgrnd_recalc ? "on" : "off");
+		n ? " on" : "off", Global->bkgrnd_recalc ? "on" : "off");
   io_text_line ("make backup files:  %s        Copy files into backups:   %s",
 	__make_backups ? " on" : "off", __backup_by_copying ? "on" : "off");
 
@@ -562,9 +540,9 @@ void
 write_mp_options (FILE *fp)
 {
   fprintf (fp, "O;%sauto;%sbackground;%sa0;ticks %d\n",
-	   auto_recalc ? "" : "no",
-	   bkgrnd_recalc ? "" : "no",
-	   a0 ? "" : "no",
+	   Global->auto_recalc ? "" : "no",
+	   Global->bkgrnd_recalc ? "" : "no",
+	   Global->a0 ? "" : "no",
 	   cell_timer_seconds);
 }
 
@@ -639,7 +617,7 @@ show_var (char *ptr)
       io_error_msg ("There is no '%s'", ptr);
       return;
     }
-  if (a0)
+  if (Global->a0)
     {
       if (v->v_rng.lr != v->v_rng.hr || v->v_rng.lc != v->v_rng.hc)
 	/* FOO */ sprintf (print_buf, "%s $%s$%u:$%s$%u", v->var_name, col_to_str (v->v_rng.lc), v->v_rng.lr, col_to_str (v->v_rng.hc), v->v_rng.hr);
@@ -656,7 +634,7 @@ show_a_var (char *name, struct var *v)
 {
   if (v->var_flags == VAR_UNDEF)
     return;
-  if (a0)
+  if (Global->a0)
     {
       if (v->v_rng.lr != v->v_rng.hr || v->v_rng.lc != v->v_rng.hc)
 	/* FOO */ io_text_line ("%-20s  $%s$%u:$%s$%u", v->var_name, col_to_str (v->v_rng.lc), v->v_rng.lr, col_to_str (v->v_rng.hc), v->v_rng.hr);
@@ -855,6 +833,43 @@ main (int argc, char **argv)
   textdomain(PACKAGE);
 #endif
 
+  MdiInitialize();	/* Create initial Global structure */
+  PlotInit();
+
+  /* Initialize stuff that's now in Global */
+  Global->bkgrnd_recalc = 1;
+  Global->auto_recalc = 1;
+  Global->a0 = 0;
+  Global->topclear = 0;
+  Global->alarm_seconds = 1;
+  Global->alarm_active = 1;
+  /* From window.c */
+  scr_lines = 24;
+  scr_cols = 80;
+  user_input = 1;
+  user_status = 2;
+  Global->input = 0;
+  Global->status = 1;
+  input_rows = 1;
+  status_rows = 1;
+  default_right_border = 0;
+  default_bottom_border = 0;
+  nwin = 0;
+  cwin = 0;
+  wins = 0;
+  win_id = 1;
+
+  Global->sylk_a0 = 1;
+
+  Global->user_height_scale = 1.;
+  Global->user_width_scale = 1.;
+  Global->height_scale = 1.;
+  Global->width_scale = 1.;
+
+  Global->cell_font_point_size = 12;
+  Global->block_on_getch = 1;
+  /* End initialize */
+
   __make_backups = 1;
 
   /* Set up the minimal io handler. */
@@ -1007,7 +1022,7 @@ main (int argc, char **argv)
 #ifndef X_DISPLAY_MISSING
   if (!no_x) {
     get_x11_args (&argc, argv);
-    if (io_x11_display_name) {
+    if (Global->io_x11_display_name) {
       x11_graphics ();
       using_x = TRUE;
       no_curses = TRUE;
@@ -1027,7 +1042,7 @@ main (int argc, char **argv)
 
   init_graphing ();
 
-  if (setjmp (error_exception))
+  if (setjmp (Global->error_exception))
   {
 	  fprintf (stderr, _("Error in the builtin init scripts (a bug!).\n"));
 	  exit (69);
@@ -1114,7 +1129,7 @@ main (int argc, char **argv)
     volatile int x;
     for (x = 0; x < init_fpc; ++x)
       {
-	if (setjmp (error_exception))
+	if (setjmp (Global->error_exception))
 	  {
 	    fprintf (stderr, _("   error occured in init file %s near line %d."),
 		     init_file_names [x], sneaky_linec);
@@ -1136,7 +1151,7 @@ main (int argc, char **argv)
       /* fixme: record file name */
 
     if ((fp = fopen (argv[optind], "r"))) {
-	  if (setjmp (error_exception)) {
+	  if (setjmp (Global->error_exception)) {
 	    fprintf (stderr, _(", error occured reading '%s'\n"), argv[optind]);
 	    io_info_msg(_(", error occured reading '%s'\n"), argv[optind]);
 	  } else
@@ -1175,20 +1190,20 @@ main (int argc, char **argv)
 #ifdef	HAVE_MOTIF
   if (using_motif) {
     motif_build_gui();
-    setjmp (error_exception);
+    setjmp (Global->error_exception);
     motif_main_loop();
   } else {
     /* Compile with Motif but don't run with it. */
     while (1)
     {
-      setjmp (error_exception);
+      setjmp (Global->error_exception);
       command_loop (0, 0);
     }
   }
 #else
   while (1)
     {
-      setjmp (error_exception);
+      setjmp (Global->error_exception);
       command_loop (0, 0);
     }
 #endif

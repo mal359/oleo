@@ -1,6 +1,6 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.47 1999/08/28 09:47:22 danny Exp $
+ *  $Id: io-motif.c,v 1.48 1999/08/30 01:39:24 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -22,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.47 1999/08/28 09:47:22 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.48 1999/08/30 01:39:24 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -106,10 +106,6 @@ static char rcsid[] = "$Id: io-motif.c,v 1.47 1999/08/28 09:47:22 danny Exp $";
 #include <XmHTML/XmHTML.h>
 #endif
 
-Pixmap	oleo_icon_pm = (Pixmap)0;
-
-static char	*early_msg_text = NULL;
-
 static Widget	w;
 
 /* Fallback resources, application resources */
@@ -117,15 +113,6 @@ extern char *fallback[];
 #include "appres.h"
 
 GnuSheetAppres	AppRes;
-
-/* This is ancient history */
-int	cell_font_point_size = 12;
-static int block_on_getch = 1;
-
-static char	input_buf[1024];
-static int	input_buf_allocated = 1024;
-
-static int	chars_buffered = 0;
 
 /* Forward declarations */
 void CancelTemplate(Widget w, XtPointer client, XtPointer call);
@@ -194,15 +181,15 @@ void MessageAppend(Boolean beep, char *fmt, ...)
 #if 0
 		fprintf(stderr, "MessageAppend: Motif not initialised yet, msg '%s'\n", s);
 #endif
-		if (early_msg_text == NULL) {
-			early_msg_text = strdup(s);
+		if (Global->MotifGlobal->early_msg_text == NULL) {
+			Global->MotifGlobal->early_msg_text = strdup(s);
 		} else {
-			int l = strlen(early_msg_text) + strlen(s) + 1;
+			int l = strlen(Global->MotifGlobal->early_msg_text) + strlen(s) + 1;
 			char *x = malloc(l);
-			strcpy(x, early_msg_text);
+			strcpy(x, Global->MotifGlobal->early_msg_text);
 			strcat(x, s);
-			free(early_msg_text);
-			early_msg_text = x;
+			free(Global->MotifGlobal->early_msg_text);
+			Global->MotifGlobal->early_msg_text = x;
 		}
 		return;
 	}
@@ -259,9 +246,6 @@ void PrintDebug(Widget w, XtPointer client, XtPointer call)
  *		Range Selection Support				*
  *								*
  ****************************************************************/
-
-Widget		ActiveRangeSelectionWidget = NULL;
-struct rng	selection_range;
 
 void FocusCB(Widget w, XtPointer client, XtPointer call)
 {
@@ -1141,16 +1125,9 @@ void PuShowXYChart(Widget w, XtPointer client, XtPointer call)
  */
 #define	PLOTLEN	32
 
-static Widget	pufsd = NULL;
-static int	PuPlotter = 0;
-
 static struct {
 	char *plotter, *pusymb, *ext;
 } PuPlotters[32];
-
-#ifdef HAVE_LIBPLOT
-PuFunction ThisPuFunction = NULL;	/* The function to plot with */
-#endif
 
 void PuSelectPlotter(Widget w, XtPointer client, XtPointer call)
 {
@@ -2374,8 +2351,6 @@ void ResizeColumnCB(Widget w, XtPointer client, XtPointer call)
  *		File interaction				*
  *								*
  ****************************************************************/
-static char	fileformat[10] = { 'o', 'l', 'e', 'o', 0, 0, 0, 0, 0, 0 };
-static char	pattern[13];
 
 void MotifSetWindowName(const char *s)
 {
@@ -2398,12 +2373,12 @@ void FileFormatCB(Widget w, XtPointer client, XtPointer call)
 	if (p == NULL)
 		p = f;
 
-	strcpy(fileformat, f);
+	strcpy(Global->MotifGlobal->fileformat, f);
 
-	strcpy(pattern, "*.");
-	strcat(pattern, p);
+	strcpy(Global->MotifGlobal->pattern, "*.");
+	strcat(Global->MotifGlobal->pattern, p);
 
-	xms = XmStringCreateSimple(pattern);
+	xms = XmStringCreateSimple(Global->MotifGlobal->pattern);
 	XtVaSetValues(fsd, XmNpattern, xms, NULL);
 	XmStringFree(xms);
 }
@@ -2438,7 +2413,7 @@ void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 
 	FileSetCurrentFileName(s);
 
-	read_file_generic(fp, 0, fileformat, s);
+	read_file_generic(fp, 0, Global->MotifGlobal->fileformat, s);
 
 	if (fclose(fp) != 0) {
 		/* handle error */
@@ -2529,6 +2504,12 @@ void LoadCB(Widget w, XtPointer client, XtPointer call)
 	XtManageChild(fsd);
 }
 
+void NewCB(Widget w, XtPointer client, XtPointer call)
+{
+	/* FIX ME Open a new window */
+	none(w, client, call);
+}
+
 void OpenCB(Widget w, XtPointer client, XtPointer call)
 {
 	LoadCB(w, client, call);
@@ -2589,7 +2570,7 @@ void ReallySave(const char *s)
 		return;
 	}
 
-	write_file_generic(fp, 0, fileformat);
+	write_file_generic(fp, 0, Global->MotifGlobal->fileformat);
 
 	if (fclose(fp) != 0) {
 		/* handle error */
@@ -2832,16 +2813,12 @@ void helpVersionCB(Widget w, XtPointer client, XtPointer call)
 	/* FIX ME */	versionCB(w, client, call);
 }
 
-/*
- * Row and column labels
- */
-char	**rowlabels = NULL, **columnlabels = NULL;
-short	*columnwidths = NULL;
-int	*columnmaxlengths = NULL;
-
 void
 MotifUpdateWidth(int col, int wid)
 {
+	if (Global->MotifGlobal == 0)
+		return;
+
 	if (! columnwidths)
 		ResetColumnWidths();
 	columnwidths[col - 1] = wid;
@@ -2856,6 +2833,9 @@ void
 ResetColumnWidths(void)
 {
 	int	i;
+
+	if (Global->MotifGlobal == 0)
+		return;
 
 	columnwidths = (short *)XtCalloc(AppRes.columns, sizeof(short));
 	for (i=0; i<AppRes.columns; i++)
@@ -2873,11 +2853,11 @@ SetRowColumnLabels(void)
 	columnmaxlengths = (int *)XtCalloc(AppRes.columns, sizeof(int));
 
 	for (i=0; i<AppRes.rows; i++) {
-		sprintf(tmp, a0 ? "%d" : "R%d", i + 1);
+		sprintf(tmp, Global->a0 ? "%d" : "R%d", i + 1);
 		rowlabels[i] = XtNewString(tmp);
 	}
 	for (i=0; i<AppRes.columns; i++) {
-		if (a0)
+		if (Global->a0)
 			columnlabels[i] = XtNewString(col_to_str(i+1));
 		else {
 			sprintf(tmp, "C%d", i + 1);
@@ -2894,13 +2874,13 @@ ChangeRowColumnLabels(void)
 	char	tmp[10];
 
 	for (i=0; i<AppRes.rows; i++) {
-		sprintf(tmp, a0 ? "%d" : "R%d", i + 1);
+		sprintf(tmp, Global->a0 ? "%d" : "R%d", i + 1);
 		XtFree(rowlabels[i]);
 		rowlabels[i] = XtNewString(tmp);
 	}
 	for (i=0; i<AppRes.columns; i++) {
 		XtFree(columnlabels[i]);
-		if (a0)
+		if (Global->a0)
 			columnlabels[i] = XtNewString(col_to_str(i+1));
 		else {
 			sprintf(tmp, "C%d", i + 1);
@@ -2919,10 +2899,10 @@ static void FixA0()
 {
 	static int	havea0 = -1;
 
-	if (havea0 == a0)
+	if (havea0 == Global->a0)
 		return;
 
-	havea0 = a0;
+	havea0 = Global->a0;
 
 	/* Update matrix */
 	ChangeRowColumnLabels();
@@ -2934,10 +2914,10 @@ static void FixA0()
 
 void ToggleA0(Widget w, XtPointer client, XtPointer call)
 {
-	if (a0)
-		a0 = 0;
+	if (Global->a0)
+		Global->a0 = 0;
 	else
-		a0 = 1;
+		Global->a0 = 1;
 
 	FixA0();
 }
@@ -3222,8 +3202,7 @@ void MarkFromDialogCB(Widget w, XtPointer client, XtPointer call)
  *		Formats Dialog					*
  *								*
  ****************************************************************/
-int fmt;
-int formats_list[] = {
+static int formats_list[] = {
 	/* 0 */		FMT_DEF,
 	/* 1 */		FMT_HID,
 	/* 2 */		FMT_GPH,
@@ -3254,9 +3233,9 @@ int formats_list[] = {
  */
 void Yeah(Widget w, XtPointer client, XtPointer call)
 {
-	fmt = formats_list[(int) client];
+	Global->MotifGlobal->fmt = formats_list[(int) client];
 #if 0
-	fprintf(stderr, "Yeah %d->%d\n", (int)client, fmt);
+	fprintf(stderr, "Yeah %d->%d\n", (int)client, Global->MotifGlobal->fmt);
 #endif
 }
 
@@ -3452,11 +3431,11 @@ void FormatsDialogOk(Widget w, XtPointer client, XtPointer call)
 	}
 
 	/* date */
-	if (fmt == FMT_DATE)
+	if (Global->MotifGlobal->fmt == FMT_DATE)
 		precision = date_format;
 
 	if (client) {	/* Set default */
-			default_fmt = fmt;
+			default_fmt = Global->MotifGlobal->fmt;
 			default_prc = precision;
 
 			MessageAppend(False, "Set Default Format %d, precision %d\n",
@@ -3472,7 +3451,7 @@ void FormatsDialogOk(Widget w, XtPointer client, XtPointer call)
 			MessageAppend(False, "FormatRegion %s\n",
 				range_name(&rng));
 
-			format_region(&rng, fmt, -1);
+			format_region(&rng, Global->MotifGlobal->fmt, -1);
 			precision_region(&rng, precision);
 
 			recalculate(1);
@@ -3481,7 +3460,7 @@ void FormatsDialogOk(Widget w, XtPointer client, XtPointer call)
 			rng.hr = rng.lr;
 			rng.hc = rng.lc;
 
-			format_region(&rng, fmt, -1);
+			format_region(&rng, Global->MotifGlobal->fmt, -1);
 			precision_region(&rng, precision);
 
 			recalculate(1);
@@ -3996,13 +3975,13 @@ GscBuildSplash(Widget parent)
 	XpmCreatePixmapFromData(XtDisplay(rc),
 		XRootWindowOfScreen(XtScreen(rc)),
 		oleo_icon,
-		&oleo_icon_pm,
+		&Global->MotifGlobal->oleo_icon_pm,
 		&mask,
 		&attrib);
 
 	XpmFreeAttributes(&attrib);
 
-	XtSetArg(al[ac], XmNlabelPixmap,	oleo_icon_pm); ac++;
+	XtSetArg(al[ac], XmNlabelPixmap,	Global->MotifGlobal->oleo_icon_pm); ac++;
 	XtSetArg(al[ac], XmNlabelType,		XmPIXMAP); ac++;
 	XtSetArg(al[ac], XmNshadowThickness,	0); ac++;
 	XtSetArg(al[ac], XmNleftAttachment,	XmATTACH_FORM); ac++;
@@ -4176,10 +4155,10 @@ GscBuildMainWindow(Widget parent)
 		NULL);
 	XtManageChild(msgtext);
 
-	if (early_msg_text) {
-		XmTextSetString(msgtext, early_msg_text);
-		free(early_msg_text);
-		early_msg_text = NULL;
+	if (Global->MotifGlobal->early_msg_text) {
+		XmTextSetString(msgtext, Global->MotifGlobal->early_msg_text);
+		free(Global->MotifGlobal->early_msg_text);
+		Global->MotifGlobal->early_msg_text = NULL;
 
 		XmTextShowPosition(msgtext, XmTextGetLastPosition(msgtext));
 		XBell(XtDisplay(msgtext), 30);
@@ -4189,6 +4168,10 @@ GscBuildMainWindow(Widget parent)
 	 * Menu system contents :
 	 *	File Menu.
 	 */
+	w = XtVaCreateManagedWidget("new", xmPushButtonGadgetClass, filemenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, NewCB, NULL);
+
 	w = XtVaCreateManagedWidget("open", xmPushButtonGadgetClass, filemenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, OpenCB, NULL);
@@ -4403,7 +4386,7 @@ GscBuildMainWindow(Widget parent)
 		optionsmenu,
 		NULL);
 	XtAddCallback(w, XmNvalueChangedCallback, ToggleA0, NULL);
-	XmToggleButtonGadgetSetState(w, a0, False);
+	XmToggleButtonGadgetSetState(w, Global->a0, False);
 
 	w = XtVaCreateManagedWidget("edges", xmToggleButtonGadgetClass,
 		optionsmenu,
@@ -4415,7 +4398,7 @@ GscBuildMainWindow(Widget parent)
 		optionsmenu,
 		NULL);
 	XtAddCallback(w, XmNvalueChangedCallback, none, NULL);
-	XmToggleButtonGadgetSetState(w, auto_recalc, False);
+	XmToggleButtonGadgetSetState(w, Global->auto_recalc, False);
 
 	w = XtVaCreateManagedWidget("loadhooks", xmToggleButtonGadgetClass,
 		optionsmenu,
@@ -4426,7 +4409,7 @@ GscBuildMainWindow(Widget parent)
 	w = XtVaCreateManagedWidget("statusline", xmToggleButtonGadgetClass,
 		optionsmenu,
 		NULL);
-	XmToggleButtonGadgetSetState(w, a0, False);
+	XmToggleButtonGadgetSetState(w, Global->a0, False);
 	XtAddCallback(w, XmNvalueChangedCallback, none, NULL);
 
 	w = XtVaCreateManagedWidget("backup", xmToggleButtonGadgetClass,
@@ -4749,15 +4732,15 @@ xio_wait_for_input (void)
 static int
 xio_read_kbd (char *buffer, int size)
 {
-	int amt_read = size < chars_buffered ? size : chars_buffered;
+	int amt_read = size < Global->MotifGlobal->chars_buffered ? size : Global->MotifGlobal->chars_buffered;
 #ifdef	VERBOSE
 	Debug(__FILE__, "xio_read_kbd ...\n");
 #endif
 	if (amt_read)
-		bcopy (input_buf, (char *) buffer, amt_read);
-	chars_buffered -= amt_read;
-	if (chars_buffered)
-		bcopy ((char *) input_buf + amt_read, (char *) input_buf, chars_buffered);
+		bcopy (Global->MotifGlobal->input_buf, (char *) buffer, amt_read);
+	Global->MotifGlobal->chars_buffered -= amt_read;
+	if (Global->MotifGlobal->chars_buffered)
+		bcopy ((char *) Global->MotifGlobal->input_buf + amt_read, (char *) Global->MotifGlobal->input_buf, Global->MotifGlobal->chars_buffered);
 	return amt_read;
 }
 
@@ -5031,6 +5014,9 @@ void motif_init(int *argc, char **argv)
 	Global->MotifGlobal = (struct MotifGlobalType *)XtMalloc(sizeof(struct MotifGlobalType));
 	memset(Global->MotifGlobal, 0, sizeof(struct MotifGlobalType));
 
+	Global->MotifGlobal->input_buf_allocated = 1024;
+	strcpy(Global->MotifGlobal->fileformat, "oleo");
+
 	io_command_loop = xio_command_loop;
 	io_open_display = xio_open_display;
 	io_redisp = xio_redisp;
@@ -5122,7 +5108,7 @@ void motif_build_gui(void)
 	XtRealizeWidget(toplevel);
 
 #ifdef	HAVE_LIBXPM
-	XtVaSetValues(toplevel, XmNiconPixmap, oleo_icon_pm, NULL);
+	XtVaSetValues(toplevel, XmNiconPixmap, Global->MotifGlobal->oleo_icon_pm, NULL);
 #endif
 
 	if (AppRes.show_version > 0) {
@@ -5283,8 +5269,6 @@ void versionCB(Widget w, XtPointer client, XtPointer call)
 void get_x11_args (int * argc_p, char ** argv)
 {
 }
-
-char *io_x11_display_name = 0;
 
 void x11_graphics(void)
 {

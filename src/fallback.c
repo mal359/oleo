@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.18 1999/08/28 09:47:22 danny Exp $
+ *  $Id: fallback.c,v 1.19 1999/08/30 01:39:22 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -56,6 +56,8 @@ char *fallback[] = {
 /* Menu System */
 /* File */
 	"*filecascade.labelString:	File",
+	"*new.labelString:		New",
+	"*new.sensitive:		false",
 	"*open.labelString:		Open",
 	"*close.labelString:		Close",
 	"*save.labelString:		Save",
@@ -210,6 +212,7 @@ char *fallback[] = {
 	"*copyDialog*cap2.labelString:	To :",
 /* Mnemonics */
 	"*filecascade.mnemonic:		F",
+	"*new.mnemonic:			N",
 	"*open.mnemonic:		O",
 	"*quit.mnemonic:		Q",
 	"*close.mnemonic:		C",
@@ -226,6 +229,7 @@ char *fallback[] = {
 	"*graphcascade.mnemonic:	G",
 	"*helpcascade.mnemonic:		H",
 /* Accelerators */
+	"*new.accelerator:		Ctrl<Key>n",
 	"*open.accelerator:		Ctrl<Key>o",
 	"*close.accelerator:		Ctrl<Key>x",
 	"*save.accelerator:		Ctrl<Key>s",
@@ -242,6 +246,7 @@ char *fallback[] = {
 	"*gotocell.accelerator:		<Key>F5",
 	"*format.accelerator:		Ctrl<Key>F",
 /* Accelerator Texts */
+	"*new.acceleratorText:		Ctrl-N",
 	"*open.acceleratorText:		Ctrl-O",
 	"*save.acceleratorText:		Ctrl-S",
 	"*saveas.acceleratorText:	Ctrl-A",

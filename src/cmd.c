@@ -1,18 +1,20 @@
-/*	Copyright (C) 1993 Free Software Foundation, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this software; see the file COPYING.  If not, write to
-the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
+/*
+ * Copyright (C) 1993, 1999 Free Software Foundation, Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -352,7 +354,7 @@ error_alarm ()
 	{
 	  pop_unfinished_command ();
 	  alarm_table[2].freq = 0;
-	  longjmp (error_exception, 1);
+	  longjmp (Global->error_exception, 1);
 	}
     }
   else
@@ -484,9 +486,9 @@ real_get_chr (void)
       io_scan_for_input (0);
       if (!io_input_avail ())
 	{
-	  if (auto_recalc && eval_next_cell ())
+	  if (Global->auto_recalc && eval_next_cell ())
 	    {
-	      if (bkgrnd_recalc)
+	      if (Global->bkgrnd_recalc)
 		while (!io_input_avail () && eval_next_cell ())
 		  io_scan_for_input (0);
 	      else
@@ -500,10 +502,10 @@ real_get_chr (void)
 	    }
 	  else
 	    {
-	      int timeout = (alarm_active
-			     ? (alarm_seconds == 1
+	      int timeout = (Global->alarm_active
+			     ? (Global->alarm_seconds == 1
 				? 1
-				: (alarm_seconds / 2))
+				: (Global->alarm_seconds / 2))
 			     : 0);
 			     
 	      io_redisp ();
@@ -912,7 +914,7 @@ exit_minibuffer (void)
 	  the_cmd_arg.is_set = 1;
 	  input_active = 0;
 	  window_after_input = -1;
-	  topclear = 2;
+	  Global->topclear = 2;
 	}
     }
 }
@@ -1993,7 +1995,7 @@ io_error_msg (char *str,...)
 
 	recover_from_error ();
 	MessageAppend(1, buf);
-	longjmp (error_exception, 1);
+	longjmp (Global->error_exception, 1);
   } else
 #endif
   {
@@ -2013,7 +2015,7 @@ io_error_msg (char *str,...)
     execute_command (buf2);
   else
     fprintf (stderr, "oleo: %s\n", buf);
-  longjmp (error_exception, 1);
+  longjmp (Global->error_exception, 1);
   }
 }
 

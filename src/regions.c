@@ -37,6 +37,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "sort.h"
 #include "basic.h"
 
+/* Apparently "all_rng" is read-only, therefore need not be put in Global. */
 struct rng all_rng = {MIN_ROW, MIN_COL, MAX_ROW, MAX_COL};
 
 /* Take a struct rng (R) and init its elements to R1 C1 R2 C2, making sure

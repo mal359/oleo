@@ -994,7 +994,7 @@ cell_name (CELLREF rr, CELLREF cc)
 
   num = num ? 0 : 1;
 
-  if (a0)
+  if (Global->a0)
     {
       ptr = &strs[num][9];
       sprintf (ptr, "%u", rr);
@@ -1068,7 +1068,7 @@ range_name (struct rng *rng)
   if ((lr == hr) && (lc == hc)) {
       sprintf (ptr, "%s", cell_name (lr, lc));
   } else {
-      if (a0)
+      if (Global->a0)
         sprintf (ptr, "%s:%s", cell_name (lr, lc), cell_name (hr, hc));
       else {
           if (lr == hr && lc != hc)
@@ -1327,10 +1327,10 @@ write_file_generic_2(FILE *fp, struct rng *rng, char *format)
 	if (!stricmp ("oleo", format)) {
 		oleo_write_file(fp, rng);
 	} else if (!stricmp ("sylk", format)) {
-		sylk_a0 = 1;
+		Global->sylk_a0 = 1;
 		sylk_write_file(fp, rng);
 	} else if (!stricmp ("sylk-noa0", format)) {
-		sylk_a0 = 0;
+		Global->sylk_a0 = 0;
 		sylk_write_file(fp, rng);
 	} else if (!stricmp ("sc", format)) {
 		sc_write_file(fp, rng);
@@ -1373,10 +1373,10 @@ read_file_generic_2(FILE *fp, int ismerge, char *format, char *name)
 	if (stricmp ("oleo", format) == 0) {
 		oleo_read_file(fp, ismerge);
 	} else if (stricmp ("sylk", format) == 0 || stricmp ("slk", format) == 0) {
-		sylk_a0 = 0;	/* FIX ME */
+		Global->sylk_a0 = 0;	/* FIX ME */
 		sylk_read_file(fp, ismerge);
 	} else if (stricmp ("sylk-noa0", format) == 0) {
-		sylk_a0 = 0;
+		Global->sylk_a0 = 0;
 		sylk_read_file(fp, ismerge);
 	} else if (stricmp ("sc", format) == 0) {
 		sc_read_file(fp, ismerge);

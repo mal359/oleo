@@ -1,18 +1,20 @@
-/*	Copyright (C) 1992, 1993 Free Software Foundation, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this software; see the file COPYING.  If not, write to
-the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
+/*
+ * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this software; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -28,48 +30,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "cmd.h"
 #include "lists.h"
 #include "regions.h"
-
-int scr_lines = 24;
-int scr_cols = 80;
-#define LINES scr_lines
-#define COLS scr_cols
-
-
-/* These control the layout of input and status lines. */
-int user_input = 1;		/* As specified (+/- [0-2]). */
-int user_status = 2;
-int input = 0;			/* As row address. */
-int status = 1;
-int input_rows = 1;		/* Size of input and status areas. */
-int status_rows = 1;
-
-/* These control the layout of edge labels. */
-int label_rows;
-int label_emcols;
-
-/* Temporary hacks for displaying multi-line messages. */
-/* If this is non-0, it should be displayed instead of 
- * the windows of cells.  This is a temporary hack.
- * Use set_info to change this.
- */
-struct info_buffer * current_info;
-
-int info_rows;		/* The height of one row of info in a */
-			/* multi-line message. */
-int info_line;		/* In the current info buffer, the first vis. line */
-int info_over;		/* Info scrolls left/right as well as up/down */
-
-
-/* Window borders: */
-int default_right_border = 0;
-int default_bottom_border = 0;
-
-/* The window list. */
-int nwin = 0;
-struct window *cwin = 0;
-struct window *wins = 0;
-static int win_id = 1;
-
 
 /* Low level window operators. */
 
@@ -726,8 +686,8 @@ io_set_input_status (int inp, int stat, int redraw)
 	}
       user_input = new_ui;
       user_status = new_us;
-      input = new_inp;
-      status = new_stat;
+      Global->input = new_inp;
+      Global->status = new_stat;
     }
 }
 
@@ -1359,10 +1319,10 @@ static int
 mouse_location (CELLREF *cr, CELLREF *cc, struct mouse_event *ev)
 {
   int n;
-  if (ev->row >= input && ev->row <= input + input_rows)
+  if (ev->row >= Global->input && ev->row <= Global->input + input_rows)
     return MOUSE_ON_INPUT;
-  if (user_status && ev->row >= status
-      && ev->row <= status + status_rows)
+  if (user_status && ev->row >= Global->status
+      && ev->row <= Global->status + status_rows)
     return MOUSE_ON_STATUS;
   for (n = 0; n < nwin; ++n)
     {

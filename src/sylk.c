@@ -43,14 +43,13 @@ static char * sylk_to_oleo_functions(char *f);
 
 #define	SYLK_LEN	1024
 
-int	nformat = 0;		/* We've already read this many formats */
+/* FIX ME Where does this variable belong ?? */
+static int	nformat = 0;		/* We've already read this many formats */
 /*
  * These functions read and write Microsoft Multiplan SYLK style files
  * as well as SYLK-NOA0 files.  SYLK-NOA0 is the same as SYLK except that
  * cell references are in rc format instead of a0 format.
  */
-
-int sylk_a0 = 1;		/* Determines sylk vs. sylk_noa0 format. */
 
 void
 sylk_read_file (fp, ismerge)
@@ -75,9 +74,9 @@ sylk_read_file (fp, ismerge)
   int old_a0;
   int	num;
 
-  old_a0 = a0;
+  old_a0 = Global->a0;
   next_a0 = old_a0;
-  a0 = sylk_a0;
+  Global->a0 = Global->sylk_a0;
 
   lineno = 0;
   if (!ismerge)
@@ -558,7 +557,7 @@ sylk_read_file (fp, ismerge)
 	/* First character on the line */
 	case 'O':
 	  /* JF extension: read uset-settable options */
-	  a0 = next_a0;
+	  Global->a0 = next_a0;
 
 #if 0
 	/* FIX ME
@@ -567,14 +566,14 @@ sylk_read_file (fp, ismerge)
 	 */
 	  read_mp_options (ptr + 2);
 #endif
-	  next_a0 = a0;
-	  a0 = sylk_a0;
+	  next_a0 = Global->a0;
+	  Global->a0 = Global->sylk_a0;
 	  break;
 
 	/* First character on the line */
 	default:
 	bad_field:
-	  a0 = old_a0;
+	  Global->a0 = old_a0;
 	  if (!ismerge)
 	    clear_spreadsheet ();
 	  io_recenter_all_win ();
@@ -589,7 +588,7 @@ sylk_read_file (fp, ismerge)
 		break;
 	}
     }
-  a0 = next_a0;
+  Global->a0 = next_a0;
   io_recenter_all_win ();
 }
 
@@ -772,8 +771,8 @@ sylk_write_file (fp, rng)
 
     }
 
-  old_a0 = a0;
-  a0 = sylk_a0;
+  old_a0 = Global->a0;
+  Global->a0 = Global->sylk_a0;
 
   find_widths (rng->lc, rng->hc);
   w = next_width (&c);
@@ -902,7 +901,7 @@ sylk_write_file (fp, rng)
     write_mp_windows (fp);
 
   (void) fprintf (fp, "E\n");
-  a0 = old_a0;
+  Global->a0 = old_a0;
 }
 
 int

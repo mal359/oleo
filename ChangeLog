@@ -1,5 +1,13 @@
-$Id: ChangeLog,v 1.100 1999/08/28 09:47:02 danny Exp $
+$Id: ChangeLog,v 1.101 1999/08/30 01:39:09 danny Exp $
 
+	* plot.c : support LineToOffScreen in XY plots (don't draw
+	  a line between points outside the visible region).
+	* More MDI work - plot globals into the structure.
+	* Update TODO.
+	* Both TODO and ChangeLog are now visible on the web page.
+	* Move many global variables into Global.
+
+Sat 28 Aug 12:40:17 1999, Danny Backx
 	* User Preferences dialog : small implementation to change
 	  the fonts (Motif); uses a new FontChooser widget from
 	  LessTif's Xlt widget set when available.

@@ -1,18 +1,20 @@
-/*	Copyright (C) 1992, 1993 Free Software Foundation, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this software; see the file COPYING.  If not, write to
-the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
+/*
+ * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
 
 #ifdef HAVE_CONFIG_H
@@ -75,7 +77,7 @@ static void
 _io_redraw_input (void)
 {
   int pos;
-  int row = (input_view.current_info ? 0 : input);
+  int row = (input_view.current_info ? 0 : Global->input);
 
   if (input_view.info_redraw_needed)
     {
@@ -437,7 +439,7 @@ _io_redisp (void)
 	    input_view.expanded_keymap_prompt))
 	move_cursor_to (cwin, curow, cucol, 0);
       else
-	move ((input_view.current_info ? 0 : input), 
+	move ((input_view.current_info ? 0 : Global->input), 
 	      input_view.prompt_wid + input_view.input_cursor -
 	      input_view.visibility_begin); 
     }
@@ -496,7 +498,7 @@ _io_repaint (void)
 		  char *ptr;
 		  char buf[30];
 
-		  if (a0)
+		  if (Global->a0)
 		    ptr = col_to_str (cc);
 		  else
 		    {
@@ -526,7 +528,7 @@ _io_repaint (void)
 	      if (n1)
 		{
 		  move (n, win->win_over - win->lh_wid);
-		  if (a0)
+		  if (Global->a0)
 		    printw ("%-*d ", win->lh_wid - 1, rr);
 		  else
 		    printw ("R%-*d", win->lh_wid - 1, rr);
@@ -623,9 +625,9 @@ static int
 _io_get_chr (char *prompt)
 {
   int x;
-  mvaddstr (input, 0, prompt);
+  mvaddstr (Global->input, 0, prompt);
   clrtoeol ();
-  topclear = 2;
+  Global->topclear = 2;
   refresh ();
   ++term_cursor_claimed;
   x = get_chr ();
@@ -706,7 +708,7 @@ _io_update_status (void)
   if (!user_status || input_view.current_info)
     return;
   getyx (stdscr, yy, xx);
-  move (status, 0);
+  move (Global->status, 0);
   wid = COLS - 2;
   
   if (mkrow != NON_ROW)
@@ -778,11 +780,11 @@ static void
 _io_clear_input_before (void)
 {
   textout = 0;
-  if (topclear == 2)
+  if (Global->topclear == 2)
     {
-      move (input, 0);
+      move (Global->input, 0);
       clrtoeol ();
-      topclear = 0;
+      Global->topclear = 0;
     }
   move (0, 0);
 }
@@ -790,11 +792,11 @@ _io_clear_input_before (void)
 static void
 _io_clear_input_after (void)
 {
-  if (topclear)
+  if (Global->topclear)
     {
-      move (input, 0);
+      move (Global->input, 0);
       clrtoeol ();
-      topclear = 0;
+      Global->topclear = 0;
     }
 }
 

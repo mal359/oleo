@@ -20,23 +20,6 @@
 #include "config.h"
 #endif
 
-/*
- * These must become static somehow - FIX ME.
- */
-/*
- * This needs to be put into the graph system
- * by using graph_set_*() API's.
- */
-double	XYxMin = 0.0, XYxMax = 100.0, XYyMin = 0.0, XYyMax = 100.0;
-int	XYxAuto = 1, XYyAuto = 1;
-int	LineToOffscreen = 0;
-
-
-/*
- * Don't compile this source unless you have GNU Plotutils
- */
-#ifdef	HAVE_LIBPLOT
-
 #include <ctype.h>
 #include "global.h"
 #include "graph.h"
@@ -49,7 +32,33 @@ int	LineToOffscreen = 0;
 #include "ref.h"
 #include "io-utils.h"
 
+void
+PlotInit(void)
+{
+	if (! Global->PlotGlobal) {
+		Global->PlotGlobal = (struct PlotGlobalType *)XtMalloc(sizeof(struct PlotGlobalType));
+		memset(Global->PlotGlobal, 0, sizeof(struct PlotGlobalType));
+
+		/*
+		 * These need to be put into the graph system
+		 * by using graph_set_*() API's.
+		 */
+		XYxMin = 0.0; XYxMax = 100.0; XYyMin = 0.0; XYyMax = 100.0;
+		XYxAuto = 1; XYyAuto = 1;
+		LineToOffscreen = 0;
+	}
+
+}
+
+
+/*
+ * Don't compile this source unless you have GNU Plotutils
+ */
+#ifdef	HAVE_LIBPLOT
+
+
 #include <plot.h>
+#include <oleo_plot.h>
 
 static int handle;
 
@@ -100,6 +109,8 @@ PuOpen(const char *plotter, FILE *outfile)
 	pl_joinmod("round");
 	pl_flinewidth(2);
 	pl_pencolorname(defaultcolor);
+
+	PlotInit();
 }
 
 static void
@@ -430,18 +441,14 @@ PuXYChart(char *plotter, FILE *outfile)
 		    xes[i++] = float_cell(cp);
 	}
 
-{	extern int XYxAuto;
 	if (XYxAuto) {
 		delta = xmax - xmin;
 		xmin -= delta * 0.1;
 		xmax += delta * 0.1;
 	} else {
-		extern double XYxMin, XYxMax;
-
 		xmin = XYxMin;	/* FIX ME */
 		xmax = XYxMax;
 	}
-}
 
 #if 0
 	fprintf(stderr, "X range should be %f to %f\n", xmin, xmax);
@@ -463,14 +470,10 @@ PuXYChart(char *plotter, FILE *outfile)
 			ymax = y;
 	    }
 
-{	extern int XYyAuto;
 	if (! XYyAuto) {
-		extern double XYyMin, XYyMax;
-
 		ymin = XYyMin;	/* FIX ME */
 		ymax = XYyMax;
 	}
-}
 
 	    pl_pencolorname(colors[r % ncolors]);
 
@@ -481,13 +484,27 @@ PuXYChart(char *plotter, FILE *outfile)
 		    y = float_cell(cp);
 #if 1
 		    if (i > 0) {
-			pl_fline(10.0 * (oldx - xmin) / (xmax - xmin),
-				10.0 * (oldy - ymin) / (ymax - ymin),
-				10.0 * (x - xmin) / (xmax - xmin),
-				10.0 * (y - ymin) / (ymax - ymin));
-			pl_fmove(
-				10.0 * (x - xmin) / (xmax - xmin),
-				10.0 * (y - ymin) / (ymax - ymin));
+			double	x1, x2, y1, y2;
+			int	out1 = 0, out2 = 0;
+
+			x1 = 10.0 * (oldx - xmin) / (xmax - xmin);
+			y1 = 10.0 * (oldy - ymin) / (ymax - ymin);
+			x2 = 10.0 * (x - xmin) / (xmax - xmin);
+			y2 = 10.0 * (y - ymin) / (ymax - ymin);
+
+			if (x1 < 0.0 || x1 > 10.0 || y1 < 0.0 || y1 > 10.0)
+				out1 = 1;
+			if (x2 < 0.0 || x2 > 10.0 || y2 < 0.0 || y2 > 10.0)
+				out2 = 1;
+
+			if (LineToOffscreen) {	/* Always draw */
+				pl_fline(x1, y1, x2, y2);
+				pl_fmove(x2, y2);
+			} else {
+				if (out1 == 0 && out2 == 0)
+					pl_fline(x1, y1, x2, y2);
+				pl_fmove(x2, y2);
+			}
 		    }
 #else
 			pl_fmarker(10.0 * (x - xmin) / (xmax - xmin),

@@ -500,10 +500,10 @@ yylex ()
 		break;
 
 	default:
-		if(!a0 && (ch=='@' || ch=='$'))
+		if(!Global->a0 && (ch=='@' || ch=='$'))
 		   goto bad_chr;
 
-		if(a0 && ch=='@') {
+		if(Global->a0 && ch=='@') {
 			begin=instr;
 			while(*instr && (isalpha(*instr) || isdigit(*instr) || *instr=='_'))
 				instr++;
@@ -1058,7 +1058,7 @@ parse_cell_or_range (char **ptr, struct rng *retp)
 {
 	unsigned char	r, *p = *ptr;
 
-	if (a0)
+	if (Global->a0)
 		r = a0_parse_cell_or_range(ptr, retp);
 	else
 		r = noa0_parse_cell_or_range(ptr, retp);

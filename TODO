@@ -1,6 +1,20 @@
-$Id: TODO,v 1.30 1999/07/22 22:13:27 danny Exp $
+$Id: TODO,v 1.31 1999/08/30 01:39:11 danny Exp $
 
 TODO's:
+
+* Multiple Document Interface
+	(done) implement framework for putting global variables into so they're
+		no longer global and we can allocate them on a per-window or
+		per file basis
+	(todo) complete the above for all global variables
+	(todo) hook this in to Motif interface
+	(todo) hook this to curses based interface
+
+* Graphs
+	(todo) connect the plot.c functionality (GNU Plotutils) to graph.c
+	(todo) make sure all the variables can get saved
+	(todo) make sure all flags can be controlled through GUI
+	(todo) put Plotutils graph in Motif XmScrolledWindow
 
 * Sorting
 	(todo) implement an interface that'll allow us to call external

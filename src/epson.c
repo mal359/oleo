@@ -1,5 +1,5 @@
 /*
- *  $Id: epson.c,v 1.6 1999/06/04 08:02:05 danny Exp $
+ *  $Id: epson.c,v 1.7 1999/08/30 01:39:33 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: epson.c,v 1.6 1999/06/04 08:02:05 danny Exp $";
+static char rcsid[] = "$Id: epson.c,v 1.7 1999/08/30 01:39:33 danny Exp $";
 
 #include <stdio.h>
 
@@ -29,17 +29,17 @@ static char rcsid[] = "$Id: epson.c,v 1.6 1999/06/04 08:02:05 danny Exp $";
 
 #include "print.h"
 
-char	*Escape = "\033";
-char	*formfeed = "\f";
+static char	*Escape = "\033";
+static char	*formfeed = "\f";
 
 /* Fonts */
-char	*courier = "\033k2";
-char	*proportional = "\033p1";
-char	*noproportional = "\033p0";
-char	*Defaultfont = "\033k\002\033X\0\025\0";
-char	*defaultfont = "\033k\002\033X\000\012\000";	/* play */
-char	*italic = "\0334";
-char	*noitalic = "\0335";
+static char	*courier = "\033k2";
+static char	*proportional = "\033p1";
+static char	*noproportional = "\033p0";
+static char	*Defaultfont = "\033k\002\033X\0\025\0";
+static char	*defaultfont = "\033k\002\033X\000\012\000";	/* play */
+static char	*italic = "\0334";
+static char	*noitalic = "\0335";
 
 void EpsonJobHeader(char *str, int npages, FILE *fp)
 {

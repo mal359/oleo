@@ -1,21 +1,23 @@
-/*	Copyright (C) 1990, 1992, 1993 Free Software Foundation, Inc.
+/*
+ * Copyright (C) 1990, 1992, 1993, 1999 Free Software Foundation, Inc.
+ *
+ * This file is part of Oleo, the GNU Spreadsheet.
+ *
+ * Oleo is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * Oleo is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Oleo; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
-This file is part of Oleo, the GNU Spreadsheet.
-
-Oleo is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
-
-Oleo is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Oleo; see the file COPYING.  If not, write to
-the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -80,8 +82,8 @@ sc_read_file (fp,ismerge)
 	struct rng rng;
 	int olda0;
 
-	olda0=a0;
-	a0=1;
+	olda0=Global->a0;
+	Global->a0=1;
 	lineno=0;
 	if(!ismerge)
 		clear_spreadsheet();
@@ -158,7 +160,7 @@ sc_read_file (fp,ismerge)
 		} else
 			io_error_msg("Line %d: Can't parse %s",lineno,buf);
 	}
-	a0=olda0;
+	Global->a0=olda0;
 	io_recenter_all_win();
 }
 
@@ -206,8 +208,8 @@ sc_write_file (fp,rng)
 	if(!rng)
 		rng= &all_rng;
 
-	olda0=a0;
-	a0=1;
+	olda0=Global->a0;
+	Global->a0=1;
 	(void)fprintf(fp,"# This file was created by Oleo, for use by the Spreadsheet Calculator\n");
 	(void)fprintf(fp,"# You probably don't want to edit it.\n\n");
 
@@ -235,7 +237,7 @@ sc_write_file (fp,rng)
 			break;
 		}
 	}
-	a0=olda0;
+	Global->a0=olda0;
 }
 
 int

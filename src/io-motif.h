@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.h,v 1.5 1999/08/28 09:47:24 danny Exp $
+ *  $Id: io-motif.h,v 1.6 1999/08/30 01:39:25 danny Exp $
  *
  *  This file is part of GnuSheet, a free spreadsheet.
  *
@@ -42,45 +42,66 @@ struct MotifGlobalType {
 	Widget	DefaultFileDialog_w, DefaultFileShell_w, ConfigureGraphNotebook_w;
 	Widget	XYxAutoToggle_w, XYxMinText_w, XYxMaxText_w, XYyAutoToggle_w,
 		XYyMinText_w, XYyMaxText_w, lineToOffscreen_w;
-	Widget	UserPref_w;
+	Widget	UserPref_w, ActiveRangeSelectionWidget_w, pufsd_w;
+	struct rng	selection_range;
+	int	PuPlotter;
+	PuFunction ThisPuFunction;
+	char	**rowlabels, **columnlabels;
+	short	*columnwidths;
+	int	*columnmaxlengths;
+	Pixmap  oleo_icon_pm;
+	char	*early_msg_text;
+	char	input_buf[1024];
+	int	input_buf_allocated, chars_buffered;
+	char	fileformat[10], pattern[13];
+	int	fmt;
 };
 
-#define	app		Global->MotifGlobal->app_c
+#define	app			Global->MotifGlobal->app_c
 
-#define	UserPref	Global->MotifGlobal->UserPref_w
-#define	toplevel	Global->MotifGlobal->toplevel_w
-#define	SplashShell	Global->MotifGlobal->SplashShell_w
-#define	plot	Global->MotifGlobal->plot_w
-#define	mw	Global->MotifGlobal->mw_w
-#define	mat	Global->MotifGlobal->mat_w
-#define	mb	Global->MotifGlobal->mb_w
-#define	filemenu	Global->MotifGlobal->filemenu_w
-#define	editmenu	Global->MotifGlobal->editmenu_w
-#define	stylemenu	Global->MotifGlobal->stylemenu_w
-#define	optionsmenu	Global->MotifGlobal->optionsmenu_w
-#define	helpmenu	Global->MotifGlobal->helpmenu_w
-#define	graphmenu	Global->MotifGlobal->graphmenu_w
-#define	dbmenu	Global->MotifGlobal->dbmenu_w
-#define	testmenu	Global->MotifGlobal->testmenu_w
-#define	msgtext	Global->MotifGlobal->msgtext_w
-#define	statustf	Global->MotifGlobal->statustf_w
-#define	formulatf	Global->MotifGlobal->formulatf_w
-#define	fsd	Global->MotifGlobal->fsd_w
-#define	pfsd	Global->MotifGlobal->pfsd_w
-#define	hd	Global->MotifGlobal->hd_w
-#define	Html	Global->MotifGlobal->html_w
-#define	gs	Global->MotifGlobal->gs_w
-#define	FormatD	Global->MotifGlobal->FormatD_w
-#define	MySQLDialog	Global->MotifGlobal->MySQLDialog_w
-#define	PrintDialog	Global->MotifGlobal->PrintDialog_w
-#define	DefaultFileDialog	Global->MotifGlobal->DefaultFileDialog_w
-#define	DefaultFileShell	Global->MotifGlobal->DefaultFileShell_w
-#define	ConfigureGraphNotebook	Global->MotifGlobal->ConfigureGraphNotebook_w
-#define	XYxAutoToggle	Global->MotifGlobal->XYxAutoToggle_w
-#define	XYxMinText	Global->MotifGlobal->XYxMinText_w
-#define	XYxMaxText	Global->MotifGlobal->XYxMaxText_w
-#define	XYyAutoToggle	Global->MotifGlobal->XYyAutoToggle_w
-#define	XYyMinText	Global->MotifGlobal->XYyMinText_w
-#define	XYyMaxText	Global->MotifGlobal->XYyMaxText_w
-#define	lineToOffscreen	Global->MotifGlobal->lineToOffscreen_w
+#define	UserPref		Global->MotifGlobal->UserPref_w
+#define	toplevel		Global->MotifGlobal->toplevel_w
+#define	SplashShell		Global->MotifGlobal->SplashShell_w
+#define	plot		Global->MotifGlobal->plot_w
+#define	mw		Global->MotifGlobal->mw_w
+#define	mat		Global->MotifGlobal->mat_w
+#define	mb		Global->MotifGlobal->mb_w
+#define	filemenu		Global->MotifGlobal->filemenu_w
+#define	editmenu		Global->MotifGlobal->editmenu_w
+#define	stylemenu		Global->MotifGlobal->stylemenu_w
+#define	optionsmenu		Global->MotifGlobal->optionsmenu_w
+#define	helpmenu		Global->MotifGlobal->helpmenu_w
+#define	graphmenu		Global->MotifGlobal->graphmenu_w
+#define	dbmenu		Global->MotifGlobal->dbmenu_w
+#define	testmenu		Global->MotifGlobal->testmenu_w
+#define	msgtext		Global->MotifGlobal->msgtext_w
+#define	statustf		Global->MotifGlobal->statustf_w
+#define	formulatf		Global->MotifGlobal->formulatf_w
+#define	fsd		Global->MotifGlobal->fsd_w
+#define	pfsd		Global->MotifGlobal->pfsd_w
+#define	hd		Global->MotifGlobal->hd_w
+#define	Html		Global->MotifGlobal->html_w
+#define	gs		Global->MotifGlobal->gs_w
+#define	FormatD		Global->MotifGlobal->FormatD_w
+#define	MySQLDialog		Global->MotifGlobal->MySQLDialog_w
+#define	PrintDialog		Global->MotifGlobal->PrintDialog_w
+#define	DefaultFileDialog		Global->MotifGlobal->DefaultFileDialog_w
+#define	DefaultFileShell		Global->MotifGlobal->DefaultFileShell_w
+#define	ConfigureGraphNotebook		Global->MotifGlobal->ConfigureGraphNotebook_w
+#define	XYxAutoToggle		Global->MotifGlobal->XYxAutoToggle_w
+#define	XYxMinText		Global->MotifGlobal->XYxMinText_w
+#define	XYxMaxText		Global->MotifGlobal->XYxMaxText_w
+#define	XYyAutoToggle		Global->MotifGlobal->XYyAutoToggle_w
+#define	XYyMinText		Global->MotifGlobal->XYyMinText_w
+#define	XYyMaxText		Global->MotifGlobal->XYyMaxText_w
+#define	lineToOffscreen		Global->MotifGlobal->lineToOffscreen_w
+#define	ActiveRangeSelectionWidget		Global->MotifGlobal->ActiveRangeSelectionWidget_w
+#define	selection_range		Global->MotifGlobal->selection_range
+#define	pufsd			Global->MotifGlobal->pufsd_w
+#define	PuPlotter		Global->MotifGlobal->PuPlotter
+#define	ThisPuFunction		Global->MotifGlobal->ThisPuFunction
+#define	rowlabels		Global->MotifGlobal->rowlabels
+#define	columnlabels		Global->MotifGlobal->columnlabels
+#define	columnwidths		Global->MotifGlobal->columnwidths
+#define	columnmaxlengths		Global->MotifGlobal->columnmaxlengths
 #endif

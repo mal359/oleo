@@ -69,12 +69,8 @@ static char *input_font_name = "8x13";
 static char *status_font_name = "6x10";
 static char *text_line_font_name = "8x13";
 static char *label_font_name = "5x8";
-int cell_font_point_size = 12;
 static char *default_bg_color_name = "black";
 static char *default_fg_color_name = "white";
-
-/* If non-0 and !no_x, these display functions will be used. */
-char *io_x11_display_name = 0;
 
 /* The geometry of the first window. */
 static int geom_x = 0;
@@ -156,17 +152,17 @@ get_x11_args (int * argc_p, char ** argv)
   
   /* Compute the display from either resources or getenv. */
   
-  io_x11_display_name =
+  Global->io_x11_display_name =
     x_get_string_resource (argv_resources, class_of ("Display"),
 			   name_of ("display"));
 #endif					       
-  if (!io_x11_display_name)
-    io_x11_display_name = ck_savestr (getenv ("DISPLAY"));
+  if (!Global->io_x11_display_name)
+    Global->io_x11_display_name = ck_savestr (getenv ("DISPLAY"));
   
-  if (!io_x11_display_name)
+  if (!Global->io_x11_display_name)
     return;
   
-  theDisplay = XOpenDisplay (io_x11_display_name);
+  theDisplay = XOpenDisplay (Global->io_x11_display_name);
   if (!theDisplay)
     panic ("Can not connect to X.  Check your DISPLAY evironment variable.");
   
@@ -527,9 +523,6 @@ io_col_to_input_pos (int c)
  * Low level Input
  ****************************************************************/
 
-/* To be like curses, we offer this option: */
-static int block_on_getch = 1;
-
 /* This is the buffer of decoded keyboard events. */
 static char *input_buf = 0;
 static int input_buf_allocated = 0;
@@ -740,7 +733,7 @@ xio_read_kbd (char *buffer, int size)
 static void
 xio_nodelay (int delayp)
 {
-  block_on_getch = delayp;
+  Global->block_on_getch = delayp;
 }
 
 static int
@@ -749,7 +742,7 @@ xio_getch (void)
   char buf;
   
   if (!chars_buffered)
-    io_scan_for_input (block_on_getch);
+    io_scan_for_input (Global->block_on_getch);
   
   if (chars_buffered)
     {
@@ -1156,7 +1149,7 @@ cell_gc (Xport port, struct font_memo *font_passed, int cursor)
   char *font_name = font->names->x_name;
   double scale = font->scale;
   struct cell_gc *c = cell_gc_cache;
-  if (cell_gc_basis != cell_font_point_size)
+  if (cell_gc_basis != Global->cell_font_point_size)
     {
       do
 	{
@@ -1171,7 +1164,7 @@ cell_gc (Xport port, struct font_memo *font_passed, int cursor)
 	  c = c->next;
 	}
       while (c != cell_gc_cache);
-      cell_gc_basis = cell_font_point_size;
+      cell_gc_basis = Global->cell_font_point_size;
     }
   else
     {
@@ -1213,7 +1206,7 @@ cell_gc (Xport port, struct font_memo *font_passed, int cursor)
     if (fontv)
       {
 	int x, best;
-	int ideal_size = rint (scale * (double) cell_font_point_size * 10.);
+	int ideal_size = rint (scale * (double) Global->cell_font_point_size * 10.);
 	int best_dist;
 	best = 0;
 	best_dist = ideal_size - name_to_ps (fontv[0]);
@@ -2324,7 +2317,7 @@ set_x_default_point_size (int l)
   
   if (l > 4)
     {
-      cell_font_point_size = l;
+      Global->cell_font_point_size = l;
       {
 	struct cell_gc *cgc = cell_gc (thePort, default_font(), 0);
 	height_scale = cgc->font->ascent + cgc->font->descent;

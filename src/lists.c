@@ -795,34 +795,28 @@ set_height (CELLREF row, int hgt)
   *ptr = hgt;
 }
 
-float height_scale = 1.;
-float width_scale = 1.;
-
-float user_height_scale = 1.;
-float user_width_scale = 1.;
-
 void
 set_user_scales (double hs, double ws)
 {
-  user_height_scale = hs;
-  user_width_scale = ws;
+  Global->user_height_scale = hs;
+  Global->user_width_scale = ws;
   io_repaint ();
 }
 
 int
 get_scaled_height (CELLREF r)
 {
-  return ((user_height_scale <= 0.)
+  return ((Global->user_height_scale <= 0.)
 	  ? 1
-	  :  (int) (get_height (r) * height_scale * user_height_scale));
+	  :  (int) (get_height (r) * Global->height_scale * Global->user_height_scale));
 }
 
 int
 get_scaled_width (CELLREF c)
 {
-  return ((user_width_scale <= 0.)
+  return ((Global->user_width_scale <= 0.)
 	  ? 1
-	  : (int)(get_width (c) * width_scale * user_width_scale));
+	  : (int)(get_width (c) * Global->width_scale * Global->user_width_scale));
 }
 
 

@@ -72,9 +72,9 @@ oleo_read_file (fp, ismerge)
   int old_a0;
   int next_a0;
 
-  old_a0 = a0;
+  old_a0 = Global->a0;
   next_a0 = old_a0;
-  a0 = 0;
+  Global->a0 = 0;
   lineno = 0;
   if (!ismerge)
     clear_spreadsheet ();
@@ -546,10 +546,10 @@ oleo_read_file (fp, ismerge)
 	  break;
 	  /* JF extension: read uset-settable options */
 	case 'O':
-	  a0 = next_a0;
+	  Global->a0 = next_a0;
 	  read_mp_options (ptr + 2);
-	  next_a0 = a0;
-	  a0 = 0;
+	  next_a0 = Global->a0;
+	  Global->a0 = 0;
 	  break;
 	case 'G':	/* Graph data */
 /*	  fprintf(stderr, "Graph input line '%s'\n", cbuf);	/* */
@@ -583,7 +583,7 @@ oleo_read_file (fp, ismerge)
 	  break;
 	default:
 	bad_field:
-	  a0 = old_a0;
+	  Global->a0 = old_a0;
 	  if (!ismerge)
 	    clear_spreadsheet ();
 	  io_recenter_all_win ();
@@ -599,7 +599,7 @@ oleo_read_file (fp, ismerge)
       io_error_msg ("read-file: read-error near line %d.", lineno);
       return;
     }
-  a0 = next_a0;
+  Global->a0 = next_a0;
   io_recenter_all_win ();
 }
 
@@ -795,8 +795,8 @@ oleo_write_file (fp, rng)
       write_mp_options (fp);
     }
 
-  old_a0 = a0;
-  a0 = 0;
+  old_a0 = Global->a0;
+  Global->a0 = 0;
 
   find_widths (rng->lc, rng->hc);
   w = next_width (&c);
@@ -979,7 +979,7 @@ oleo_write_file (fp, rng)
 
   /* End of writing */
   (void) fprintf (fp, "E\n");
-  a0 = old_a0;
+  Global->a0 = old_a0;
 }
 
 int

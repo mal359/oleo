@@ -44,12 +44,12 @@ static CELLREF decomp_col;
 /* These #defines are so that we don't have to duplicate code below */
 /* JF: now obsolete, and should be trashed. */
 
-#define F0	a0?"@%s()":"%s()"
-#define F1	a0?"@%s(%s)":"%s(%s)"
-#define F2	a0?"@%s(%s, %s)":"%s(%s, %s)"
-#define F3	a0?"@%s(%s, %s, %s)":"%s(%s, %s, %s)"
-#define F4	a0?"@%s(%s, %s, %s, %s)":"%s(%s, %s, %s, %s)"
-#define FN1	a0?"@%s(%s":"%s(%s"
+#define F0	Global->a0?"@%s()":"%s()"
+#define F1	Global->a0?"@%s(%s)":"%s(%s)"
+#define F2	Global->a0?"@%s(%s, %s)":"%s(%s, %s)"
+#define F3	Global->a0?"@%s(%s, %s, %s)":"%s(%s, %s, %s)"
+#define F4	Global->a0?"@%s(%s, %s, %s, %s)":"%s(%s, %s, %s, %s)"
+#define FN1	Global->a0?"@%s(%s":"%s(%s"
 
 /* We decompile things with these wierd node-things.  It's ugly, but it works.
  */
@@ -217,7 +217,7 @@ next_byte:
 	col = GET_COL (expr);
 	expr += EXP_ADD;
 
-	if (a0)
+	if (Global->a0)
 	  {
 	    new = n_alloc (30, 1000, f->fn_str, col_to_str (col), row);
 	  }
@@ -282,7 +282,7 @@ next_byte:
 	GET_RNG (expr, &rng);
 	expr += EXP_ADD_RNG;
 
-	if (a0)
+	if (Global->a0)
 	  new = n_alloc (40, 1000, f->fn_str, col_to_str (rng.lc), rng.lr, col_to_str (rng.hc), rng.hr);
 	else
 	  {

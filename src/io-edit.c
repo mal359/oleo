@@ -1,18 +1,20 @@
-/*	Copyright (C) 1992, 1993 Free Software Foundation, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this software; see the file COPYING.  If not, write to
-the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
+/*
+ * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
 
 #ifdef HAVE_CONFIG_H
@@ -77,7 +79,7 @@ check_editting_mode (void)
 void
 begin_edit (void)
 {
-  topclear = 0;
+  Global->topclear = 0;
   the_cmd_frame->complex_to_user = 1;
   io_fix_input ();
 }
@@ -480,7 +482,7 @@ insert_rel_ref(void)
     {
       char vbuf[50];
       char * in_str;
-      if (a0)
+      if (Global->a0)
 	{
 	  if (mkrow != NON_ROW)
 	    {
@@ -586,7 +588,7 @@ insert_abs_ref(int x)
           mr = curow;
           mc = cucol;
         }
-      if (a0)
+      if (Global->a0)
 	{
 	  if (mr != NON_ROW)
 	    sprintf (vbuf, "$%s$%u:$%s:$%u",

@@ -248,7 +248,7 @@ set_default_font (char * name, double scale)
   the_default_font = intern_font (default_oleo_name, scale);
 #ifndef X_DISPLAY_MISSING
   if (using_x)
-    set_x_default_point_size (cell_font_point_size);
+    set_x_default_point_size (Global->cell_font_point_size);
   else
 #endif
     io_repaint ();
