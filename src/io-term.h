@@ -1,7 +1,7 @@
 #ifndef IO_TERMH
 #define IO_TERMH
 /*
- * $Id: io-term.h,v 1.9 2000/08/10 21:02:50 danny Exp $
+ * $Id: io-term.h,v 1.10 2001/02/07 03:16:10 pw Exp $
  *
  * Copyright © 1992, 1993 Free Software Foundation, Inc.
  * 
@@ -74,7 +74,6 @@ extern void show_var (char *ptr);
 extern void show_all_var (void);
 extern void write_variables (FILE * fp);
 extern void read_variables (FILE * fp);
-extern void init_maps (void);
 extern int add_usr_cmds (struct cmd_func *new_cmds);
 extern int main (int argc, char **argv);
 extern void InitializeGlobals(void);
