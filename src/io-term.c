@@ -1,5 +1,5 @@
 /*
- * $Id: io-term.c,v 1.57 2003/01/16 00:36:36 pw Exp $
+ * $Id: io-term.c,v 1.58 2003/01/18 17:25:59 pw Exp $
  *
  * Copyright © 1990, 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 
@@ -20,7 +20,7 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char *rcsid = "$Id: io-term.c,v 1.57 2003/01/16 00:36:36 pw Exp $";
+static char *rcsid = "$Id: io-term.c,v 1.58 2003/01/18 17:25:59 pw Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -34,6 +34,7 @@ static char *rcsid = "$Id: io-term.c,v 1.57 2003/01/16 00:36:36 pw Exp $";
 #include <stdio.h>
 #include <locale.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #include "global.h"
 

@@ -1,5 +1,10 @@
 
-$Id: ChangeLog,v 1.163 2003/01/16 00:36:36 pw Exp $
+$Id: ChangeLog,v 1.164 2003/01/18 17:25:59 pw Exp $
+
+Sat Jan 18 12:19:35 EST 2003  Pete Wyckoff  <pw@osc.edu>
+	* src/posixtm.y: Hide more yy* declarations for an old yacc.  Add
+	  missing semicolon.
+	* src/io-term.c: Add <errno> header.
 
 Wed Jan 15 19:33:55 EST 2003  Pete Wyckoff  <pw@osc.edu>
 	* src/io-term.c: Fix --format argument parsing using getopt to
