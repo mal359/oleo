@@ -1,5 +1,5 @@
 /*
- *  $Id: mdi.c,v 1.8 2000/08/10 21:02:51 danny Exp $
+ *  $Id: mdi.c,v 1.9 2001/02/05 00:14:56 pw Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: mdi.c,v 1.8 2000/08/10 21:02:51 danny Exp $";
+static char rcsid[] = "$Id: mdi.c,v 1.9 2001/02/05 00:14:56 pw Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -141,6 +141,7 @@ MdiOpen()
 /*
  * Close the current Global structure
  */
+void
 MdiClose()
 {
 	MessageAppend(False, "Closing file '%s'", Global->FileName);
