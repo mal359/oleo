@@ -1,11 +1,13 @@
 
-$Id: ChangeLog,v 1.139 2001/02/04 15:54:20 danny Exp $
+$Id: ChangeLog,v 1.140 2001/02/04 16:11:32 danny Exp $
 
 
 Sun Feb  4 16:54:38 CET 2001, Danny
 	* Try to get Oleo to stay away from the eight bit. Not bullet-proof
 	  yet. This is to get scandinavian character input to work in raw X
 	  mode.
+	* io-term.c : warning removal by declaring gettext().
+	* Convert compile time error message into an #error in global.h .
 
 Sat Feb  3 18:55:19 EST 2000  Pete Wyckoff  (pw@osc.edu)
 	* Add documentation for business functions, and clean up

@@ -1,7 +1,7 @@
 #ifndef GLOBALH
 #define GLOBALH
 /*
- * $Id: global.h,v 1.17 2001/02/04 15:54:20 danny Exp $
+ * $Id: global.h,v 1.18 2001/02/04 16:11:33 danny Exp $
  *
  * Copyright © 1990, 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 
@@ -148,7 +148,7 @@ typedef unsigned char CELLREF;
 #define PUT_COL(name,val)	((name)[1]=(val))
 #define EXP_ADD			sizeof(CELLREF)*2
 #else
-FOO FOO FOO You need to define the obvious macros above
+#error "FOO FOO FOO You need to define the obvious macros above"
 #endif
 #endif
 

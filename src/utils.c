@@ -1,5 +1,5 @@
 /*
- * $Id : $
+ * $Id: utils.c,v 1.19 2001/02/04 16:11:33 danny Exp $
  *
  * Copyright © 1990, 1992, 1993, 2001 Free Software Foundation, Inc.
  * 

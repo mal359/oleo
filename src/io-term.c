@@ -1,5 +1,5 @@
 /*
- * $Id: io-term.c,v 1.48 2001/02/04 00:01:26 pw Exp $
+ * $Id: io-term.c,v 1.49 2001/02/04 16:11:33 danny Exp $
  *
  * Copyright © 1990, 1992, 1993, 1999, 2000 Free Software Foundation, Inc.
  * 
@@ -20,7 +20,7 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char *rcsid = "$Id: io-term.c,v 1.48 2001/02/04 00:01:26 pw Exp $";
+static char *rcsid = "$Id: io-term.c,v 1.49 2001/02/04 16:11:33 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -84,6 +84,10 @@ static char *rcsid = "$Id: io-term.c,v 1.48 2001/02/04 00:01:26 pw Exp $";
 
 #ifdef	HAVE_PANIC_SAVE
 #include "panic.h"
+#endif
+
+#if	ENABLE_NLS
+extern char *gettext(char *);
 #endif
 
 /*
