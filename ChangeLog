@@ -1,4 +1,15 @@
 
+Fri 26 Mar 00:27:46 1999, Danny Backx
+	* Get configure to recognize both 2.2 and older versions of
+	  GNU plotutils and act appropriately. (The API changed.)
+	* It seems to be impossible to use automake/autoconf to make a
+	  distribution that contains a C++ file, and have the thing
+	  gracefully degrade into not using the C++ functionality when
+	  we find no C++ compiler.
+	  Therefore, abandon automatic use of Xbase. You'll need to do
+	  something for it to work, unfortunately.
+	  What to do is documented in the FAQ.
+
 Sun 21 Mar 17:18:47 1999, Danny Backx
 	* Add examples/loop.oleo to clarify TODO.
 	* Print Dialog now contains file selection box.

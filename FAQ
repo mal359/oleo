@@ -28,6 +28,10 @@ Questions
 20. I can compile with the Motif interface, but when I run Oleo
     with the -x or --nw option to use the character terminal
     interface, a lot of keys don't work.  What's the deal?
+21. What are these spreadsheet formats ?
+22. Oleo seems to be able to read DBF files, yet it complains. Why ?
+23. How can I build Oleo with Xbase support ?
+24. I have plotutils installed yet Oleo doesn't use it. Why ?
 
 Answers
 -------
@@ -156,3 +160,68 @@ Answers
 	correctly.  For now, the only way to handle this is to
 	keep two separately compiled copies of Oleo on your system,
 	one with Motif and one without.
+
+21. What are these spreadsheet formats ?
+
+	Oleo currently understands the following formats :
+	- .oleo
+	- .sylk
+	- .sc
+	- .csv	(comma separated values)
+	- .list	(tab separated values)
+	- .panic
+	- .dbf   (Dbase format)
+
+	It currently doesn't understand Excel or Lotus 1-2-3 file
+	formats.
+
+	Many spreadsheet formats, including many of the above, are
+	documented at www.wotsit.org .
+
+22. Oleo seems to be able to read DBF files, yet it complains. Why ?
+
+	Oleo has (currently simplistic) support for reading DBF files
+	through the Xbase library.
+
+	The Xbase library can be obtained from
+		http://www.startech.keller.tx.us/xbase.html
+
+	The problem is that this is C++ software, and we have chosen
+	not to force the use of C++ upon people who want to build
+	Oleo. The automake/autoconf build systems don't allow us to
+	build configuration files that will work whether a C++
+	compiler is present or not (if we include C++ source files).
+
+	So the only option we have left is not to support Xbase by
+	default.
+
+	See the next question.
+
+23. How can I build Oleo with Xbase support ?
+
+	You'll need a C++ compiler, and recent versions of GNU automake
+	and GNU autoconf.
+
+	Then you'll need to modify the Oleo configure.in file, and the
+	src/Makefile.am, as is indicated in the comments in those files.
+
+	Then run
+		autoheader
+		automake -i
+		autoconf
+		rm config.cache
+		./configure
+		make clean
+		make
+
+	Then you should have a version of Oleo that can deal with .DBF files.
+
+24. I have plotutils installed yet Oleo doesn't use it. Why ?
+
+	GNU Plotutils can be used with Motif(LessTif), or with the Athena
+	widgets. If your system has a version of Plotutils that has been
+	built with the Athena widgets, it is very likely that the Oleo
+	configuration scripts will fail to pick it up.
+
+	The only remedy is to build a version of Plotutils for use with
+	Motif. This will work correctly with Oleo.

@@ -1,16 +1,12 @@
-$Id: TODO,v 1.20 1999/03/21 16:21:03 danny Exp $
+$Id: TODO,v 1.21 1999/03/25 23:28:12 danny Exp $
 
 TODO's:
 
-* FAQ
-	Clarify build problems relating to
-		C++, xbase
-		plotutils versions
-		plotutils Athena vs. Motif
-
 * Configuration
  	(done) fail on funky options --with-motif --without-Xbae
-	(todo) make sure C++ stuff doesn't break non-Xbase compiles
+	(done) make sure C++ stuff doesn't break non-Xbase compiles
+		Unfortunately: can't get this to work. Hence :
+	(todo) Once automake supports it, use Xbase by default.
 
 * Get our stuff together for an upcoming 2.0 release of Oleo.
 

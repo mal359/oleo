@@ -45,6 +45,29 @@ static char	*colors[] = { "yellow", "green", "blue", "red",
 static int	ncolors = sizeof(colors) / sizeof(char *);
 
 /*
+ * The API changed from version 2.2 of GNU plotutils.
+ * Cope with that.
+ */
+#if !defined(HAVE_LIBPLOT_2_2)
+#define	pl_newpl(a,b,c,d)	new_pl(a,b,c,d)
+#define	pl_openpl()		openpl()
+#define	pl_selectpl(a)		selectpl(a)
+#define	pl_filltype(a)		filltype(a)
+#define	pl_joinmod(a)		joinmod(a)
+#define	pl_flinewidth(a)	flinewith(a)
+#define pl_pencolorname(a)	pencolorname(a)
+#define	pl_deletepl(a)		deletepl(a)
+#define	pl_fspace(a,b,c,d)	fspace(a,b,c,d)
+#define	pl_fmove(a,b)		fmove(a,b)
+#define	pl_fcont(a,b)		fcont(a,b)
+#define	pl_farc(a,b,c,d)	farc(a,b,c,d)
+#define	pl_endpath()		endpath()
+#define	pl_alabel(a,b,c)	alabel(a,b,c)
+#define	pl_box(a,b,c,d)		box(a,b,c,d)
+#define	pl_fmarker(a,b,c,d)	fmarker(a,b,c,d)
+#endif
+
+/*
  * Internal functions - initialize and close GNU PlotUtils
  */
 static void

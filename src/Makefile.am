@@ -1,9 +1,11 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.29 1999/03/17 21:21:36 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.30 1999/03/25 23:28:28 danny Exp $
 #
 localedir = $(prefix)/share/locale
 
 AUTOMAKE_OPTIONS = ../lib/ansi2knr dejagnu
+
+EXTRA_DIST=	xbase.cpp oleo_xb.h
 
 bin_PROGRAMS = oleo
 
@@ -14,7 +16,13 @@ GUI =
 endif
 
 if HaveXbase
-XBSRC=	xbase.cpp oleo_xb.h
+#
+#	Xbase support
+#		Uncomment the line containing xbase.cpp to use Xbase.
+#
+XBSRC=
+# XBSRC=	xbase.cpp oleo_xb.h
+#
 else
 XBSRC=
 endif

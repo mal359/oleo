@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.51 1999/03/21 16:19:11 danny Exp $
+dnl $Id: configure.in,v 1.52 1999/03/25 23:28:15 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -163,7 +163,13 @@ dnl	This needs to be done after the X and Motif tests, because
 dnl	the libplot from GNU plotutils sometimes requires linking the
 dnl	X and Motif libraries
 dnl
-AC_CHECK_LIB(plot, openpl)
+AC_CHECK_LIB(plot, openpl,
+	AC_DEFINE(HAVE_LIBPLOT)
+	LIBS="$LIBS -lplot",
+	AC_CHECK_LIB(plot, pl_openpl,
+		AC_DEFINE(HAVE_LIBPLOT)
+		LIBS="$LIBS -lplot"
+		AC_DEFINE(HAVE_LIBPLOT_2_2)))
 
 dnl Checks for Guile
 dnl AC_CHECK_LIB(guile, scm_boot_guile)
@@ -196,13 +202,17 @@ AC_CHECK_HEADERS(fcntl.h limits.h malloc.h strings.h sys/time.h unistd.h)
 AC_CHECK_HEADERS(locale.h time.h)
 
 dnl
-dnl Do we have xbase library ?
+dnl Xbase support (to read DBF files).
+dnl	You'll need to uncomment the lines below for Xbase support,
+dnl	as is indicated in the FAQ.
 dnl
-AC_PROG_CXX
-if test "$ac_cv_prog_cxx_works" = "yes"; then
-	AC_CHECK_LIB(xbase, main)
-	AM_CONDITIONAL(HaveXbase, test x$ac_cv_lib_xbase_main = xyes)
-fi
+dnl AC_PROG_CXX
+dnl AC_CHECK_LIB(xbase, main)
+dnl
+dnl End Xbase support lines
+dnl
+
+AM_CONDITIONAL(HaveXbase, test x$ac_cv_lib_xbase_main = xyes)
 
 dnl
 dnl Checks for typedefs, structures, and compiler characteristics.

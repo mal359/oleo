@@ -172,6 +172,10 @@
 #undef HAVE_Xbae
 #undef HAVE_XLT
 
+/* GNU Plotutils */
+#undef	HAVE_LIBPLOT
+#undef	HAVE_LIBPLOT_2_2
+
 #if ENABLE_NLS
 # include <libintl.h>
 # define _(Text) gettext (Text)
