@@ -27,9 +27,11 @@
 #define _NO_PROTO
 #endif
 
+#if 0
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#endif /* 0 */
 
 #if !defined (__STDC__) || !__STDC__
 /* This is a separate conditional since some stdc systems

@@ -725,7 +725,7 @@ xio_wait_for_input (void)
 }
 
 static int
-xio_read_kbd (VOLATILE char *buffer, int size)
+xio_read_kbd (char *buffer, int size)
 {
   int amt_read = size < chars_buffered ? size : chars_buffered;
   if (amt_read)

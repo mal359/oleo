@@ -155,6 +155,9 @@
 /* Define to 1 if GNU regex should be used instead of GNU rx.  */
 #undef WITH_REGEX
 
+/* Define to 1 if GTK is present. */
+#undef HAVE_LIBGTK
+
 #if HAVE_LOCALE_H
 # include <locale.h>
 #endif

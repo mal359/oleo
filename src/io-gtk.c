@@ -609,7 +609,7 @@ gio_nodelay(int delayp)
 }
 
 int
-gio_read_kbd(VOLATILE char *buffer, int size)
+gio_read_kbd(char *buffer, int size)
 {
 #ifdef DEBUG
 	fprintf(stderr, "io-gtk.c: STUB gio_read_kbd\n");

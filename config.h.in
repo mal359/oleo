@@ -101,6 +101,9 @@
 /* Define to the version of the distribution.  */
 #undef VERSION
 
+/* Define to 1 if GTK is present. */
+#undef HAVE_LIBGTK
+
 #if ENABLE_NLS
 # include <libintl.h>
 # define _(Text) gettext (Text)

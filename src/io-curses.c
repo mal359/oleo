@@ -575,7 +575,7 @@ _io_wait_for_input (void)
 }
 
 static int 
-_io_read_kbd (VOLATILE char *buf, int size)
+_io_read_kbd (char *buf, int size)
 {
   int r = read (0, buf, size);
   FD_CLR (0, &read_pending_fd_set);

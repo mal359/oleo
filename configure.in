@@ -76,7 +76,7 @@ AC_ARG_WITH(gtk,
 [		with_gtk=yes])
 
 if test $with_gtk = yes; then
-	AM_PATH_GTK
+	AM_PATH_GTK(1.0.0, AC_DEFINE(HAVE_LIBGTK))
 fi
 
 dnl Checks for header files.
@@ -104,6 +104,8 @@ AM_FUNC_OBSTACK
 dnl See if we're GNU Gettext friendly
 AM_GNU_GETTEXT
 
+AC_LINK_FILES($nls_cv_header_libgt, $nls_cv_header_intl)
+
 AC_SUBST(LIBOBJS)
 
-AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile po/Makefile.in], [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])
+AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile m4/Makefile po/Makefile.in], [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])

@@ -47,7 +47,7 @@ EXTERN void (*io_close_display) (void);
 EXTERN int (*io_input_avail) (void);/* How many chars can be read? */
 EXTERN void (*io_scan_for_input) (int ok_to_block);
 EXTERN void (*io_wait_for_input) (void);
-EXTERN int (*io_read_kbd) (VOLATILE char *buf, int size);
+EXTERN int (*io_read_kbd) (char *buf, int size);
 
 /* A curses compatible interface.  These have no effect on low level
    calls except to consume characters which io_read_kbd might

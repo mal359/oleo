@@ -1,3 +1,14 @@
+Thu Apr 16 17:41:00 1997 Jeff Bailey   (jbailey@gnu.org)
+
+	* configure.in: Link for libintl.h if necessary.
+	Fix GTK.
+	* src/Makefile.am:  Make sure INCLUDES uses -I../intl -I../lib
+	* src/io-curses.c: Remove volatile from function that doesn't
+	need it.
+	* src/io-abstract.h: ""
+	* src/io-x11.c: ""
+	* src/io-gtk.c: ""
+
 Tue Apr 7 18:47:00 1997  Jeff Bailey   (jbailey@gnu.org)
 
 	* configure.in: Use gtk.m4 macro to detect Gtk.

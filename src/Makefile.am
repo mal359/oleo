@@ -5,8 +5,8 @@ bin_PROGRAMS = oleo
 oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
  decompile.c sort.c regions.c utils.c lists.c\
  io-term.c io-utils.c io-x11.c window.c io-edit.c\
- hash.c panic.c line.c key.c format.c funcs.c \
- ir.c io-curses.c font.c display.c print.c init.c \
+ panic.c line.c key.c format.c funcs.c \
+ hash.c ir.c io-curses.c font.c display.c print.c init.c \
  sylk.c oleofile.c sc.c list.c busi.c string.c cells.c \
  cmd.c basic.c args.c io-gtk.c \
  stub.c input.c info.c help.c graph.c forminfo.c \
@@ -20,4 +20,8 @@ noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  panic.h parse.h print.h proto.h ref.h regions.h sc.h stub.h stubs.h sylk.h \
  sysdef.h utils.h window.h list.h ir.h io-gtk.h sort.h
 
-oleo_LDADD = @INTLLIBS@ ../lib/liboleo.a
+oleo_LDADD = @INTLLIBS@ @GTK_LIBS@ ../lib/liboleo.a
+
+INCLUDES = -I.. -I$(srcdir) -I$(srcdir) -I$(top_srcdir)/lib -I../intl
+
+CFLAGS = @CFLAGS@ @GTK_CFLAGS@
