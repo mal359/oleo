@@ -1,3 +1,30 @@
+Fri Sep 19 18:48:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
+
+	* Add curses support.
+	* io-x11.c: Fix so that compiling with X11R6 libraries is possible
+	* src/Makefile.am: Forcibly add -lX11 to linker.
+
+	I'm not deceiving myself into thinking that it works now.
+	However, it is possible to compile it, and it does spawn an X
+	session.
+
+Thu Sep 18 16:36:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
+
+	* Makefile.am: Require automake 1.2, disable dependency tracking
+	* More X fixes.
+	* Add Termcap and Termlib support back in.
+	* utils.c: remove def'n of sys_errlist[] for SCO portability.
+
+Tue Sep 16 18:33:00 1997  Jeff Bailey  (jbailey@nisa.net)
+
+	* Uptime mktime.c from Glibc.
+	* Don't install obstack and mktime by default.  Detect
+	  and add only if necessary
+	* Detect if compiler is ANSI C or not.
+	* Fix Broken X detection.  Must configure with --without-x
+	  for now until completely working.  Will not compile
+	  otherwise!
+
 Sun Sep 14 18:01:00 1997  Jeff Bailey  (jbailey@nisa.net)
 
        * Remove parse.y dependancy on funcdef.h kludge.

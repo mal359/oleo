@@ -72,7 +72,6 @@ extern void *realloc ();
 #endif /* _DEBUG_MALLOC_INC */
 
 extern int sys_nerr;
-extern const char *const sys_errlist[];
 
 struct id
   {

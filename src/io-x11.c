@@ -1,4 +1,4 @@
-#ifdef HAVE_X11_X_H
+#ifndef X_DISPLAY_MISSING
 /*	Copyright (C) 1992, 1993 Free Software Foundation, Inc.
 	
 	This program is free software; you can redistribute it and/or modify
@@ -210,7 +210,7 @@ get_x11_args (argc_p, argv)
   RetKeySym = XStringToKeysym("Return");
 
   /* Load the resource databases in a manner not unlike emacs :). */
-  rdb = x_load_resources (theDisplay, 0, rdb_class_name);
+  /* FIXME rdb = x_load_resources (theDisplay, 0, rdb_class_name); */
   
 #if 0
   /* Merge in the command line database.  */
@@ -221,18 +221,18 @@ get_x11_args (argc_p, argv)
   {
     char * val;
     
-    val = x_get_string_resource (rdb, class_of ("Foreground"),
-				 name_of("foreground"));
+    /* FIXME val = x_get_string_resource (rdb, class_of ("Foreground"), 
+				 name_of("foreground")); */
     if (val)
       default_fg_color_name = val;
     
-    val = x_get_string_resource (rdb, class_of ("Background"),
-				 name_of("background"));
+    /* FIXME val = x_get_string_resource (rdb, class_of ("Background"), 
+				 name_of("background")); */
     if (val)
       default_bg_color_name = val;
     
-    val = x_get_string_resource (rdb, class_of ("Geometry"),
-				 name_of("geometry"));
+    /* FIXME val = x_get_string_resource (rdb, class_of ("Geometry"),
+				 name_of("geometry")); */
     if (val)
       XGeometry (theDisplay, DefaultScreen(theDisplay), val, geom_string,
 		 0, 1, 1, 0, 0, &geom_x, &geom_y, &geom_w, &geom_h);
@@ -1855,11 +1855,11 @@ draw_cell (xwin, cd_passed, cursor)
   
   cgc = cell_gc (port, cd->font, cursor);
   {
-    int isclipped;
+    int isclipped = 0;
     char *str;
     struct xx_sIntRectangle *strbox;
     
-    isclipped = !xx_IRencloses_width (&cd->layout, &cd->goal);
+    /* FIXME isclipped = !xx_IRencloses_width (&cd->layout, &cd->goal); */
     if (!isclipped)
       {
 	str = cd->unclipped;
@@ -1888,7 +1888,7 @@ draw_cell (xwin, cd_passed, cursor)
       struct xx_sIntRectangle tofill[4];
       int fillc;
       
-      fillc = xx_IRsubtract (tofill, &cd->layout, strbox);
+      /* FIXME fillc = xx_IRsubtract (tofill, &cd->layout, strbox); */
       {
 	XGCValues v;
 	v.foreground = cursor ? port->fg_color_pixel : port->bg_color_pixel;
@@ -2668,5 +2668,5 @@ set_x_default_point_size (l)
 }
 
 
-#endif /* HAVE_X11_X_H */
+#endif /* X_DISPLAY_MISSING */
 

@@ -325,7 +325,7 @@ set_default_font (name, scale)
   if (fn != find_font_name (default_oleo_name))
     define_font (default_oleo_name, fn->x_name, fn->ps_name);
   the_default_font = intern_font (default_oleo_name, scale);
-#ifdef HAVE_X11_X_H
+#ifndef X_DISPLAY_MISSING
   if (using_x)
     set_x_default_point_size (cell_font_point_size);
   else

@@ -1139,7 +1139,7 @@ DEFUN ("set-default-x-font",
 "This will be used to display all cells with no explicitly defined font.",
 #endif
 
-#ifdef HAVE_X11_X_H
+#ifndef X_DISPLAY_MISSING
 DEFUN ("set-default-point-size", FDset_x_default_point_size,
        FAset_x_default_point_size, set_x_default_point_size)
 #ifdef FUNC_ARG_STRINGS

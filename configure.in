@@ -9,17 +9,28 @@ AM_CONFIG_HEADER(config.h)
 dnl Checks for programs.
 AC_PROG_YACC
 AC_PROG_CC
-AC_PROG_INSTALL
+AM_PROG_INSTALL
 AC_PROG_LN_S
+
+dnl Checks the Compiler.
+AM_C_PROTOTYPES
 
 dnl Checks for libraries.
 dnl Replace `main' with a function in -lncurses:
-AC_CHECK_LIB(ncurses, main)
+AC_CHECK_LIB(ncurses, main, ,
+	AC_CHECK_LIB(curses, main, ,
+		AC_CHECK_LIB(termlib, tgetent, ,
+			AC_CHECK_LIB(termcap, tgetend))))
 dnl Replace `main' with a function in -lm:
 AC_CHECK_LIB(m, main)
 
+dnl Checks for X11
+AC_PATH_XTRA
+
+dnl Checks for X11 Libraries
+AC_CHECK_LIB(X11, main)
+
 dnl Checks for header files.
-AC_PATH_X
 AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_CHECK_HEADERS(fcntl.h limits.h malloc.h strings.h sys/time.h unistd.h)
@@ -38,5 +49,7 @@ AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(ftime gethostname gettimeofday mktime select strdup strstr)
+AM_FUNC_MKTIME
+AM_FUNC_OBSTACK
 
 AC_OUTPUT([Makefile doc/Makefile src/Makefile])

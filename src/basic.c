@@ -1081,7 +1081,7 @@ do_mouse_goto ()
   else if (last_mouse_event.location == MOUSE_ON_INPUT)
     {
       goto_minibuffer ();
-#ifdef HAVE_X11_X_H
+#ifndef X_DISPLAY_MISSING
       if (using_x)
 	goto_char (io_col_to_input_pos (last_mouse_event.col));
 #endif

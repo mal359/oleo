@@ -59,11 +59,20 @@
 /* Define if your <sys/time.h> declares struct tm.  */
 #undef TM_IN_SYS_TIME
 
+/* Define if the X Window System is missing or not being used.  */
+#undef X_DISPLAY_MISSING
+
+/* Define to 1 if you have the obstack functions from GNU libc.  */
+#undef HAVE_OBSTACK
+
 /* Define to the name of the distribution.  */
 #undef PACKAGE
 
 /* The concatenation of the strings "GNU ", and PACKAGE.  */
 #undef GNU_PACKAGE
+
+/* Define to 1 if ANSI function prototypes are usable.  */
+#undef PROTOTYPES
 
 /* Define to the version of the distribution.  */
 #undef VERSION
@@ -104,6 +113,9 @@
 /* Define if you have the <ndir.h> header file.  */
 #undef HAVE_NDIR_H
 
+/* Define if you have the <string.h> header file.  */
+#undef HAVE_STRING_H
+
 /* Define if you have the <strings.h> header file.  */
 #undef HAVE_STRINGS_H
 
@@ -118,6 +130,9 @@
 
 /* Define if you have the <unistd.h> header file.  */
 #undef HAVE_UNISTD_H
+
+/* Define if you have the X11 library (-lX11).  */
+#undef HAVE_LIBX11
 
 /* Define if you have the m library (-lm).  */
 #undef HAVE_LIBM

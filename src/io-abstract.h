@@ -75,7 +75,7 @@ EXTERN void (*io_erase) (int len);
 EXTERN void (*io_insert) (int len);
 EXTERN void (*io_over) (char *, int len);
 
-#ifdef HAVE_X11_X_H
+#ifndef X_DISPLAY_MISSING
 #ifdef __STDC__
 extern int io_col_to_input_pos (int col);
 #else

@@ -1,4 +1,4 @@
-#ifdef HAVE_X11_X_H
+#ifndef X_DISPLAY_MISSING
 /* Deal with the X Resource Manager.
    Copyright (C) 1990, 1992, 1993 Free Software Foundation.
 
@@ -534,5 +534,5 @@ main (argc, argv)
   XCloseDisplay (display);
 }
 #endif /* TESTRM */
-#endif /* HAVE_X11_X_H */
+#endif /* X_DISPLAY_MISSING */
 

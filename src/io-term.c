@@ -1104,7 +1104,7 @@ main (argc, argv)
   FD_ZERO (&exception_fd_set);
   FD_ZERO (&exception_pending_fd_set);
 
-#ifdef HAVE_X11_X_H
+#ifndef X_DISPLAY_MISSING
   if (!no_x)
     get_x11_args (&argc, argv);
   if (!no_x && io_x11_display_name)
