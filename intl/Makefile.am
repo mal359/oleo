@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/intl/Attic/Makefile.am,v 1.2 1999/02/10 22:23:10 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/intl/Attic/Makefile.am,v 1.3 2000/02/22 23:44:18 danny Exp $
 #
 noinst_LIBRARIES = libintl.a
 

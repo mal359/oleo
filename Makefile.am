@@ -3,7 +3,7 @@
 #
 # Process this file with automake to produce Makefile.in
 #
-# $Header: /home/matt/cvs/oleo/oleo/Makefile.am,v 1.32 1999/10/23 13:40:04 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/Makefile.am,v 1.33 2000/02/22 23:44:18 danny Exp $
 #
 AUTOMAKE_OPTIONS = gnu 1.4 readme-alpha
 ACLOCAL_AMFLAGS = -I m4

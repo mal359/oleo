@@ -4,7 +4,7 @@
 # interface, which is not easily done with the GNU Gettext facilities in
 # the po/ directory.
 #
-# $Header: /home/matt/cvs/oleo/oleo/Xresources/Makefile.am,v 1.1 1998/09/02 22:40:48 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/Xresources/Makefile.am,v 1.2 2000/02/22 23:44:18 danny Exp $
 #
 
 xdefaultsdir =	$(prefix)/share/oleo

@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/afm/Makefile.am,v 1.3 1999/10/24 12:19:33 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/afm/Makefile.am,v 1.4 2000/02/22 23:44:18 danny Exp $
 #
 # Process this file with automake to produce Makefile.in
 #
