@@ -56,7 +56,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 #ifdef HAVE_LIBGTK
 #include "gtk/gtk.h"
-#include "gdk/gdkprivate.h"
 #endif 
 
 #ifdef USE_DLD
@@ -1012,6 +1011,10 @@ main (argc, argv)
 
 #ifdef HAVE_LIBGTK
   GtkWidget *window;
+  GtkWidget *menu;
+  GtkWidget *menu_bar;
+  GtkWidget *root_menu;
+  GtkWidget *menu_items;
 #endif
 
   __make_backups = 1;
@@ -1019,17 +1022,8 @@ main (argc, argv)
 #ifdef HAVE_LIBGTK
   /* Define basic GTK Window */
 
-  gdk_progclass = g_strdup("XTerm");
   gtk_init(&argc, &argv);
 
-  window = gtk_widget_new (gtk_window_get_type (),
-                           "GtkObject::user_data", NULL,
-                           "GtkWindow::type", GTK_WINDOW_TOPLEVEL,
-                           "GtkWindow::title", GNU_PACKAGE,
-                           "GtkWindow::allow_grow", TRUE,
-                           "GtkWindow::allow_shrink", TRUE,
-                           "GtkContainer::border_width", 10,
-                           NULL);
 #endif
 
 
@@ -1131,8 +1125,40 @@ main (argc, argv)
   FD_ZERO (&exception_pending_fd_set);
 
 #ifdef HAVE_LIBGTK
+	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW (window), GNU_PACKAGE);
+
+	menu_bar = gtk_menu_bar_new();
+
+	menu = gtk_menu_new();
+	root_menu = gtk_menu_item_new_with_label("File");
+	gtk_widget_show (root_menu);
+	menu_items = gtk_menu_item_new_with_label("Open");
+	gtk_menu_append(GTK_MENU (menu), menu_items);
+	gtk_widget_show(menu_items);
+	menu_items = gtk_menu_item_new_with_label("Exit");
+	gtk_menu_append(GTK_MENU (menu), menu_items);
+	gtk_widget_show(menu_items);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM (root_menu), menu);
+	gtk_container_add(GTK_CONTAINER(window), menu_bar);
+	gtk_menu_bar_append(GTK_MENU_BAR (menu_bar), root_menu);	
+
+	menu = gtk_menu_new();
+	root_menu = gtk_menu_item_new_with_label("Edit");
+	gtk_widget_show (root_menu);
+	menu_items = gtk_menu_item_new_with_label("Copy");
+	gtk_menu_append(GTK_MENU (menu), menu_items);
+	gtk_widget_show(menu_items);
+	menu_items = gtk_menu_item_new_with_label("Paste");
+	gtk_menu_append(GTK_MENU (menu), menu_items);
+	gtk_widget_show(menu_items);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM (root_menu), menu);
+	gtk_container_add(GTK_CONTAINER(window), menu_bar);
+	gtk_menu_bar_append(GTK_MENU_BAR (menu_bar), root_menu);
+
+	gtk_widget_show(menu_bar);
 	gtk_widget_show (window);
-	
+
 	gtk_main ();
 
 	exit (0);
