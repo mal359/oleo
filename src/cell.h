@@ -122,11 +122,12 @@ typedef struct cell CELL;
 /*
  * Actually get/set both Format *and* precision
  */
+#define	FMT_MASK	0xF0
+#define	PREC_MASK	0x0F
+#define	FMT_SHIFT	4
+
 #define GET_FORMAT(p)	((p)->cell_flags.cell_format)
 #define SET_FORMAT(p,x)	((p)->cell_flags.cell_format = (x))
-
-// #define GET_FMT(p)	((p)->cell_flags.cell_format & 0x007F)
-// #define SET_FMT(p,x)	((p)->cell_flags &= ~0x007F,(p)->cell_flags|=(x))
 
 #define GET_PRECISION(p)	((p)->cell_flags.cell_precision)
 #define SET_PRECISION(p,x)	((p)->cell_flags.cell_precision = (x))

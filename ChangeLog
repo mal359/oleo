@@ -1,4 +1,19 @@
 
+Wed 10 Mar 23:47:05 1999, Danny Backx
+	* Oleo 1.6.16
+	* Add an RPM spec file sent by Marc Zonzon.
+	* Got more comments from Art Haas showing what else is wrong.
+	  Basically Art's patch made the set-region-format command work
+	  but it broke everything else that set a format. Including the
+	  file read stuff.
+	  I found a couple of places to fix, now both work. There is still
+	  a bit of a mess (mixing format and precision) between the
+	  functions str_to_fmt() and set_region_format(), simply because
+	  I don't know how to pass more than one variable over the command
+	  loop which is also a giant mess.
+	* Add examples/types.oleo which contains a couple of fields in
+	  comma, percent, dollar, date, graph, ... formats.
+
 Tue  9 Mar 22:24:38 1999, Danny Backx
 	* Oleo 1.6.15
 	* Use XmNgridType as suggested by Andrew Lister (Xbae's maintainer).

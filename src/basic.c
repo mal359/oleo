@@ -1538,10 +1538,29 @@ set_region_alignment (struct rng * rng, int align)
     io_error_msg ("Unknown Justify '%s'", char_to_string (align));
 }
 
+/*
+ * Lacking more knowledge of Oleo internals, we're hacking this thing to
+ *	clean up the mess concerning the mixup of format and precision.
+ *
+ * The function set_region_format is a pass-through between the command
+ *	loop and format_region(). As I don't know how to pass more than
+ *	one parameter from str_to_fmt over the command loop into
+ *	set_region_format, I'm leaving the mixup mentioned above as it
+ *	is in that area. But *only* for passing the information to here.
+ * Here the first thing we do is take the two values apart and call the
+ *	clean API's with the right values.
+ *
+ * Sigh.
+ * FIX ME
+ */
 void
 set_region_format (struct rng * rng, int fmt)
 {
-  format_region (rng, fmt, -1); 
+  int format = (fmt & FMT_MASK) >> FMT_SHIFT;
+  int precision = fmt & PREC_MASK;
+
+  format_region (rng, format, -1); 
+  precision_region(rng, precision, -1);
 }
 
 

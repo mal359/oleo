@@ -142,6 +142,16 @@ static struct fmt withprec[] =
 	{0, 0}
 };
 
+/*
+ * This function still has the messy mixup between format and precision
+ * that I'm trying to get rid of.
+ *
+ * I'm leaving it here because I don't know how to pass two variables over
+ * the command loop. Look at set_region_format for the other piece of
+ * this mess.
+ *
+ * FIX ME.
+ */
 int
 str_to_fmt (char *ptr)
 {
@@ -160,7 +170,11 @@ str_to_fmt (char *ptr)
 	  for (p1 = ptr, p2 = *strs; *p1 == *p2 && *p1; p1++, p2++)
 	    ;
 	  if (*p1 == '\0' && *p2 == '\0')
+#if 0
 	    return f->fmt;		/* AHAAS had a different version here */
+#else
+	    return ((f->fmt) << FMT_SHIFT);
+#endif
 	}
     }
   if (!strncmp (ptr, "user-", 5))
@@ -169,7 +183,11 @@ str_to_fmt (char *ptr)
       n = astol (&ptr);
       if (*ptr || n < 1 || n > 16)
 	return -1;
+#if 0
       return n - 1 - FLOAT_PRECISION + FMT_USR;		/* AHAAS had a different version here */
+#else
+      return (FMT_USR << FMT_SHIFT) + n;
+#endif
     }
   for (f = withprec, ret = 0; !ret && f->strs; f++)
     {
@@ -200,7 +218,11 @@ str_to_fmt (char *ptr)
       if (*ptr || n < 0 || n > 14)
 	return -1;
     }
+#if 0
   return ret + n;		/* AHAAS had a different version here */
+#else
+  return (ret << FMT_SHIFT) + n;
+#endif
 }
 
 char *
