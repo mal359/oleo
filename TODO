@@ -1,0 +1,21 @@
+Short-term TODO's:
+
+* Update AUTHORS list to show everyone in ChangeLog. (June 1/97 - JB)
+
+* Increase "X" friendliness. (June 1/97 - JB)
+
+* Add Mouse support. (June 1/97 - JB)
+
+* Write Documentation.  (June 1/97 - JB)
+
+* Create proper bug tracking facilities.  GNATS?  (June 1/97 - JB)
+
+Longer-term TODO's:
+
+* Import/Export Filters. (June 1/97 - JB)
+
+* Tighter link with GNU Plot. (June 1/97 - JB)
+
+* Scripting Language.  GUILE? (June 1/97 - JB)
+
+* Look into GNU/WIN32 Portability. (June 1/97 - JB)
