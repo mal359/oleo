@@ -58,17 +58,10 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #endif
 
 #ifndef _DEBUG_MALLOC_INC
-#ifdef __STDC__
 extern void abort (void);
 extern void *malloc (size_t);
 extern void *calloc (size_t, size_t);
 extern void *realloc (void *, size_t);
-#else
-extern void abort ();
-extern void *malloc ();
-extern void *calloc ();
-extern void *realloc ();
-#endif
 #endif /* _DEBUG_MALLOC_INC */
 
 extern int sys_nerr;
@@ -113,14 +106,8 @@ panic (s, va_alist)
 }
 
 /* Given a file name, come up with a backup file name. . . */
-#ifdef __STDC__
 char *
 backup_file_name (char *file_name)
-#else
-char *
-backup_file_name (file_name)
-     char *file_name;
-#endif
 {
   char *dir_name, *dir_end;
 
@@ -409,26 +396,14 @@ ck_malloc (size)
 }
 
 
-#ifdef __STDC__
 void
 ck_free (void * mem)
-#else
-void
-ck_free (mem)
-     void * mem;
-#endif
 {
   if (mem) free (mem);
 }
 
-#ifdef __STDC__
 char *
 ck_savestr (char *str)
-#else
-char *
-ck_savestr (str)
-     char *str;
-#endif
 {
   char *newstr = 0;
   if (str)
@@ -441,15 +416,8 @@ ck_savestr (str)
 }
 
 
-#ifdef __STDC__
 char *
 ck_savestrn (char *str, int n)
-#else
-char *
-ck_savestrn (str, n)
-     char *str;
-     int n;
-#endif
 {
   char *newstr = 0;
   if (str)
@@ -462,14 +430,8 @@ ck_savestrn (str, n)
   return newstr;
 }
 
-#ifdef __STDC__
 void *
 ck_calloc (size_t size)
-#else
-void *
-ck_calloc (size)
-     size_t size;
-#endif
 {
   void *ret;
 
@@ -480,15 +442,8 @@ ck_calloc (size)
 }
 
 /* Realloc or panic */
-#ifdef __STDC__
 void *
 ck_realloc (void *ptr, size_t size)
-#else
-void *
-ck_realloc (ptr, size)
-     void *ptr;
-     size_t size;
-#endif
 {
   void *ret;
 
@@ -639,15 +594,8 @@ strdup (str)
  * stricmp - compare string s1 to s2, ignoring case
  */
 
-#ifdef __STDC__
 int
 stricmp (const char * s1, const char * s2)
-#else
-int
-stricmp (s1, s2)
-     const char *s1;
-     const char *s2;
-#endif
 {
   register const char *scan1;
   register const char *scan2;
@@ -684,16 +632,8 @@ stricmp (s1, s2)
 #ifndef _DEBUG_MALLOC_INC
 #ifndef HAVE_STRINCMP
 /* strincmp - compare first N chars of strings S1 and S2 */
-#ifdef __STDC__
 int
 strincmp (const char * s1, const char * s2, size_t n)
-#else
-int
-strincmp (s1, s2, n)
-     const char *s1;
-     const char *s2;
-     size_t n;
-#endif
 {
   register const char *scan1;
   register const char *scan2;
@@ -734,15 +674,8 @@ strincmp (s1, s2, n)
 
 #ifndef _DEBUG_MALLOC_INC
 #ifndef HAVE_STRSTR
-#ifdef __STDC__
 char *
 strstr (const char *s, const char *wanted)
-#else
-char *
-strstr (s, wanted)
-     const char *s;
-     const char *wanted;
-#endif
 {
   register const char *scan;
   register size_t len;
@@ -763,13 +696,8 @@ strstr (s, wanted)
 #endif
 #endif /* ndef _DEBUG_MALLOC_INC */
 
-#ifdef __STDC__
 char *
 err_msg (void)
-#else
-char *
-err_msg ()
-#endif
 {
   int n;
   static char buf[80];
@@ -784,14 +712,8 @@ err_msg ()
 
 
 /* Take a quoted string and return the character it represents */
-#ifdef __STDC__
 int
 string_to_char (char ** ptr)
-#else
-int
-string_to_char (ptr)
-     char **ptr;
-#endif
 {
   char *str;
   int i;
@@ -920,14 +842,8 @@ string_to_char (ptr)
 }
 
 /* Take a char and turn it into a readable string */
-#ifdef __STDC__
 char *
 char_to_string (int ch)
-#else
-char *
-char_to_string (ch)
-     int ch;
-#endif
 {
   static char buf[] = "M-\0\0\0\0";
 
@@ -986,14 +902,8 @@ char_to_string (ch)
 }
 
 
-#ifdef __STDC__
 long
 astol (char **ptr)
-#else
-long
-astol (ptr)
-     char **ptr;
-#endif
 {
   register long i = 0;
   register int c;
@@ -1063,14 +973,8 @@ static double exps1[10] =
 
 #define REGISTER register
 
-#ifdef __STDC__
 double
 astof (char **sp)
-#else
-double
-astof (sp)
-     char **sp;
-#endif
 {
   REGISTER char *s;
   REGISTER char *cp;

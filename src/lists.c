@@ -89,14 +89,8 @@ struct find
 
 struct find *finds = 0;
 
-#ifdef __STDC__
 static inline void
 flush (struct list *ptr)
-#else
-static inline void
-flush (ptr)
-     struct list *ptr;
-#endif
 {
   struct list *nxt;
 
@@ -108,16 +102,8 @@ flush (ptr)
     }
 }
 
-#ifdef __STDC__
 static inline void
 resync (struct list *tofree, struct list *new, int ele)
-#else
-static inline void
-resync (tofree, new, ele)
-     struct list *tofree;
-     struct list *new;
-     int ele;
-#endif
 {
   struct find *findp;
 
@@ -143,16 +129,8 @@ resync (tofree, new, ele)
   free (tofree);
 }
 
-#ifdef __STDC__
 static inline void *
 find (CELLREF pos, struct list *ptr, int ele)
-#else
-static inline void *
-find (pos, ptr, ele)
-     CELLREF pos;
-     struct list *ptr;
-     int ele;
-#endif
 {
   for (; ptr; ptr = ptr->next)
     {
@@ -164,17 +142,8 @@ find (pos, ptr, ele)
   return 0;
 }
 
-#ifdef __STDC__
 static inline void *
 make (CELLREF pos, struct list **prevp, int ele, int buf)
-#else
-static inline void *
-make (pos, prevp, ele, buf)
-     CELLREF pos;
-     struct list **prevp;
-     int ele;
-     int buf;
-#endif
 {
   CELLREF lo, hi;
   size_t size;
@@ -270,17 +239,8 @@ make (pos, prevp, ele, buf)
   return ptr->mem + (pos - ptr->lo) * ele;
 }
 
-#ifdef __STDC__
 static inline void *
 find_rng (struct list **start, CELLREF lo, CELLREF hi, int ele)
-#else
-static inline void *
-find_rng (start, lo, hi, ele)
-     struct list **start;
-     CELLREF lo;
-     CELLREF hi;
-     int ele;
-#endif
 {
   struct list *ptr;
   struct find *f;
@@ -308,18 +268,8 @@ find_rng (start, lo, hi, ele)
   return f;
 }
 
-#ifdef __STDC__
 static inline void *
 make_rng (struct list **start, CELLREF lo, CELLREF hi, int ele, int buf)
-#else
-static inline void *
-make_rng (start, lo, hi, ele, buf)
-     struct list **start;
-     CELLREF lo;
-     CELLREF hi;
-     int ele;
-     int buf;
-#endif
 {
   struct list **prevp;
   struct list *ptr;
@@ -425,15 +375,8 @@ make_rng (start, lo, hi, ele, buf)
   return f;
 }
 
-#ifdef __STDC__
 static inline void *
 next_rng (struct find *f, CELLREF *posp)
-#else
-static inline void *
-next_rng (f, posp)
-     struct find *f;
-     CELLREF *posp;
-#endif
 {
   void *ret;
   struct find *next;
@@ -496,13 +439,8 @@ init_cells ()
   hgts = 0;
 }
 
-#ifdef __STDC__
 void 
 flush_everything (void)
-#else
-void 
-flush_everything ()
-#endif
 {
   struct list *ptr, *nxt;
   int n;
@@ -523,15 +461,8 @@ flush_everything ()
   flush_fonts ();
 }
 
-#if __STDC__
 struct cell *
 find_cell (CELLREF row, CELLREF col)
-#else
-struct cell *
-find_cell (row, col)
-     CELLREF row;
-     CELLREF col;
-#endif
 {
   void **v;
 
@@ -539,15 +470,8 @@ find_cell (row, col)
   return v ? find (row, *v, sizeof (struct cell)) : 0;
 }
 
-#if __STDC__
 struct cell *
 find_or_make_cell (CELLREF row, CELLREF col)
-#else
-struct cell *
-find_or_make_cell (row, col)
-     CELLREF row;
-     CELLREF col;
-#endif
 {
   struct list **v;
 
@@ -555,14 +479,8 @@ find_or_make_cell (row, col)
   return make (row, v, sizeof (struct cell), ROW_BUF);
 }
 
-#ifdef __STDC__
 void
 find_cells_in_range (struct rng *r)
-#else
-void
-find_cells_in_range (r)
-     struct rng *r;
-#endif
 {
   struct cf *new;
   struct list **firstcol;
@@ -579,14 +497,8 @@ find_cells_in_range (r)
     new->cols = 0;
 }
 
-#ifdef __STDC__
 void
 make_cells_in_range (struct rng *r)
-#else
-void
-make_cells_in_range (r)
-     struct rng *r;
-#endif
 {
   struct cf *new;
   struct list **firstcol;
@@ -600,13 +512,8 @@ make_cells_in_range (r)
   new->cols = make_rng (firstcol, r->lr, r->hr, sizeof (struct cell), COL_BUF);
 }
 
-#ifdef __STDC__
 struct cell *
 next_cell_in_range (void)
-#else
-struct cell *
-next_cell_in_range ()
-#endif
 {
   struct cell *ret;
   void *new_row;
@@ -630,15 +537,8 @@ next_cell_in_range ()
     }
 }
 
-#ifdef __STDC__
 struct cell *
 next_row_col_in_range (CELLREF *rowp, CELLREF *colp)
-#else
-struct cell *
-next_row_col_in_range (rowp, colp)
-     CELLREF *rowp;
-     CELLREF *colp;
-#endif
 {
   struct cell *ret;
   struct list **new_row;
@@ -665,13 +565,8 @@ next_row_col_in_range (rowp, colp)
     }
 }
 
-#ifdef __STDC__
 void
 no_more_cells (void)
-#else
-void
-no_more_cells ()
-#endif
 {
   struct cf *old;
 
@@ -687,14 +582,8 @@ no_more_cells ()
   fp = old;
 }
 
-#ifdef __STDC__
 CELLREF
 max_row (CELLREF col)
-#else
-CELLREF
-max_row (col)
-     CELLREF col;
-#endif
 {
   struct list **ptr;
 
@@ -706,14 +595,8 @@ max_row (col)
   return (*ptr)->hi;
 }
 
-#ifdef __STDC__
 CELLREF
 max_col (CELLREF row)
-#else
-CELLREF
-max_col (row)
-     CELLREF row;
-#endif
 {
   struct list *ptr;
 
@@ -724,13 +607,8 @@ max_col (row)
   return ptr->hi;
 }
 
-#ifdef __STDC__
 CELLREF 
 highest_row (void)
-#else
-CELLREF 
-highest_row ()
-#endif
 {
   void *f;
   struct list **ptr;
@@ -751,13 +629,8 @@ highest_row ()
 }
 
 
-#ifdef __STDC__
 CELLREF 
 highest_col (void)
-#else
-CELLREF 
-highest_col ()
-#endif
 {
   struct list *ptr;
 
@@ -771,14 +644,8 @@ highest_col ()
 
 /* Routines for dealing with the widths of columns. . . */
 
-#ifdef __STDC__
 int 
 get_width (CELLREF col)
-#else
-int 
-get_width (col)
-     CELLREF col;
-#endif
 {
   int *ptr;
 
@@ -789,14 +656,8 @@ get_width (col)
 }
 
 
-#ifdef __STDC__
 int 
 get_nodef_width (CELLREF col)
-#else
-int 
-get_nodef_width (col)
-     CELLREF col;
-#endif
 {
   int *ptr;
 
@@ -804,15 +665,8 @@ get_nodef_width (col)
   return ptr ? *ptr : 0;
 }
 
-#ifdef __STDC__
 void 
 set_width (CELLREF col, int wid)
-#else
-void 
-set_width (col, wid)
-     CELLREF col;
-     int wid;
-#endif
 {
   int *ptr;
 
@@ -820,27 +674,14 @@ set_width (col, wid)
   *ptr = wid;
 }
 
-#ifdef __STDC__
 void 
 find_widths (CELLREF lo, CELLREF hi)
-#else
-void 
-find_widths (lo, hi)
-     CELLREF lo;
-     CELLREF hi;
-#endif
 {
   w_find = find_rng (&wids, lo, hi, sizeof (int));
 }
 
-#ifdef __STDC__
 int 
 next_width (CELLREF *posp)
-#else
-int 
-next_width (posp)
-     CELLREF *posp;
-#endif
 {
   int *ptr;
 
@@ -850,18 +691,8 @@ next_width (posp)
   return ptr ? *ptr : 0;
 }
 
-#ifdef __STDC__
 static void
 do_shift (int over, CELLREF lo, CELLREF hi, struct list **start, int buf)
-#else
-static void
-do_shift (over, lo, hi, start, buf)
-     int over;
-     CELLREF lo;
-     CELLREF hi;
-     struct list **start;
-     int buf;
-#endif
 {
   CELLREF pos;
   int w;
@@ -917,16 +748,8 @@ do_shift (over, lo, hi, start, buf)
     }
 }
 
-#ifdef __STDC__
 void 
 shift_widths (int over, CELLREF lo, CELLREF hi)
-#else
-void 
-shift_widths (over, lo, hi)
-     int over;
-     CELLREF lo;
-     CELLREF hi;
-#endif
 {
   do_shift (over, lo, hi, &wids, COL_BUF);
 }
@@ -939,14 +762,8 @@ int display_formula_mode = 0;
 
 /* Routines for dealing with the height of rows 
  */
-#ifdef __STDC__
 int 
 get_height (CELLREF row)
-#else
-int 
-get_height (row)
-     CELLREF row;
-#endif
 {
   int *ptr;
 
@@ -956,14 +773,8 @@ get_height (row)
   return *ptr - 1 + (display_formula_mode && using_curses);
 }
 
-#ifdef __STDC__
 int 
 get_nodef_height (CELLREF row)
-#else
-int 
-get_nodef_height (row)
-     CELLREF row;
-#endif
 {
   int *ptr;
 
@@ -971,15 +782,8 @@ get_nodef_height (row)
   return ptr ? *ptr : 0;
 }
 
-#ifdef __STDC__
 void 
 set_height (CELLREF row, int hgt)
-#else
-void 
-set_height (row, hgt)
-     CELLREF row;
-     int hgt;
-#endif
 {
   int *ptr;
 
@@ -993,43 +797,24 @@ float width_scale = 1.;
 float user_height_scale = 1.;
 float user_width_scale = 1.;
 
-#ifdef __STDC__
 void
 set_user_scales (double hs, double ws)
-#else
-void
-set_user_scales (hs, ws)
-     double hs;
-     double ws;
-#endif
 {
   user_height_scale = hs;
   user_width_scale = ws;
   io_repaint ();
 }
 
-#ifdef __STDC__
 int
 get_scaled_height (CELLREF r)
-#else
-int
-get_scaled_height (r)
-     CELLREF r;
-#endif
 {
   return ((user_height_scale <= 0.)
 	  ? 1
 	  :  (int) (get_height (r) * height_scale * user_height_scale));
 }
 
-#ifdef __STDC__
 int
 get_scaled_width (CELLREF c)
-#else
-int
-get_scaled_width (c)
-     CELLREF c;
-#endif
 {
   return ((user_width_scale <= 0.)
 	  ? 1
@@ -1037,27 +822,14 @@ get_scaled_width (c)
 }
 
 
-#ifdef __STDC__
 void 
 find_heights (CELLREF lo, CELLREF hi)
-#else
-void 
-find_heights (lo, hi)
-     CELLREF lo;
-     CELLREF hi;
-#endif
 {
   h_find = find_rng (&hgts, lo, hi, sizeof (int));
 }
 
-#ifdef __STDC__
 int 
 next_height (CELLREF *posp)
-#else
-int 
-next_height (posp)
-     CELLREF *posp;
-#endif
 {
   int *ptr;
 
@@ -1067,16 +839,8 @@ next_height (posp)
   return ptr ? *ptr : 0;
 }
 
-#ifdef __STDC__
 void 
 shift_heights (int dn, CELLREF lo, CELLREF hi)
-#else
-void 
-shift_heights (dn, lo, hi)
-     int dn;
-     CELLREF lo;
-     CELLREF hi;
-#endif
 {
   do_shift (dn, lo, hi, &hgts, ROW_BUF);
 }

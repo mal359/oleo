@@ -40,15 +40,10 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 static struct line graph_term_cmd;
 static struct line graph_output_file;
 
-#ifdef __STDC__
 typedef void (*plotter) (void);
-#else
-typedef void (*plotter) ();
-#endif
 
 struct get_symbols_frame;
 struct write_data_frame;
-#ifdef __STDC__
 static void get_symbols_thunk (struct get_symbols_frame * fr,
 			       CELL * cell, CELLREF r, CELLREF c);
 static void write_data_thunk (struct write_data_frame * fr,
@@ -57,13 +52,6 @@ static void spew_gnuplot (FILE  * fp, struct line * data_files, char * dir,
 			  char * dbase); 
 static void spew_for_x (void);
 static void spew_for_ps (void);
-#else
-static void get_symbols_thunk ();
-static void write_data_thunk ();
-static void spew_gnuplot ();
-static void spew_for_x ();
-static void spew_for_ps ();
-#endif
 
 static plotter plot_fn = 0;
 
@@ -131,14 +119,8 @@ static enum graph_pair_ordering graph_data_order [graph_num_axis];
 
 
 
-#ifdef __STDC__
 enum graph_axis
 chr_to_axis (int c)
-#else
-enum graph_axis
-chr_to_axis (c)
-     int c;
-#endif
 {
   if (isupper (c))
     c = tolower (c);
@@ -154,14 +136,8 @@ chr_to_axis (c)
 }
 
 
-#ifdef __STDC__
 enum graph_ordering
 chr_to_graph_ordering (int c)
-#else
-enum graph_ordering
-chr_to_graph_ordering (c)
-     int c;
-#endif
 {
   if (isupper (c))
     c = tolower (c);
@@ -176,15 +152,8 @@ chr_to_graph_ordering (c)
   return graph_rows;		/* not reached */
 }
 
-#ifdef __STDC__
 enum graph_pair_ordering
 chrs_to_graph_pair_ordering (int pair, int dir)
-#else
-enum graph_pair_ordering
-chrs_to_graph_pair_ordering (pair, dir)
-     int pair;
-     int dir;
-#endif
 {
   int pair_offset;
   if (isupper (pair))
@@ -213,14 +182,8 @@ chrs_to_graph_pair_ordering (pair, dir)
   return PAIR_ORDER(chr_to_graph_ordering (dir), pair_offset);
 }
 
-#ifdef __STDC__
 char *
 graph_quoted_str (char *str)
-#else
-char *
-graph_quoted_str (str)
-     char *str;
-#endif
 {
   static struct line buf;
   
@@ -244,13 +207,8 @@ graph_quoted_str (str)
 
 
 
-#ifdef __STDC__
 void
 graph_x11_mono (void)
-#else
-void
-graph_x11_mono ()
-#endif
 {
   set_line (&graph_term_cmd, "x11 # b/w");
   set_line (&graph_output_file, "");
@@ -258,13 +216,8 @@ graph_x11_mono ()
 }
 
 
-#ifdef __STDC__
 void
 graph_x11_color (void)
-#else
-void
-graph_x11_color ()
-#endif
 {
   set_line (&graph_term_cmd, "X11 # color");
   set_line (&graph_output_file, "");
@@ -272,18 +225,8 @@ graph_x11_color ()
 }
 
 
-#ifdef __STDC__
 void
 graph_postscript (char * file, int kind, int spectrum, char * font, int pt_size)
-#else
-void
-graph_postscript (file, kind, spectrum, font, pt_size)
-     char * file;
-     int kind;
-     int spectrum;
-     char * font;
-     int pt_size;
-#endif
 {
   if (isupper (kind))
     kind = tolower (kind);
@@ -306,30 +249,15 @@ graph_postscript (file, kind, spectrum, font, pt_size)
 
 
 
-#ifdef __STDC__
 void
 graph_set_axis_title (int axis_c, char * title)
-#else
-void
-graph_set_axis_title (axis_c, title)
-     int axis_c;
-     char * title;
-#endif
 {
   enum graph_axis axis = chr_to_axis (axis_c);
   set_line (&graph_axis_title [axis], graph_quoted_str (title));
 }
 
-#ifdef __STDC__
 void
 graph_set_logness (int axis_c, int explicit, int newval)
-#else
-void
-graph_set_logness (axis_c, explicit, newval)
-     int axis_c;
-     int explicit;
-     int newval;
-#endif
 {
   enum graph_axis axis = chr_to_axis (axis_c);
   static struct line msg_buf;
@@ -348,14 +276,8 @@ graph_set_logness (axis_c, explicit, newval)
   io_info_msg ("set %s", msg_buf.buf);
 }
 
-#ifdef __STDC__
 void
 graph_check_range (char * val)
-#else
-void
-graph_check_range (val)
-     char * val;
-#endif
 {
   if (says_default (val))
     return;
@@ -385,15 +307,8 @@ graph_check_range (val)
 }
 
 
-#ifdef __STDC__
 void
 graph_set_axis_lo (int axis_c, char * val)
-#else
-void
-graph_set_axis_lo (axis_c, val)
-     int axis_c;
-     char * val;
-#endif
 {
   enum graph_axis axis = chr_to_axis (axis_c);
   graph_check_range (val);
@@ -402,15 +317,8 @@ graph_set_axis_lo (axis_c, val)
 }
 
 
-#ifdef __STDC__
 void
 graph_set_axis_hi (int axis_c, char * val)
-#else
-void
-graph_set_axis_hi (axis_c, val)
-     int axis_c;
-     char * val;
-#endif
 {
   enum graph_axis axis = chr_to_axis (axis_c);
   graph_check_range (val);
@@ -418,16 +326,8 @@ graph_set_axis_hi (axis_c, val)
   graph_axis_symbols [axis].lr = NON_ROW;
 }
 
-#ifdef __STDC__
 void
 graph_set_axis_symbolic (int axis_c, struct rng * rng, int ordering_c) 
-#else
-void
-graph_set_axis_symbolic (axis_c, rng, ordering_c)
-     int axis_c;
-     struct rng * rng;
-     int ordering_c;
-#endif
 {
   enum graph_axis axis = chr_to_axis (axis_c);
   enum graph_ordering ordering = chr_to_graph_ordering (ordering_c);
@@ -441,17 +341,8 @@ graph_set_axis_symbolic (axis_c, rng, ordering_c)
   graph_axis_ordering [axis] = ordering;
 }
 
-#ifdef __STDC__
 void
 graph_set_axis_labels (int axis_c, struct rng * rng, int pair, int dir)
-#else
-void
-graph_set_axis_labels (axis_c, rng, dir, pair)
-     int axis_c;
-     struct rng * rng;
-     int pair;
-     int dir;
-#endif
 {
   enum graph_pair_ordering order = chrs_to_graph_pair_ordering (pair, dir);
   enum graph_axis axis = chr_to_axis (axis_c);
@@ -459,14 +350,8 @@ graph_set_axis_labels (axis_c, rng, dir, pair)
   graph_axis_label_order [axis] = order;
 }
 
-#ifdef __STDC__
 void
 graph_default_axis_labels (int axis_c)
-#else
-void
-graph_default_axis_labels (axis_c)
-     int axis_c;
-#endif
 {
   enum graph_axis axis = chr_to_axis (axis_c);
   graph_axis_labels [axis].lr = NON_ROW;
@@ -484,14 +369,8 @@ static char * graph_plot_styles [] =
    0
 };
 
-#ifdef __STDC__
 int
 graph_check_style (char * name)
-#else
-int
-graph_check_style (name)
-     char * name;
-#endif
 {
   int x =
     words_member (graph_plot_styles, parray_len (graph_plot_styles), name);
@@ -502,15 +381,8 @@ graph_check_style (name)
 }
 
 
-#ifdef __STDC__
 void
 graph_set_style (int data_set, char * style)
-#else
-void
-graph_set_style (data_set, style)
-     int data_set;
-     char * style;
-#endif
 {
   int x = graph_check_style (style);
   if ((data_set < 0) || (data_set >= NUM_DATASETS))
@@ -520,15 +392,8 @@ graph_set_style (data_set, style)
   set_line (&graph_style [data_set], graph_plot_styles [x]);
 }
 
-#ifdef __STDC__
 void
 graph_set_data_title (int data_set, char * title)
-#else
-void
-graph_set_data_title (data_set, title)
-     int data_set;
-     char * title;
-#endif
 {
   if ((data_set < 0) || (data_set >= NUM_DATASETS))
     io_error_msg
@@ -537,17 +402,8 @@ graph_set_data_title (data_set, title)
   set_line (&graph_title [data_set], title);
 }
 
-#ifdef __STDC__
 void
 graph_set_data (int data_set, struct rng * rng, int pair, int dir)
-#else
-void
-graph_set_data (data_set, rng, pair, dir)
-     int data_set;
-     struct rng * rng;
-     int pair;
-     int dir;
-#endif
 {
   enum graph_pair_ordering order = chrs_to_graph_pair_ordering (pair, dir);
   if ((data_set < 0) || (data_set >= NUM_DATASETS))
@@ -561,13 +417,8 @@ graph_set_data (data_set, rng, pair, dir)
 
 
 
-#ifdef __STDC__
 void
 graph_presets (void)
-#else
-void
-graph_presets ()
-#endif
 {
   if (using_curses)
     graph_postscript ("#plot.ps", 'd', 'm', "TimesRoman", 12);
@@ -592,13 +443,8 @@ graph_presets ()
 
 
 
-#ifdef __STDC__
 void
 graph_clear_datasets (void)
-#else
-void
-graph_clear_datasets ()
-#endif
 {
   int x;
   for (x = 0; x < NUM_DATASETS; ++x)
@@ -610,13 +456,8 @@ graph_clear_datasets ()
 }
 
 
-#ifdef __STDC__
 void
 init_graphing (void)
-#else
-void
-init_graphing ()
-#endif
 {
   gnuplot_program = getenv ("GNUPLOT_PROG");
   if (!gnuplot_program)
@@ -632,13 +473,8 @@ init_graphing ()
 }
 
 
-#ifdef __STDC__
 void
 graph_make_info (void)
-#else
-void
-graph_make_info ()
-#endif
 {
   struct info_buffer * ib = find_or_make_info ("graphing-parameters");
   enum graph_axis axis;
@@ -734,33 +570,16 @@ graph_make_info ()
 
 
 
-#ifdef __STDC__
 static FILE *
 mk_tmp_file (struct line * line, char * dir, char * base)
-#else
-static FILE *
-mk_tmp_file (line, dir, base)
-     struct line * line;
-     char * dir;
-     char * base;
-#endif
 {
   set_line (line, tmpnam (0));
   return fopen (line->buf, "w");
 }
 
 
-#ifdef __STDC__
 void
 for_pairs_in (struct rng * rng, enum graph_pair_ordering order, fpi_thunk thunk, void * frame)
-#else
-void
-for_pairs_in (rng, order, thunk, frame)
-     struct rng * rng;
-     enum graph_pair_ordering order;
-     fpi_thunk thunk;
-     void * frame;
-#endif
 {
   CELLREF r;
   CELLREF c;
@@ -820,17 +639,8 @@ struct write_tics_frame
   int tic_cnt;
 };
 
-#ifdef __STDC__
 static void
 write_tics_thunk (struct write_tics_frame * fr, CELL * cp, CELLREF r, CELLREF c)
-#else
-static void
-write_tics_thunk (fr, cp, r, c)
-     struct write_tics_frame * fr;
-     CELL * cp;
-     CELLREF r;
-     CELLREF c;
-#endif
 {
   char * str = graph_quoted_str (print_cell (cp));
   if (fr->tic_cnt)
@@ -849,17 +659,8 @@ write_tics_thunk (fr, cp, r, c)
 }
 
 
-#ifdef __STDC__
 static void
 write_tics_command (FILE * fp, enum graph_axis axis, struct rng * rng, enum graph_pair_ordering order)
-#else
-static void
-write_tics_command (fp, axis, rng, order)
-     FILE * fp;
-     enum graph_axis axis;
-     struct rng * rng;
-     enum graph_pair_ordering order;
-#endif
 {
   struct write_tics_frame fr;
   fr.fp = fp;
@@ -877,18 +678,9 @@ struct get_symbols_frame
   char ** names;
 };
 
-#ifdef __STDC__
 static void
 get_symbols_thunk (struct get_symbols_frame * fr,
 		   CELL * cell, CELLREF r, CELLREF c)
-#else
-static void
-get_symbols_thunk (fr, cell, r, c)
-     struct get_symbols_frame * fr;
-     CELL * cell;
-     CELLREF r;
-     CELLREF c;
-#endif
 {
   fr->names = (char **)ck_realloc (fr->names,
 				   (fr->symbols + 1) * sizeof (char *));
@@ -905,18 +697,9 @@ struct write_data_frame
   struct get_symbols_frame gsf;
 };
 
-#ifdef __STDC__
 static void
 write_data_thunk (struct write_data_frame * fr,
 		  CELL * y_cell, CELLREF r, CELLREF c) 
-#else
-static void
-write_data_thunk (fr, y_cell, r, c)
-     struct write_data_frame * fr;
-     CELL * y_cell;
-     CELLREF r;
-     CELLREF c;
-#endif
 {
   if (!y_cell || !GET_TYP(y_cell))
     return;
@@ -949,17 +732,8 @@ write_data_thunk (fr, y_cell, r, c)
 }
 
 
-#ifdef __STDC__
 static void
 spew_gnuplot (FILE  * fp, struct line * data_files, char * dir, char * dbase)
-#else
-static void
-spew_gnuplot (fp, data_files, dir, dbase)
-     FILE  * fp;
-     struct line * data_files;
-     char * dir;
-     char * dbase;
-#endif
 {
   fprintf (fp, "set terminal %s\n", graph_term_cmd.buf);
   fprintf (fp, "set output %s\n",
@@ -1057,24 +831,10 @@ spew_gnuplot (fp, data_files, dir, dbase)
 }
 
 
-#ifdef __STDC__
 static void
 graph_spew_with_parameters (struct line * shell_script, struct line *
 			    gp_script, char * last_cmd, char * dir, char *
 			    dbase, char * gbase, char * sbase, int run_gnuplot)
-#else
-static void
-graph_spew_with_parameters (shell_script, gp_script, last_cmd, dir, dbase,
-			    gbase, sbase, run_gnuplot)
-     struct line * shell_script;
-     struct line * gp_script;
-     char * last_cmd;
-     char * dir;
-     char * dbase;
-     char * gbase;
-     char * sbase;
-     int run_gnuplot;
-#endif
 {
   struct line data_files [NUM_DATASETS];
   FILE * fp;
@@ -1116,32 +876,16 @@ static FILE * pipe_to_gnuplot = 0;
 static char * cleanup_script = 0;
 static char * gnuplot_script = 0;
 
-#ifdef __STDC__
 static void death_to_gnuplot (void);
-#else
-static void death_to_gnuplot ();
-#endif
 
-#ifdef __STDC__
 static void
 gnuplot_exception (int fd)
-#else
-static void
-gnuplot_exception (fd)
-     int fd;
-#endif
 {
   death_to_gnuplot ();
 }
 
-#ifdef __STDC__
 static void
 gnuplot_writable (int fd)
-#else
-static void
-gnuplot_writable (fd)
-     int fd;
-#endif
 {
   FD_CLR (fd, &write_fd_set);
   file_write_hooks [fd].hook_fn = 0;
@@ -1149,13 +893,8 @@ gnuplot_writable (fd)
   fflush (pipe_to_gnuplot);
 }
 
-#ifdef __STDC__
 static void
 ensure_gnuplot_pipe (void)
-#else
-static void
-ensure_gnuplot_pipe ()
-#endif
 {
   if (!pipe_to_gnuplot)
     {
@@ -1172,13 +911,8 @@ ensure_gnuplot_pipe ()
     }
 }
 
-#ifdef __STDC__
 static void
 death_to_gnuplot (void)
-#else
-static void
-death_to_gnuplot ()
-#endif
 {
   if (pipe_to_gnuplot)
     {
@@ -1202,13 +936,8 @@ death_to_gnuplot ()
 
 
 
-#ifdef __STDC__
 static void
 spew_for_x (void)
-#else
-static void
-spew_for_x ()
-#endif
 {
   struct line shell_script;
   struct line gp_script;
@@ -1230,13 +959,8 @@ spew_for_x ()
   ensure_gnuplot_pipe ();
 }
 
-#ifdef __STDC__
 static void
 spew_for_ps (void)
-#else
-static void
-spew_for_ps ()
-#endif
 {
   struct line shell_script;
   struct line gp_script;
@@ -1251,13 +975,8 @@ spew_for_ps ()
   free_line (&gp_script);
 }
 
-#ifdef __STDC__
 void
 graph_plot (void)
-#else
-void
-graph_plot ()
-#endif
 {
   plot_fn ();
 }

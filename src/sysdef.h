@@ -32,10 +32,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #else
-#ifdef __STDC__
 extern int access (char *, int);
 extern int getuid (void);
-#endif
 #endif /* HAVE_UNISTD_H */
 
 #ifndef _DEBUG_MALLOC_INC
@@ -82,28 +80,15 @@ extern int getuid (void);
 #endif
 
 #ifndef HAVE_STRFTIME
-#ifdef __STDC__
 extern size_t strfntime (char *, int, char * format, struct tm *);
-#else
-extern size_t strfntime ();
-#endif
 #endif
 
 #ifndef HAVE_MKTIME
-#ifdef __STDC__
 extern time_t mktime (struct tm *);
-#else
-extern time_t mktime ();
-#endif
 #endif
 
-#ifdef __STDC__
 extern struct tm * localtime (const time_t *);
 extern struct tm * gmtime (const time_t *);
-#else
-extern struct tm * localtime ();
-extern struct tm * gmtime ();
-#endif
 
 #ifdef __STDC__
 #if 0				/* Hopefully these aren't necessary. */

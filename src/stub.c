@@ -32,16 +32,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 
 
-#ifdef __STDC__
 static void
 find_args (struct command_arg ** argv_out, int argc, struct command_frame * frame)
-#else
-static void
-find_args (argv_out, argc, frame)
-     struct command_arg ** argv_out;
-     int argc;
-     struct command_frame * frame;
-#endif
 {
   int found = 0;
   int pos = 0;
@@ -59,8 +51,8 @@ find_args (argv_out, argc, frame)
  * an used to build a table of stub functions.
  */
 
-#ifdef __STDC__
 #define STUB1(STR,NAME, PRE, VAL, TYPE) \
+
 static void \
 NAME (frame) \
      struct command_frame * frame; \
@@ -69,21 +61,9 @@ NAME (frame) \
   find_args (&argv, 1, frame); \
   ((void (*) (TYPE)) frame->cmd->func_func) (PRE argv->val.VAL); \
 }
-#else
-#define STUB1(STR,NAME, PRE, VAL, TYPE) \
-static void \
-NAME (frame) \
-     struct command_frame * frame; \
-{ \
-  int x; \
-  struct command_arg * argv; \
-  find_args (&argv, 1, frame); \
-  frame->cmd->func_func (PRE argv->val.VAL); \
-}
-#endif
 
-#ifdef __STDC__
 #define STUB2(STR,NAME,PRE1,VAL1,TYPE1,PRE2,VAL2,TYPE2) \
+
 static void \
 NAME (frame) \
      struct command_frame * frame; \
@@ -94,23 +74,10 @@ NAME (frame) \
     (PRE1 argv[0]->val.VAL1,  \
      PRE2 argv[1]->val.VAL2); \
 }
-#else
-#define STUB2(STR,NAME,PRE1,VAL1,TYPE1,PRE2,VAL2,TYPE2) \
-static void \
-NAME (frame) \
-     struct command_frame * frame; \
-{ \
-  struct command_arg * argv[2]; \
-  find_args (argv, 2, frame); \
-  frame->cmd->func_func \
-    (PRE1 argv[0]->val.VAL1,  \
-     PRE2 argv[1]->val.VAL2); \
-}
-#endif 
 
 
-#ifdef __STDC__
 #define STUB3(STR,NAME,PRE1,VAL1,TYPE1,PRE2,VAL2,TYPE2,PRE3,VAL3,TYPE3) \
+
 static void \
 NAME (frame) \
      struct command_frame * frame; \
@@ -122,23 +89,9 @@ NAME (frame) \
      PRE2 argv[1]->val.VAL2, \
      PRE3 argv[2]->val.VAL3); \
 }
-#else
-#define STUB3(STR,NAME,PRE1,VAL1,TYPE1,PRE2,VAL2,TYPE2,PRE3,VAL3,TYPE3) \
-static void \
-NAME (frame) \
-     struct command_frame * frame; \
-{ \
-  struct command_arg * argv[3]; \
-  find_args (argv, 3, frame); \
-  frame->cmd->func_func \
-    (PRE1 argv[0]->val.VAL1, \
-     PRE2 argv[1]->val.VAL2, \
-     PRE3 argv[2]->val.VAL3); \
-}
-#endif
 
-#ifdef __STDC__
 #define STUB4(STR,NAME,PRE1,VAL1,TYPE1,PRE2,VAL2,TYPE2,PRE3,VAL3,TYPE3,PRE4,VAL4,TYPE4) \
+
 static void \
 NAME (frame) \
      struct command_frame * frame; \
@@ -151,24 +104,9 @@ NAME (frame) \
      PRE3 argv[2]->val.VAL3, \
      PRE4 argv[3]->val.VAL4); \
 }
-#else
-#define STUB4(STR,NAME,PRE1,VAL1,TYPE1,PRE2,VAL2,TYPE2,PRE3,VAL3,TYPE3,PRE4,VAL4,TYPE4) \
-static void \
-NAME (frame) \
-     struct command_frame * frame; \
-{ \
-  struct command_arg * argv[4]; \
-  find_args (argv, 4, frame); \
-  frame->cmd->func_func \
-    (PRE1 argv[0]->val.VAL1, \
-     PRE2 argv[1]->val.VAL2, \
-     PRE3 argv[2]->val.VAL3, \
-     PRE4 argv[3]->val.VAL4); \
-}
-#endif
 
-#ifdef __STDC__
 #define STUB5(STR,NAME,PRE1,VAL1,TYPE1,PRE2,VAL2,TYPE2,PRE3,VAL3,TYPE3,PRE4,VAL4,TYPE4,PRE5,VAL5,TYPE5) \
+
 static void \
 NAME (frame) \
      struct command_frame * frame; \
@@ -182,22 +120,6 @@ NAME (frame) \
      PRE4 argv[3]->val.VAL4, \
      PRE5 argv[4]->val.VAL5); \
 }
-#else
-#define STUB5(STR,NAME,PRE1,VAL1,TYPE1,PRE2,VAL2,TYPE2,PRE3,VAL3,TYPE3,PRE4,VAL4,TYPE4,PRE5,VAL5,TYPE5) \
-static void \
-NAME (frame) \
-          struct command_frame * frame; \
-{ \
-  struct command_arg * argv[5]; \
-  find_args (argv, 5, frame); \
-  frame->cmd->func_func \
-    (PRE1 argv[0]->val.VAL1, \
-     PRE2 argv[1]->val.VAL2, \
-     PRE3 argv[2]->val.VAL3, \
-     PRE4 argv[3]->val.VAL4, \
-     PRE5 argv[4]->val.VAL5); \
-}
-#endif
 
 /* This contains the list of stub functions. */
 
@@ -205,14 +127,8 @@ NAME (frame) \
 
 /* There is only one `STUB0' so we needn't bother with a macro. */
 
-#ifdef __STDC__
 static void
 stub_void (struct command_frame * frame)
-#else
-static void
-stub_void (frame)
-     struct command_frame * frame;
-#endif
 {
   frame->cmd->func_func ();
 }
@@ -277,13 +193,8 @@ static struct cmd_stub the_stubs[] =
 /* This looks at the arguments built for the current command and 
  * finds the right stub.
  */
-#ifdef __STDC__
 cmd_invoker
 find_stub (void)
-#else
-cmd_invoker
-find_stub ()
-#endif
 {
   char type_buf[100];
 

@@ -43,14 +43,9 @@ struct value
 
 
 
-#ifdef __STDC__
 struct timeb;
 extern time_t get_date (char *, struct timeb *);
 extern time_t posixtime (char *);
-#else
-extern time_t get_date ();
-extern time_t posixtime ();
-#endif
 
 
 
@@ -58,79 +53,38 @@ extern time_t posixtime ();
  * of time.
  */
 
-#ifdef __STDC__
 static long
 dt_hms_to_time (long h, long m, long s)
-#else
-static long
-dt_hms_to_time (h, m, s)
-     long h;
-     long m;
-     long s;
-#endif
 {
   return ((h * 60) + m) * 60 + s;
 }
 
-#ifdef __STDC__
 static long
 dt_dhms_to_time (long d, long h, long m, long s)
-#else
-static long
-dt_dhms_to_time (d, h, m, s)
-     long d;
-     long h;
-     long m;
-     long s;
-#endif
 {
   return ((((d * 24) + h) * 60) + m) * 60 + s;
 }
 
-#ifdef __STDC__
 static long
 dt_time_to_d (long t)
-#else
-static long
-dt_time_to_d (t)
-     long t;
-#endif
 {
   return t / (60 * 60 * 24);
 }
 
-#ifdef __STDC__
 static long
 dt_time_to_h (long t)
-#else
-static long
-dt_time_to_h (t)
-     long t;
-#endif
 {
   return (t / (60 * 60)) % 24;
 }
 
-#ifdef __STDC__
 static long
 dt_time_to_m (long t)
-#else
-static long
-dt_time_to_m (t)
-     long t;
-#endif
 {
   return (t / 60) % 60;
 }
 
-#ifdef __STDC__
 static long
 dt_time_to_s (long t)
-#else
-static long
-dt_time_to_s (t)
-     long t;
-#endif
 {
   return t % 60;
 }
@@ -144,17 +98,8 @@ dt_time_to_s (t)
 /* mktime: */
 
 
-#ifdef __STDC__
 static long
 dt_ymd_dst (long y, long mo, long d, long dst)
-#else
-static long
-dt_ymd_dst (y, mo, d, dst)
-     long y;
-     long mo;
-     long d;
-     long dst;
-#endif
 {
   struct tm tm;
   tm.tm_year = y - 1900;
@@ -167,16 +112,8 @@ dt_ymd_dst (y, mo, d, dst)
   return mktime (&tm);
 }
 
-#ifdef __STDC__
 static long
 dt_ymd (long y, long mo, long d)
-#else
-static long
-dt_ymd (y, mo, d)
-     long y;
-     long mo;
-     long d;
-#endif
 {
   return dt_ymd_dst (y, mo, d, -1);
 }
@@ -221,15 +158,8 @@ TM_ACCESS_GMT (dt_gmt_wday, tm_wday)
 
 
 
-#ifdef __STDC__
 static char *
 dt_strftime (char * format, long clk)
-#else
-static char *
-dt_strftime (format, clk)
-     char * format;
-     long clk;
-#endif
 {
   int len_used = 0;
   int len = 32;
@@ -250,26 +180,14 @@ dt_strftime (format, clk)
 
 
 
-#ifdef __STDC__
 static long
 dt_get_date (char * date)
-#else
-static long
-dt_get_date (date)
-     char * date;
-#endif
 {
   return get_date (date, NULL);
 }
 
-#ifdef __STDC__
 static long
 dt_posix_date (char * date)
-#else
-static long
-dt_posix_date (date)
-     char * date;
-#endif
 {
   return posixtime (date);
 }

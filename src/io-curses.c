@@ -52,22 +52,11 @@ static int redrew = 0;
 static int textout = 0;
 static int term_cursor_claimed = 0;
 
-#ifdef __STDC__
 static void move_cursor_to (struct window *, CELLREF, CELLREF, int);
-#else
-static void move_cursor_to ();
-#endif
 
 
-#ifdef __STDC__
 static int
 curses_metric (char * str, int len)
-#else
-static int
-curses_metric (str, len)
-     char * str;
-     int len;
-#endif
 {
   return len;
 }
@@ -75,13 +64,8 @@ curses_metric (str, len)
 static struct input_view input_view
   = {0, curses_metric, curses_metric, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-#ifdef __STDC__
 static void
 _io_redraw_input (void)
-#else
-static void
-_io_redraw_input ()
-#endif
 {
   int pos;
   int row = (input_view.current_info ? 0 : input);
@@ -134,13 +118,8 @@ _io_redraw_input ()
 #undef MIN
 #define MIN(A,B) (((A) < (B)) ? (A) : (B))
 
-#ifdef __STDC__
 void
 redraw_info (void)
-#else
-void
-redraw_info ()
-#endif
 {
   if (!input_view.current_info)
     return;
@@ -159,61 +138,32 @@ redraw_info ()
 }
 
 
-#ifdef __STDC__
 static void
 _io_fix_input (void)
-#else
-static void
-_io_fix_input ()
-#endif
 {
   iv_fix_input (&input_view);
 }
 
-#ifdef __STDC__
 static void
 _io_move_cursor (void)
-#else
-static void
-_io_move_cursor ()
-#endif
 {
   iv_move_cursor (&input_view);
 }
 
-#ifdef __STDC__
 static void
 _io_erase (int len)
-#else
-static void
-_io_erase (len)
-     int len;
-#endif
 {
   iv_erase (&input_view, len);
 }
 
-#ifdef __STDC__
 static void
 _io_insert (int len)
-#else
-static void
-_io_insert (len)
-     int len;
-#endif
 {
   iv_insert (&input_view, len);
 }
 	   
-#ifdef __STDC__
 static void
 _io_over (char * str, int len)
-#else
-static void
-_io_over (str, len)
-     char * str;
-     int len;
-#endif
 {
   iv_over (&input_view, len);
 }
@@ -222,13 +172,8 @@ _io_over (str, len)
 
 
 
-#ifdef __STDC__
 static void 
 _io_display_cell_cursor (void)
-#else
-static void 
-_io_display_cell_cursor ()
-#endif
 {
   int cell_cursor_row;
   int cell_cursor_col;
@@ -269,13 +214,8 @@ _io_display_cell_cursor ()
   move (y, x);
 }
 
-#ifdef __STDC__
 static void 
 _io_hide_cell_cursor (void)
-#else
-static void 
-_io_hide_cell_cursor ()
-#endif
 {
   int cc;
   int rr;
@@ -326,14 +266,8 @@ struct slops
     } s_b[1];
 };
 
-#ifdef __STDC__
 static void 
 flush_slops (VOIDSTAR where)
-#else
-static void 
-flush_slops (where)
-     VOIDSTAR where;
-#endif
 {
   struct slops *s;
 
@@ -342,18 +276,8 @@ flush_slops (where)
     s->s_used = 0;
 }
 
-#ifdef __STDC__
 static int 
 find_slop (VOIDSTAR where, CELLREF r, CELLREF c, CELLREF *cclp, CELLREF *cchp)
-#else
-static int 
-find_slop (where, r, c, cclp, cchp)
-     VOIDSTAR where;
-     CELLREF r;
-     CELLREF c;
-     CELLREF *cclp;
-     CELLREF *cchp;
-#endif
 {
   int n;
   struct slops *s;
@@ -373,17 +297,8 @@ find_slop (where, r, c, cclp, cchp)
   return 0;
 }
 
-#ifdef __STDC__
 static void 
 kill_slop (VOIDSTAR where, CELLREF r, CELLREF clo, CELLREF chi)
-#else
-static void 
-kill_slop (where, r, clo, chi)
-     VOIDSTAR where;
-     CELLREF r;
-     CELLREF clo;
-     CELLREF chi;
-#endif
 {
   int n;
   struct slops *s;
@@ -400,17 +315,8 @@ kill_slop (where, r, clo, chi)
     }
 }
 
-#ifdef __STDC__
 static void 
 set_slop (VOIDSTAR *wherep, CELLREF r, CELLREF clo, CELLREF chi)
-#else
-static void 
-set_slop (wherep, r, clo, chi)
-     VOIDSTAR *wherep;
-     CELLREF r;
-     CELLREF clo;
-     CELLREF chi;
-#endif
 {
   int n;
   struct slops **sp;
@@ -437,20 +343,9 @@ set_slop (wherep, r, clo, chi)
   (*sp)->s_b[n].chi = chi;
 }
 
-#ifdef __STDC__
 static void 
 change_slop (VOIDSTAR where,
 	     CELLREF r, CELLREF olo, CELLREF ohi, CELLREF lo, CELLREF hi)
-#else
-static void 
-change_slop (where, r, olo, ohi, lo, hi)
-     VOIDSTAR where;
-     CELLREF r;
-     CELLREF olo;
-     CELLREF ohi;
-     CELLREF lo;
-     CELLREF hi;
-#endif
 {
   int n;
   struct slops *s;
@@ -468,13 +363,8 @@ change_slop (where, r, olo, ohi, lo, hi)
 }
 
 
-#ifdef __STDC__
 static void 
 _io_open_display (void)
-#else
-static void 
-_io_open_display ()
-#endif
 {
   initscr ();
   scrollok (stdscr, 0);
@@ -492,13 +382,8 @@ _io_open_display ()
   print_width = COLS;		/* Make ascii print width == terminal width. */
 }
 
-#ifdef __STDC__
 void
 cont_curses(void)
-#else
-void
-cont_curses()
-#endif
 {
 #ifdef HAVE_CBREAK
   cbreak ();
@@ -511,13 +396,8 @@ cont_curses()
 }
 
 
-#ifdef __STDC__
 void
 stop_curses(void)
-#else
-void
-stop_curses()
-#endif
 {
 #ifdef HAVE_CBREAK
   nocbreak ();
@@ -530,33 +410,18 @@ stop_curses()
   io_redisp ();
 }
 
-#ifdef __STDC__
 static void 
 _io_cellize_cursor (void)
-#else
-static void 
-_io_cellize_cursor ()
-#endif
 {
 }
 
-#ifdef __STDC__
 static void 
 _io_inputize_cursor (void)
-#else
-static void 
-_io_inputize_cursor ()
-#endif
 {
 }
 
-#ifdef __STDC__
 static void 
 _io_redisp (void)
-#else
-static void 
-_io_redisp ()
-#endif
 {
   if (!term_cursor_claimed)
     {
@@ -580,25 +445,14 @@ _io_redisp ()
   refresh ();
 }
 
-#ifdef __STDC__
 static void 
 _io_repaint_win (struct window *win)
-#else
-static void 
-_io_repaint_win (win)
-     struct window *win;
-#endif
 {
   io_repaint ();
 }
 
-#ifdef __STDC__
 static void 
 _io_repaint (void)
-#else
-static void 
-_io_repaint ()
-#endif
 {
   CELLREF cc, rr;
   int n, n1;
@@ -690,65 +544,37 @@ _io_repaint ()
   io_update_status ();
 }
 
-#ifdef __STDC__
 static void 
 _io_close_display (void)
-#else
-static void 
-_io_close_display ()
-#endif
 {
   clear ();
   refresh ();
   (void) endwin ();
 }
 
-#ifdef __STDC__
 static int 
 _io_input_avail (void)
-#else
-static int 
-_io_input_avail ()
-#endif
 {
   return (FD_ISSET (0, &read_pending_fd_set)
 	  || FD_ISSET (0, &exception_pending_fd_set));
 }
 
-#ifdef __STDC__
 static void 
 _io_scan_for_input (int block)
-#else
-static void 
-_io_scan_for_input (block)
-     int block;
-#endif
 {
   /* This function only exists because X kbd events don't generate */
   /* SIGIO. Under curses, the SIGIO hander does the work of this */
   /* function. */
 }
 
-#ifdef __STDC__
 static void 
 _io_wait_for_input (void)
-#else
-static void 
-_io_wait_for_input ()
-#endif
 {
   pause ();
 }
 
-#ifdef __STDC__
 static int 
 _io_read_kbd (VOLATILE char *buf, int size)
-#else
-static int 
-_io_read_kbd (buf, size)
-     VOLATILE char *buf;
-     int size;
-#endif
 {
   int r = read (0, buf, size);
   FD_CLR (0, &read_pending_fd_set);
@@ -760,41 +586,24 @@ _io_read_kbd (buf, size)
 #if defined(SIGIO)
 
 
-#ifdef __STDC__
 static void 
 _io_nodelay (int delayp)
-#else
-static void 
-_io_nodelay (delayp)
-     int delayp;
-#endif
 {
   panic ("Trying to curses nodelay on a system with SIGIO.");
 }
 
 #else
 
-#ifdef __STDC__
 static void 
 _io_nodelay (int delayp)
-#else
-static void 
-_io_nodelay (delayp)
-     int delayp;
-#endif
 {
   nodelay (stdscr, delayp);
 }
 
 #endif
 
-#ifdef __STDC__
 static int 
 _io_getch (void)
-#else
-static int 
-_io_getch ()
-#endif
 {
   char ch;
   return ((io_read_kbd (&ch, 1) != 1)
@@ -803,14 +612,8 @@ _io_getch ()
 }
 
 
-#ifdef __STDC__
 static int 
 _io_get_chr (char *prompt)
-#else
-static int 
-_io_get_chr (prompt)
-     char *prompt;
-#endif
 {
   int x;
   mvaddstr (input, 0, prompt);
@@ -825,38 +628,21 @@ _io_get_chr (prompt)
 
 #define BUFFER 10
 
-#ifdef __STDC__
 static void 
 local_putchar (int ch)
-#else
-static void 
-local_putchar (ch)
-     int ch;
-#endif
 {
   (void) putc (ch, stdout);
   /* (void)putchar(ch); */
 }
 
-#ifdef __STDC__
 static void
 local_puts (char *s)
-#else
-static void
-local_puts (s)
-    char *s;
-#endif
 {
    (void) tputs (s, 1, (int (*)()) local_putchar);
 }
 
-#ifdef __STDC__
 static void 
 _io_bell (void)
-#else
-static void 
-_io_bell ()
-#endif
 {
 #ifndef HAVE_GETCAP
   putchar ('\007');
@@ -881,17 +667,8 @@ _io_bell ()
 }
 
 
-#if __STDC__
 static void
 move_cursor_to (struct window *win, CELLREF r, CELLREF c, int dn)
-#else
-static void
-move_cursor_to (win, r, c, dn)
-     struct window *win;
-     CELLREF r;
-     CELLREF c;
-     int dn;
-#endif
 {
   int cc;
   int cell_cursor_col;
@@ -907,13 +684,8 @@ move_cursor_to (win, r, c, dn)
   move (cell_cursor_row, cell_cursor_col);
 }
 
-#ifdef __STDC__
 static void
 _io_update_status (void)
-#else
-static void
-_io_update_status ()
-#endif
 {
   CELL *cp;
   char *dec;
@@ -995,13 +767,8 @@ _io_update_status ()
 
 extern int auto_recalc;
 
-#ifdef __STDC__
 static void
 _io_clear_input_before (void)
-#else
-static void
-_io_clear_input_before ()
-#endif
 {
   textout = 0;
   if (topclear == 2)
@@ -1013,13 +780,8 @@ _io_clear_input_before ()
   move (0, 0);
 }
 
-#ifdef __STDC__
 static void
 _io_clear_input_after (void)
-#else
-static void
-_io_clear_input_after ()
-#endif
 {
   if (topclear)
     {
@@ -1030,17 +792,8 @@ _io_clear_input_after ()
 }
 
 
-#if __STDC__
 static void
 _io_pr_cell_win (struct window *win, CELLREF r, CELLREF c, CELL *cp)
-#else
-static void
-_io_pr_cell_win (win, r, c, cp)
-     struct window *win;
-     CELLREF r;
-     CELLREF c;
-     CELL *cp;
-#endif
 {
   int glowing;
   int lenstr;
@@ -1233,13 +986,8 @@ _io_pr_cell_win (win, r, c, cp)
 
 
 
-#ifdef __STDC__
 static void
 _io_flush (void)
-#else
-static void
-_io_flush ()
-#endif
 {
   refresh ();
 }
@@ -1247,13 +995,8 @@ _io_flush ()
 
 
 
-#ifdef __STDC__
 void
 tty_graphics (void)
-#else
-void
-tty_graphics ()
-#endif
 {
 
   FD_SET (0, &read_fd_set);

@@ -53,15 +53,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
  * if COMMAND is bound.
  */
 
-#ifdef __STDC__
 void
 expand_help_msg (struct info_buffer * out, struct info_buffer * in)
-#else
-void
-expand_help_msg (out, in)
-     struct info_buffer * out;
-     struct info_buffer * in;
-#endif
 {
   int x;
   struct line line;
@@ -132,14 +125,8 @@ expand_help_msg (out, in)
 
 
 
-#ifdef __STDC__
 void
 describe_function (char * name)
-#else
-void
-describe_function (name)
-     char * name;
-#endif
 {
   int vector;
   struct cmd_func * cmd;
@@ -169,14 +156,8 @@ describe_function (name)
 
 
 
-#ifdef __STDC__
 void
 brief_describe_key (struct key_sequence * keyseq)
-#else
-void
-brief_describe_key (keyseq)
-     struct key_sequence * keyseq;
-#endif
 {
   if (keyseq->cmd.vector < 0 && keyseq->cmd.code < 0)
     io_info_msg ("%s is unbound", keyseq->keys->buf);
@@ -185,14 +166,8 @@ brief_describe_key (keyseq)
 		 the_funcs[keyseq->cmd.vector][keyseq->cmd.code].func_name);
 }
 
-#ifdef __STDC__
 void
 describe_key (struct key_sequence * keyseq)
-#else
-void
-describe_key (keyseq)
-     struct key_sequence * keyseq;
-#endif
 {
   if (keyseq->cmd.vector < 0 && keyseq->cmd.code < 0)
     io_info_msg ("%s is unbound", keyseq->keys->buf);
@@ -205,14 +180,8 @@ describe_key (keyseq)
 }
 
 
-#ifdef __STDC__
 void
 where_is (char * name)
-#else
-void
-where_is (name)
-char * name;
-#endif
 {
   struct line seqname;
   int vec;
@@ -243,13 +212,8 @@ char * name;
 
 /* Help for the context of the current complex command. */
 
-#ifdef __STDC__
 void
 help_with_command (void)
-#else
-void
-help_with_command ()
-#endif
 {
   if (!the_cmd_frame->cmd)
     io_info_msg ("help-with-command: No command is executing now.");
@@ -268,14 +232,8 @@ help_with_command ()
  * called _info_NAME
  */
 
-#ifdef __STDC__
 void
 builtin_help (char * name)
-#else
-void
-builtin_help (name)
-     char * name;
-#endif
 {
   char info_name[100];
   struct info_buffer * ib;
@@ -313,13 +271,8 @@ builtin_help (name)
   }
 }
 
-#ifdef __STDC__
 void
 make_wallchart_info (void)
-#else
-void
-make_wallchart_info ()
-#endif
 {
   struct info_buffer * wc = find_or_make_info ("unexpanded_wallchart");
   struct info_buffer * wc_expanded = find_or_make_info ("wallchart");
@@ -336,15 +289,8 @@ make_wallchart_info ()
 }
 
 
-#ifdef __STDC__
 void
 write_info (char * info, FILE * fp)
-#else
-void
-write_info (info, fp)
-     char * info;
-     FILE * fp;
-#endif
 {
   struct info_buffer * ib = find_or_make_info (info);
   int x;

@@ -41,18 +41,8 @@ struct rng all_rng = {MIN_ROW, MIN_COL, MAX_ROW, MAX_COL};
 /* Take a struct rng (R) and init its elements to R1 C1 R2 C2, making sure
    they are put in in the right order.
  */
-#ifdef __STDC__
 void
 set_rng (struct rng *r, CELLREF r1, CELLREF c1, CELLREF r2, CELLREF c2)
-#else
-void
-set_rng (r, r1, c1, r2, c2)
-     struct rng *r;
-     CELLREF r1;
-     CELLREF c1;
-     CELLREF r2;
-     CELLREF c2;
-#endif
 {
   if (r1 <= r2)
     {
@@ -77,14 +67,8 @@ set_rng (r, r1, c1, r2, c2)
 }
 
 /* Flush all the cells in a region */
-#ifdef __STDC__
 void
 delete_region (struct rng *where)
-#else
-void
-delete_region (where)
-     struct rng *where;
-#endif
 {
   CELLREF rr, cc;
   CELL *pp;
@@ -114,15 +98,8 @@ delete_region (where)
 }
 
 /* Turn on/off the locked bits in a region */
-#ifdef __STDC__
 void
 lock_region (struct rng *where, int locked)
-#else
-void
-lock_region (where, locked)
-     struct rng *where;
-     int locked;
-#endif
 {
   CELL *cp;
 
@@ -132,16 +109,8 @@ lock_region (where, locked)
     SET_LCK (cp, locked);
 }
 
-#ifdef __STDC__
 void
 format_region (struct rng *where, int fmt, int just)
-#else
-void
-format_region (where, fmt, just)
-     struct rng *where;
-     int fmt;
-     int just;
-#endif
 {
   CELL *cp;
   CELLREF rr, cc;
@@ -160,15 +129,8 @@ format_region (where, fmt, just)
 
 unsigned int print_width;
 
-#ifdef __STDC__
 void
 print_region (struct rng *print, FILE *fp)
-#else
-void
-print_region (print, fp)
-     struct rng *print;
-     FILE *fp;
-#endif
 {
   CELLREF rr, cc;
   CELL *cp;
@@ -304,15 +266,8 @@ print_region (print, fp)
 	2 if everything is OK.
  */
 
-#ifdef __STDC__
 static int
 set_to_region (struct rng *fm, struct rng *to)
-#else
-static int
-set_to_region (fm, to)
-     struct rng *fm;
-     struct rng *to;
-#endif
 {
   /* Delta {row,col} {from,to} */
   int drf, dcf;
@@ -378,15 +333,8 @@ set_to_region (fm, to)
 /* This is only complicated because it must deal with overlap, and it wants
    to be smart about copying empty space. . .
  */
-#ifdef __STDC__
 void
 move_region (struct rng *fm, struct rng *to)
-#else
-void
-move_region (fm, to)
-     struct rng *fm;
-     struct rng *to;
-#endif
 {
   /* Delta {row,col} */
   int dr, dc;
@@ -688,15 +636,8 @@ move_region (fm, to)
   return;
 }
 
-#ifdef __STDC__
 void
 copy_region (struct rng *fm, struct rng *to)
-#else
-void
-copy_region (fm, to)
-     struct rng *fm;
-     struct rng *to;
-#endif
 {
   CELLREF rf, rt, cf, ct;
 
@@ -717,15 +658,8 @@ copy_region (fm, to)
     }
 }
 
-#ifdef __STDC__
 void
 copy_values_region (struct rng *fm, struct rng *to)
-#else
-void
-copy_values_region (fm, to)
-     struct rng *fm;
-     struct rng *to;
-#endif
 {
   CELLREF rf, rt, cf, ct;
   union vals dummy;
@@ -761,13 +695,8 @@ static int srdiff, erdiff, scdiff, ecdiff;
 extern int debug;
 #endif
 
-#ifdef __STDC__
 void
 sort_region (void)
-#else
-void
-sort_region ()
-#endif
 {
   srdiff = 1 + sort_rng.hr - sort_rng.lr;
   erdiff = 1 + sort_ele.hr - sort_ele.lr;
@@ -803,15 +732,8 @@ sort_region ()
     }
 }
 
-#ifdef __STDC__
 int
 cmp_cells (int n1, int n2)
-#else
-int
-cmp_cells (n1, n2)
-     int n1;
-     int n2;
-#endif
 {
   CELL *c1, *c2;
   int t1, t2;
@@ -939,15 +861,8 @@ cmp_cells (n1, n2)
   return 0;
 }
 
-#ifdef __STDC__
 void
 swp_cells (int n1, int n2)
-#else
-void
-swp_cells (n1, n2)
-     int n1;
-     int n2;
-#endif
 {
   int rn, cn;
   CELLREF r1, r2, c1, c2;
@@ -985,15 +900,8 @@ swp_cells (n1, n2)
       }
 }
 
-#ifdef __STDC__
 void
 rot_cells (int n1, int n2)
-#else
-void
-rot_cells (n1, n2)
-     int n1;
-     int n2;
-#endif
 {
   int rn, cn;
   int nn;

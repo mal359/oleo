@@ -41,16 +41,8 @@ struct font_memo * font_list = 0;
 struct font_memo * the_default_font = 0;
 
 
-#ifdef __STDC__
 void
 define_font (char * oleo_name, char * x_name, char * ps_name)
-#else
-void
-define_font (oleo_name, x_name, ps_name)
-     char * oleo_name;
-     char * x_name;
-     char * ps_name;
-#endif
 {
   struct font_names * fn;
 
@@ -75,14 +67,8 @@ define_font (oleo_name, x_name, ps_name)
 }
 
 
-#ifdef __STDC__
 static struct font_names * 
 find_font_name (char * name)
-#else
-static struct font_names * 
-find_font_name (name)
-     char * name;
-#endif
 {
   struct font_names * fn = font_names;
   if (!name || says_default (name))
@@ -103,15 +89,8 @@ find_font_name (name)
  * who's oleo name is a concatenation of their x and postscript names.
  */
 
-#ifdef __STDC__
 static struct font_names *
 matching_font_names (char * x_name, char * ps_name)
-#else
-static struct font_names *
-matching_font_names (x_name, ps_name)
-     char * x_name;
-     char * ps_name;
-#endif
 {
   struct font_names * fn;
   for (fn = font_names; fn; fn = fn->next)
@@ -132,15 +111,8 @@ matching_font_names (x_name, ps_name)
 
 
 
-#ifdef __STDC__
 struct font_memo *
 intern_font (char * oleo_name, double scale)
-#else
-struct font_memo *
-intern_font (oleo_name, scale)
-     char * oleo_name;
-     double scale;
-#endif
 {
   struct font_names *names = find_font_name (oleo_name);
   struct font_memo *it = font_list;
@@ -158,27 +130,14 @@ intern_font (oleo_name, scale)
   return it;
 }
 
-#ifdef __STDC__
 struct font_memo * 
 default_font (void)
-#else
-struct font_memo * 
-default_font ()
-#endif
 {
   return the_default_font;
 }
 
-#ifdef __STDC__
 struct font_memo *
 matching_font (char * x_name, char * ps_name, double scale)
-#else
-struct font_memo *
-matching_font (x_name, ps_name, scale)
-     char * x_name;
-     char * ps_name;
-     double scale;
-#endif
 {
   struct font_names * fn = matching_font_names (x_name, ps_name);
   return intern_font (fn->oleo_name, scale);
@@ -186,14 +145,8 @@ matching_font (x_name, ps_name, scale)
 
 /* This is for the benefit of oleofile.c only */
 
-#ifdef __STDC__
 struct font_memo *
 parsed_matching_font (char * fullname)
-#else
-struct font_memo *
-parsed_matching_font (fullname)
-     char * fullname;
-#endif
 {
   char x_name[1000];
   char ps_name[1000];
@@ -237,16 +190,8 @@ parsed_matching_font (fullname)
 
 
 
-#ifdef __STDC__
 void 
 set_region_font (struct rng *rng, char * oleo_name, double scale)
-#else
-void 
-set_region_font (rng, oleo_name, scale)
-     struct rng *rng;
-     char * oleo_name;
-     double scale;
-#endif
 {
   struct font_memo *font = ((oleo_name || scale != 1.0)
 			    ? intern_font (oleo_name, scale)
@@ -263,13 +208,8 @@ set_region_font (rng, oleo_name, scale)
   io_redo_region (rng);
 }
 
-#ifdef __STDC__
 void 
 flush_fonts (void)
-#else
-void 
-flush_fonts ()
-#endif
 {
   CELL * cp;
   struct rng rng;
@@ -286,40 +226,21 @@ flush_fonts ()
     }
 }
 
-#ifdef __STDC__
 void
 set_x_default_font (char * str)
-#else
-void
-set_x_default_font (str)
-     char * str;
-#endif
 {
   define_font (default_oleo_name, str, the_default_font->names->ps_name);
   io_repaint ();
 }
 
-#ifdef __STDC__
 void
 set_ps_font_cmd (char * ps_name)
-#else
-void
-set_ps_font_cmd (ps_name)
-     char * ps_name;
-#endif
 {
   define_font (default_oleo_name, the_default_font->names->x_name, ps_name);
 }
 
-#ifdef __STDC__
 void
 set_default_font (char * name, double scale)
-#else
-void
-set_default_font (name, scale)
-     char * name;
-     double scale;
-#endif
 {
   struct font_names * fn = find_font_name (name);
   if (fn != find_font_name (default_oleo_name))
@@ -334,13 +255,8 @@ set_default_font (name, scale)
 }
 
 
-#ifdef __STDC__
 void 
 init_fonts (void)
-#else
-void 
-init_fonts ()
-#endif
 {
   define_font (default_oleo_name, default_x_name, default_ps_name);
   define_font ("times", default_x_name, default_ps_name);

@@ -40,13 +40,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "errors.h"
 
 #if defined(HAVE_RINT)
-#ifdef __STDC__
 extern double rint (double);
 extern long random (void);
-#else
-extern double rint ();
-extern long random ();
-#endif
 #else
 #define rint(x) (((x)<0) ? ceil((x)-.5) : floor((x)+.5))
 #endif
@@ -66,11 +61,7 @@ static void add_flt ();
 RETSIGTYPE math_sig ();
 #endif
 
-#ifdef __STDC__
 int fls (long);
-#else
-int fls ();
-#endif
 #ifdef SMALLEVAL
 int __to_flt (struct value *);
 int __to_int (struct value *);
@@ -680,13 +671,8 @@ eval_expression (expr)
 	case F_SQRT:
 	case F_TAN:
 	  {
-#ifdef __STDC__
 	    double (*funp1) (double);
 	    funp1 = (double (*)(double)) (f->fn_fun);
-#else
-	    double (*funp1) ();
-	    funp1 = (double (*)()) (f->fn_fun);
-#endif
 
 	    p->Float = (*funp1) (p->Float);
 	    if (p->Float != p->Float)
@@ -753,13 +739,8 @@ eval_expression (expr)
 	case F_HYPOT:
 	case POW:
 	  {
-#ifdef __STDC__
 	    double (*funp2) (double, double);
 	    funp2 = (double (*)(double, double)) (f->fn_fun);
-#else
-	    double (*funp2) ();
-	    funp2 = (double (*)()) (f->fn_fun);
-#endif
 
 	    p->Float = (*funp2) (p->Float, (p + 1)->Float);
 	    if (p->Float != p->Float)
@@ -1124,24 +1105,14 @@ eval_expression (expr)
 	default:
 	  if ((f->fn_argn & X_ARGS) == X_AN)
 	    {
-#ifdef __STDC__
 	      void (*funp) (int, struct value *);
 	      funp = (void (*)(int, struct value *)) f->fn_fun;
-#else
-	      void (*funp) ();
-	      funp = (void (*)()) f->fn_fun;
-#endif
 	      (*funp) (numarg, p);
 	    }
 	  else
 	    {
-#ifdef __STDC__
 	      void (*funp) (struct value *);
 	      funp = (void (*)(struct value *)) f->fn_fun;
-#else
-	      void (*funp) ();
-	      funp = (void (*)()) f->fn_fun;
-#endif
 	      (*funp) (p);
 	    }
 	  break;
@@ -1431,38 +1402,20 @@ add_int (value)
     }
 }
 
-#ifdef __STDC__
 double
 dtr (double x)
-#else
-double
-dtr (x)
-     double x;
-#endif
 {
   return x * (PI / (double) 180.0);
 }
 
-#ifdef __STDC__
 double
 rtd (double x)
-#else
-double
-rtd (x)
-     double x;
-#endif
 {
   return x * (180.0 / (double) PI);
 }
 
-#ifdef __STDC__
 double
 to_int (double x)
-#else
-double
-to_int (x)
-     double x;
-#endif
 {
   return (x < 0 ? ceil (x) : floor (x));
 }

@@ -1,3 +1,20 @@
+Sat Oct 4  17:12:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
+
+	* io-x11.c: ANSIfy
+	* io-curses.c: ""
+	* date.c: ""
+	* eval.c: ""
+	* graph.c: ""
+	* font.c: ""
+	* help.c: ""
+	* ref.c: ""
+	* lists.c: ""
+	* regions.c: ""
+	* stub.c: ""
+
+	* utils.c: ANSIfy but search STDC for where I couldn't
+	* sysdef.h: ""
+
 Fri Oct 3  00:25:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
 
 	* Regenerate with Automake 1.2c to remove test error

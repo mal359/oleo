@@ -50,25 +50,15 @@
 
 
 #if defined(HAVE_RINT)
-#ifdef __STDC__
 extern double rint (double);
-#else
-extern double rint ();
-#endif
 #else
 #define rint(x) (((x)<0) ? ceil((x)-.5) : floor((x)+.5))
 #endif
 static void record_damage ();
 
-#ifdef __STDC__
 extern char * x_get_string_resource (XrmDatabase, char *, char *);
 extern XrmDatabase x_load_resources (Display *, char *, char *);
 extern char * getenv (const char *);
-#else
-extern char * x_get_string_resource ();
-extern XrmDatabase x_load_resources ();
-extern char * getenv ();
-#endif
 
 
 static char *emergency_font_name = "8x13";
@@ -122,15 +112,8 @@ static int
 #define RDB_NAME_BUF	8
 #define RDB_NAME_SIZE	256
 
-#ifdef __STDC__
 static char * 
 resource_name (char * left, char * right)
-#else
-static char * 
-resource_name (left, right)
-     char * left;
-     char * right;
-#endif
 {
   static char bufs[RDB_NAME_BUF][RDB_NAME_SIZE];
   static int buf_pos = 0;
@@ -143,26 +126,14 @@ resource_name (left, right)
   return bufs [buf_pos++];
 }
 
-#ifdef __STDC__
 static char *
 class_of (char * foo)
-#else
-static char *
-class_of (foo)
-     char * foo;
-#endif
 {
   return resource_name (rdb_class_name, foo);
 }
 
-#ifdef __STDC__
 static char *
 name_of (char * foo)
-#else
-static char *
-name_of (foo)
-     char * foo;
-#endif
 {
   return resource_name (rdb_name, foo);
 }
@@ -170,15 +141,8 @@ name_of (foo)
 static XrmDatabase rdb;
 static KeySym RetKeySym;
 
-#ifdef __STDC__
 void
 get_x11_args (int * argc_p, char ** argv)
-#else
-void
-get_x11_args (argc_p, argv)
-     int * argc_p;
-     char ** argv;
-#endif
 {
   XrmInitialize ();
   
@@ -282,14 +246,8 @@ struct sXport
   struct input_view input_view;
 };
 
-#ifdef __STDC__
 static void
 beep (Xport xport)
-#else
-static void
-beep (xport)
-     Xport xport;
-#endif
 {
 #if 0
   XBell (xport->dpy, 30);
@@ -297,35 +255,16 @@ beep (xport)
 #endif
 }
 
-#ifdef __STDC__
 static void
 xio_bell (void)
-#else
-static void
-xio_bell ()
-#endif
 {
   beep (thePort);
 }
 
 
-#ifdef __STDC__
 static void
 draw_text_item (Xport xport, int c, int r, int wid, int hgt,
 		XFontStruct *font, GC gc, XTextItem *text, int do_clip)
-#else
-static void
-draw_text_item (xport, c, r, wid, hgt, font, gc, text, do_clip)
-     Xport xport;
-     int c;
-     int r;
-     int wid;
-     int hgt;
-     XFontStruct *font;
-     GC gc;
-     XTextItem *text;
-     int do_clip;
-#endif
 {
   XRectangle clip;
   int widused;
@@ -393,14 +332,8 @@ draw_text_item (xport, c, r, wid, hgt, font, gc, text, do_clip)
     XSetClipMask (xport->dpy, gc, None);
 }
 
-#ifdef __STDC__
 static void
 xio_redraw_input_cursor (int on)
-#else
-static void
-xio_redraw_input_cursor (on)
-     int on;
-#endif
 {
   struct input_view * iv = &thePort->input_view;
   int offset = iv->input_cursor - iv->visibility_begin;
@@ -433,24 +366,14 @@ xio_redraw_input_cursor (on)
 		  &cursor_text, 1);
 }
 
-#ifdef __STDC__
 static void
 xio_cellize_cursor (void)
-#else
-static void
-xio_cellize_cursor ()
-#endif
 {
   xio_redraw_input_cursor (0);
 }
 
-#ifdef __STDC__
 static void
 xio_inputize_cursor (void)
-#else
-static void
-xio_inputize_cursor ()
-#endif
 {
   xio_redraw_input_cursor (1);
 }
@@ -464,13 +387,8 @@ x_input_metric (str, len)
 }
 
 /* This redraws the input area without recomputing anything. */
-#ifdef __STDC__
 static void
 xio_redraw_input (void)
-#else
-static void
-xio_redraw_input ()
-#endif
 {
   {
     struct input_view * iv = &thePort->input_view;
@@ -548,24 +466,14 @@ xio_redraw_input ()
 }
 
 
-#ifdef __STDC__
 static void
 xio_fix_input (void)
-#else
-static void
-xio_fix_input ()
-#endif
 {
   iv_fix_input (&thePort->input_view);
 }
 
-#ifdef __STDC__
 static void
 xio_move_cursor (void)
-#else
-static void
-xio_move_cursor ()
-#endif
 {
   if (input_active)
     xio_redraw_input_cursor (0);
@@ -574,51 +482,26 @@ xio_move_cursor ()
     xio_redraw_input_cursor (1);
 }
 
-#ifdef __STDC__
 static void
 xio_erase (int len)
-#else
-static void
-xio_erase (len)
-     int len;
-#endif
 {
   iv_erase (&thePort->input_view, len);
 }
 
-#ifdef __STDC__
 static void
 xio_insert (int len)
-#else
-static void
-xio_insert (len)
-     int len;
-#endif
 {
   iv_insert (&thePort->input_view, len);
 }
 	   
-#ifdef __STDC__
 static void
 xio_over (char * str, int len)
-#else
-static void
-xio_over (str, len)
-     char * str;
-     int len;
-#endif
 {
   iv_over (&thePort->input_view, len);
 }
 
-#ifdef __STDC__
 int
 io_col_to_input_pos (int c)
-#else
-int
-io_col_to_input_pos (c)
-     int c;
-#endif
 {
   struct input_view * iv = &thePort->input_view;
   char * prompt = (iv->expanded_keymap_prompt
@@ -657,14 +540,8 @@ static int se_chars_buffered = 0;
 
 static XComposeStatus compose;
 
-#ifdef __STDC__
 static void
 xio_scan_for_input (int blockp)
-#else
-static void
-xio_scan_for_input (blockp)
-     int blockp;
-#endif
 {
   XEvent event_return;
   static int pendingw;
@@ -835,37 +712,20 @@ xio_scan_for_input (blockp)
 }
 
 
-#ifdef __STDC__
 static int
 xio_input_avail (void)
-#else
-static int
-xio_input_avail ()
-#endif
 {
   return chars_buffered;
 }
 
-#ifdef __STDC__
 static void
 xio_wait_for_input (void)
-#else
-static void
-xio_wait_for_input ()
-#endif
 {
   io_scan_for_input (1);
 }
 
-#ifdef __STDC__
 static int
 xio_read_kbd (VOLATILE char *buffer, int size)
-#else
-static int
-xio_read_kbd (buffer, size)
-     VOLATILE char *buffer;
-     int size;
-#endif
 {
   int amt_read = size < chars_buffered ? size : chars_buffered;
   if (amt_read)
@@ -876,25 +736,14 @@ xio_read_kbd (buffer, size)
   return amt_read;
 }
 
-#ifdef __STDC__
 static void
 xio_nodelay (int delayp)
-#else
-static void
-xio_nodelay (delayp)
-     int delayp;
-#endif
 {
   block_on_getch = delayp;
 }
 
-#ifdef __STDC__
 static int
 xio_getch (void)
-#else
-static int
-xio_getch ()
-#endif
 {
   char buf;
   
@@ -920,18 +769,8 @@ xio_getch ()
  * a given number of cols, presuming that if they don't all fit,
  * the string CONTINUE must be added to the end of those that do.
  */
-#ifdef __STDC__
 static int
 cram (int cols, XFontStruct *font, char *text, int len, char *continuation)
-#else
-static int
-cram (cols, font, text, len, continuation)
-     int cols;
-     XFontStruct *font;
-     char *text;
-     int len;
-     char *continuation;
-#endif
 {
   int cont_cols = XTextWidth (font, continuation, strlen (continuation));
   int cols_used = 0;
@@ -950,16 +789,8 @@ cram (cols, font, text, len, continuation)
 
 
 
-#ifdef __STDC__
 static void
 set_text (XTextItem *xtext, char *text, int len)
-#else
-static void
-set_text (xtext, text, len)
-     XTextItem *xtext;
-     char *text;
-     int len;
-#endif
 {
   if (xtext->nchars < len)
     {
@@ -991,13 +822,8 @@ static int input_cursor = 0;	/* Position of cursor, if visible */
 static int textout;
 static int input_more_mode = 0;
 
-#ifdef __STDC__
 static void
 draw_input (void)
-#else
-static void
-draw_input ()
-#endif
 {
   if (!input_text.chars)
     {
@@ -1036,13 +862,8 @@ draw_input ()
 }
 
 
-#ifdef __STDC__
 static void
 xio_clear_input_before (void)
-#else
-static void
-xio_clear_input_before ()
-#endif
 {
   textout = 0;
   if (topclear == 2)
@@ -1056,13 +877,8 @@ xio_clear_input_before ()
     }
 }
 
-#ifdef __STDC__
 static void
 xio_clear_input_after (void)
-#else
-static void
-xio_clear_input_after ()
-#endif
 {
   if (topclear)
     {
@@ -1075,16 +891,8 @@ xio_clear_input_after ()
     }
 }
 
-#ifdef __STDC__
 static void
 set_input (char *text, int len, int cursor)
-#else
-static void
-set_input (text, len, cursor)
-     char *text;
-     int len;
-     int cursor;
-#endif
 {
   set_text (&input_text, text, len);
   if (cursor + 1 > input_text.nchars)
@@ -1103,13 +911,8 @@ set_input (text, len, cursor)
  */
 static XTextItem status_text;
 
-#ifdef __STDC__
 static void
 draw_status (void)
-#else
-static void
-draw_status ()
-#endif
 {
   if (!x11_opened || thePort->input_view.current_info)
     return;
@@ -1119,14 +922,8 @@ draw_status ()
 		    thePort->status_gc, &status_text, 1);
 }
 
-#ifdef __STDC__
 static void
 set_status (char *text)
-#else
-static void
-set_status (text)
-     char *text;
-#endif
 {
   set_text (&status_text, text, strlen (text));
   status_text.font = thePort->status_font->fid;
@@ -1138,13 +935,8 @@ set_status (text)
  * High level interfaces for the input and status areas.
  ****************************************************************/
 
-#ifdef __STDC__
 static void
 xio_update_status (void)
-#else
-static void
-xio_update_status ()
-#endif
 {
   CELL *cp;
   char *dec;
@@ -1256,14 +1048,8 @@ xio_update_status ()
 }
 
 
-#ifdef __STDC__
 static int
 xio_get_chr (char *prompt)
-#else
-static int
-xio_get_chr (prompt)
-     char *prompt;
-#endif
 {
   int len = strlen (prompt);
   set_input (prompt, len, len);
@@ -1334,14 +1120,8 @@ static struct cell_gc *cell_gc_cache = 0;
  * tenths of a point.  If the string is not a valid font name, 0 is returned.
  */
 
-#ifdef __STDC__
 static int 
 name_to_ps (char *xfont)
-#else
-static int 
-name_to_ps (xfont)
-     char *xfont;
-#endif
 {
   while (*xfont)
     if (*xfont == '-')
@@ -1367,16 +1147,8 @@ name_to_ps (xfont)
 
 #define ABS(A) ((A) < 0 ? -(A) : (A))
 
-#ifdef __STDC__
 static struct cell_gc *
 cell_gc (Xport port, struct font_memo *font_passed, int cursor)
-#else
-static struct cell_gc *
-cell_gc (port, font_passed, cursor)
-     Xport port;
-     struct font_memo *font_passed;
-     int cursor;
-#endif
 {
   struct font_memo *font =
     (font_passed ? font_passed : default_font());
@@ -1524,14 +1296,8 @@ struct x_window
 
 
 
-#ifdef __STDC__
 static void
 collect_clipping (xx_IntRectangle rect)
-#else
-static void
-collect_clipping (rect)
-     xx_IntRectangle rect;
-#endif
 {
   if (cliprectc == cliprect_alloc)
     {
@@ -1548,15 +1314,8 @@ collect_clipping (rect)
   ++cliprectc;
 }
 
-#ifdef __STDC__
 static void 
 clip_to_intrectangle (struct x_window * xwin, xx_IntRectangle rect)
-#else
-static void 
-clip_to_intrectangle (xwin, rect)
-     struct x_window * xwin;
-     xx_IntRectangle rect;
-#endif
 {
   struct window * win = xwin->win;
   int x_ceil = win->win_over + win->numc;
@@ -1576,18 +1335,8 @@ clip_to_intrectangle (xwin, rect)
 }
 
 
-#ifdef __STDC__
 static void 
 place_text (xx_IntRectangle out, struct display *disp, struct cell_display *cd, XFontStruct *font, char *string)
-#else
-static void 
-place_text (out, disp, cd, font, string)
-     xx_IntRectangle out;
-     struct display *disp;
-     struct cell_display *cd;
-     XFontStruct *font;
-     char *string;
-#endif
 {
   int *widths = disp->widths;
   int *heights = disp->heights;
@@ -1618,15 +1367,8 @@ place_text (out, disp, cd, font, string)
 
 
 
-#ifdef __STDC__
 static void
 x_metric (struct cell_display *cd, struct display *disp)
-#else
-static void
-x_metric (cd, disp)
-     struct cell_display *cd;
-     struct display *disp;
-#endif
 {
   struct x_window *xw = (struct x_window *) disp->vdata;
   Xport port = xw->port;
@@ -1641,16 +1383,8 @@ x_metric (cd, disp)
 
 
 
-#ifdef __STDC__
 static struct x_window *
 x_win (Xport port, struct window *win, int rebuild)
-#else
-static struct x_window *
-x_win (port, win, rebuild)
-     Xport port;
-     struct window *win;
-     int rebuild;
-#endif
 {
   struct x_window *xw;
   
@@ -1678,14 +1412,8 @@ x_win (port, win, rebuild)
   return xw;
 }
 
-#ifdef __STDC__
 static void
 flush_x_windows (Xport port)
-#else
-static void
-flush_x_windows (port)
-     Xport port;
-#endif
 {
   while (port->xwins)
     {
@@ -1700,18 +1428,8 @@ flush_x_windows (port)
 
 
 
-#ifdef __STDC__
 static void
 record_damage (Xport port, int x, int y, int w, int h)
-#else
-static void
-record_damage (port, x, y, w, h)
-     Xport port;
-     int x;
-     int y;
-     int w;
-     int h;
-#endif
 {
   struct x_window *xwin = port->xwins;
   
@@ -1753,17 +1471,8 @@ record_damage (port, x, y, w, h)
 
 
 
-#ifdef __STDC__
 static void
 xio_pr_cell_win (struct window *win, CELLREF r, CELLREF c, CELL *cp)
-#else
-static void
-xio_pr_cell_win (win, r, c, cp)
-     struct window *win;
-     CELLREF r;
-     CELLREF c;
-     CELL *cp;
-#endif
 {
   struct x_window *xwin = x_win (thePort, win, 0);
   struct display *disp = &xwin->display;
@@ -1777,14 +1486,8 @@ xio_pr_cell_win (win, r, c, cp)
 }
 
 
-#ifdef __STDC__
 static void
 xio_repaint_win (struct window *win)
-#else
-static void
-xio_repaint_win (win)
-     struct window *win;
-#endif
 {
   x_win (thePort, win, 1);
   XFillRectangle (thePort->dpy, thePort->window, thePort->neutral_gc,
@@ -1794,13 +1497,8 @@ xio_repaint_win (win)
 
 
 
-#ifdef __STDC__
 static void
 xio_repaint (void)
-#else
-static void
-xio_repaint ()
-#endif
 {
   struct window *win;
   if (thePort->input_view.current_info)
@@ -1814,17 +1512,8 @@ xio_repaint ()
 }
 
 
-#ifdef __STDC__
 static void
 draw_cell (struct x_window *xwin, struct cell_display *cd_passed, int cursor)
-#else
-static void
-draw_cell (xwin, cd_passed, cursor)
-     struct x_window *xwin;
-     struct cell_display *cd_passed;
-     int cursor;
-     
-#endif
 {
   struct cell_display *cd = cd_passed->used_by;
   Xport port = xwin->port;
@@ -1908,14 +1597,8 @@ draw_cell (xwin, cd_passed, cursor)
 
 /* Cell values */
 
-#ifdef __STDC__
 static void
 set_cursor (int on)
-#else
-static void
-set_cursor (on)
-     int on;
-#endif
 {
   struct x_window *xwin = x_win (thePort, cwin, 0);
   struct display *disp = &xwin->display;
@@ -1956,25 +1639,15 @@ set_cursor (on)
 }
 
 
-#ifdef __STDC__
 static void
 xio_hide_cell_cursor (void)
-#else
-static void
-xio_hide_cell_cursor ()
-#endif
 {
   if (thePort->cursor_visible)
     set_cursor (0);
 }
 
-#ifdef __STDC__
 static void
 xio_display_cell_cursor (void)
-#else
-static void
-xio_display_cell_cursor ()
-#endif
 {
   if (!thePort->cursor_visible)
     {
@@ -1991,13 +1664,8 @@ xio_display_cell_cursor ()
 static int xx[10] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
 
-#ifdef __STDC__
 static void
 draw_labels (void)
-#else
-static void
-draw_labels ()
-#endif
 {
   struct x_window *xwin;
   XRectangle rect;
@@ -2153,13 +1821,8 @@ draw_labels ()
 /* Refresh the existing image. */
 
 
-#ifdef __STDC__
 static void
 xio_redisp (void)
-#else
-static void
-xio_redisp ()
-#endif
 {
   static int was_text = 0;
   if (thePort->input_view.current_info)
@@ -2295,15 +1958,8 @@ xio_redisp ()
 
 
 
-#ifdef __STDC__
 static XFontStruct *
 reasonable_font (Xport port, char *name)
-#else
-static XFontStruct *
-reasonable_font (port, name)
-     Xport port;
-     char *name;
-#endif
 {
   XFontStruct *f = XLoadQueryFont (port->dpy, name);
   
@@ -2321,13 +1977,8 @@ reasonable_font (port, name)
   return f;
 }
 
-#ifdef __STDC__
 extern void 
 xio_open_display (void)
-#else
-extern void 
-xio_open_display ()
-#endif
 {
   XGCValues gcv;
   XWMHints wmhints;
@@ -2574,25 +2225,15 @@ xio_open_display ()
 }
 
 
-#ifdef __STDC__
 extern void
 xio_close_display (void)
-#else
-extern void
-xio_close_display ()
-#endif
 {
   XCloseDisplay (thePort->dpy);
   x11_opened = 0;
 }
 
-#ifdef __STDC__
 static void
 xio_flush (void)
-#else
-static void
-xio_flush ()
-#endif
 {
   XFlush (theDisplay);
 }
@@ -2631,25 +2272,14 @@ xio_flush ()
 #define _io_inputize_cursor xio_inputize_cursor
 
 
-#ifdef __STDC__
 void
 x11_graphics (void)
-#else
-void
-x11_graphics ()
-#endif
 {
   IO_SETUP;
 }
 
-#ifdef __STDC__
 void
 set_x_default_point_size (int l)
-#else
-void
-set_x_default_point_size (l)
-     int l;
-#endif
 {
 
 /* If the display is not open (ie, we're running on a non x screen, */
