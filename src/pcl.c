@@ -1,5 +1,5 @@
 /*
- *  $Id: pcl.c,v 1.15 2000/08/10 21:02:51 danny Exp $
+ *  $Id: pcl.c,v 1.16 2001/02/05 00:15:05 pw Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: pcl.c,v 1.15 2000/08/10 21:02:51 danny Exp $";
+static char rcsid[] = "$Id: pcl.c,v 1.16 2001/02/05 00:15:05 pw Exp $";
 
 #include <stdio.h>
 
@@ -129,9 +129,6 @@ void PCLPageFooter(char *str, FILE *fp)
 void PCLField(char *str, int wid, int rightborder,
 			int xpoints, int xchars, FILE *fp)
 {
-	char	format[16];
-	int	l;
-
 #if 0
 	fprintf(stderr, "PCLField(%s,%d,%d)\n",
 		str, wid, rightborder);
