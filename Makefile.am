@@ -3,7 +3,7 @@
 #
 # Process this file with automake to produce Makefile.in
 #
-# $Header: /home/matt/cvs/oleo/oleo/Makefile.am,v 1.35 2000/11/25 10:02:04 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/Makefile.am,v 1.36 2001/02/07 03:32:46 pw Exp $
 #
 AUTOMAKE_OPTIONS = gnu 1.4 readme-alpha
 ACLOCAL_AMFLAGS = -I m4
@@ -46,3 +46,5 @@ web:
 docdir=        $(prefix)/Oleo
 doc_DATA=	AUTHORS FAQ
 
+# remove all the symlinks that come from automake
+MAINTAINERCLEANFILES = COPYING INSTALL install-sh missing mkinstalldirs
