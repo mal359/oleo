@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.h,v 1.13 2000/07/03 16:33:02 danny Exp $
+ *  $Id: io-motif.h,v 1.14 2000/07/03 19:28:34 danny Exp $
  *
  *  This file is part of GnuSheet, a free spreadsheet.
  *
@@ -71,6 +71,7 @@ struct MotifGlobalType {
 	Widget	XLogToggle, xticklblmenu, xticklbloption, xtickfmt;
 	Widget	YLogToggle, yticklblmenu, yticklbloption, ytickfmt;
 	int	xtick, ytick;
+	Widget	ticktype_w[2][10];	/* Safe, don't include sciplot.h */
 };
 
 #define	app			Global->MotifGlobal->app_c

@@ -597,6 +597,18 @@ oleo_read_file (fp, ismerge)
 	      graph_set_data(i, &r, 'h', 'r');
 	    }
 	    break;
+	  case 'm':	/* Tick marks Gmxts, x = 0 or 1, t = 0 .. 4 (the tick type),
+			 * s is the format string, if any.
+			 */
+	    {
+		int	axis, tp;
+
+		axis = cbuf[2] - '0';
+		tp = cbuf[3] - '0';
+
+		graph_set_axis_ticks(axis, tp, strdup(&cbuf[4]));
+	    }
+		break;
 	  default:
 	    fprintf(stderr, "Graph: invalid line '%s'\n", cbuf);
 	  }
@@ -1029,6 +1041,14 @@ oleo_write_file (fp, rng)
 
   /* Draw line to offscreen data points */
   fprintf(fp, "Go%c\n", graph_get_linetooffscreen() ? '1' : '0');
+
+  /* Axis tick marks */
+  fprintf(fp, "Gm0%c%s\n",
+	'0' + graph_get_axis_ticktype(0),
+	graph_get_axis_tickformat(0));
+  fprintf(fp, "Gm1%c%s\n",
+	'0' + graph_get_axis_ticktype(1),
+	graph_get_axis_tickformat(1));
 
   /* Database stuff */
   if (DatabaseInitialised()) {

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: plot.c,v 1.20 2000/07/03 16:33:02 danny Exp $
+ * $Id: plot.c,v 1.21 2000/07/03 19:28:34 danny Exp $
  *
  * This file contains the code to draw plots from the Oleo data
  * layered on top of the libsciplot functions.
@@ -386,6 +386,17 @@ PuXYChart(char *plotter, FILE *outfile)
 
 	sp_set_axis_range(mg, X_AXIS, xmin, xmax, 0.0, 0);
 	sp_set_axis_range(mg, Y_AXIS, ymin, ymax, 0.0, 0);
+
+	if (Global->PlotGlobal->ticktype[0] == SP_TICK_STRFTIME) {
+		sp_set_axis_ticktype_date(mg, X_AXIS, 1.0, 1.0, Global->PlotGlobal->tickformat[0]);
+	} else if (Global->PlotGlobal->ticktype[0] == SP_TICK_PRINTF) {
+		/* FIX ME need more API for this */
+	}
+	if (Global->PlotGlobal->ticktype[1] == SP_TICK_STRFTIME) {
+		sp_set_axis_ticktype_date(mg, Y_AXIS, 1.0, 1.0, Global->PlotGlobal->tickformat[1]);
+	} else if (Global->PlotGlobal->ticktype[1] == SP_TICK_PRINTF) {
+		/* FIX ME need more API for this */
+	}
 #if 0
 	/*
 	 * This is experimental code to force dates to be used for the X axis tick marks.

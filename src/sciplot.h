@@ -1,5 +1,5 @@
 /*
- * $Header: /home/matt/cvs/oleo/oleo/src/sciplot.h,v 1.3 2000/04/08 12:20:05 danny Exp $
+ * $Header: /home/matt/cvs/oleo/oleo/src/sciplot.h,v 1.4 2000/07/03 19:28:34 danny Exp $
  *
  * This file is part of GNU plotutils.
  *
@@ -134,8 +134,12 @@ typedef enum {
 	SP_TICK_DEFAULT = 0,
 	SP_TICK_PRINTF,
 	SP_TICK_STRFTIME,
-	SP_TICK_CUSTOM
+	SP_TICK_CUSTOM,
+	SP_TICK_NONE,
+
+	SP_TICK_LAST
 } tick_type_e;
+
 
 typedef char *(*axis_xlate_tick)(double value);
 void sp_set_axis_ticktype(Multigrapher *mg, int axis,

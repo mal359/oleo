@@ -1,4 +1,7 @@
-$Id: ChangeLog,v 1.127 2000/07/03 16:33:01 danny Exp $
+$Id: ChangeLog,v 1.128 2000/07/03 19:28:34 danny Exp $
+
+Mon  3 Jul 18:49:04 2000, Danny
+	* This is oleo 1.99.11 .
 
 	* Handle Window Manager quit (WM_DELETE_WINDOW) nicely.
 	* Replaced the parent widget in call to XmCreate*Dialog(),
@@ -21,6 +24,7 @@ $Id: ChangeLog,v 1.127 2000/07/03 16:33:01 danny Exp $
 	* Add support in the Configure Graph dialog to be able to
 	  set the value type for tick marks (e.g. to dates as indicated
 	  above).
+	* Add doc/oleo1.png - a screenshot.
 
 Sat  8 Apr 14:21:36 2000, Danny
 	* doc/oleo_web.html now points to ChangeLog in CVSWEB as well,

@@ -2,23 +2,23 @@
 #define GRAPHH
 
 /*
-	$Id: graph.h,v 1.6 2000/03/03 07:52:40 danny Exp $
-
-	Copyright (C) 1993-1998 Free Software Foundation, Inc.
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 2, or (at your option)
-	any later version.
-	
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-	
-	You should have received a copy of the GNU General Public License
-	along with this software; see the file COPYING.  If not, write to
-	the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ * $Id: graph.h,v 1.7 2000/07/03 19:28:34 danny Exp $
+ *
+ * Copyright (C) 1993-2000 Free Software Foundation, Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this software; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 #include "cell.h"
 
@@ -75,6 +75,10 @@ double graph_get_axis_lo(int axis);
 double graph_get_axis_hi(int axis);
 void graph_set_linetooffscreen(int set);
 int graph_get_linetooffscreen(void);
+
+void graph_set_axis_ticks(int axis, int ticktype, char *fmt);
+int graph_get_axis_ticktype(int axis);
+char *graph_get_axis_tickformat(int axis);
 
 typedef void (*plotter) (void);
 

@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: graph.c,v 1.15 2000/07/03 16:33:02 danny Exp $
+ * $Id: graph.c,v 1.16 2000/07/03 19:28:34 danny Exp $
  *
  * This file contains the functions to maintain the internal graphing
  * data structures in Oleo.
@@ -756,6 +756,43 @@ graph_get_linetooffscreen(void)
 	return Global->PlotGlobal->LineToOffscreen;
 }
 
+/*
+ * Axis tick marks
+ */
+void
+graph_set_axis_ticks(int axis, int ticktype, char *fmt)
+{
+	if (axis < 0 || axis > graph_num_axis) {
+		io_error_msg("graph_set_axis_ticks: invalid graph axis %d, must be 0 or 1", axis);
+		return;
+	}
+
+	Global->PlotGlobal->ticktype[axis] = ticktype;
+	Global->PlotGlobal->tickformat[axis] = fmt;
+}
+
+int
+graph_get_axis_ticktype(int axis)
+{
+	if (axis < 0 || axis > graph_num_axis) {
+		io_error_msg("graph_get_axis_ticktype: invalid graph axis %d, must be 0 or 1", axis);
+		return 0;
+	}
+
+	return Global->PlotGlobal->ticktype[axis];
+}
+
+char *
+graph_get_axis_tickformat(int axis)
+{
+	if (axis < 0 || axis > graph_num_axis) {
+		io_error_msg("graph_get_axis_tickformat: invalid graph axis %d, must be 0 or 1", axis);
+		return 0;
+	}
+
+	return Global->PlotGlobal->tickformat[axis];
+}
+ 
 #if 0
 /*
  * Data structures for writing the output.

@@ -1,4 +1,4 @@
-$Id: TODO,v 1.34 2000/03/03 07:52:40 danny Exp $
+$Id: TODO,v 1.35 2000/07/03 19:28:34 danny Exp $
 
 TODO's:
 
@@ -12,6 +12,7 @@ TODO's:
 	- open file ok ? (MDI)
 	- Motif GUI
 	- @button in Motif
+	- remove GNUPLOT dependency
 --------
 
 * Internationalisation
@@ -27,7 +28,7 @@ TODO's:
 	(todo) hook this to curses based interface
 
 * Graphs
-	(todo) connect the plot.c functionality (GNU Plotutils) to graph.c
+	(busy) connect the plot.c functionality (GNU Plotutils) to graph.c
 	(busy) make sure all the variables can get saved
 	(todo) make sure all flags can be controlled through GUI
 	(done) put Plotutils graph in Motif XmScrolledWindow

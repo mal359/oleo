@@ -1,6 +1,6 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.59 2000/07/03 16:33:02 danny Exp $
+ *  $Id: io-motif.c,v 1.60 2000/07/03 19:28:34 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -22,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.59 2000/07/03 16:33:02 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.60 2000/07/03 19:28:34 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -71,6 +71,7 @@ static char rcsid[] = "$Id: io-motif.c,v 1.59 2000/07/03 16:33:02 danny Exp $";
 
 #ifdef	HAVE_LIBPLOT
 #include <plot.h>
+#include "sciplot.h"
 #endif
 #include "oleo_plot.h"
 
@@ -1445,6 +1446,19 @@ void PuPrintXY(Widget w, XtPointer client, XtPointer call)
 #endif
 }
 
+static void TickTypeCB(Widget w, XtPointer client, XtPointer call)
+{
+	int	n = (int)client;
+	int	axis = n / 256;
+	int	val = n % 256;
+
+	MotifSelectGlobal(w);
+
+	if (axis == 0)
+		Global->MotifGlobal->xtick = val;
+	else
+		Global->MotifGlobal->ytick = val;
+}
 
 /*
  * A piece of dialog for configuring XY chars
@@ -1594,18 +1608,26 @@ Widget ConfigureXYChart(Widget parent)
 	Global->MotifGlobal->xticklbloption = XmCreateOptionMenu(form, "xticklbloption", al, ac);
 	XtManageChild(Global->MotifGlobal->xticklbloption);
 
-	XtVaCreateManagedWidget("xtickdefault", xmPushButtonWidgetClass,
+	w = XtVaCreateManagedWidget("xtickdefault", xmPushButtonWidgetClass,
 		Global->MotifGlobal->xticklblmenu,
 		NULL);
-	XtVaCreateManagedWidget("xticknone", xmPushButtonWidgetClass,
+	Global->MotifGlobal->ticktype_w[0][SP_TICK_DEFAULT] = w;
+	XtAddCallback(w, XmNactivateCallback, TickTypeCB, (XtPointer)(0x000 | SP_TICK_DEFAULT));
+	w = XtVaCreateManagedWidget("xticknone", xmPushButtonWidgetClass,
 		Global->MotifGlobal->xticklblmenu,
 		NULL);
-	XtVaCreateManagedWidget("xtickprintf", xmPushButtonWidgetClass,
+	Global->MotifGlobal->ticktype_w[0][SP_TICK_NONE] = w;
+	XtAddCallback(w, XmNactivateCallback, TickTypeCB, (XtPointer)(0x000 | SP_TICK_NONE));
+	w = XtVaCreateManagedWidget("xtickprintf", xmPushButtonWidgetClass,
 		Global->MotifGlobal->xticklblmenu,
 		NULL);
-	XtVaCreateManagedWidget("xtickstrftime", xmPushButtonWidgetClass,
+	Global->MotifGlobal->ticktype_w[0][SP_TICK_PRINTF] = w;
+	XtAddCallback(w, XmNactivateCallback, TickTypeCB, (XtPointer)(0x000 | SP_TICK_PRINTF));
+	w = XtVaCreateManagedWidget("xtickstrftime", xmPushButtonWidgetClass,
 		Global->MotifGlobal->xticklblmenu,
 		NULL);
+	Global->MotifGlobal->ticktype_w[0][SP_TICK_STRFTIME] = w;
+	XtAddCallback(w, XmNactivateCallback, TickTypeCB, (XtPointer)(0x000 | SP_TICK_STRFTIME));
 
 	Global->MotifGlobal->xtickfmt = XtVaCreateManagedWidget("xtickfmt", xmTextFieldWidgetClass,
 		form,
@@ -1641,18 +1663,26 @@ Widget ConfigureXYChart(Widget parent)
 	Global->MotifGlobal->yticklbloption = XmCreateOptionMenu(form, "yticklbloption", al, ac);
 	XtManageChild(Global->MotifGlobal->yticklbloption);
 
-	XtVaCreateManagedWidget("ytickdefault", xmPushButtonWidgetClass,
+	w = XtVaCreateManagedWidget("ytickdefault", xmPushButtonWidgetClass,
 		Global->MotifGlobal->yticklblmenu,
 		NULL);
-	XtVaCreateManagedWidget("yticknone", xmPushButtonWidgetClass,
+	Global->MotifGlobal->ticktype_w[1][SP_TICK_DEFAULT] = w;
+	XtAddCallback(w, XmNactivateCallback, TickTypeCB, (XtPointer)(0x100 | SP_TICK_DEFAULT));
+	w = XtVaCreateManagedWidget("yticknone", xmPushButtonWidgetClass,
 		Global->MotifGlobal->yticklblmenu,
 		NULL);
-	XtVaCreateManagedWidget("ytickprintf", xmPushButtonWidgetClass,
+	Global->MotifGlobal->ticktype_w[1][SP_TICK_NONE] = w;
+	XtAddCallback(w, XmNactivateCallback, TickTypeCB, (XtPointer)(0x100 | SP_TICK_NONE));
+	w = XtVaCreateManagedWidget("ytickprintf", xmPushButtonWidgetClass,
 		Global->MotifGlobal->yticklblmenu,
 		NULL);
-	XtVaCreateManagedWidget("ytickstrftime", xmPushButtonWidgetClass,
+	Global->MotifGlobal->ticktype_w[1][SP_TICK_PRINTF] = w;
+	XtAddCallback(w, XmNactivateCallback, TickTypeCB, (XtPointer)(0x100 | SP_TICK_PRINTF));
+	w = XtVaCreateManagedWidget("ytickstrftime", xmPushButtonWidgetClass,
 		Global->MotifGlobal->yticklblmenu,
 		NULL);
+	Global->MotifGlobal->ticktype_w[1][SP_TICK_STRFTIME] = w;
+	XtAddCallback(w, XmNactivateCallback, TickTypeCB, (XtPointer)(0x100 | SP_TICK_STRFTIME));
 
 	Global->MotifGlobal->ytickfmt = XtVaCreateManagedWidget("ytickfmt", xmTextFieldWidgetClass,
 		form,
@@ -1670,6 +1700,7 @@ Widget ConfigureXYChart(Widget parent)
 void ConfigureXYOk(void)
 {
 	char	*s;
+	int	b;
 
 	s = XmTextFieldGetString(XYxMinText);
 	graph_set_axis_lo('x', s);
@@ -1687,17 +1718,16 @@ void ConfigureXYOk(void)
 	graph_set_axis_auto(1, XmToggleButtonGadgetGetState(XYyAutoToggle));
 	graph_set_linetooffscreen(XmToggleButtonGadgetGetState(lineToOffscreen));
 
-#if 0
-	/* FIX ME need an implementation in graph.c */
-	graph_set_axis_params(0,
-		/* log */	XmToggleButtonGadgetGetState(Global->MotifGlobal->XLogToggle),
+	graph_set_axis_ticks(0,
 		/* tick label type */	Global->MotifGlobal->xtick,
 		/* format string */	XmTextFieldGetString(Global->MotifGlobal->xtickfmt));
-	graph_set_axis_params(1,
-		/* log */	XmToggleButtonGadgetGetState(Global->MotifGlobal->YLogToggle),
+	graph_set_axis_ticks(1,
 		/* tick label type */	Global->MotifGlobal->ytick,
 		/* format string */	XmTextFieldGetString(Global->MotifGlobal->ytickfmt));
-#endif
+
+	/* FIX ME treat these */
+	b = XmToggleButtonGadgetGetState(Global->MotifGlobal->YLogToggle);
+	b = XmToggleButtonGadgetGetState(Global->MotifGlobal->YLogToggle);
 }
 
 static void TextFieldSetFloat(Widget w, float f)
@@ -1717,6 +1747,14 @@ void ConfigureXYReset(void)
 	TextFieldSetFloat(XYyMinText, graph_get_axis_lo(1));
 	TextFieldSetFloat(XYyMaxText, graph_get_axis_hi(1));
 	XmToggleButtonGadgetSetState(lineToOffscreen, graph_get_linetooffscreen(), False);
+
+	XtVaSetValues(Global->MotifGlobal->xticklbloption, XmNmenuHistory, 
+		Global->MotifGlobal->ticktype_w[0][Global->PlotGlobal->ticktype[0]], NULL);
+	XtVaSetValues(Global->MotifGlobal->yticklbloption, XmNmenuHistory, 
+		Global->MotifGlobal->ticktype_w[1][Global->PlotGlobal->ticktype[1]], NULL);
+
+	XmTextFieldSetString(Global->MotifGlobal->xtickfmt, graph_get_axis_tickformat(0));
+	XmTextFieldSetString(Global->MotifGlobal->ytickfmt, graph_get_axis_tickformat(1));
 }
 
 Widget ConfigurePieChart(Widget parent)
