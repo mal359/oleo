@@ -648,7 +648,8 @@ set_width (CELLREF col, int wid)
   *ptr = wid;
 
 #ifdef	HAVE_MOTIF
-  MotifUpdateWidth(col, wid);
+  if (using_motif)
+	MotifUpdateWidth(col, wid);
 #endif
 }
 

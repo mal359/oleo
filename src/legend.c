@@ -1,5 +1,5 @@
 /*
- * $Header: /home/matt/cvs/oleo/oleo/src/legend.c,v 1.3 2000/04/08 12:20:05 danny Exp $
+ * $Header: /home/matt/cvs/oleo/oleo/src/legend.c,v 1.4 2000/07/03 16:33:02 danny Exp $
  *
  * This file is part of libsciplot, one of the libraries in the GNU PlotUtils package.
  *
@@ -47,7 +47,7 @@
 void sp_legend_draw(Multigrapher *mg)
 {
 	double	y;
-	int	i;
+	int	i, nl;
 
         switch (mg->plot_type) {
         case SP_PLOT_XY:
@@ -58,6 +58,14 @@ void sp_legend_draw(Multigrapher *mg)
                 return;	/* No legend */
         }
 
+	/* Figure out whether there's something to show. */
+	for (nl=0, i=1; i<=mg->datasetnum; i++) {
+		if (mg->legend[i] && strlen(mg->legend[i]) != 0)
+			nl++;
+	}
+	if (nl == 0)
+		return;
+	
 	pl_pencolorname_r(mg->plotter, "black");	/* FIX ME */
 
 	/* Draw rectangle */

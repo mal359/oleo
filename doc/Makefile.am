@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/doc/Makefile.am,v 1.12 2000/02/22 23:29:32 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/doc/Makefile.am,v 1.13 2000/07/03 16:33:01 danny Exp $
 #
 # Process this file with automake to produce Makefile.in
 #
@@ -11,7 +11,7 @@ TEXIS=		basics.texi bugs.texi cell-refs.texi entering-data.texi \
 		programs.texi ranlib.texi style.texi texinfo.tex windows.texi \
 		motif.texi dbms.texi
 
-EXTRA_DIST=	$(TEXIS) oleo_web.html texi2html
+EXTRA_DIST=	$(TEXIS) oleo_web.html texi2html oleo1.png
 noinst_DATA =	oleo_web.html $(TEXIS)
 
 oleo.info:	oleo.texi $(TEXIS)

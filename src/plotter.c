@@ -1,3 +1,9 @@
+/*
+ * $Id: plotter.c,v 1.4 2000/07/03 16:33:02 danny Exp $
+ *
+ * This file contains the heart of libsciplot - the scientific plotting
+ * library layered on top of GNU plotutils.
+ */
 #include "config.h"
 
 #ifndef	HAVE_LIBSCIPLOT
@@ -201,21 +207,12 @@ transpose(Multigrapher *mg)
 }
 
 
-/* print_tick_label() prints a label on an axis tick.  The format depends
- * on whether the axis is a log axis or a linear axis; also, the magnitude
- * of the axis labels.
+/*
+ * sp_default_tick_label() is the function for tick labels originally
+ *	provided with Plotutils. In SciPlot it is only the default case.
  */
-
 static void
-#ifdef _HAVE_PROTOS
-print_tick_label (char *labelbuf, const Axis *axis, const Transform *transform, double val)
-#else
-print_tick_label (labelbuf, axis, transform, val)
-     char *labelbuf;
-     const Axis *axis;
-     const Transform *transform;
-     double val;
-#endif
+sp_default_tick_label(char *labelbuf, const Axis *axis, const Transform *transform, double val)
 {
   int prec;
   char *eloc, *ptr;
@@ -328,6 +325,36 @@ print_tick_label (labelbuf, axis, transform, val)
       sprintf (labelbuf, "%.*f", prec, val);
       return;
     }
+}
+
+/*
+ * print_tick_label() prints a label on an axis tick.  The format depends
+ * on whether the axis is a log axis or a linear axis; also, the magnitude
+ * of the axis labels.
+ *
+ * SciPlot added functionality : configurable.
+ */
+
+static void
+print_tick_label (char *labelbuf, const Axis *axis, const Transform *transform, double val)
+{
+  struct tm tm;
+  time_t	t = (time_t) val;
+
+  localtime_r(&t, &tm);
+
+  switch (axis->tick_type) {
+  case SP_TICK_PRINTF:
+	break;
+  case SP_TICK_STRFTIME:
+	strftime(labelbuf, 128, axis->tick_format, &tm);
+	break;
+  case SP_TICK_CUSTOM:
+	break;
+  case SP_TICK_DEFAULT:
+  default:
+	sp_default_tick_label(labelbuf, axis, transform, val);
+  }
 }
 
 /* Algorithm SCALE1, for selecting an inter-tick spacing that will yield a
@@ -1389,7 +1416,7 @@ draw_frame_of_graph (multigrapher, draw_canvas)
       if (multigrapher->x_axis.have_lin_subticks)
 	{
 	  double subtick_size;	/* libplot coordinates */
-	  
+
 	  /* linearly spaced subticks on log axes are as long as reg. ticks */
 	  subtick_size = (multigrapher->x_axis.type == A_LOG10 
 			  ? SS(multigrapher->tick_size) : SS(multigrapher->subtick_size));
@@ -3459,6 +3486,9 @@ void
 sp_set_axis_ticktype_date(Multigrapher *mg, int axis,
 	double round_to, double incr, char *format_string)
 {
+	sp_set_axis_ticktype(mg, axis, round_to, incr, NULL);
+	mg->x_axis.tick_type = SP_TICK_STRFTIME;
+	mg->x_axis.tick_format = format_string;
 }
 
 /*

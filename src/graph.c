@@ -16,6 +16,13 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/*
+ * $Id: graph.c,v 1.15 2000/07/03 16:33:02 danny Exp $
+ *
+ * This file contains the functions to maintain the internal graphing
+ * data structures in Oleo.
+ */
+
 #undef	GRAPH_VERBOSE
 
 #ifdef HAVE_CONFIG_H
@@ -663,6 +670,96 @@ for_pairs_in (struct rng * rng, enum graph_pair_ordering order, fpi_thunk thunk,
     }
 }
 
+/*
+ * graph_plot() gets called from the curses UI for actually creating a plot.
+ */
+void
+graph_plot (void)
+{
+  plot_fn ();
+}
+
+static char *graph_plot_title = NULL;
+
+void
+graph_set_title(char *t)
+{
+	if (graph_plot_title)
+		free(graph_plot_title);
+	graph_plot_title = strdup(t);
+#ifdef	GRAPH_VERBOSE
+	fprintf(stderr, "graph_set_title(%s)\n", t);
+#endif
+}
+
+char *
+graph_get_title(void)
+{
+	return	graph_plot_title;
+}
+
+void
+graph_set_axis_auto(int axis, int set)
+{
+	if (axis == 0  || axis == 1)
+		Global->PlotGlobal->XYAuto[axis] = set;
+	else {
+		io_error_msg("Invalid graph axis %d, must be 0 or 1", axis);
+	}
+#ifdef	GRAPH_VERBOSE
+	fprintf(stderr, "graph_set_axis_auto(%d,%d)\n", axis, set);
+#endif
+}
+
+int
+graph_get_axis_auto(int axis)
+{
+	if (axis == 0  || axis == 1)
+		return Global->PlotGlobal->XYAuto[axis];
+
+	io_error_msg("Invalid graph axis %d, must be 0 or 1", axis);
+	return 1;
+}
+
+double
+graph_get_axis_lo(int axis)
+{
+	if (axis < 0 || axis > graph_num_axis) {
+		io_error_msg("graph_get_axis_lo : invalid graph axis %d, must be 0 or 1", axis);
+		return 0.0;
+	}
+	return Global->PlotGlobal->XYMin[axis];
+}
+
+double
+graph_get_axis_hi(int axis)
+{
+	if (axis < 0 || axis > graph_num_axis) {
+		io_error_msg("graph_get_axis_hi: invalid graph axis %d, must be 0 or 1", axis);
+		return 0.0;
+	}
+	return Global->PlotGlobal->XYMax[axis];
+}
+
+void
+graph_set_linetooffscreen(int set)
+{
+	Global->PlotGlobal->LineToOffscreen = set;
+#ifdef	GRAPH_VERBOSE
+	fprintf(stderr, "graph_set_linetooffscreen(%d)\n", set);
+#endif
+}
+
+int
+graph_get_linetooffscreen(void)
+{
+	return Global->PlotGlobal->LineToOffscreen;
+}
+
+#if 0
+/*
+ * Data structures for writing the output.
+ */
 struct write_tics_frame
 {
   FILE * fp;
@@ -671,6 +768,23 @@ struct write_tics_frame
   int tic_cnt;
 };
 
+struct get_symbols_frame
+{
+  int symbols;
+  char ** names;
+};
+
+struct write_data_frame
+{
+  FILE * fp;
+  enum graph_pair_ordering ornt;
+  int data_cnt;
+  struct get_symbols_frame gsf;
+};
+
+/*
+ * The functions below implement writing to GNUPLOT.
+ */
 static void
 write_tics_thunk (struct write_tics_frame * fr, CELL * cp, CELLREF r, CELLREF c)
 {
@@ -690,7 +804,6 @@ write_tics_thunk (struct write_tics_frame * fr, CELL * cp, CELLREF r, CELLREF c)
   ++fr->tic_cnt;
 }
 
-
 static void
 write_tics_command (FILE * fp, enum graph_axis axis, struct rng * rng, enum graph_pair_ordering order)
 {
@@ -704,12 +817,6 @@ write_tics_command (FILE * fp, enum graph_axis axis, struct rng * rng, enum grap
   fputs (")\n", fp);
 }
 
-struct get_symbols_frame
-{
-  int symbols;
-  char ** names;
-};
-
 static void
 get_symbols_thunk (struct get_symbols_frame * fr,
 		   CELL * cell, CELLREF r, CELLREF c)
@@ -719,15 +826,6 @@ get_symbols_thunk (struct get_symbols_frame * fr,
   fr->names [fr->symbols] = ck_savestr (print_cell (cell));
   ++fr->symbols;
 }
-
-
-struct write_data_frame
-{
-  FILE * fp;
-  enum graph_pair_ordering ornt;
-  int data_cnt;
-  struct get_symbols_frame gsf;
-};
 
 static void
 write_data_thunk (struct write_data_frame * fr,
@@ -762,7 +860,6 @@ write_data_thunk (struct write_data_frame * fr,
   fprintf (fr->fp, " %s\n", print_cell (y_cell));
   ++fr->data_cnt;
 }
-
 
 static void
 spew_gnuplot (FILE  * fp, struct line * data_files, char * dir, char * dbase)
@@ -903,6 +1000,10 @@ graph_spew_with_parameters (struct line * shell_script, struct line *
   fclose (fp);
 }
 
+/*
+ * The functions and variables below constitute the low level
+ * interface to the GNUPLOT program.
+ */
 static FILE * pipe_to_gnuplot = 0;
 static char * cleanup_script = 0;
 static char * gnuplot_script = 0;
@@ -963,8 +1064,10 @@ death_to_gnuplot (void)
     ck_free (gnuplot_script);
 }
 
-
-
+/*
+ * This function is called by graph_plot() from the curses UI to
+ * create a plot.
+ */
 static void
 spew_for_x (void)
 {
@@ -988,6 +1091,10 @@ spew_for_x (void)
   ensure_gnuplot_pipe ();
 }
 
+/*
+ * This function is called by graph_plot() from the curses UI to
+ * create a plot.
+ */
 static void
 spew_for_ps (void)
 {
@@ -1003,86 +1110,34 @@ spew_for_ps (void)
   free_line (&shell_script);
   free_line (&gp_script);
 }
-
-void
-graph_plot (void)
+#else
+/*
+ * Show a GNU Plotutils chart.
+ *
+ * In the Motif interface, ...
+ * The client parameter is the function (from plot.c) which will
+ * handle the plotting. We pass it to RedrawPlotutilsWindow() too.
+ */
+static void
+spew_for_ps(void)
 {
-  plot_fn ();
-}
+#ifdef	HAVE_LIBPLOT
+	void (*f)(char *, FILE *) = PuXYChart;	/* FIX ME */
+	FILE	*fp;
 
-static char *graph_plot_title = NULL;
+	fp = fopen("#plot.ps", "w");
+	if (fp == NULL)
+		return;				/* FIX ME */
 
-void
-graph_set_title(char *t)
-{
-	if (graph_plot_title)
-		free(graph_plot_title);
-	graph_plot_title = strdup(t);
-#ifdef	GRAPH_VERBOSE
-	fprintf(stderr, "graph_set_title(%s)\n", t);
+	PlotInit();
+
+	(*f)("ps", fp);		/* FIX ME */
+
+	fclose(fp);
 #endif
 }
-
-char *
-graph_get_title(void)
+static void
+spew_for_x(void)
 {
-	return	graph_plot_title;
 }
-
-void
-graph_set_axis_auto(int axis, int set)
-{
-	if (axis == 0  || axis == 1)
-		Global->PlotGlobal->XYAuto[axis] = set;
-	else {
-		io_error_msg("Invalid graph axis %d, must be 0 or 1", axis);
-	}
-#ifdef	GRAPH_VERBOSE
-	fprintf(stderr, "graph_set_axis_auto(%d,%d)\n", axis, set);
 #endif
-}
-
-int
-graph_get_axis_auto(int axis)
-{
-	if (axis == 0  || axis == 1)
-		return Global->PlotGlobal->XYAuto[axis];
-
-	io_error_msg("Invalid graph axis %d, must be 0 or 1", axis);
-	return 1;
-}
-
-double
-graph_get_axis_lo(int axis)
-{
-	if (axis < 0 || axis > graph_num_axis) {
-		io_error_msg("graph_get_axis_lo : invalid graph axis %d, must be 0 or 1", axis);
-		return 0.0;
-	}
-	return Global->PlotGlobal->XYMin[axis];
-}
-
-double
-graph_get_axis_hi(int axis)
-{
-	if (axis < 0 || axis > graph_num_axis) {
-		io_error_msg("graph_get_axis_hi: invalid graph axis %d, must be 0 or 1", axis);
-		return 0.0;
-	}
-	return Global->PlotGlobal->XYMax[axis];
-}
-
-void
-graph_set_linetooffscreen(int set)
-{
-	Global->PlotGlobal->LineToOffscreen = set;
-#ifdef	GRAPH_VERBOSE
-	fprintf(stderr, "graph_set_linetooffscreen(%d)\n", set);
-#endif
-}
-
-int
-graph_get_linetooffscreen(void)
-{
-	return Global->PlotGlobal->LineToOffscreen;
-}

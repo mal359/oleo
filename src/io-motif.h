@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.h,v 1.12 2000/03/03 07:52:40 danny Exp $
+ *  $Id: io-motif.h,v 1.13 2000/07/03 16:33:02 danny Exp $
  *
  *  This file is part of GnuSheet, a free spreadsheet.
  *
@@ -68,6 +68,9 @@ struct MotifGlobalType {
 	char	fileformat[10], pattern[13];
 	int	fmt, havea0;
 	Boolean	**selectedcells, newcall, needrecalculate;
+	Widget	XLogToggle, xticklblmenu, xticklbloption, xtickfmt;
+	Widget	YLogToggle, yticklblmenu, yticklbloption, ytickfmt;
+	int	xtick, ytick;
 };
 
 #define	app			Global->MotifGlobal->app_c

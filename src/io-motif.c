@@ -1,6 +1,6 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.58 2000/04/08 12:20:05 danny Exp $
+ *  $Id: io-motif.c,v 1.59 2000/07/03 16:33:02 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -22,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.58 2000/04/08 12:20:05 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.59 2000/07/03 16:33:02 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -129,6 +129,7 @@ static void UpdateStatus(void);
 void helpUsingCB(Widget w, XtPointer client, XtPointer call);
 static void MotifSelectGlobal(Widget);
 Widget GscBuildMainWindow(Widget parent);
+void DestroyToplevel(Widget w, XtPointer client, XtPointer call);
 
 Widget ConfigureBarChart(Widget parent);
 Widget ConfigurePieChart(Widget parent);
@@ -373,6 +374,18 @@ void RegisterRangeSelector(Widget w)
  *		Generic Helper Functions			*
  *								*
  ****************************************************************/
+void
+RegisterWMClose(Widget w)
+{
+        Atom    delete_atom;
+
+        delete_atom = XmInternAtom(XtDisplay(w), "WM_DELETE_WINDOW", False);
+        XmAddWMProtocols(w, &delete_atom, 1);
+        XmSetWMProtocolHooks(w, delete_atom,
+		(XtCallbackProc)DestroyToplevel, (XtPointer)1,
+                (XtCallbackProc)0, (XtPointer)0);
+}
+
 void
 PopDownHelpCB(Widget widget, XtPointer client, XtPointer call)
 {
@@ -1218,7 +1231,7 @@ void PuShowChart(Widget w, XtPointer client, XtPointer call)
 
 	ac = 0;
 	XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
-	dlg = XmCreateTemplateDialog(w, "printDialog", al, ac);
+	dlg = XmCreateTemplateDialog(toplevel, "printDialog", al, ac);
 
 	ac = 0;
 #if 0
@@ -1442,6 +1455,7 @@ Widget ConfigureXYChart(Widget parent)
 	Widget	frame, form, w, te, l, t;
 	Arg	al[10];
 	int	ac;
+	XmString	xms;
 
 	MotifSelectGlobal(parent);
 
@@ -1555,6 +1569,101 @@ Widget ConfigureXYChart(Widget parent)
 			XmNleftOffset,          10,
 		NULL);
 
+	/* Axis tick labels */
+	Global->MotifGlobal->XLogToggle = XtVaCreateManagedWidget("xLogToggle",
+		xmToggleButtonGadgetClass,
+		form,
+			XmNtopAttachment,       XmATTACH_WIDGET,
+			XmNtopWidget,           lineToOffscreen,
+			XmNtopOffset,           10,
+			XmNleftAttachment,      XmATTACH_FORM,
+			XmNleftOffset,          10,
+		NULL);
+
+	Global->MotifGlobal->xticklblmenu = XmCreatePulldownMenu(form, "xticklblmenu", NULL, 0);
+	ac=0;
+	XtSetArg(al[ac], XmNsubMenuId, Global->MotifGlobal->xticklblmenu); ac++;
+	xms = XmStringCreateSimple(_("X Axis Tick Label Type"));
+	XtSetArg(al[ac], XmNlabelString, xms); ac++;
+	XtSetArg(al[ac], XmNtopAttachment, XmATTACH_WIDGET); ac++;
+	XtSetArg(al[ac], XmNtopWidget, lineToOffscreen); ac++;
+	XtSetArg(al[ac], XmNtopOffset, 10); ac++;
+	XtSetArg(al[ac], XmNleftAttachment, XmATTACH_WIDGET); ac++;
+	XtSetArg(al[ac], XmNleftWidget, Global->MotifGlobal->XLogToggle); ac++;
+	XtSetArg(al[ac], XmNleftOffset, 10); ac++;
+	Global->MotifGlobal->xticklbloption = XmCreateOptionMenu(form, "xticklbloption", al, ac);
+	XtManageChild(Global->MotifGlobal->xticklbloption);
+
+	XtVaCreateManagedWidget("xtickdefault", xmPushButtonWidgetClass,
+		Global->MotifGlobal->xticklblmenu,
+		NULL);
+	XtVaCreateManagedWidget("xticknone", xmPushButtonWidgetClass,
+		Global->MotifGlobal->xticklblmenu,
+		NULL);
+	XtVaCreateManagedWidget("xtickprintf", xmPushButtonWidgetClass,
+		Global->MotifGlobal->xticklblmenu,
+		NULL);
+	XtVaCreateManagedWidget("xtickstrftime", xmPushButtonWidgetClass,
+		Global->MotifGlobal->xticklblmenu,
+		NULL);
+
+	Global->MotifGlobal->xtickfmt = XtVaCreateManagedWidget("xtickfmt", xmTextFieldWidgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_WIDGET,
+			XmNtopWidget,		lineToOffscreen,
+			XmNtopOffset,		10,
+			XmNleftAttachment,	XmATTACH_WIDGET,
+			XmNleftWidget,		Global->MotifGlobal->xticklbloption,
+			XmNleftOffset,		10,
+		NULL);
+
+	Global->MotifGlobal->YLogToggle = XtVaCreateManagedWidget("yLogToggle",
+		xmToggleButtonGadgetClass,
+		form,
+			XmNtopAttachment,       XmATTACH_WIDGET,
+			XmNtopWidget,           Global->MotifGlobal->XLogToggle,
+			XmNtopOffset,           10,
+			XmNleftAttachment,      XmATTACH_FORM,
+			XmNleftOffset,          10,
+		NULL);
+
+	Global->MotifGlobal->yticklblmenu = XmCreatePulldownMenu(form, "yticklblmenu", NULL, 0);
+	ac=0;
+	XtSetArg(al[ac], XmNsubMenuId, Global->MotifGlobal->yticklblmenu); ac++;
+	xms = XmStringCreateSimple(_("Y Axis Tick Label Type"));
+	XtSetArg(al[ac], XmNlabelString, xms); ac++;
+	XtSetArg(al[ac], XmNtopAttachment, XmATTACH_WIDGET); ac++;
+	XtSetArg(al[ac], XmNtopWidget, Global->MotifGlobal->xtickfmt); ac++;
+	XtSetArg(al[ac], XmNtopOffset, 10); ac++;
+	XtSetArg(al[ac], XmNleftAttachment, XmATTACH_WIDGET); ac++;
+	XtSetArg(al[ac], XmNleftWidget, Global->MotifGlobal->YLogToggle); ac++;
+	XtSetArg(al[ac], XmNleftOffset, 10); ac++;
+	Global->MotifGlobal->yticklbloption = XmCreateOptionMenu(form, "yticklbloption", al, ac);
+	XtManageChild(Global->MotifGlobal->yticklbloption);
+
+	XtVaCreateManagedWidget("ytickdefault", xmPushButtonWidgetClass,
+		Global->MotifGlobal->yticklblmenu,
+		NULL);
+	XtVaCreateManagedWidget("yticknone", xmPushButtonWidgetClass,
+		Global->MotifGlobal->yticklblmenu,
+		NULL);
+	XtVaCreateManagedWidget("ytickprintf", xmPushButtonWidgetClass,
+		Global->MotifGlobal->yticklblmenu,
+		NULL);
+	XtVaCreateManagedWidget("ytickstrftime", xmPushButtonWidgetClass,
+		Global->MotifGlobal->yticklblmenu,
+		NULL);
+
+	Global->MotifGlobal->ytickfmt = XtVaCreateManagedWidget("ytickfmt", xmTextFieldWidgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_WIDGET,
+			XmNtopWidget,		Global->MotifGlobal->XLogToggle,
+			XmNtopOffset,		10,
+			XmNleftAttachment,	XmATTACH_WIDGET,
+			XmNleftWidget,		Global->MotifGlobal->xticklbloption,
+			XmNleftOffset,		10,
+		NULL);
+
 	return frame;
 }
 
@@ -1577,6 +1686,18 @@ void ConfigureXYOk(void)
 	graph_set_axis_auto(0, XmToggleButtonGadgetGetState(XYxAutoToggle));
 	graph_set_axis_auto(1, XmToggleButtonGadgetGetState(XYyAutoToggle));
 	graph_set_linetooffscreen(XmToggleButtonGadgetGetState(lineToOffscreen));
+
+#if 0
+	/* FIX ME need an implementation in graph.c */
+	graph_set_axis_params(0,
+		/* log */	XmToggleButtonGadgetGetState(Global->MotifGlobal->XLogToggle),
+		/* tick label type */	Global->MotifGlobal->xtick,
+		/* format string */	XmTextFieldGetString(Global->MotifGlobal->xtickfmt));
+	graph_set_axis_params(1,
+		/* log */	XmToggleButtonGadgetGetState(Global->MotifGlobal->YLogToggle),
+		/* tick label type */	Global->MotifGlobal->ytick,
+		/* format string */	XmTextFieldGetString(Global->MotifGlobal->ytickfmt));
+#endif
 }
 
 static void TextFieldSetFloat(Widget w, float f)
@@ -2499,6 +2620,12 @@ void DrawCell(Widget w, XtPointer client, XtPointer call)
 	}
 #endif
 
+#if 0
+	if (cbp->string && strlen(cbp->string))
+		fprintf(stderr, "OleoDrawCell(%d,%d) -> [%s]\n",
+			cbp->row, cbp->column, cbp->string);
+#endif
+
 #ifdef	VERBOSE
 	Debug(__FILE__, "DrawCell(%d, %d, %s)\n",
 		cbp->row, cbp->column, cbp->string);
@@ -2747,8 +2874,11 @@ void DestroyToplevel(Widget w, XtPointer client, XtPointer call)
 #if 0
 	fprintf(stderr, "In DestroyToplevel()\n");
 #endif
-	MotifGlobalInitialize();
-	MdiClose();
+
+	/*
+	 * Calling this solves all the issues...
+	 */
+	QuitCB(w, client, call);
 }
 
 /*
@@ -2767,7 +2897,8 @@ void OpenNewCB(Widget w, XtPointer client, XtPointer call)
 
 	toplevel = XtVaAppCreateShell(PACKAGE, PACKAGE,
 		topLevelShellWidgetClass, d, NULL);
-	XtAddCallback(toplevel, XtNdestroyCallback, DestroyToplevel, NULL);
+	RegisterWMClose(toplevel);
+	XtVaSetValues(toplevel, XmNdeleteResponse, XmDO_NOTHING, NULL);
 
 	/* FIX ME do we need to do this again ?? */
 	XtVaGetApplicationResources(toplevel, &AppRes,
@@ -3998,7 +4129,7 @@ FontChooserCB(Widget w, XtPointer client, XtPointer call)
 	MotifSelectGlobal(w);
 
 	ac = 0;
-	fc = XltCreateFontChooserDialog(w, "font chooser", al, ac);
+	fc = XltCreateFontChooserDialog(toplevel, "font chooser", al, ac);
 	XtManageChild(fc);
 
 	XtAddCallback(fc, XmNokCallback, ChooseFont, NULL);
@@ -5548,7 +5679,8 @@ void motif_init(int *argc, char **argv)
 
 	toplevel = XtVaAppCreateShell(PACKAGE, PACKAGE,
 		topLevelShellWidgetClass, dpy, NULL);
-	XtAddCallback(toplevel, XtNdestroyCallback, DestroyToplevel, NULL);
+	RegisterWMClose(toplevel);
+	XtVaSetValues(toplevel, XmNdeleteResponse, XmDO_NOTHING, NULL);
 
 	/*
 	 * Add converter for tearoffs.
@@ -5585,6 +5717,9 @@ void RaiseSplash()
 
 void motif_build_gui(void)
 {
+	RegisterWMClose(toplevel);
+	XtVaSetValues(toplevel, XmNdeleteResponse, XmDO_NOTHING, NULL);
+
 	w = GscBuildMainWindow(toplevel);
 	XtManageChild(w);
 	XtRealizeWidget(toplevel);
@@ -5660,7 +5795,7 @@ void gplCB(Widget w, XtPointer client, XtPointer call)
 
 	ac = 0;
 	XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
-	x = XmCreateTemplateDialog(w, "versionD", al, ac);
+	x = XmCreateTemplateDialog(toplevel, "versionD", al, ac);
 
 	ac = 0;
 	XtSetArg(al[ac], XmNeditable, False); ac++;
@@ -5707,7 +5842,11 @@ void versionCB(Widget w, XtPointer client, XtPointer call)
 	XmStringFree(xms1);
 	XmStringFree(xms2);
 
+#if XbaeVersion > 40800
+	sprintf(xbae, "\n  %s", XbaeGetVersionTxt());
+#else
 	sprintf(xbae, "\n  Xbae %d", XbaeVersion);
+#endif
 	xms1 = xms;
 	xms2 = XmStringCreateLtoR(xbae, XmFONTLIST_DEFAULT_TAG);
 	xms = XmStringConcat(xms1, xms2);
@@ -5750,7 +5889,7 @@ void versionCB(Widget w, XtPointer client, XtPointer call)
 #endif
 
 #ifdef	HAVE_LIBPLOT
-	sprintf(xbae, "\n  GNU PlotUtils (libplot version %s)", LIBPLOT_VERSION);
+	sprintf(xbae, "\n  GNU PlotUtils (libplot version %s)", PL_LIBPLOT_VER_STRING);
 	xms1 = xms;
 	xms2 = XmStringCreateLtoR(xbae, XmFONTLIST_DEFAULT_TAG);
 	xms = XmStringConcat(xms1, xms2);
@@ -5760,7 +5899,7 @@ void versionCB(Widget w, XtPointer client, XtPointer call)
 
 	ac = 0;
 	XtSetArg(al[0], XmNmessageString, xms); ac++;
-	x = XmCreateMessageDialog(w, "versionD", al, ac);
+	x = XmCreateMessageDialog(toplevel, "versionD", al, ac);
 
 	XtAddCallback(x, XmNhelpCallback, gplCB, NULL);
 

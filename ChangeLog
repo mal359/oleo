@@ -1,4 +1,26 @@
-$Id: ChangeLog,v 1.126 2000/04/08 12:20:04 danny Exp $
+$Id: ChangeLog,v 1.127 2000/07/03 16:33:01 danny Exp $
+
+	* Handle Window Manager quit (WM_DELETE_WINDOW) nicely.
+	* Replaced the parent widget in call to XmCreate*Dialog(),
+	  OpenMotif dies if this is a button.
+	* Add doc/oleo1.png, a simple screenshot of Oleo in action.
+	  It shows the LessTif GUI and an XY plot with GNU Plotutils.
+	* Update spec file so we can build a reasonable RPM.
+	  rpm -ba oleo.spec should now just work.
+	* Finally (!) fix the bug so parse.h is automatically
+	  included in the source distribution, together with parse.c.
+	* Make sure that "oleo -t xx.oleo" works when compiled with Motif.
+	  (This should start the curses interface.)
+	* Manipulate src/graph.c so it no longer uses GNUPLOT (which has
+	  nothing to do with GNU), but GNU plotutils. The latter is a GNU
+	  product, and is more interesting to use for other reasons too.
+	  (This is obviously a personal opinion !)
+	* Don't draw a legend unless you have text to put in it.
+	* Add experimental code for displaying dates as axis labels
+	  in XY plots. (Conditionally compiled out for now.)
+	* Add support in the Configure Graph dialog to be able to
+	  set the value type for tick marks (e.g. to dates as indicated
+	  above).
 
 Sat  8 Apr 14:21:36 2000, Danny
 	* doc/oleo_web.html now points to ChangeLog in CVSWEB as well,
@@ -7,6 +29,7 @@ Sat  8 Apr 14:21:36 2000, Danny
 	* Detect rename() system call.
 	* intl/ : use autoconf to figure out which data type is nls_uint32.
 	* Upgraded doc/texi2html to version 1.61.
+	* Use XbaeGetVersionTxt() if available (in the version dialog).
 
 Fri  3 Mar 08:48:49 2000, Danny
 	* Oleo sources are now in CVS at subversions.gnu.org,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1998-1999 Free Software Foundation, Inc.
+ * Copyright (C) 1998-2000 Free Software Foundation, Inc.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,6 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this software; see the file COPYING.  If not, write to
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/*
+ * $Id: plot.c,v 1.20 2000/07/03 16:33:02 danny Exp $
+ *
+ * This file contains the code to draw plots from the Oleo data
+ * layered on top of the libsciplot functions.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -379,6 +386,15 @@ PuXYChart(char *plotter, FILE *outfile)
 
 	sp_set_axis_range(mg, X_AXIS, xmin, xmax, 0.0, 0);
 	sp_set_axis_range(mg, Y_AXIS, ymin, ymax, 0.0, 0);
+#if 0
+	/*
+	 * This is experimental code to force dates to be used for the X axis tick marks.
+	 */
+	sp_set_axis_ticktype_date(mg, X_AXIS,
+		/* round_to */		1.0,
+		/* incr */		1.0,
+		/* format_string */	"%b\n%Y");
+#endif
 
 	sp_draw_frame(mg, 1);
 

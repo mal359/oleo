@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.24 2000/04/08 12:20:05 danny Exp $
+ *  $Id: fallback.c,v 1.25 2000/07/03 16:33:02 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -318,6 +318,16 @@ char *fallback[] = {
 	"*yMinLabel.labelString:			Minimum Y :",
 	"*yMaxLabel.labelString:			Maximum Y :",
 	"*lineToOffscreen.labelString:			Draw line to offscreen data points",
+	"*xLogToggle.labelString:		Logarithmic Scale",
+	"*yLogToggle.labelString:		Logarithmic Scale",
+	"*xtickdefault.labelString:		Default",
+	"*xticknone.labelString:		None",
+	"*xtickprintf.labelString:		Printf",
+	"*xtickstrftime.labelString:		Strftime",
+	"*ytickdefault.labelString:		Default",
+	"*yticknone.labelString:		None",
+	"*ytickprintf.labelString:		Printf",
+	"*ytickstrftime.labelString:		Strftime",
 /* Bar Chart Dialog */
 	"*BarTab.labelString:				Bar Chart",
 	"*configureBarChartFrameTitle.labelString:	Configure Bar Charts",
