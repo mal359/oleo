@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.85 2000/11/25 10:02:04 danny Exp $
+dnl $Id: configure.in,v 1.86 2001/02/07 02:07:44 pw Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -179,7 +179,7 @@ if test "$no_x" = ""; then
  dnl
  if test "$with_motif" = "yes"; then
    AC_FIND_MOTIF
-   AC_FIND_XBAE
+   ICE_FIND_Xbae
    ICE_FIND_XmHTML
    AC_FIND_XLT
    if test "x$XLT_LIBS" != "x"; then
