@@ -1,5 +1,5 @@
 /*
- * $Id: key.c,v 1.6 2000/08/10 21:02:50 danny Exp $
+ * $Id: key.c,v 1.7 2001/02/07 03:17:36 pw Exp $
  *
  * Copyright © 1993 Free Software Foundation, Inc.
  * 
@@ -48,7 +48,7 @@ search_map_for_cmd (struct line * line, int map, int vec, int code)
   int len = strlen (line->buf);
   struct keymap * this_map;
   int x;
-  char used[256];
+  char used[OLEO_NUM_KEYS];
   int try_prefix;
 
   for (try_prefix = 0; try_prefix < 2; ++try_prefix)
@@ -300,7 +300,7 @@ bind_all_keys (char * keymap, char * function)
 fini:
   {
     int ch;
-    for (ch = 0; ch < 256; ++ch)
+    for (ch = 0; ch < OLEO_NUM_KEYS; ++ch)
       do_bind_key (the_maps[map], ch, vec, code);
   }
 }
@@ -337,7 +337,7 @@ write_keys_cmd (FILE *fp)
   for (n = 0; n < num_maps; n++)
     {
       map = the_maps[n];
-      for (key = 0; key < 256; key++)
+      for (key = 0; key < OLEO_NUM_KEYS; key++)
 	{
 	  vec = map->keys[key].vector;
 	  code = map->keys[key].code;
@@ -361,7 +361,7 @@ void
 clear_keymap (struct keymap *m)
 {
   int n;
-  for (n = 0; n < 256; n++)
+  for (n = 0; n < OLEO_NUM_KEYS; n++)
     {
       m->keys[n].vector = -1;
       m->keys[n].code = -1;
@@ -369,7 +369,7 @@ clear_keymap (struct keymap *m)
 }
 
 int 
-map_idn (char *name, int n)
+map_idn (const char *name, int n)
 {
   int x;
   for (x = 0; x < num_maps; ++x)
@@ -378,13 +378,19 @@ map_idn (char *name, int n)
   return -1;
 }
 
+int
+map_id(const char *name)
+{
+    return map_idn(name, strlen(name));
+}
+
 void
 create_keymap (char * mapname, char * parentname)
 {
   int map = map_id (mapname);
   int parent = parentname ? map_id (parentname) : -1;
 
-  if (map > 0)
+  if (map >= 0)
     {
       io_info_msg ("Map %s already exists.",  mapname);
       return;
@@ -402,7 +408,7 @@ create_keymap (char * mapname, char * parentname)
 				  : 0);
   {
     int c;
-    for (c = 0; c < 256; ++c)
+    for (c = 0; c < OLEO_NUM_KEYS; ++c)
       {
 	the_maps[num_maps]->keys[c].vector = -1;
 	the_maps[num_maps]->keys[c].code = -1;
