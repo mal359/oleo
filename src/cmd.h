@@ -2,7 +2,7 @@
 #define CMDH
 
 /*
- * $Id: cmd.h,v 1.6 2001/02/04 15:54:20 danny Exp $
+ * $Id: cmd.h,v 1.7 2001/02/06 02:38:05 pw Exp $
  *
  * Copyright © 1992, 1993, 2001 Free Software Foundation, Inc.
  * 
@@ -335,6 +335,7 @@ extern void end_macro (void);
 extern void stop_entering_macro (void);
 extern void store_last_macro (struct rng * rng);
 extern int real_get_chr (void);
+extern void block_until_excitement(struct timeval *tv);
 extern void push_command_frame (struct rng * rng, char * first_line, int len);
 extern void remove_cmd_frame (struct command_frame * frame);
 extern void free_cmd_frame (struct command_frame * frame);
