@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.22 1999/01/23 10:15:02 danny Exp $
+ *  $Id: io-motif.c,v 1.23 1999/02/10 22:23:17 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.22 1999/01/23 10:15:02 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.23 1999/02/10 22:23:17 danny Exp $";
 
 #include "config.h"
 
@@ -46,6 +46,7 @@ static char rcsid[] = "$Id: io-motif.c,v 1.22 1999/01/23 10:15:02 danny Exp $";
 
 #if	HAVE_XLT
 #include <Xlt/SciPlot.h>
+#define	HAVE_SciPlot_H
 #else
 #if	HAVE_SciPlot_H
 #include <SciPlot/SciPlot.h>
@@ -2219,8 +2220,8 @@ int formats_list[] = {
 	/* 11 */	FMT_DEF,
 	/* 12 */	FMT_DEF,
 	/* 13 */	FMT_DEF,
-	/* 14 */	FMT_DEF,
-	/* 15 */	FMT_DEF,
+	/* 14 */	FMT_USR | 4,
+	/* 15 */	FMT_USR | 15,
 	/* 16 */	FMT_DEF
 };
 
@@ -2820,6 +2821,7 @@ GscBuildMainWindow(Widget parent)
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, ConfigureGraph, NULL);
 
+#ifdef	HAVE_SciPlot_H
 	w = XtVaCreateManagedWidget("show", xmPushButtonGadgetClass, graphmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, ShowGraph, NULL);
@@ -2827,7 +2829,9 @@ GscBuildMainWindow(Widget parent)
 	w = XtVaCreateManagedWidget("print", xmPushButtonGadgetClass, graphmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, PrintGraph, NULL);
+#endif
 
+#ifdef	HAVE_LIBPLOT
 	/* GNU Plotutils */
 	w = XtVaCreateManagedWidget("pulabel", xmLabelGadgetClass, graphmenu,
 		NULL);
@@ -2848,6 +2852,7 @@ GscBuildMainWindow(Widget parent)
 		graphmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, PuShowXYChart, NULL);
+#endif
 
 
 	/*

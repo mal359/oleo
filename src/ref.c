@@ -366,6 +366,19 @@ move_cell (CELLREF rf, CELLREF cf, CELLREF rt, CELLREF ct)
       cur_row = rt;
       cur_col = ct;
       my_cell = find_cell (cur_row, cur_col);
+#ifdef	NEW_CELL_FLAGS
+      if (my_cell)
+	flush_old_value ();
+      else if (((non_cell.cell_flags.cell_format == 0)
+		&& (non_cell.cell_flags.cell_precision == 0)
+		&& (non_cell.cell_flags.cell_justify == 0)
+		&& (non_cell.cell_flags.cell_type == 0))
+		&& (non_cell.cell_flags.cell_lock == 0)
+		&& !non_cell.cell_formula && !non_cell.cell_font)
+	return;
+      else
+	my_cell = find_or_make_cell (cur_row, cur_col);
+#else
       if (my_cell)
 	flush_old_value ();
       else if (!non_cell.cell_flags && !non_cell.cell_formula
@@ -373,6 +386,7 @@ move_cell (CELLREF rf, CELLREF cf, CELLREF rt, CELLREF ct)
 	return;
       else
 	my_cell = find_or_make_cell (cur_row, cur_col);
+#endif
 
       my_cell->cell_flags = non_cell.cell_flags;
       my_cell->cell_refs_to = non_cell.cell_refs_to;
@@ -403,7 +417,11 @@ move_cell (CELLREF rf, CELLREF cf, CELLREF rt, CELLREF ct)
 	  non_cell.cell_cycle = cpf->cell_cycle;
 	  non_cell.cell_font = cpf->cell_font;
 	  non_cell.c_z = cpf->c_z;
+#ifdef	NEW_CELL_FLAGS
+	bzero(&(cpf->cell_flags), sizeof(cpf->cell_flags));
+#else
 	  cpf->cell_flags = 0;
+#endif
 	  cpf->cell_refs_to = 0;
 	  cpf->cell_formula = 0;
 	  cpf->cell_cycle = 0;
@@ -415,9 +433,21 @@ move_cell (CELLREF rf, CELLREF cf, CELLREF rt, CELLREF ct)
   cur_row = rt;
   cur_col = ct;
   my_cell = find_cell (cur_row, cur_col);
+#ifdef	NEW_CELL_FLAGS
+  if ((!cpf ||
+      (((non_cell.cell_flags.cell_format == 0)
+		&& (non_cell.cell_flags.cell_precision == 0)
+		&& (non_cell.cell_flags.cell_justify == 0)
+		&& (non_cell.cell_flags.cell_type == 0))
+		&& (non_cell.cell_flags.cell_lock == 0)
+	&& !cpf->cell_formula && !cpf->cell_font))
+      && !my_cell)
+    return;
+#else
   if ((!cpf || (!cpf->cell_flags && !cpf->cell_formula && !cpf->cell_font))
       && !my_cell)
     return;
+#endif
   if (!my_cell)
     {
       my_cell = find_or_make_cell (cur_row, cur_col);
@@ -436,7 +466,11 @@ move_cell (CELLREF rf, CELLREF cf, CELLREF rt, CELLREF ct)
   my_cell->cell_font = cpf->cell_font;
   my_cell->c_z = cpf->c_z;
 
+#ifdef	NEW_CELL_FLAGS
+  bzero(&(cpf->cell_flags), sizeof(cpf->cell_flags));
+#else
   cpf->cell_flags = 0;
+#endif
   cpf->cell_refs_to = 0;
   cpf->cell_formula = 0;
   cpf->cell_cycle = 0;
@@ -458,9 +492,20 @@ copy_cell (CELLREF rf, CELLREF cf, CELLREF rt, CELLREF ct)
   cur_row = rt;
   cur_col = ct;
   my_cell = find_cell (cur_row, cur_col);
+#ifdef	NEW_CELL_FLAGS
+  if ((!cpf ||
+      (((cpf->cell_flags.cell_format == 0)
+		&& (cpf->cell_flags.cell_precision == 0)
+		&& (cpf->cell_flags.cell_justify == 0)
+		&& (cpf->cell_flags.cell_type == 0))
+		&& (cpf->cell_flags.cell_lock == 0)
+	&& !cpf->cell_formula && !cpf->cell_font)) && !my_cell)
+    return;
+#else
   if ((!cpf || (!cpf->cell_flags && !cpf->cell_formula && !cpf->cell_font))
       && !my_cell)
     return;
+#endif
   if (!my_cell)
     {
       my_cell = find_or_make_cell (cur_row, cur_col);

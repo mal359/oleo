@@ -647,7 +647,11 @@ insert_cell_attr (struct rng * rng, char * attr)
 	set_line (&line, "def");
       else
 	{
+#ifdef	NEW_CELL_FLAGS
+	  int fmt = GET_FORMAT (cp);
+#else
 	  int fmt = GET_FMT (cp);
+#endif
 	  set_line (&line, fmt_to_str (fmt));
 	}
     }

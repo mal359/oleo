@@ -250,6 +250,27 @@ esac
 
 dnl
 dnl
+dnl AC_LINK_X : find X11 (minimal file to OPTIONALLY link Oleo
+dnl	with X11 libraries.
+dnl
+dnl Adapted from a macro by Andreas Zeller.
+dnl
+dnl The variable provided is :
+dnl	link_x			(e.g. -L/usr/X11R6/lib -lX11 -lXt)
+dnl
+dnl The link_x variable should be fit to put on the application's
+dnl link line in the Makefile.
+dnl
+dnl Oleo CVS $Id: aclocal.m4,v 1.26 1999/02/10 22:23:04 danny Exp $
+dnl
+AC_DEFUN(AC_LINK_X,
+[if test "$with_x" = "yes"; then
+  X_LIBS="${X_LIBS} -lX11 -lXt"
+fi])
+
+
+dnl
+dnl
 dnl AC_FIND_MOTIF : find OSF/Motif or LessTif, and provide variables
 dnl	to easily use them in a Makefile.
 dnl
@@ -264,7 +285,7 @@ dnl
 dnl The link_motif and include_motif variables should be fit to put on
 dnl your application's link line in your Makefile.
 dnl
-dnl Oleo CVS $Id: aclocal.m4,v 1.25 1999/02/04 22:32:47 danny Exp $
+dnl Oleo CVS $Id: aclocal.m4,v 1.26 1999/02/10 22:23:04 danny Exp $
 dnl
 AC_DEFUN(AC_FIND_MOTIF,
 [
@@ -585,10 +606,58 @@ fi
 #
 # Provide an easier way to link
 #
-if test "$xbae_includes" != "" && test "$xbae_includes" != "$x_includes" && test "$xbae_includes" != "none" ; then
-	link_xbae="-L$xbae_libraries -lXbae"
-	include_xbae="-I$xbae_includes"
+# Okay
+#
+# Let's start by making sure that we completely abandon everything related
+# to Xbae installation if either the library or the includes have not been
+# located, OR if there was a problem locating the Motif libraries, which are
+# required for the use of Xbae.  The opening three conditions, if true, will
+# bypass all Xbae config operations; that is to say, if any of these
+# conditions is true, we call with_xbae "no", and that's the end of the
+# game.
+#
+if test "$with_motif" = "no" ; then
+	with_xbae="no"
+elif test "$xbae_includes" = "none" ; then
+        with_xbae="no"
+elif test "$xbae_libraries" = "none"; then
+        with_xbae="no"
+else
+#
+# We now have established that we want to use Xbae. It's time to set up the
+# basic environment, and do some discrete tests to set up the environment.
+#
+# First, let's set with_xbae to "yes" (don't know of this is really
+# necessary, but we'll be conservative here).  We also send HAVE_Xbae
+# to config.h and the cache file.
+#
 	AC_DEFINE(HAVE_Xbae)
+        with_xbae="yes"
+#
+# Then let's see if the includes were NOT in the default path (if they were,
+# we won't be needing an -I to point at the headers, because the compiler
+# will find them by itself).  We've already eliminated the possibility of
+# "none", so anything other than "" will definitely be a path.
+#
+        if test "$xbae_includes" != ""; then
+                include_xbae="-I$xbae_includes"
+        fi
+#
+# Now that that's out of the way, let's deal with libraries.  Here,
+# we check again to see if the variable (xbae_libraries this time)
+# is an empty string, but this time we have work to do whether the
+# test is true or false.  We start with the case of an empty
+# string, which means we want to link with Xbae, but don't need
+# a path to the library.
+#
+        if test "$xbae_libraries" = ""; then
+                link_xbae="-lXbae"
+        else
+                link_xbae="-L$xbae_libraries -lXbae"
+        fi
+#
+# We now close the enclosing conditional.
+#
 fi
 #
 AC_SUBST(include_xbae)
@@ -753,10 +822,62 @@ fi
 #
 # Provide an easier way to link
 #
-if test "$xmhtml_includes" != "" && test "$xmhtml_includes" != "$x_includes" && test "$xmhtml_includes" != "none"; then
-	link_xmhtml="-L$xmhtml_libraries -lXmHTML -ljpeg"
-	include_xmhtml="-I$xmhtml_includes"
-	AC_DEFINE(HAVE_XmHTML_H)
+# Okay
+#
+# Let's start by making sure that we completely abandon everything related
+# to XmHTML installation if either the library or the includes have not been
+# located, OR if there was a problem locating the Motif libraries, which are
+# required for the use of XmHTML.  The opening three conditions, if true, will
+# bypass all XmHTML config operations; that is to say, if any of these
+# conditions is true, we call with_xmhtml "no", and that's the end of the
+# game.
+#
+if test "$with_xmhtml" = "no" ; then
+        with_xmhtml="no"
+elif test "$xmhtml_includes" = "none" ; then
+        with_xmhtml="no"
+elif test "$xmhtml_libraries" = "none"; then
+        with_xmhtml="no"
+else
+#
+# We now have established that we want to use XmHTML. It's time to set up the
+# basic environment, and do some discrete tests to set up the environment.
+#
+# First, let's set with_xmhtml to "yes" (don't know of this is really
+# necessary, but we'll be conservative here).  We also send HAVE_XmHTML
+# to config.h and the cache file.
+#
+        AC_DEFINE(HAVE_XmHTML_H)
+        with_xmhtml="yes"
+#
+# Then let's see if the includes were NOT in the default path (if they were,
+# we won't be needing an -I to point at the headers, because the compiler
+# will find them by itself).  We've already eliminated the possibility of
+# "none", so anything other than "" will definitely be a path.
+#
+#
+        if test "$xmhtml_includes" != ""; then
+                include_xmhtml="-I$xmhtml_includes"
+        fi
+#
+# Now that that's out of the way, let's deal with libraries.  Here,
+# we check again to see if the variable (xmhtml_libraries this time)
+# is an empty string, but this time we have work to do whether the
+# test is true or false.  We start with the case of an empty
+# string, which means we want to link with XmHTML, but don't need
+# a path to the library.
+#
+# This isn't quite happy yet.  A test for the location of the jpeg
+# and Xext libraries should be added.
+#
+        if test "$xmhtml_libraries" = ""; then
+                link_xmhtml="-lXmHTML -lXext -ljpeg"
+        else
+                link_xmhtml="-L$xmhtml_libraries -lXmHTML -lXext -ljpeg"
+        fi
+#
+# We now close the enclosing conditional.
+#
 fi
 #
 AC_SUBST(include_xmhtml)
@@ -869,6 +990,7 @@ then
     if test -z "$xlt_includes"
     then
 	xlt_includes_result="default path"
+	have_xlt="yes"
 	XLT_CFLAGS=""
     else
 	if test "$xlt_includes" = "no"

@@ -1,12 +1,12 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/intl/Attic/Makefile.am,v 1.1 1999/02/04 22:31:21 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/intl/Attic/Makefile.am,v 1.2 1999/02/10 22:23:10 danny Exp $
 #
 noinst_LIBRARIES = libintl.a
 
 gnulocaledir = $(prefix)/share/locale
 localedir = $(datadir)/locale
 
-CFLAGS=	-DLOCALEDIR=\"$(localedir)\" \
+DEFS=	-DLOCALEDIR=\"$(localedir)\" \
 	-DGNULOCALEDIR=\"$(gnulocaledir)\" \
 	-DLOCALE_ALIAS_PATH=\"$(aliaspath)\"
 

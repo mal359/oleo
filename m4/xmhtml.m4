@@ -141,10 +141,62 @@ fi
 #
 # Provide an easier way to link
 #
-if test "$xmhtml_includes" != "" && test "$xmhtml_includes" != "$x_includes" && test "$xmhtml_includes" != "none"; then
-	link_xmhtml="-L$xmhtml_libraries -lXmHTML -ljpeg"
-	include_xmhtml="-I$xmhtml_includes"
-	AC_DEFINE(HAVE_XmHTML_H)
+# Okay
+#
+# Let's start by making sure that we completely abandon everything related
+# to XmHTML installation if either the library or the includes have not been
+# located, OR if there was a problem locating the Motif libraries, which are
+# required for the use of XmHTML.  The opening three conditions, if true, will
+# bypass all XmHTML config operations; that is to say, if any of these
+# conditions is true, we call with_xmhtml "no", and that's the end of the
+# game.
+#
+if test "$with_xmhtml" = "no" ; then
+        with_xmhtml="no"
+elif test "$xmhtml_includes" = "none" ; then
+        with_xmhtml="no"
+elif test "$xmhtml_libraries" = "none"; then
+        with_xmhtml="no"
+else
+#
+# We now have established that we want to use XmHTML. It's time to set up the
+# basic environment, and do some discrete tests to set up the environment.
+#
+# First, let's set with_xmhtml to "yes" (don't know of this is really
+# necessary, but we'll be conservative here).  We also send HAVE_XmHTML
+# to config.h and the cache file.
+#
+        AC_DEFINE(HAVE_XmHTML_H)
+        with_xmhtml="yes"
+#
+# Then let's see if the includes were NOT in the default path (if they were,
+# we won't be needing an -I to point at the headers, because the compiler
+# will find them by itself).  We've already eliminated the possibility of
+# "none", so anything other than "" will definitely be a path.
+#
+#
+        if test "$xmhtml_includes" != ""; then
+                include_xmhtml="-I$xmhtml_includes"
+        fi
+#
+# Now that that's out of the way, let's deal with libraries.  Here,
+# we check again to see if the variable (xmhtml_libraries this time)
+# is an empty string, but this time we have work to do whether the
+# test is true or false.  We start with the case of an empty
+# string, which means we want to link with XmHTML, but don't need
+# a path to the library.
+#
+# This isn't quite happy yet.  A test for the location of the jpeg
+# and Xext libraries should be added.
+#
+        if test "$xmhtml_libraries" = ""; then
+                link_xmhtml="-lXmHTML -lXext -ljpeg"
+        else
+                link_xmhtml="-L$xmhtml_libraries -lXmHTML -lXext -ljpeg"
+        fi
+#
+# We now close the enclosing conditional.
+#
 fi
 #
 AC_SUBST(include_xmhtml)

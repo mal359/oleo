@@ -324,7 +324,11 @@ oleo_read_file (fp, ismerge)
 	    {
 	    case 1:
 	      cp = find_or_make_cell (crow, ccol);
+#ifdef	NEW_CELL_FLAGS
+	      SET_FORMAT (cp, fmt);
+#else
 	      SET_FMT (cp, fmt);
+#endif
 	      SET_JST (cp, jst);
 	      if (font_spec_in_format)
 		cp->cell_font = fnt;
@@ -337,7 +341,11 @@ oleo_read_file (fp, ismerge)
 	      make_cells_in_range (&rng);
 	      while ((cp = next_cell_in_range ()))
 		{
+#ifdef	NEW_CELL_FLAGS
+		  SET_FORMAT (cp, fmt);
+#else
 		  SET_FMT (cp, fmt);
+#endif
 		  SET_JST (cp, jst);
 		  if (font_spec_in_format)
 		    cp->cell_font = fnt;
@@ -351,7 +359,11 @@ oleo_read_file (fp, ismerge)
 	      make_cells_in_range (&rng);
 	      while ((cp = next_cell_in_range ()))
 		{
+#ifdef	NEW_CELL_FLAGS
+		  SET_FORMAT (cp, fmt);
+#else
 		  SET_FMT (cp, fmt);
+#endif
 		  SET_JST (cp, jst);
 		  if (font_spec_in_format)
 		    cp->cell_font = fnt;
@@ -591,12 +603,18 @@ oleo_read_file (fp, ismerge)
   io_recenter_all_win ();
 }
 
+#ifdef	NEW_CELL_FLAGS
 static char *
-oleo_fmt_to_str (f1)
-     int f1;
+oleo_fmt_to_str (int f1, int p1)
+#else
+static char *
+oleo_fmt_to_str (int f1)
+#endif
 {
   static char p_buf[40];
+#ifndef	NEW_CELL_FLAGS
   int p1;
+#endif
 
   p_buf[1] = '\0';
   switch (f1)
@@ -611,7 +629,9 @@ oleo_fmt_to_str (f1)
       p_buf[0] = '*';
       break;
     default:
+#ifndef	NEW_CELL_FLAGS
       p1 = GET_PRC (f1);
+#endif
       if (p1 == PRC_FLT)
 	{
 	  p_buf[1] = 'F';
@@ -746,7 +766,15 @@ oleo_write_file (fp, rng)
 
       rng = &all_rng;
 
-      (void) fprintf (fp, "F;D%s%c%u\n", oleo_fmt_to_str (default_fmt), jst_to_chr (default_jst), default_width);
+#ifdef	NEW_CELL_FLAGS
+      (void) fprintf (fp, "F;D%s%c%u\n",
+		oleo_fmt_to_str (default_fmt, default_prc),
+		jst_to_chr (default_jst),
+		default_width);
+#else
+      (void) fprintf (fp, "F;D%s%c%u\n",
+		oleo_fmt_to_str (default_fmt), jst_to_chr (default_jst), default_width);
+#endif
 
       fmts = usr_set_fmts ();
       for (n = 0; n < 16; n++)
@@ -825,7 +853,11 @@ oleo_write_file (fp, rng)
       int f1, j1;
       char p_buf[40];
 
+#ifdef	NEW_CELL_FLAGS
+      f1 = GET_FORMAT (cp);
+#else
       f1 = GET_FMT (cp);
+#endif
       j1 = GET_JST (cp);
       if (f1 != FMT_DEF || j1 != JST_DEF || cp->cell_font)
 	{
@@ -853,8 +885,13 @@ oleo_write_file (fp, rng)
 	    }
 	  if (cp->cell_font)
 	    (void) fprintf (fp, "f%d;", cp->cell_font->id_memo);
-	  (void) fprintf (fp, "F%s%c\n",
+#ifdef	NEW_CELL_FLAGS
+	    (void) fprintf (fp, "F%s%c\n",
+			  oleo_fmt_to_str (f1, GET_PRECISION(cp)), jst_to_chr (j1));
+#else
+	    (void) fprintf (fp, "F%s%c\n",
 			  oleo_fmt_to_str (f1), jst_to_chr (j1));
+#endif
 	}
 
       if (!GET_TYP (cp) && !cp->cell_formula)

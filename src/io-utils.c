@@ -1,3 +1,4 @@
+#define	DATE_AS_USER
 /*      Copyright (C) 1990, 1992, 1993 Free Software Foundation, Inc.
 
    This file is part of Oleo, the GNU Spreadsheet.
@@ -33,6 +34,10 @@
 #include "io-term.h"
 #include "cmd.h"
 #include "sylk.h"
+
+#ifdef	HAVE_TIME_H
+#include <time.h>
+#endif
 
 
 /* Routines for formatting cell values */
@@ -187,14 +192,22 @@ flt_to_str (double val)
 char *
 flt_to_str_fmt (CELL *cp)
 {
+#ifdef	NEW_CELL_FLAGS
+  int j = GET_FORMAT(cp);	/* Only format, not precision */
+#else
   int j = GET_FMT(cp);
+#endif
   int p;
   double f;
 
   if (j == FMT_DEF)
     j = default_fmt;
 
+#ifdef	NEW_CELL_FLAGS
+  p = GET_PRECISION(cp);
+#else
   p = GET_PRC (j);
+#endif
 
   if (cp->cell_flt == __plinf)
     return iname;
@@ -238,10 +251,23 @@ print_cell (CELL * cp)
   if (!cp)
     return "";
 
+#ifdef	NEW_CELL_FLAGS
+  j = GET_FORMAT (cp);
+#else
   j = GET_FMT (cp);
+#endif
 
-  if (j == FMT_DEF)
+#ifdef	NEW_CELL_FLAGS
+  p = GET_PRECISION (cp);
+#else
+  p = GET_PRC (j);
+#endif
+  if (j == FMT_DEF) {
     j = default_fmt;
+#ifdef	NEW_CELL_FLAGS
+    p = default_prc;
+#endif
+  }
   if (j == FMT_HID || GET_TYP (cp) == 0)
     return "";
 
@@ -265,8 +291,11 @@ print_cell (CELL * cp)
     }
   if (GET_TYP (cp) == TYP_FLT)
     {
-      int p = GET_PRC (j);
+#ifdef	NEW_CELL_FLAGS
+      switch (j)
+#else
       switch (j | PRC_FLT)
+#endif
 	{
 	case FMT_GPH:
 	  if (cp->cell_flt < 0)
@@ -341,8 +370,16 @@ print_cell (CELL * cp)
 
   if (GET_TYP (cp) == TYP_INT)
     {
+#ifdef	NEW_CELL_FLAGS
+      p = GET_PRECISION (cp);
+#else
       p = GET_PRC (j);
+#endif
+#ifdef	NEW_CELL_FLAGS
+      switch (j)
+#else
       switch (j | PRC_FLT)
+#endif
 	{
 	case FMT_GPH:
 	  if (cp->cell_int < 0)
@@ -363,6 +400,17 @@ print_cell (CELL * cp)
 	  goto graph;
 
 	case FMT_USR:
+#ifdef	DATE_AS_USER
+		if (p > 3) {	/* Represent as a date */
+		    time_t t = cp->cell_int;
+		    struct tm *tmp = localtime(&t);
+		    sprintf(print_buf, "%4d-%02d-%02d",
+			tmp->tm_year + 1900,
+			tmp->tm_mon + 1,
+			tmp->tm_mday);
+		    return print_buf;
+		}
+#endif
 	  return pr_int (cp->cell_int, &u[p], u[p].prec);
 
 	case FMT_GEN:
@@ -685,10 +733,18 @@ adjust_prc (char *oldp, CELL * cp, int width, int smallwid, int just)
   char *eptr;
   int len;
 
+#ifdef	NEW_CELL_FLAGS
+  fmt = GET_FORMAT (cp);
+#else
   fmt = GET_FMT (cp);
+#endif
   if (fmt == FMT_DEF)
     fmt = default_fmt;
+#ifdef	NEW_CELL_FLAGS
+  prc = GET_PRECISION (cp);
+#else
   prc = GET_PRC (fmt);
+#endif
   switch (fmt | PRC_FLT)
     {
     case FMT_GPH:

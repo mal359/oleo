@@ -149,6 +149,7 @@ unsigned int saved_default_height = 1;
 /* Other cell defaults: */
 int default_jst = JST_LFT;
 int default_fmt = FMT_GEN;
+int default_prc = 0x0F;		/* FIX ME */
 int default_lock = LCK_UNL;
 
 /* Pointers to interesting cmd_func structures. */

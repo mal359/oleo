@@ -11,7 +11,7 @@
 # PARTICULAR PURPOSE.
 
 #
-# $Header: /home/matt/cvs/oleo/oleo/intl/Attic/Makefile.in,v 1.4 1999/02/04 22:32:48 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/intl/Attic/Makefile.in,v 1.5 1999/02/10 22:23:09 danny Exp $
 #
 
 
@@ -109,7 +109,7 @@ noinst_LIBRARIES = libintl.a
 gnulocaledir = $(prefix)/share/locale
 localedir = $(datadir)/locale
 
-CFLAGS = -DLOCALEDIR=\"$(localedir)\" 	-DGNULOCALEDIR=\"$(gnulocaledir)\" 	-DLOCALE_ALIAS_PATH=\"$(aliaspath)\"
+DEFS = -DLOCALEDIR=\"$(localedir)\" 	-DGNULOCALEDIR=\"$(gnulocaledir)\" 	-DLOCALE_ALIAS_PATH=\"$(aliaspath)\"
 
 
 libintl_a_SOURCES = libgettext.h loadinfo.h 	gettext.h gettextP.h hash-string.h 	intl-compat.c 	bindtextdom.c dcgettext.c dgettext.c gettext.c 	finddomain.c loadmsgcat.c localealias.c textdomain.c l10nflist.c 	explodename.c
@@ -121,8 +121,6 @@ CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
 LIBRARIES =  $(noinst_LIBRARIES)
 
-
-DEFS = @DEFS@ -I. -I$(srcdir) -I..
 CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
@@ -135,6 +133,7 @@ libintl_a_OBJECTS =  intl-compat.o bindtextdom.o dcgettext.o dgettext.o \
 gettext.o finddomain.o loadmsgcat.o localealias.o textdomain.o \
 l10nflist.o explodename.o
 AR = ar
+CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@

@@ -893,12 +893,21 @@ _io_pr_cell_win (struct window *win, CELLREF r, CELLREF c, CELL *cp)
       
       for (wwid = wid; lenstr > wwid - 1; wwid += get_width (cc))
 	{
+#ifdef	NEW_CELL_FLAGS
+	  if (++cc > win->screen.hc
+	      || ((ccp = find_cell (r, cc))
+		  && GET_TYP (ccp)
+		  && (GET_FORMAT (ccp) != FMT_HID
+		      || (GET_FORMAT (ccp) == FMT_DEF
+			  && default_fmt != FMT_HID))))
+#else
 	  if (++cc > win->screen.hc
 	      || ((ccp = find_cell (r, cc))
 		  && GET_TYP (ccp)
 		  && (GET_FMT (ccp) != FMT_HID
 		      || (GET_FMT (ccp) == FMT_DEF
 			  && default_fmt != FMT_HID))))
+#endif
 	    {
 	      --cc;
 	      break;

@@ -141,7 +141,7 @@ extern double __plinf, __neinf, __nan;
 extern CELLREF cur_row, cur_col;
 
 extern int default_jst;
-extern int default_fmt;
+extern int default_fmt, default_prc;
 extern int default_lock;
 
 extern unsigned short current_cycle;

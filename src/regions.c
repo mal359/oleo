@@ -81,7 +81,7 @@ delete_region (struct rng *where)
     {
       if (!pp->cell_formula && !GET_TYP (pp))
 	{
-	  pp->cell_flags = 0;
+	  bzero(&(pp->cell_flags), sizeof(pp->cell_flags));
 	  pp->cell_font = 0;
 	  continue;
 	}
@@ -90,7 +90,7 @@ delete_region (struct rng *where)
       my_cell = pp;
       flush_old_value ();
       pp->cell_formula = 0;
-      pp->cell_flags = 0;
+      bzero(&(pp->cell_flags), sizeof(pp->cell_flags));
       pp->cell_font = 0;
       push_refs (pp->cell_refs_from);
       io_pr_cell (rr, cc, pp);
@@ -121,7 +121,11 @@ format_region (struct rng *where, int fmt, int just)
   while ((cp = next_row_col_in_range (&rr, &cc)))
     {
       if (fmt != -1)
-	SET_FMT (cp, fmt);
+#ifdef	NEW_CELL_FLAGS
+	SET_FORMAT (cp, fmt);	/* Only the format, not the precision !! */
+#else
+	SET_FMT (cp, fmt);	/* Format *and* precision */
+#endif
       if (just != -1)
 	SET_JST (cp, just);
       io_pr_cell (rr, cc, cp);
@@ -219,10 +223,17 @@ print_region (struct rng *print, FILE *fp)
 		      if (++ccc > c_hi)
 			break;
 		      ccp = find_cell (rr, ccc);
+#ifdef	NEW_CELL_FLAGS
+		      if (!ccp || !GET_TYP (ccp) || GET_FORMAT (ccp) == FMT_HID)
+			continue;
+		      if (GET_FORMAT (ccp) == FMT_DEF && default_fmt == FMT_HID)
+			continue;
+#else
 		      if (!ccp || !GET_TYP (ccp) || GET_FMT (ccp) == FMT_HID)
 			continue;
 		      if (GET_FMT (ccp) == FMT_DEF && default_fmt == FMT_HID)
 			continue;
+#endif
 		      break;
 		    }
 		  if (lenstr > w - 1)
@@ -584,14 +595,27 @@ move_region (struct rng *fm, struct rng *to)
 	  cur_row = rt;
 	  cur_col = ct;
 	  my_cell = find_cell (cur_row, cur_col);
-	  if ((!cpf
-	       || (!cpf->cell_font && !cpf->cell_flags && !cpf->cell_formula))
+#ifdef	NEW_CELL_FLAGS
+	  if ((!cpf || (!cpf->cell_font &&
+		((cpf->cell_flags.cell_format == 0)
+		&& (cpf->cell_flags.cell_precision == 0)
+		&& (cpf->cell_flags.cell_justify == 0)
+		&& (cpf->cell_flags.cell_type == 0))
+		&& (cpf->cell_flags.cell_lock == 0)
+		&& !cpf->cell_formula))
 	      && !my_cell)
 	    continue;
+#else
+	  if ((!cpf || (!cpf->cell_font &&
+		!cpf->cell_flags
+		&& !cpf->cell_formula))
+	      && !my_cell)
+	    continue;
+#endif
 
 	  if (!cpf)
 	    {
-	      my_cell->cell_flags = 0;
+	      bzero(&(my_cell->cell_flags), sizeof(my_cell->cell_flags));
 	      my_cell->cell_font = 0;
 	      my_cell->cell_refs_to = 0;
 	      my_cell->cell_formula = 0;
@@ -614,7 +638,7 @@ move_region (struct rng *fm, struct rng *to)
 	  my_cell->cell_cycle = cpf->cell_cycle;
 	  my_cell->c_z = cpf->c_z;
 
-	  cpf->cell_flags = 0;
+	  bzero(&(cpf->cell_flags), sizeof(cpf->cell_flags));
 	  cpf->cell_font = 0;
 	  cpf->cell_refs_to = 0;
 	  cpf->cell_formula = 0;

@@ -141,10 +141,58 @@ fi
 #
 # Provide an easier way to link
 #
-if test "$xbae_includes" != "" && test "$xbae_includes" != "$x_includes" && test "$xbae_includes" != "none" ; then
-	link_xbae="-L$xbae_libraries -lXbae"
-	include_xbae="-I$xbae_includes"
+# Okay
+#
+# Let's start by making sure that we completely abandon everything related
+# to Xbae installation if either the library or the includes have not been
+# located, OR if there was a problem locating the Motif libraries, which are
+# required for the use of Xbae.  The opening three conditions, if true, will
+# bypass all Xbae config operations; that is to say, if any of these
+# conditions is true, we call with_xbae "no", and that's the end of the
+# game.
+#
+if test "$with_motif" = "no" ; then
+	with_xbae="no"
+elif test "$xbae_includes" = "none" ; then
+        with_xbae="no"
+elif test "$xbae_libraries" = "none"; then
+        with_xbae="no"
+else
+#
+# We now have established that we want to use Xbae. It's time to set up the
+# basic environment, and do some discrete tests to set up the environment.
+#
+# First, let's set with_xbae to "yes" (don't know of this is really
+# necessary, but we'll be conservative here).  We also send HAVE_Xbae
+# to config.h and the cache file.
+#
 	AC_DEFINE(HAVE_Xbae)
+        with_xbae="yes"
+#
+# Then let's see if the includes were NOT in the default path (if they were,
+# we won't be needing an -I to point at the headers, because the compiler
+# will find them by itself).  We've already eliminated the possibility of
+# "none", so anything other than "" will definitely be a path.
+#
+        if test "$xbae_includes" != ""; then
+                include_xbae="-I$xbae_includes"
+        fi
+#
+# Now that that's out of the way, let's deal with libraries.  Here,
+# we check again to see if the variable (xbae_libraries this time)
+# is an empty string, but this time we have work to do whether the
+# test is true or false.  We start with the case of an empty
+# string, which means we want to link with Xbae, but don't need
+# a path to the library.
+#
+        if test "$xbae_libraries" = ""; then
+                link_xbae="-lXbae"
+        else
+                link_xbae="-L$xbae_libraries -lXbae"
+        fi
+#
+# We now close the enclosing conditional.
+#
 fi
 #
 AC_SUBST(include_xbae)

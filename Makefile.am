@@ -3,9 +3,9 @@
 #
 # Process this file with automake to produce Makefile.in
 #
-# $Header: /home/matt/cvs/oleo/oleo/Makefile.am,v 1.17 1998/09/02 22:42:36 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/Makefile.am,v 1.18 1999/02/10 22:23:04 danny Exp $
 #
-AUTOMAKE_OPTIONS = gnu 1.3
+AUTOMAKE_OPTIONS = gnu 1.4 readme-alpha
 ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = doc lib intl src m4 po Xresources

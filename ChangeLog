@@ -1,5 +1,18 @@
+
+Wed 10 Feb 21:40:43 1999, Danny Backx
+	* Experimentally change cell.h data structures so the cell_flags
+	  becomes a bitfield in C, not a kludge of macros.
+	  This affects many of the source files, problems may arise as
+	  the precision and type fields in cell_flags were used together
+	  in a strange way; this has to disappear.
+	* Add flags to configure.in to enforce autoconf 2.13 or higher
+	  and to Makefile.am to enforce automake 1.4 or higher.
+	  Also add a flag to include README-alpha in the distribution
+	  automagically.
+	* intl/Makefile.am should have a bunch of variables added,
+	  not in CFLAGS (overrides too much) but in DEFS.
 	* Fix bad error in m4/motif.m4 which prevented Motif to be found
-	  on many systems.
+	  on many systems, similar thing in xmhtml.m4 and xbae.m4 .
 	* Added AM_LINK_FILES again. Hopefully nobody gets hard links to
 	  the root directory any more.
 	* intl/Makefile.am added.
@@ -7,17 +20,18 @@
 	  gpl.sed.
 	* Remove lib/error.c lib/error.h lib/xmalloc.c, they're not used.
 	* Remove AM_EMX macro: autoconf 2.13 has AC_EXEEXT.
-(FB)
-	* Replace README with a new version.
-	* Fix to xlt.m4.  Xlt detection no longer breaks when ./configure
-	  is run in the presence of a config.cache file.
-	* Fix to graph.c.  Setting X_DISPLAY_MISSING now completely
-	  eliminates all X11 functions from the compiled code.
-	* Added x11.m4.  Needed to make linking to X11 libraries
-	  optional.
-	* Fixes to m4/Makefile.am, src/Makefile.am, ./configure.in.
-	  Needed to make linking to X11 libraries optional.
-	* Added FAQ.
+
+Wed, 10 Feb 1999 01:00:21, Frank Bennett
+        * Replace README with a new version.
+        * Fix to xlt.m4.  Xlt detection no longer breaks when ./configure
+          is run in the presence of a config.cache file.
+        * Fix to graph.c.  Setting X_DISPLAY_MISSING now completely
+          eliminates all X11 functions from the compiled code.
+        * Added x11.m4.  Needed to make linking to X11 libraries
+          optional.
+        * Fixes to m4/Makefile.am, src/Makefile.am, ./configure.in.
+          Needed to make linking to X11 libraries optional.
+        * Added FAQ.
 
 Wed Jan 27 21:21:31 1999, Danny Backx (danny@gnu.org)
 	* Clean up a number of files that don't belong in CVS: Makefile.in

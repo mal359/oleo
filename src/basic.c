@@ -958,7 +958,7 @@ kill_cell_cmd (void)
       return;
     }
   new_value (curow, cucol, "");
-  cp->cell_flags = 0;
+  bzero(&(cp->cell_flags), sizeof(cp->cell_flags));
   cp->cell_font = 0;
   modified = 1;
 }
