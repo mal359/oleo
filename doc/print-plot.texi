@@ -87,7 +87,7 @@ cell is A1.C20, then you only need type
 @item M-C-p p f
 @cmindex set-default-ps-font
         This command sets the default font used in printing a region in
-PostScript.  (@code{set-default-ps-font}) @xref{Fonts (in X11)} for
+PostScript.  (@code{set-default-ps-font}) @pxref{Fonts (in X11)} for
 information about the possible fonts. 
 To set the font to 24 point courier, type
 @example
@@ -294,7 +294,7 @@ following in the graph menu:
               x ]  5 @key{RET}
 @end example
 
-@item s@footnote{is it}
+@item s
 Use a symbolic expression for the range @footnote{what?}
 @item l
 Use values in the spreadsheet for the ticks on the axis.
