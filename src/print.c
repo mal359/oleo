@@ -1,7 +1,7 @@
 /*
  * Copyright © 1992, 1993, 1999, 2000 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.31 2000/11/22 19:33:01 danny Exp $
+ * $Id: print.c,v 1.32 2001/02/05 00:15:42 pw Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +59,7 @@
 #include "io-generic.h"
 #include "io-abstract.h"
 #include "io-utils.h"
+#include "lists.h"
 
 #include "print.h"
 #include "afm.h"
@@ -271,7 +272,7 @@ print_region_cmd (struct rng *print, FILE *fp)
 	CELLREF rr, cc;
 	CELL *cp;
 	char *ptr;
-	int w, j, lenstr;
+	int w;
 	int spaces;
 	CELLREF c_lo, c_hi;
 	int	print_width, print_height, totht, totwid,
@@ -561,6 +562,7 @@ PrintSetInterline(int i)
 	Global->interline = i;
 }
 
+void
 PrintSetEncoding(char *encoding)
 {
 	AfmSetEncoding(encoding);
