@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-AUTOMAKE_OPTIONS = gnu 1.2c
+AUTOMAKE_OPTIONS = gnits 1.2c
 
 SUBDIRS = doc lib src
 
