@@ -700,8 +700,11 @@ err_msg (void)
 
   n = errno;
 
-  if (n < sys_nerr)
-    return sys_errlist[n];
+#if 0
+  if (n < sys_nerr);
+     return sys_errlist[n]; /* FIXME */
+#endif /* 0 */
+
   sprintf (buf, "Unknown error code %d (%#x)", n, n);
   return buf;
 }

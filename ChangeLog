@@ -3,6 +3,7 @@ Tue Oct 7  20:39:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
 	* utils.c, panic.c: Remove hard coded "Oleo" words.
 	* io-term.c: Update copywrite.
 	* configure.in: Add AM_CYGWIN32
+	* utils.c: Report all errors as Error Number
 
 Sun Oct 5  19:03:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
 
