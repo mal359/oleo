@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2000-11-25 11:02+0100\n"
+"POT-Creation-Date: 2001-02-04 11:03+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,52 +43,52 @@ msgid ""
 "Report bugs to <bug-oleo@gnu.org>.\n"
 msgstr ""
 
-#: src/io-term.c:1015
+#: src/io-term.c:1021
 #, c-format
 msgid "%s %s\n"
 msgstr ""
 
-#: src/io-term.c:1016
+#: src/io-term.c:1022
 msgid "Copyright © 1992-2000 Free Software Foundation, Inc.\n"
 msgstr ""
 
-#: src/io-term.c:1017
+#: src/io-term.c:1023
 #, c-format
 msgid "%s comes with ABSOLUTELY NO WARRANTY.\n"
 msgstr ""
 
-#: src/io-term.c:1018
+#: src/io-term.c:1024
 #, c-format
 msgid "You may redistribute copies of %s\n"
 msgstr ""
 
-#: src/io-term.c:1019
+#: src/io-term.c:1025
 msgid "under the terms of the GNU General Public License.\n"
 msgstr ""
 
-#: src/io-term.c:1020
+#: src/io-term.c:1026
 msgid "For more information about these matters, "
 msgstr ""
 
-#: src/io-term.c:1021
+#: src/io-term.c:1027
 msgid "see the files named COPYING.\n"
 msgstr ""
 
-#: src/io-term.c:1164
+#: src/io-term.c:1170
 msgid "Error in the builtin init scripts (a bug!).\n"
 msgstr ""
 
-#: src/io-term.c:1184 src/io-term.c:1186
+#: src/io-term.c:1190 src/io-term.c:1192
 #, c-format
 msgid "   error occured in init file %s near line %d."
 msgstr ""
 
-#: src/io-term.c:1205 src/io-term.c:1206
+#: src/io-term.c:1211 src/io-term.c:1212
 #, c-format
 msgid ", error occured reading '%s'\n"
 msgstr ""
 
-#: src/io-term.c:1213 src/io-term.c:1214
+#: src/io-term.c:1219 src/io-term.c:1220
 #, c-format
 msgid "Can't open %s: %s\n"
 msgstr ""

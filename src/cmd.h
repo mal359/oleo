@@ -2,9 +2,9 @@
 #define CMDH
 
 /*
- * $Id: cmd.h,v 1.5 2000/08/10 21:02:50 danny Exp $
+ * $Id: cmd.h,v 1.6 2001/02/04 15:54:20 danny Exp $
  *
- * Copyright © 1992, 1993 Free Software Foundation, Inc.
+ * Copyright © 1992, 1993, 2001 Free Software Foundation, Inc.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,9 @@ struct alarm_entry
   time_t last_time;
 };
 
+#define	SPECIAL_CODE_A	0x80 + 'a'
+#define	SPECIAL_CODE_B	0x80 + 'b'
+#define	SPECIAL_CODE_C	0x80 + 'c'
 
 extern struct alarm_entry alarm_table[];
 

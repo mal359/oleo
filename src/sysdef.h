@@ -1,7 +1,7 @@
 #ifndef SYSDEFH
 #define SYSDEFH
 /*
- * $Id: sysdef.h,v 1.6 2000/08/10 21:02:51 danny Exp $
+ * $Id: sysdef.h,v 1.7 2001/02/04 15:54:21 danny Exp $
  *
  * Copyright © 1992, 1993 Free Software Foundation, Inc.
  * 
@@ -91,12 +91,6 @@ extern struct tm * localtime (const time_t *);
 extern struct tm * gmtime (const time_t *);
 
 #ifdef __STDC__
-#if 0				/* Hopefully these aren't necessary. */
-extern int gethostname (char *, int);
-extern int atoi (const char *);
-#endif
-extern char *getenv (const char *);
-
 #ifndef _DEBUG_MALLOC_INC
 #ifndef HAVE_STRDUP
 extern char *strdup (const char *);

@@ -1,9 +1,9 @@
-#undef	I18N_VERBOSE
-#undef	X_I18N
+#define	I18N_VERBOSE
+#define	X_I18N
 /*
- * $Id: io-x11.c,v 1.26 2001/02/04 00:02:42 pw Exp $
+ * $Id: io-x11.c,v 1.27 2001/02/04 15:54:20 danny Exp $
  *
- *	Copyright © 1992, 1993, 1999 Free Software Foundation, Inc.
+ *	Copyright © 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 	
  * 	This program is free software; you can redistribute it and/or modify
  * 	it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 #ifndef	HAVE_MOTIF
 #ifndef X_DISPLAY_MISSING
 
-#include  <stdio.h>
+#include <stdio.h>
 #include <ctype.h>
 #include <sys/param.h>
 #define NeedFunctionPrototypes 0
@@ -796,17 +796,11 @@ xio_scan_for_input (int blockp)
 	                se_buf =
 		          (char *) ck_remalloc (se_buf, se_buf_allocated);
 	              }
-#if 0
-	            len = XLookupString (&event_return,
-			           se_buf + se_chars_buffered,
-			           MAX_KEY_TRANSLATION, &se_keysym, &compose);
-#else
 		    len = xi18nlookup(&event_return, se_buf + se_chars_buffered,
 				MAX_KEY_TRANSLATION, &se_keysym, &compose);
-#endif
 
 	            if ((len == 1) && (event_return.xkey.state & Mod1Mask))
-	              se_buf[se_chars_buffered] |= 0x80;
+	              se_buf[se_chars_buffered] |= META_BIT;
 
 	            if (se_keysym == RetKeySym)
                       {
@@ -878,16 +872,10 @@ xio_scan_for_input (int blockp)
       switch (event_return.type)
 	{
 	case KeyPress:
-#if 0
-	  len = XLookupString (&event_return,
-			       input_buf + chars_buffered,
-			       MAX_KEY_TRANSLATION, 0, &compose);
-#else
 	  len = xi18nlookup(&event_return,input_buf + chars_buffered,
 				MAX_KEY_TRANSLATION, 0, &compose);
-#endif
 	  if ((len == 1) && (event_return.xkey.state & Mod1Mask))
-	    input_buf[chars_buffered] |= 0x80;
+	    input_buf[chars_buffered] |= META_BIT;
 	  chars_buffered += len;
 	  break;
 	  

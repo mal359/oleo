@@ -1,5 +1,11 @@
 
-$Id: ChangeLog,v 1.138 2001/02/04 00:06:02 pw Exp $
+$Id: ChangeLog,v 1.139 2001/02/04 15:54:20 danny Exp $
+
+
+Sun Feb  4 16:54:38 CET 2001, Danny
+	* Try to get Oleo to stay away from the eight bit. Not bullet-proof
+	  yet. This is to get scandinavian character input to work in raw X
+	  mode.
 
 Sat Feb  3 18:55:19 EST 2000  Pete Wyckoff  (pw@osc.edu)
 	* Add documentation for business functions, and clean up

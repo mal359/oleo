@@ -1,7 +1,7 @@
 /*
  * $Id : $
  *
- * Copyright © 1990, 1992, 1993 Free Software Foundation, Inc.
+ * Copyright © 1990, 1992, 1993, 2001 Free Software Foundation, Inc.
  * 
  * This file is part of Oleo, the GNU Spreadsheet.
  * 
@@ -36,6 +36,7 @@
 #include <stdarg.h>
 #include <fcntl.h>
 
+#include "cmd.h"
 
 /* unistd.h defines _POSIX_VERSION on POSIX.1 systems.  */
 #if defined(DIRENT) || defined(_POSIX_VERSION)
@@ -787,7 +788,7 @@ string_to_char (char ** ptr)
 
   if (str[0] == 'M' && str[1] == '-')
     {
-      i = 0x80;
+      i = META_BIT;
       str += 2;
     }
   else
@@ -798,7 +799,7 @@ string_to_char (char ** ptr)
       if (str[1] == '\\')
 	++str;
       if (str[1] == '?')
-	i += 0x7f;
+	i += MASK_META_BIT;
       else if (str[1] >= '@' && str[1] <= '_')
 	i |= str[1] - '@';
       else if (str[1] >= 'a' && str[1] <= 'z')
@@ -833,13 +834,13 @@ char_to_string (int ch)
       return &buf[3];
   }
 
-  if (ch & 0x80)
+  if (ch & META_BIT)
     {
-      ch &= 0x7f;
-      if (ch == 0x7f || ch < ' ')
+      ch &= MASK_META_BIT;
+      if (ch == BACKSPACE || ch < ' ')
 	{
 	  buf[2] = '^';
-	  buf[3] = (ch == 0x7f ? '?' : ch + '@');
+	  buf[3] = (ch == BACKSPACE ? '?' : ch + '@');
 	  if (buf[3] == '\\')
 	    {
 	      buf[4] = '\\';
@@ -861,10 +862,10 @@ char_to_string (int ch)
 	}
       return buf;
     }
-  if (ch == 0x7f || ch < ' ')
+  if (ch == BACKSPACE || ch < ' ')
     {
       buf[2] = '^';
-      buf[3] = (ch == 0x7f ? '?' : ch + '@');
+      buf[3] = (ch == BACKSPACE ? '?' : ch + '@');
       if (buf[3] == '\\')
 	{
 	  buf[4] = '\\';

@@ -1,5 +1,5 @@
 /*
- * $Id: oleofile.c,v 1.24 2000/11/22 19:33:01 danny Exp $
+ * $Id: oleofile.c,v 1.25 2001/02/04 15:54:20 danny Exp $
  *
  * Copyright © 1990-2000 Free Software Foundation, Inc.
  *
@@ -1063,10 +1063,10 @@ oleo_write_file (fp, rng)
   /* Axis tick marks */
   fprintf(fp, "Gm0%c%s\n",
 	'0' + graph_get_axis_ticktype(0),
-	graph_get_axis_tickformat(0));
+	graph_get_axis_tickformat(0) ? graph_get_axis_tickformat(0) : "(null)");
   fprintf(fp, "Gm1%c%s\n",
 	'0' + graph_get_axis_ticktype(1),
-	graph_get_axis_tickformat(1));
+	graph_get_axis_tickformat(1) ? graph_get_axis_tickformat(1) : "(null)");
 
   /* Database stuff */
   if (DatabaseInitialised()) {

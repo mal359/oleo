@@ -1,5 +1,5 @@
 /*
- * $Id: cmd.c,v 1.21 2001/02/03 23:59:03 pw Exp $
+ * $Id: cmd.c,v 1.22 2001/02/04 15:54:20 danny Exp $
  *
  * Copyright © 1993, 1999, 2000 Free Software Foundation, Inc.
  *
@@ -455,6 +455,9 @@ block_until_excitment (int timeout_seconds)
  * this function save characters in the macro.
  */
 
+/*
+ * Version without 8-bit problem.
+ */
 int 
 real_get_chr (void)
 {
@@ -463,10 +466,9 @@ real_get_chr (void)
   /* Characters with the meta bit set are returned as
    * two characters: ESC and a non-meta character.
    * This buffers the non-meta character between calls.
-   * The value is 0 if no character is buffered, C+1 if
-   * C is buffered.
    */
-  static int saved_char;
+  static int	saved_char,
+		have_saved_char = 0;
 
   /* A buffer of characters read in one burst from the kbd. */
   static unsigned char ibuf[256];
@@ -474,10 +476,9 @@ real_get_chr (void)
   static int i_cnt;		/* buffer position */
 
   alarm_hooks ();
-  if (saved_char)
-    {
-      ch = saved_char - 1;
-      saved_char = 0;
+  if (have_saved_char) {
+      ch = saved_char;
+      have_saved_char = 0;
       goto fini;
     }
 
@@ -549,11 +550,7 @@ real_get_chr (void)
 
 fini:
 
-  if (ch & 0x80) {
-#if 0
-      saved_char = 1 + (ch & 0x7f);
-      ch = CTRL ('[');
-#else	/* SCANDI */
+  if (ch & META_BIT) {
 	switch (ch) {
 		case 229:                             /* e */
 		case 228:                             /* d */
@@ -563,10 +560,10 @@ fini:
 		case 214:                             /* V */
 			break;
 		default:
-			saved_char = 1 + (ch & 0x7f);
+			saved_char = ch;
+			have_saved_char = 1;
 			ch = CTRL ('[');
 	}
-#endif
   }
 
   if (making_macro)
@@ -576,9 +573,9 @@ fini:
        * `struct line' and not c-strings.   -tl
        */
       if (ch == 0)
-	*making_macro++ = 0x80 | 'a';
+	*making_macro++ = SPECIAL_CODE_A;
       else if (ch == '{')
-	*making_macro++ = 0x80 | 'b';
+	*making_macro++ = SPECIAL_CODE_B;
       else
 	*making_macro++ = ch;
       if (making_macro >= (making_macro_start + making_macro_size))
@@ -1085,14 +1082,14 @@ command_loop (int prefix, int iscmd)
 		  cur_chr = 0;
 		  goto got_command;
 		  
-		case 0x80 | 'a':
+		case SPECIAL_CODE_A:
 		  ch = '\0';
 		  break;
 		  
-		case 0x80 | 'b':
+		case SPECIAL_CODE_B:
 		  ch = '{';
 		  break;
-		case 0x80 | 'c':
+		case SPECIAL_CODE_C:
 		  ch = '}';
 		  break;
 		  
@@ -1155,10 +1152,10 @@ command_loop (int prefix, int iscmd)
 			    {
 			      switch (*ptr)
 				{
-				case 0x80 | 'b':
+				case SPECIAL_CODE_B:
 				  *ptr = '{';
 				  break;
-				case 0x80 | 'c':
+				case SPECIAL_CODE_C:
 				  *ptr = '}';
 				  break;
 				}
@@ -1861,10 +1858,10 @@ quote_macro_args (args)
       switch (*args)
 	{
 	case '{':
-	  *args = 0x80 | 'b';
+	  *args = SPECIAL_CODE_B;
 	  break;
 	case '}':
-	  *args = 0x80 | 'c';
+	  *args = SPECIAL_CODE_C;
 	  break;
 	}
       ++args;
@@ -1988,11 +1985,11 @@ get_chr (void)
 	  --rmac->mac_exe;
 	  break;
 
-	case (0x80 | 'a'):
+	case (SPECIAL_CODE_A):
 	  ch = 0;
 	  break;
 
-	case (0x80 | 'b'):
+	case (SPECIAL_CODE_B):
 	  ch = '{';
 	  break;
 	default:

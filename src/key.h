@@ -1,7 +1,7 @@
 #ifndef KEYH
 #define KEYH
 /*
- * $Id: key.h,v 1.8 2000/08/10 21:02:50 danny Exp $
+ * $Id: key.h,v 1.9 2001/02/04 15:54:20 danny Exp $
  *
  * Copyright © 1993 Free Software Foundation, Inc.
  * 
@@ -41,7 +41,6 @@ struct key
 };
 
 /* For commands that take a keysequence argument: */
-
 struct key_sequence
 {
   int top_map;
@@ -54,20 +53,13 @@ struct keymap
 {
   struct keymap *map_next;
   int id;
-  struct key keys[256];
+  struct key keys[OLEO_NUM_KEYS];
 };
 
 extern int num_maps;
 extern struct keymap **the_maps;
 extern char **map_names;
 extern char **map_prompts;
-
-#ifndef CTRL
-#define CTRL(x) (x&037)
-#endif
-#ifndef META
-#define META(X) ((X)|0200)
-#endif
 
 /* String convention conversion. */
 

@@ -1,9 +1,9 @@
 #ifndef GLOBALH
 #define GLOBALH
 /*
- * $Id: global.h,v 1.16 2000/12/20 20:00:39 danny Exp $
+ * $Id: global.h,v 1.17 2001/02/04 15:54:20 danny Exp $
  *
- * Copyright © 1990, 1992, 1993, 1999, 2000 Free Software Foundation, Inc.
+ * Copyright © 1990, 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -354,5 +354,42 @@ struct OleoGlobal {
 };
 
 extern struct OleoGlobal *Global;
+
+/*
+ * Determine which flags are set to indicate META-key
+ *	OLEO_NUM_KEYS sizes a definition in key.h
+ */
+#define	BACKSPACE	0x7f
+
+#if 0
+/*
+ * Hopefully 8-bit clean version
+ */
+#ifndef CTRL
+#define CTRL(x)		((x)&037)
+#endif
+
+#define	META_BIT	0x8000			/* Must be power of 2 */
+#define	MASK_META_BIT	(META_BIT - 1)		/* used to be 0x7f */
+#define	OLEO_NUM_KEYS	0x10000
+
+#ifndef META
+#define META(X)		((X)|0200)
+#endif
+
+#else
+/* 8-bit diry version !! */
+
+#ifndef CTRL
+#define CTRL(x) (x&037)
+#endif
+#ifndef META
+#define META(X) ((X)|0200)
+#endif
+#define	META_BIT	0x80			/* Must be power of 2 */
+#define	MASK_META_BIT	(META_BIT - 1)		/* used to be 0x7f */
+
+#define	OLEO_NUM_KEYS	256
+#endif
 
 #endif	/* GLOBALH */
