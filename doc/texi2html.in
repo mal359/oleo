@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!@HAVE_PERL@
 'di ';
 'ig 00 ';
 #+##############################################################################
@@ -10,7 +10,7 @@
 #-##############################################################################
 
 # From @(#)texi2html	1.52 01/05/98	
-# $Id: texi2html,v 1.2 2000/02/22 23:29:32 danny Exp $
+# $Id: texi2html.in,v 1.1 2000/02/24 18:51:53 danny Exp $
 # Homepage:
 $T2H_HOMEPAGE = <<EOT;
 http://www.mathematik.uni-kl.de/~obachman/Texi2html
@@ -50,7 +50,7 @@ $T2H_TODAY = &pretty_date;		# like "20 September 1993"
 # Copy this file and make changes to it, if you like
 # Afterwards, load it with command-line option (-init_file)
 #
-# $Id: texi2html,v 1.2 2000/02/22 23:29:32 danny Exp $
+# $Id: texi2html.in,v 1.1 2000/02/24 18:51:53 danny Exp $
 
 ######################################################################
 # stuff which can also be set by comman-line options
