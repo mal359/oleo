@@ -1,3 +1,16 @@
+Sun Jan 11 18:35:00 1997  Jeff Bailey  (jbailey@gnu.org)
+
+	* po/: Create & populate
+	* intl/: Create & populate
+	* configure.in: Add AM_GNU_GETTEXT, ALL_LINGUAS
+	* Makefile.am: Add po and intl to SUBDIRS
+	* ABOUT-NLS: Add
+	* gettext.m4: Add
+	* lcmessage.m4: Add
+	* progtest.m4: Add
+	* po/POTFILES.in: Create
+	* README: Update
+
 Mon Jan 5 19:18:00 1997   Jeff Bailey  (jbailey@gnu.org)
 
 	* src/io-gtk.c: Implement gio_inputize_cursor

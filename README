@@ -1,13 +1,100 @@
+Welcome to GNU Oleo!  Aiming to be the FREE-world's hottest spreadsheet
+package.  By free world, of course, I am referring to the freedom that
+comes with the GNU Copyleft.  For more information see the file 
+COPYING included with this distribution.
 
-For installation instructions, see the files INSTALL and INSTALL.OLEO.
+This distribution tries to meet the GNU standards for package distribution,
+and as such you can expect to find files such as NEWS, ChangeLog, README,
+COPYING, etc. in their usual places.  Official(tm) released versions can
+also be found at ftp.gnu.org, or some nearby mirror.
 
-For usage documentation, such as it is, see USING.
+If this package has README-alpha file in it's top level, you are looking
+at an ALPHA version of Oleo.  This means that unless you're brave and
+_really_ need to test my bugs on your system, you should find a release
+version.  Otherwise, please consult the README-alpha file for up-to-date
+information as to what's going on.
 
-For copyright information, see COPYING.
+Why a Spreadsheet
+-=-=-=-=-=-=-=-=-
 
-For a wall-chart of keybindings, see KEYS.
+Most people don't remember back to the gold old days of computers.  I'm
+not referring to when you had to use that *extremely* slow 14.4k modem, 
+but back when computers began to become popular in business environments.
+Most history books that I've read (which, adminitedly, is three), say that
+accountants brought computers into business with the creation of spreadsheet
+packages.  Being able to map out formulas on a grid was too much for the 'ol
+bean counters to pass up, and so out the machines came.  
 
-Before reporting bugs, see the file BUGS.
+Year 2000
+-=-=-=-=-
 
-Release notes are in NEWS, and the developer's log is ChangeLog.
+As GNU Oleo is free software, there is no guarantee that this package
+is year-2000 safe.  There are several places where 2-digit dates may
+indeed be used internally.  However, being based on the GNU Libc, it
+is likely that it will be year 2000 safe once a quick pass is made to
+ensure that it uses standard date functions.  Most unix systems use a
+32-bit date field, which give us until the year 2030 or so to find a better
+solution.  The likely hood is that all systems will be _at least_ 64 bit
+by then, alleviating all the pressure.
+
+This still poses an interesting problem for future modelling, as this means
+that you should NOT expect this version of Oleo to be able to calculate, say,
+50 or 100 year investment bonds.  This is a serious limitation, and is being
+looked at.
+
+Components Required
+-=-=-=-=-=-=-=-=-=-
+
+GNU Oleo is what I like to refer to as a "top of the food chain" application.
+Many other packages are required to ensure full functionality.  Among those
+that are required:
+
+GNU Readline 2.0 or later
+GNU Guile 1.3 or later
+GNU Plotutils
+Gtk+
+NCurses or Termcap/curses
+
+Further, to debug this application you will need the following:
+GNU Automake 1.2
+GNU Autoconf 2.12
+GNU Gettext 0.10.32
+and the various components to make these applications run.
+
+That GNU Oleo is strongly dependant on those applications is a clear
+indication of my lack of desire to support these applications myself.
+I have not included these by default, and expect the installer to have
+them on hand, or accept that Oleo's functionality may be decreased.
+
+Parlez-Vous francais?
+-=-=-=-=-=-=-=-=-=-=-
+
+GNU Oleo is going international!  Internationalization is complete,
+and localization is on it's way.  If you want to help, please read
+ABOUT-NLS, and consider getting involved in a GNU translation effort.
+
+Getting Help and Reporting Bugs
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+There are 2 lists setup for your convenience:
+
+help-oleo@gnu.org
+bug-oleo@gnu.org
+
+Please remember a couple quick points when emailing these lists:
+o Oleo suffered a long period of inactivity.  It's popularity is just
+beginning to increase again.
+
+o We're all volunteers, be nice =)
+
+o More detail is good.  Suggestions as to what you think the problem might
+be are also good.
+
+o Please make sure you're running a recent version before reporting the bug.
+Excessively old version won't be patched if the fix already exists in a
+more recent version.
+
+Tks,
+Jeff Bailey
+Jan 11, 1998.
 

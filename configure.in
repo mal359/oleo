@@ -5,6 +5,9 @@ AM_INIT_AUTOMAKE([oleo], [1.6.6])
 GNU_PACKAGE="GNU $PACKAGE"
 AC_DEFINE_UNQUOTED(GNU_PACKAGE, "$GNU_PACKAGE")
 
+dnl Define available languages
+ALL_LINGUAS = ""
+
 AC_ARG_PROGRAM
 AM_CONFIG_HEADER(config.h)
 
@@ -77,5 +80,8 @@ AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(ftime gethostname gettimeofday mktime select strdup strstr)
 AM_FUNC_MKTIME
 AM_FUNC_OBSTACK
+
+dnl See if we're GNU Gettext friendly
+AM_GNU_GETTEXT
 
 AC_OUTPUT([Makefile doc/Makefile lib/Makefile src/Makefile])
