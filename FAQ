@@ -18,14 +18,16 @@ Questions
 12. What are the licensing terms for Oleo?
 13. I can't compile Oleo 1.6 on a <computer> running <operating system>
 14. I can compile with the Motif interface, but the binary dumps
-   core when I try to run it under X.  What's the deal?
+    core when I try to run it under X.  What's the deal?
 15. Menu item <some item> in the Motif interface doesn't do anything!
 16. I can't select cells in the Motif interface!
 17. How can I get help on what functions are used for what?
 18. It's obvious that this application needs my help.  How can I
     participate?
 19. What other spreadsheets are out there?
-
+20. I can compile with the Motif interface, but when I run Oleo
+    with the -x or --nw option to use the character terminal
+    interface, a lot of keys don't work.  What's the deal?
 
 Answers
 -------
@@ -144,3 +146,13 @@ Answers
 
 	There are several.  A good site to check for information on
 	spreadsheet issues generally is <Web address>.
+
+20. I can compile with the Motif interface, but when I run Oleo
+    with the -x or --nw option to use the character terminal
+    interface, a lot of keys don't work.  What's the deal?
+
+	At present, an Oleo compiled with Motif support lacks the
+	key bindings needed for the character interface to work
+	correctly.  For now, the only way to handle this is to
+	keep two separately compiled copies of Oleo on your system,
+	one with Motif and one without.
