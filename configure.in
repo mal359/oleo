@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.87 2001/02/07 03:13:30 pw Exp $
+dnl $Id: configure.in,v 1.88 2001/03/04 14:08:21 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -260,9 +260,9 @@ dnl
 dnl GNU GSL (GNU Scientific Library)
 dnl
 AC_CHECK_LIB(gsl, gsl_error,
-	LIBS="$LIBS -lgsl -lgslblasnative"
+	LIBS="$LIBS -lgsl -lgslblas"
 	AC_DEFINE(HAVE_GSL),,
-	-lgslblasnative)
+	-lgslblas)
 
 dnl
 dnl MySQL client library ?
