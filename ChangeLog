@@ -1,5 +1,8 @@
 
-$Id: ChangeLog,v 1.159 2001/07/23 09:56:43 danny Exp $
+$Id: ChangeLog,v 1.160 2001/08/31 09:12:52 danny Exp $
+
+Fri Aug 31 11:15:22 CEST 2001, Danny Backx
+	* Changes for autoconf 2.50
 
 Mon Jul 23 11:58:19 CEST 2001, Danny Backx
 	* Link -lncurses when found.

@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.92 2001/07/23 09:56:43 danny Exp $
+dnl $Id: configure.in,v 1.93 2001/08/31 09:12:52 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -298,7 +298,7 @@ AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(ftime gethostname gettimeofday mktime select strdup strstr)
 AC_CHECK_FUNCS(putenv strcasecmp strerror getcwd rename)
-AM_FUNC_MKTIME
+AC_FUNC_MKTIME
 AM_FUNC_OBSTACK
 
 dnl
@@ -313,8 +313,8 @@ dnl Xbase support (to read DBF files).
 dnl	You'll need to uncomment the lines below for Xbase support,
 dnl	as is indicated in the FAQ.
 dnl
-dnl AC_PROG_CXX
-AC_PROG_CXX_NONFATAL
+AC_PROG_CXX
+dnl AC_PROG_CXX_NONFATAL
 dnl
 dnl End Xbase support lines
 dnl
