@@ -84,3 +84,12 @@ msgstr "Bestand '%s' is geschreven\n"
 #: src/io-motif.c:1748
 msgid "XmProcessTraversal failed\n"
 msgstr "Interne fout: XmProcessTraversal faalde\n"
+
+#: src/io-motif.c:752
+msgid "File Format"
+msgstr "Bestandsformaat"
+
+#: src/io-motif.c:739
+msgid "*.oleo"
+msgstr "*.oleo"
+

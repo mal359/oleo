@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.3 1998/08/27 22:29:23 danny Exp $
+ *  $Id: io-motif.c,v 1.4 1998/08/28 00:13:47 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.3 1998/08/27 22:29:23 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.4 1998/08/28 00:13:47 danny Exp $";
 
 #include "config.h"
 
@@ -62,6 +62,7 @@ static char rcsid[] = "$Id: io-motif.c,v 1.3 1998/08/27 22:29:23 danny Exp $";
 #include "regions.h"
 #include "input.h"
 #include "info.h"
+#include "eval.h"
 
 #include "io-motif.h"		/* To get warnings when inconsistent */
 
@@ -362,8 +363,9 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 {
 	Widget			f = (Widget)client;
 	struct ConfigureWidgets	*cw = NULL;
-	char			*s;
+	char			*s, *p;
 	struct rng		rngx;
+	int			r;
 
 	XtVaGetValues(f, XmNuserData, &cw, NULL);
 
@@ -374,50 +376,77 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 
 	MessageAppend("ConfigureGraphOk\n", False);
 
-	s = XmTextFieldGetString(cw->x);
-	if (get_abs_rng(&s, &rngx) == 0) {	/* 0 is success */
-		graph_set_data(0, &rngx, 0, 0);
+	p = s = XmTextFieldGetString(cw->x);
+	if ((r = parse_cell_or_range(&p, &rngx)) == 0)
+		ConversionError(s, _("range"));
+	else if (r & RANGE) {
+		graph_set_data(0, &rngx, 'h', 'r');
+#if 0
 		fprintf(stderr, "X %d %d %d %d\n",
 			rngx.lr,
 			rngx.lc,
 			rngx.hr,
 			rngx.hc);
-
-	} else
-		ConversionError(s, _("range"));
+#endif
+	} else {
+		rngx.hr = rngx.lr;
+		rngx.hc = rngx.lc;
+		graph_set_data(0, &rngx, 'h', 'r');
+#if 0
+		fprintf(stderr, "X %d %d %d %d\n",
+			rngx.lr,
+			rngx.lc,
+			rngx.hr,
+			rngx.hc);
+#endif
+	}
 
 #ifdef	FREE_TF_STRING
 	XtFree(s);
 #endif
 
-	s = XmTextFieldGetString(cw->a);
-	if (get_abs_rng(&s, &rngx) == 0) {	/* 0 is success */
-		graph_set_data(1, &rngx, 0, 0);
+	p = s = XmTextFieldGetString(cw->a);
+	if ((r = parse_cell_or_range(&p, &rngx)) == 0)
+		ConversionError(s, _("range"));
+	else if (r & RANGE) {
+		graph_set_data(1, &rngx, 'h', 'r');
+#if 0
 		fprintf(stderr, "A %d %d %d %d\n",
 			rngx.lr,
 			rngx.lc,
 			rngx.hr,
 			rngx.hc);
-	} else
-		ConversionError(s, _("range"));
+#endif
+	} else {
+		rngx.hr = rngx.lr;
+		rngx.hc = rngx.lc;
+		graph_set_data(1, &rngx, 'h', 'r');
+#if 0
+		fprintf(stderr, "A %d %d %d %d\n",
+			rngx.lr,
+			rngx.lc,
+			rngx.hr,
+			rngx.hc);
+#endif
+	}
 
 #ifdef	FREE_TF_STRING
 	XtFree(s);
 #endif
 
-	s = XmTextFieldGetString(cw->b);
+	p = s = XmTextFieldGetString(cw->b);
 	MessageAppend(s, False);
 #ifdef	FREE_TF_STRING
 	XtFree(s);
 #endif
 
-	s = XmTextFieldGetString(cw->c);
+	p = s = XmTextFieldGetString(cw->c);
 	MessageAppend(s, False);
 #ifdef	FREE_TF_STRING
 	XtFree(s);
 #endif
 
-	s = XmTextFieldGetString(cw->d);
+	p = s = XmTextFieldGetString(cw->d);
 	MessageAppend(s, False);
 #ifdef	FREE_TF_STRING
 	XtFree(s);
@@ -682,26 +711,58 @@ void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 	XtFree(t);
 }
 
+void CreateFSD()
+{
+	Arg		al[10];
+	int		ac = 0;
+	XmString	xms;
+	Widget		cb, menu, b;
+
+	ac = 0;
+	XtSetArg(al[ac], XmNautoUnmanage, True); ac++;
+	xms = XmStringCreateSimple(_("*.oleo"));
+	XtSetArg(al[ac], XmNpattern, xms); ac++;
+
+	fsd = XmCreateFileSelectionDialog(toplevel, "selectfile",
+		al, ac);
+	XtDestroyWidget(
+		XmFileSelectionBoxGetChild(fsd, XmDIALOG_HELP_BUTTON));
+	XmStringFree(xms);
+
+	/* Option menu */
+	menu = XmCreatePulldownMenu(fsd, "optionMenu", NULL, 0);
+	ac = 0;
+	XtSetArg(al[ac], XmNsubMenuId, menu); ac++;
+	xms = XmStringCreateSimple(_("File Format"));
+	XtSetArg(al[ac], XmNlabelString, xms); ac++;
+	cb = XmCreateOptionMenu(fsd, "optionCB", al, ac);
+	XtManageChild(cb);
+	XmStringFree(xms);
+
+	b = XtVaCreateManagedWidget("oleo", xmPushButtonGadgetClass,
+		menu,
+		NULL);
+	b = XtVaCreateManagedWidget("SYLK", xmPushButtonGadgetClass,
+		menu,
+		NULL);
+	b = XtVaCreateManagedWidget("SC", xmPushButtonGadgetClass,
+		menu,
+		NULL);
+	b = XtVaCreateManagedWidget("list", xmPushButtonGadgetClass,
+		menu,
+		NULL);
+	b = XtVaCreateManagedWidget("panic", xmPushButtonGadgetClass,
+		menu,
+		NULL);
+}
+
 void LoadCB(Widget w, XtPointer client, XtPointer call)
 {
 	Arg	al[10];
 	int	ac = 0;
 
-	if (fsd == NULL) {
-		XmString	xms;
-
-		ac = 0;
-		XtSetArg(al[ac], XmNautoUnmanage, True); ac++;
-		xms = XmStringCreateSimple("*.oleo");
-		XtSetArg(al[ac], XmNpattern, xms); ac++;
-
-		fsd = XmCreateFileSelectionDialog(toplevel, "selectfile",
-			al, ac);
-		XtDestroyWidget(
-			XmFileSelectionBoxGetChild(fsd, XmDIALOG_HELP_BUTTON));
-
-		XmStringFree(xms);
-	}
+	if (fsd == NULL)
+		CreateFSD();
 
 	XtRemoveAllCallbacks(fsd, XmNokCallback);
 	XtAddCallback(fsd, XmNokCallback, ReallyLoadCB, NULL);
@@ -752,21 +813,8 @@ void SaveAsCB(Widget w, XtPointer client, XtPointer call)
 	Arg	al[10];
 	int	ac = 0;
 
-	if (fsd == NULL) {
-		XmString	xms;
-
-		ac = 0;
-		XtSetArg(al[ac], XmNautoUnmanage, True); ac++;
-		xms = XmStringCreateSimple("*.oleo");
-		XtSetArg(al[ac], XmNpattern, xms); ac++;
-
-		fsd = XmCreateFileSelectionDialog(toplevel, "selectfile",
-			al, ac);
-		XtDestroyWidget(
-			XmFileSelectionBoxGetChild(fsd, XmDIALOG_HELP_BUTTON));
-
-		XmStringFree(xms);
-	}
+	if (fsd == NULL)
+		CreateFSD();
 
 	XtRemoveAllCallbacks(fsd, XmNokCallback);
 	XtAddCallback(fsd, XmNokCallback, ReallySaveCB, NULL);
@@ -1071,10 +1119,11 @@ GscBuildSplash(Widget parent)
 	x1 = XmStringCreateLtoR(GNU_PACKAGE " " VERSION "\n",
 		"large");
 	x2 = XmStringCreateLtoR(
-		_(GNU_PACKAGE
+		_( "\n" GNU_PACKAGE
 		" is free software, you are welcome to\n"
 		"distribute copies of it. See the file COPYING for the\n"
-		"conditions. " GNU_PACKAGE " comes with no warranty"),
+		"conditions.\n\n"
+		GNU_PACKAGE " comes with ABSOLUTELY NO WARRANTY."),
 		"small");
 	xms = XmStringConcat(x1, x2);
 	XtSetArg(al[ac], XmNlabelString, xms); ac++;

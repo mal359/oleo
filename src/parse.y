@@ -578,7 +578,13 @@ yylex ()
 	return ch;
 }
 
-/* Return value is
+/* The return value of parse_cell_or_range() is actually
+        0 if it doesn't look like a cell or a range,
+        RANGE | some stuff (bitwise or) if it's a range,
+        other bits if it's a cell
+   The comments just below are wrong !!
+   Danny 28/8/1998.
+ * Return value is
 	0 if it doesn't look like a cell or a range,
 	R_CELL if it is a cell (ptr now points past the characters, lr and lc hold the row and col of the cell)
 	RANGE if it is a range (ptr points past the chars)

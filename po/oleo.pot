@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1998-08-27 17:18+0200\n"
+"POT-Creation-Date: 1998-08-28 02:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,12 +14,12 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: ENCODING\n"
 
-#: src/io-term.c:872
+#: src/io-term.c:875
 #, c-format
 msgid "Usage: %s [OPTION]... [FILE]...\n"
 msgstr ""
 
-#: src/io-term.c:875
+#: src/io-term.c:878
 msgid ""
 "\n"
 "  -h, --help               display this help and exit\n"
@@ -32,46 +32,58 @@ msgid ""
 "Report bugs to <bug-oleo@gnu.org>.\n"
 msgstr ""
 
-#: src/io-motif.c:266
+#: src/io-motif.c:270
 #, c-format
 msgid "Plotting X in %d [%d.%d], A in %d [%d.%d]\n"
 msgstr ""
 
-#: src/io-motif.c:272
+#: src/io-motif.c:276
 #, c-format
 msgid "Graph X [%s] A [%s]\n"
 msgstr ""
 
-#: src/io-motif.c:349
+#: src/io-motif.c:353
 #, c-format
 msgid "Conversion error: cannot convert '%s' to a %s\n"
 msgstr ""
 
-#: src/io-motif.c:368 src/io-motif.c:439
+#: src/io-motif.c:373 src/io-motif.c:471
 msgid "Cannot find XmNuserData\n"
 msgstr ""
 
-#: src/io-motif.c:384 src/io-motif.c:399
+#: src/io-motif.c:381 src/io-motif.c:410
 msgid "range"
 msgstr ""
 
 #. Set window title
 #. enough
-#: src/io-motif.c:671
+#: src/io-motif.c:703
 #, c-format
 msgid "[Oleo: %s]"
 msgstr ""
 
-#: src/io-motif.c:675
+#: src/io-motif.c:707
 #, c-format
 msgid "Read file '%s'\n"
 msgstr ""
 
-#: src/io-motif.c:737
+#: src/io-motif.c:723
+msgid "*.oleo"
+msgstr ""
+
+#: src/io-motif.c:736
+msgid "File Format"
+msgstr ""
+
+#: src/io-motif.c:801
 #, c-format
 msgid "Saved file '%s'\n"
 msgstr ""
 
-#: src/io-motif.c:1748
+#: src/io-motif.c:1122
+msgid "\n"
+msgstr ""
+
+#: src/io-motif.c:1816
 msgid "XmProcessTraversal failed\n"
 msgstr ""
