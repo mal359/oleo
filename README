@@ -37,7 +37,7 @@ As the above list shows, much work needs to be done to get Oleo to fulfill
 its potential utility.  The framework is in place for collaboration and the
 work has begun; to find out more, send a message to bug-oleo@gnu.org, with
 "subscribe" as the only word in the subject line, and your email address in
-the body of the message.  The list is the forum through which developers
+the body of the message.  This list is the forum through which developers
 confer and keep one another posted about what's happening.  Everyone with an
 interest in the future of this application is encouraged to subscribe.
 
@@ -79,7 +79,9 @@ This interface provides very little beyond the basic character terminal
 interface built with the previous command, but it will allow you to select a
 cell with the mouse and use the cursor keys in an Xterm.  Like the no-frills
 interface, this offers no support for plotting.  It of course requires the
-basic X11 libraries to compile.
+basic X11 libraries to compile.  To run an Oleo compiled with X11 with
+the character interface instead, run it with a command line options -x
+or --nw.
 
 
 (3) Motif Interface
@@ -88,10 +90,11 @@ To build an Oleo with Motif support, try building with the following:
 
   ./configure --with-motif && make
 
-The Motif interface is still incomplete, but you can run an Oleo compiled in
-this way with the -x or --nw option, to go back to the basic character
-interface.  To compile with Motif support, you will need the following
-libraries on your system:
+The Motif interface shows where Oleo is headed, but at present a binary
+produced in this way cannot be used in character mode (i.e. by running it
+with the -x or --nw options).  It will run, but many key bindings (like the
+Enter key :) are missing.  To compile with Motif support, you will need the
+following libraries on your system:
 
 	* Motif or LessTif, Xlt (from LessTif) and Xbae 4.6.2
 	* SciPlot (for charts, if Xlt not used)
