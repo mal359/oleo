@@ -1,3 +1,9 @@
+Sat Oct 18 16:28:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
+
+	* Add lib/libintl.h for xmalloc.c 
+	* configure.in: Modify to detect gtk and add hook to
+	disable with --without-gtk
+
 Fri Oct 10 00:28:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
 
 	* KEYS: move to doc/

@@ -27,6 +27,7 @@ AC_CHECK_LIB(ncurses, main, ,
 	AC_CHECK_LIB(curses, main, ,
 		AC_CHECK_LIB(termlib, tgetent, ,
 			AC_CHECK_LIB(termcap, tgetend))))
+
 dnl Replace `main' with a function in -lm:
 AC_CHECK_LIB(m, main)
 
@@ -38,6 +39,22 @@ LIBS="$LIBS $X_LIBS"
 
 dnl Checks for X11 Libraries
 AC_CHECK_LIB(X11, main)
+
+dnl Checks for GTK
+AC_ARG_WITH(gtk,
+[  --without-gtk		  Do not use GTK, even if detected],
+[		case "${withval}" in
+		  y | ye | yes )	usegtk=yes ;;
+		  n | no )		usegtk=no ;;
+		  * )			usegtk=yes ;;
+		esac],
+[		usegtk=yes])
+
+if test $usegtk = yes; then
+	AC_CHECK_LIB(glib, main, ,-lgtk -lgdk)
+	AC_CHECK_LIB(gtk, main, , ,-lglib -lgdk) 
+	AC_CHECK_LIB(gdk, main, , ,-lglib -lgdk)
+fi
 
 dnl Checks for header files.
 AC_HEADER_DIRENT
