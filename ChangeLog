@@ -1,3 +1,52 @@
+Mon Sep  1 23:12:00 1997  Jeff Bailey  (jbailey@nisa.net)
+
+        * INSTALL.OLEO: remove
+	* TODO: update
+        * args.c: Reference config.h
+        * busi.c: ditto
+        * cells.c: ditto
+        * date.c: ditto
+        * decompile.c: ditto
+        * display.c: ditto
+        * eval.c: ditto
+        * font.c: ditto
+        * format.c: ditto
+        * forminfo.c: ditto
+        * funcs.c: ditto
+        * graph.c: ditto
+        * hash.c: ditto
+	* help.c: ditto
+	* info.c: ditto
+	* init.c: ditto
+	* input.c: ditto
+	* io-curses.c: ditto
+	* io-edit.c: ditto
+	* io-term.c: ditto
+	* io-utils.c: ditto
+	* io-x11.c: ditto
+	* ir.c: ditto
+	* key.c: ditto
+	* line.c: ditto
+	* list.c: ditto
+	* lists.c: ditto
+	* mktime.c: ditto
+	* obstack.c: ditto
+	* oleofile.c: ditto
+	* panic.c: ditto
+	* print.c: ditto
+	* random.c: ditto
+	* ref.c: ditto
+	* regions.c: ditto
+	* sc.c: ditto
+	* string.c: ditto
+	* stub.c: ditto
+	* sylk.c: ditto
+	* windows.c: ditto
+	* xmalloc.c: ditto
+	* xrdb.c: ditto
+
+	Update to Automake 1.2, Autoconf 2.12.
+
 Sun Jun  1 21:26:00 1997  Jeff Bailey  (jbailey@nisa.net)
 
 	* configure.am: create

@@ -17,6 +17,10 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "funcdef.h"
 #include <stdio.h>
 #include <fcntl.h>

@@ -20,6 +20,9 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
  * This file contains descriptions of all the interactive functions 
  * built into oleo. 
  */
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include "global.h"
 #include "cmd.h"

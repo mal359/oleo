@@ -15,6 +15,10 @@ along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 /* this file was derived from the file sylk.c */
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "funcdef.h"
 #include <stdio.h>
 #include <ctype.h>

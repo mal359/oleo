@@ -19,6 +19,10 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 /* Coopted for oleo -t 12/92 */
 /* Written by jla, 4/90 */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #ifndef alloca
 #ifdef __GNUC__
 #define alloca __builtin_alloca
