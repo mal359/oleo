@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.88 2001/03/04 14:08:21 danny Exp $
+dnl $Id: configure.in,v 1.89 2001/03/08 08:28:15 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -169,7 +169,7 @@ if test "$no_x" = ""; then
 	AC_FIND_MOTIF
     fi
     if test "$with_motif" = "yes"; then
-	ICE_FIND_Xbae
+	AC_FIND_XBAE
 	if test "$with_xbae" = "no" ; then
 	    AC_MSG_ERROR(
 	      [Xbae not found; you must install it or use "--without-motif"])

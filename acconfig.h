@@ -172,7 +172,7 @@
 #undef HAVE_MOTIF
 #undef HAVE_SciPlot_H
 #undef HAVE_XmHTML_H
-#undef HAVE_Xbae
+#undef HAVE_XBAE
 #undef HAVE_XLT
 #undef HAVE_XLT_FONTCHOOSER
 #undef HAVE_XPM
