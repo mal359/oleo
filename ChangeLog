@@ -1,3 +1,6 @@
+
+Sat  6 Mar 14:45:24 1999, Danny Backx
+	* Add to the graph configuration: XmNotebook with a couple of tabs.
 	* Remove m4/emx.m4 from CVS; it's obsolete because we're using
 	  automake 1.4 and autoconf 2.13.
 	* Fixed po/{en,nl,fr}.po - some messages from the source weren't here
