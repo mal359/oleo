@@ -1,5 +1,5 @@
 /*
- * $Id: hash.c,v 1.5 2000/08/10 21:02:50 danny Exp $
+ * $Id: hash.c,v 1.6 2001/02/04 00:00:43 pw Exp $
  *
  * hash.c - hash table lookup strings - Copyright © 1987, 1992, 1993 Free Software
  * Foundation, Inc.
@@ -291,7 +291,7 @@ hash_new ()			/* create a new hash table */
  *
  * Table should be empty, but this is not checked. To empty the table, try
  * hash_apply()ing a symbol deleter. Return to free memory both the hash
- * table and it's control block. 'handle' has no meaning after this function.
+ * table and its control block. 'handle' has no meaning after this function.
  * No errors are recoverable.
  */
 void
