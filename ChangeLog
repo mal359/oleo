@@ -1,3 +1,8 @@
+Sat Oct 18 19:47:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
+
+	* Modify src/Makefile.am to not include the X Include path twice.
+	* io-term.c: Begin to add gtk window creation.
+
 Sat Oct 18 16:28:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
 
 	* Add lib/libintl.h for xmalloc.c 

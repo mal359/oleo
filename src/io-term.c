@@ -54,19 +54,24 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "funcs.h"
 #include "graph.h"
 
+#ifdef HAVE_LIBGTK
+#include "gtk/gtk.h"
+#include "gdk/gdkprivate.h"
+#endif 
+
 #ifdef USE_DLD
 /* If we're using dynamic linking, we get the names of the
-	   functions to call by prepending the basename of save_name onto
-		   _read_file
-		   _write_file
-		   _set_options
-		   _show_options
-	   so, if the file is sylk.o , the functions are named
-		   sylk_read_file
-		   sylk_write_file
-		   sylk_set_options
-		   sylk_show_options
-		   */
+   functions to call by prepending the basename of save_name onto
+   _read_file
+   _write_file
+   _set_options
+   _show_options
+   so, if the file is sylk.o , the functions are named
+   sylk_read_file
+   sylk_write_file
+   sylk_set_options
+   sylk_show_options
+*/
 char *io_name;
 #else
 #include "list.h"
@@ -1005,7 +1010,28 @@ main (argc, argv)
   volatile int init_fpc = 0;
   int command_line_file = 0;	/* was there one? */
 
+#ifdef HAVE_LIBGTK
+  GtkWidget *window;
+#endif
+
   __make_backups = 1;
+
+#ifdef HAVE_LIBGTK
+  /* Define basic GTK Window */
+
+  gdk_progclass = g_strdup("XTerm");
+  gtk_init(&argc, &argv);
+
+  window = gtk_widget_new (gtk_window_get_type (),
+                           "GtkObject::user_data", NULL,
+                           "GtkWindow::type", GTK_WINDOW_TOPLEVEL,
+                           "GtkWindow::title", GNU_PACKAGE,
+                           "GtkWindow::allow_grow", TRUE,
+                           "GtkWindow::allow_shrink", TRUE,
+                           "GtkContainer::border_width", 10,
+                           NULL);
+#endif
+
 
   /* Set up the minimal io handler. */
 #if 0
@@ -1104,6 +1130,13 @@ main (argc, argv)
   FD_ZERO (&exception_fd_set);
   FD_ZERO (&exception_pending_fd_set);
 
+#ifdef HAVE_LIBGTK
+	gtk_widget_show (window);
+	
+	gtk_main ();
+
+	exit (0);
+#endif /* HAVE_LIBGTK */
 #ifndef X_DISPLAY_MISSING
   if (!no_x)
     get_x11_args (&argc, argv);
@@ -1113,30 +1146,31 @@ main (argc, argv)
       using_x = 1;
     }
   else
-#endif
-    {
-      tty_graphics ();
-      using_curses = 1;
-      /* Allow the disclaimer to be read. */
-      if (!init_fpc && !spread_quietly)
-	sleep (5);
-    }
+#endif /* X_DISPLAY_MISSING */
+	  
+  {
+	  tty_graphics ();
+	  using_curses = 1;
+	  /* Allow the disclaimer to be read. */
+	  if (!init_fpc && !spread_quietly)
+		  sleep (5);
+  }
 
   io_open_display ();
-
+  
   init_graphing ();
-
+  
   if (setjmp (error_exception))
-    {
-      fprintf (stderr, "Error in the builtin init scripts (a bug!).");
-      exit (69);
-    }
+  {
+	  fprintf (stderr, "Error in the builtin init scripts (a bug!).");
+	  exit (69);
+  }
   else
-    {
-      init_maps ();
-      init_named_macro_strings ();
-      run_init_cmds ();
-    }
+  {
+	  init_maps ();
+	  init_named_macro_strings ();
+	  run_init_cmds ();
+  }
 
   /* These probably don't all need to be ifdef, but
    * it is harmless.

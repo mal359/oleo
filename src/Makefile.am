@@ -26,5 +26,5 @@ noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
 
 oleo_LDADD = ../lib/liboleo.a
 
-INCLUDES = $(X_CFLAGS)
+#INCLUDES = $(X_CFLAGS)
 

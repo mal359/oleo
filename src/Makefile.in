@@ -92,8 +92,6 @@ noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
 # oleo_LDADD = @LIBOBJS@
 
 oleo_LDADD = ../lib/liboleo.a
-
-INCLUDES = $(X_CFLAGS)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES = 
@@ -441,6 +439,8 @@ install-data install uninstall all installdirs mostlyclean-generic \
 distclean-generic clean-generic maintainer-clean-generic clean \
 mostlyclean distclean maintainer-clean
 
+
+#INCLUDES = $(X_CFLAGS)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
