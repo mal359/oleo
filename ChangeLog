@@ -1,4 +1,152 @@
-Sun Mar 15 12:27:00 1997  Jeff Bailey   (jbailey@gnu.org)
+Tue Apr 7 18:47:00 1997  Jeff Bailey   (jbailey@gnu.org)
+
+	* configure.in: Use gtk.m4 macro to detect Gtk.
+	* Makefile.am: Require Automake 1.3
+	* */Makefile.in:  Regenerate with Automake 1.3
+	* lib/ansi2knr.*: Update from Automake 1.3
+	* TODO: Update
+	* THANKS: Update
+
+	* lib/xmalloc.c: If PROTOTYPES not defined, don't use.
+	* src/cmd.c: Include key.h to get CTRL macro.
+	* src/Makefile.am: Make sure INTLLIBS are included in oleo.
+	Patch file by Markku Rossi <mtr@ngs.fi> 
+
+	Incorporate Oleo-patched 1.6C-E from Frank Bennett:
+	* basic.c: Added two new commands, save-point-to-cell
+	and save-mark-to-cell.  Saving these had been
+	possible, but with an obscure combination of six
+	commands or so.  Populated necessaries to basic.h
+	and defun.h.
+
+	* basic.c: Addes new command goto-set-cell.  Populated
+	necessary changes to basic.h and defun.h
+
+	* byte-compile.c: Altered value for cells_funs in hack
+	entry (quod vidis).  This accomodates the addition of new
+	function varval(int, str, str) in cells.c
+
+	* cells.c: New function varval(int, str, str).  Populated
+	necessary changes in byte-compile.c, etc.
+
+	* cmd.c(command_loop):  This function now takes an additional
+	argument, used to flag execution of a command (as opposed to
+	a macro) from execute_command.  This permits the command	
+	argument types 'r' and '@' to discriminate between macro
+	and command execution.  Big improvement in flexibility
+	and in stability at one blow.
+
+	* cmd.c(command_loop): Some improvements have been made to the
+	handling of regions in macros.  Arguments of type 'r' no
+	longer supply an implicit argument (i.e. the currently
+	marked range, if there is one) to the called command.
+	Instead, these now always expect an explicit range argument
+	when called in a macro.  A new type '@' argument always
+	provides an implicit argument (even when called interactively).
+	Macros can now bne written using the commands copy-region,
+	move-region, copy-values-in-region and set-region-formula
+	that don't spring nasty surprises on you when the mark is
+	set.
+
+	* cmd.c(command_loop):  Introduced global variable that can be used
+	by new error-msg expression to terminate macro processing.
+	Unfortunetly, the approach adopted (search for "ioerror" to
+	find the changes) does not work for macros bound to keys,
+	but it's a start, and the limitation can be worked around
+	by binding to a variable that invokes the target variable
+	via "exec".
+
+	* decompile.c: Function decomp is now an alias for
+	decomp_formula.  The latter is the old decomp function,
+	with a new toggle that triggers return of the formatted
+	content of floating point numbers.  Dealing with finances
+	is now a little less madding.
+
+	* defun.h:  Interface change.  Changes set-region-formula arg 
+	style from $ to $', since most of the time this is used in a macro,
+	and is seldom used to clone existing text to a passel of other cells.
+	Command set-variable has been replaced by set-var and unset-var.  New
+	set-var command takes arguments in the opposite order (i.e. region
+	name, rather than name, region) and the region uses the new '@' arg
+	type which offers and prompts in interactive mode, or grabs point or
+	region transparently in a macro.  The name of execute-commnad has
+	been changed to exec.  Less typing.  Eliminated disabled block
+	of code referring to an "enter-string-in-cell" command.  Can't
+	find the source for this in the code, so it might as well go.  Also
+	made inclusion of several X11-related commands (set-default-x-font,
+	set-x-default-font, graph-x11-mono, graph-x11-color), and eliminated
+	their key-bindings and menu entries in the termincal version as
+	well.  Also, reorganize all the enries into catagories.
+
+	* io-edit.c:  Changes insert_other_cell_value and insert_cell_value so
+	that quotes are stripped.  Required a change to cell_value_string,
+	and this was propagated to all instances of that function.  Added
+	code for insert_other_cell_Value and insert-other-cell-expression,
+	and tweaked in a new command insert-abs-cell-ref by putting a toggle
+	into existing insert_abs_ref function.
+
+	* io-term.c: Added code for set-var and unset-var.
+
+	* io-utils.s: cell_value_string now accepts a toggle that can
+	be used to turn off enclosing quotes.  Added function flt_to_str_fmt,
+	which can be called instead of flt_to_str if the current cell arraw is
+	available.  Returns the formatted content of floating point numbers
+	and percents, suitable for editing by humans.  Performed some
+	surgeru on range_name and cell_name to make things a little more robust
+	and eliminate some duplicated code.
+
+	* key.c: Added code for new command unbind-key.  Move bind_set to 
+	bind_or_unbind_set.  New function unbind_set passes an empty command
+	argument to the old function, causing the keys designated to be
+	unbound.
+
+	* ref.c: new_var_value has been preserved in old_new_var_value,
+	and a new function new_var_Value has been introdueced in tis stead.
+	The only difference in the new version is that is tkaes a struct
+	rng as argument, instad of parsing a char *.
+
+	* regions.c: Changed move_region and copy_region functions 
+	so that mark follwes the new test.  You can hop stuff
+	around the sheet more easily now, and hop-and-reformat
+	is smoother.
+
+	* init.c: Eliminated key bindings to graph-x11-mono and
+	graph-x11-color from the terminal only version.
+
+	* graph.c: Replaced graph_quoted_str function with
+	discrete functions line_to_q_char and char_to_q_char.
+	This, and some jiggery-pokery in gnuplot_spew (look
+	for graph_title at or about lines 1070 and 1071),
+	prevents Oleo from whining about unquoted data set titles.
+	We _should_ offer a default data set title that is
+	somewhat informative.
+
+	* xrdb.c: Remove sysinfo call - It wasn't posix.
+
+	* font.h:  Changed TimesRomand to Times-Roman in various
+	places to confrom to the font names used by Ghostscript.
+	* defun.h: ""
+	* graph.c: ""
+
+	* help.c: In descrive_function, forced ib.len to always 
+	be 1.  I have not tested this extensively, nor have I
+	traced through the code to see _why_ this works in the
+	cases I have tried.  But the previous algorithm found
+	ridiculoud numbers for texts associated with macros
+	defined using name-macro-string.  Asking for help with
+	these functions no longer dumps code.	
+
+Mon Mar 23 21:00:00 1997  Jeff Bailey  (jbailey@gnu.org)
+
+	* lib/Makefile.am: Deposit contents of LIBOBJS into liboleo.a
+	* configure.in: Make sure the LIBOBJS gets added into Makefiles.
+	Detect libguile, and link against if available. 
+
+Fri Mar 20 17:00:00 1997  Jeff Bailey  (jbailey@gnu.org)
+
+	* src/io-gtk.c: Fix typo.
+
+Sun Mar 15 12:27:00 1997  Jeff Bailey  (jbailey@gnu.org)
 
 	* configure.in:  Make -Wall default only on --with-debug
 	* src/io-curses.c: Expand IO_SETUP macro.

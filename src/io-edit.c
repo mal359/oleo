@@ -427,6 +427,28 @@ insert_cell_expression (void)
 
 
 void
+insert_other_cell_expression (struct rng * rng)
+{
+  if (check_editting_mode ())
+    return;
+  else
+    {
+      CELL *cp;
+      char * in_str;
+      if (!(cp = find_cell (rng->lr, rng->lc)))
+        return;
+      in_str = decomp (rng->lr, rng->lc, cp);
+      put_string (in_str, strlen(in_str));
+      decomp_free ();
+    }
+}
+
+/* No quotes are provided here, because it's easier to add
+ * quotes at the end of a macro than to strip them in the
+ * middle of one.
+ * --FB 1997.12.28
+ */
+void
 insert_cell_value(void)
 {
   if (check_editting_mode ())
@@ -434,7 +456,24 @@ insert_cell_value(void)
   else
     {
       char * in_str;
-      in_str = cell_value_string (curow, cucol);
+      in_str = cell_value_string (curow, cucol, 0);
+      put_string (in_str, strlen(in_str));
+    }
+}
+
+/* Ditto.
+ * --FB 1997.12.28
+ */
+
+void
+insert_other_cell_value(struct rng * rng)
+{
+  if (check_editting_mode ())
+    return;
+  else
+    {
+      char * in_str;
+      in_str = cell_value_string (rng->lr, rng->lc, 0);
       put_string (in_str, strlen(in_str));
     }
 }
@@ -536,7 +575,7 @@ insert_rel_ref(void)
 
 
 void
-insert_abs_ref(void)
+insert_abs_ref(int x)
 {
   if (check_editting_mode ())
     return;
@@ -544,23 +583,33 @@ insert_abs_ref(void)
     {
       char vbuf[50];
       char * in_str;
-      /* Insert current cell/range name as an absolute reference */
+      CELLREF mr = mkrow;
+      CELLREF mc = mkcol;
+/* Insert current cell/range name as an absolute reference
+ * but if argument x is 1, insert current cell address,
+ * leaving out mark information.
+ */
+      if (x)
+        {
+          mr = curow;
+          mc = cucol;
+        }
       if (a0)
 	{
-	  if (mkrow != NON_ROW)
+	  if (mr != NON_ROW)
 	    sprintf (vbuf, "$%s$%u:$%s:$%u",
-		     col_to_str (cucol), curow, col_to_str (mkcol), mkrow) ;
+		     col_to_str (cucol), curow, col_to_str (mc), mr) ;
 	  else
 	    sprintf (vbuf, "$%s$%u", col_to_str (cucol), curow);
 	  in_str = vbuf;
 	}
       else
 	{
-	  if (mkrow != NON_ROW)
+	  if (mr != NON_ROW)
 	    {
 	      struct rng r;
 	      
-	      set_rng (&r, curow, cucol, mkrow, mkcol);
+	      set_rng (&r, curow, cucol, mr, mc);
 	      in_str = range_name (&r);
 	    }
 	  else

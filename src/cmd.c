@@ -47,6 +47,7 @@ local_free (p)
 #include "io-edit.h"
 #include "stub.h"
 #include "ref.h"
+#include "key.h"
 
 #undef MIN
 #undef MAX
@@ -84,6 +85,7 @@ struct select_hook file_read_hooks[SELECT_SET_SIZE] = {0};
 struct select_hook file_exception_hooks[SELECT_SET_SIZE] = {0};
 struct select_hook file_write_hooks[SELECT_SET_SIZE] = {0};
 
+int ioerror = 0;
 
 /* The current stream from which commands are being read. */
 struct input_stream * the_input_stream = 0;
@@ -237,7 +239,7 @@ run_string_as_macro (char * macro)
   /* Reset the keystate. */
   cur_keymap = the_cmd_frame->top_keymap;
   macro_only_input_stream (&rng, macro, strlen (macro), the_cmd_frame);
-  command_loop (1);
+  command_loop (1, 0);
 }
 
 void
@@ -889,7 +891,7 @@ get_argument (char * prompt, struct prompt_style * style)
       rng.lr = rng.hr = rng.lc = rng.hc = 1;
       macro_only_input_stream (&rng, init_code, strlen (init_code),
 			       the_cmd_frame);
-      command_loop (1);
+      command_loop (1, 0);
     }
 
   return 1;
@@ -964,7 +966,7 @@ set_default_arg (struct command_arg * arg, char * text, int len)
  */
 
 void
-command_loop (int prefix)
+command_loop (int prefix, int iscmd)
 {
 
   /* We might be re-entering after a longjmp caused by an error.
@@ -1307,6 +1309,7 @@ command_loop (int prefix)
 		{
 		case 'c':
 		  {
+                    int tmp;
 		    ++prompt;
 		    if (*prompt == '#')
 		      {
@@ -1325,11 +1328,22 @@ command_loop (int prefix)
 		      }
 		    else if (*prompt == '\'')
 		      {
-			the_cmd_arg.timeout_seconds = 30;
+			the_cmd_arg.timeout_seconds = 3;
 			alarm_table[1].freq = 1;
 			++prompt;
+                        tmp = get_argument(prompt, &char_style);
 		      }
-		    if (get_argument (prompt, &char_style))
+                    else if (*prompt == '!')
+                     {
+                       the_cmd_arg.timeout_seconds = 3;
+                       alarm_table[1].freq = 1;
+                       ++prompt;
+                       ioerror = 1;
+                       tmp = get_argument(prompt, &char_style);
+                     }
+                    else
+		     tmp =  get_argument(prompt, &char_style);
+                    if (tmp)
 		      goto new_cycle;
 		    goto next_arg;
 		  }
@@ -1527,26 +1541,70 @@ command_loop (int prefix)
 		      }
 		    goto next_arg;
 		  }
+/* This might look slightly tangled, but it makes the command
+ * interface less fickle and more flexible for the user who
+ * wants to macrify a spreadsheet.
+ *
+ * A lowercase 'r' should trigger a prompt for a range in
+ * interactice mode if the mark is not set; if the mark IS set,
+ * then it should grab the range as the implicit answer.  Inside
+ * a macro, 'r' should always expect an explicit argument.
+ * 
+ * The '@' argument should provide a default range with opportunity
+ * for editing (if run interactively), or an implicit argument (if
+ * run non-interactively in a macro).  If the mark is not set, then
+ * the default range or implicit argument is set to the current
+ * cell location.
+ *
+ * If the user really and truly wants interactive behaviour inside a
+ * macro (perhaps because the command is the last in the chain), he
+ * or she can have it by using exec to launch the command.
+ * 
+ * --FB, 1997.12.27
+ */
+                case '@':
 		case 'r':
 		case 'R':
 		  {
-		    if (*prompt != 'R' && mkrow != NON_ROW)
+		    if (*prompt != '@' && mkrow != NON_ROW)
+                      {
+                        mkrow = curow;
+                        mkcol = cucol;
+                      }
+                    if ((*prompt != 'R'
+                        && (!rmac || iscmd)
+                        && mkrow != NON_ROW) || *prompt =='@')
 		      {
 			the_cmd_arg.val.range.lr = MIN(mkrow, curow);
 			the_cmd_arg.val.range.hr = MAX(mkrow, curow);
 			the_cmd_arg.val.range.lc = MIN(mkcol, cucol);
 			the_cmd_arg.val.range.hc = MAX(mkcol, cucol);
-			the_cmd_arg.is_set = 1;
-			the_cmd_arg.do_prompt = 1;
-			the_cmd_arg.style = &range_style;
-			mkrow = NON_ROW;
-			mkcol = NON_COL;
-			init_arg_text (&the_cmd_arg,
-				       range_name (&the_cmd_arg.val.range)); 
+                          mkrow = NON_ROW;
+                          mkcol = NON_COL;
+                          io_update_status ();
+                        if (*prompt == '@' && (!rmac || iscmd))
+                          {
+                            ++prompt;
+                            if (get_argument (prompt, &range_style))
+                              {
+                                init_arg_text (&the_cmd_arg,
+                                  range_name (&the_cmd_arg.val.range));
+                              }
+                            goto new_cycle;
+                          }
+                        else
+                          {
+                            ++prompt;
+                            the_cmd_arg.is_set = 1;
+                            the_cmd_arg.do_prompt = 1;
+                            the_cmd_arg.style = &range_style;
+                            init_arg_text (&the_cmd_arg,
+                               range_name (&the_cmd_arg.val.range));
+                          }
 			goto next_arg;
-		      }
-		    else
-		      {
+		        }
+		      else
+		        {
 			++prompt;
 			if (get_argument (prompt, &range_style))
 			  goto new_cycle;
@@ -1683,8 +1741,12 @@ command_loop (int prefix)
 		      {
 			if (do_init)
 			  {
-			    init_arg_text (&the_cmd_arg,
-					   decomp (curow, cucol, cp));
+                            if (rmac && !iscmd)
+                              init_arg_text (&the_cmd_arg,
+                                decomp_formula (curow, cucol, cp, 0));
+                            else
+                              init_arg_text (&the_cmd_arg,
+                                decomp_formula (curow, cucol, cp, 1));
 			    decomp_free ();
 			  }
 			goto new_cycle;
@@ -1740,9 +1802,10 @@ command_loop (int prefix)
 	/* If command_loop was called by execute_command, it should
 	 * return as soon as there is no more macro to evaluate.
  	 */
-	if (!rmac && the_cmd_frame->input->prev_stream)
+	if ((!rmac && the_cmd_frame->input->prev_stream) || ioerror)
 	  {
 	    pop_input_stream ();
+            ioerror = 0;
 	    return;
 	  }
 	if (the_cmd_frame->cmd)
@@ -1786,6 +1849,7 @@ quote_macro_args (args)
 void 
 execute_command (char *str)
 {
+  int iscmd = 0;
   char *ptr = str;
   char * run;			/* The first string to execute. */
   /* The address of the macro to execute.  If the user typed a 
@@ -1795,6 +1859,7 @@ execute_command (char *str)
   struct rng rng;
   static struct line exec_buf = {0, 0};
   int count = 1;
+  ioerror = 0;
 
   /* Chop off the first word. */
   while (isspace (*str))
@@ -1830,6 +1895,7 @@ execute_command (char *str)
 	run = exec_cmd_line.buf;
 	rng.lr = rng.hr = 1;
 	rng.lc = rng.hc = 1;
+          iscmd = 1;
 	goto found_command;
       }
   }
@@ -1869,7 +1935,7 @@ execute_command (char *str)
   while (count-- > 0)
     {
       macro_only_input_stream (&rng, run, strlen (run), the_cmd_frame);
-      command_loop (1);
+      command_loop (1, iscmd);
     }
 }
 
@@ -1916,7 +1982,7 @@ get_chr (void)
  */
 
 void
-display_error_msg (char * msg, int c)
+display_msg (char * msg, int c)
 {
   if (c > 0)
     pushed_back_char = c;
@@ -1944,7 +2010,7 @@ io_error_msg (char *str,...)
   
   va_start (foo, str);
   vsprintf (buf, str, foo);
-  sprintf (buf2, "display-error-msg %s", buf);
+  sprintf (buf2, "display-msg %s", buf);
   recover_from_error ();
   if (display_opened)
     execute_command (buf2);
@@ -1963,7 +2029,7 @@ io_info_msg (char *str,...)
 
   va_start (foo, str);
   vsprintf (buf, str, foo);
-  sprintf (buf2, "display-error-msg %s", buf);
+  sprintf (buf2, "display-msg %s", buf);
   execute_command (buf2);
 }
 

@@ -147,6 +147,7 @@ extern int default_lock;
 
 extern unsigned short current_cycle;
 extern int a0;
+extern int ioerror;
 extern int errno;
 extern const char oleo_version_string[];
 

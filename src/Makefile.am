@@ -1,4 +1,4 @@
-AUTOMAKE_OPTIONS = ../lib/ansi2knr
+AUTOMAKE_OPTIONS = ../lib/ansi2knr dejagnu
 
 bin_PROGRAMS = oleo
 
@@ -20,4 +20,4 @@ noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  panic.h parse.h print.h proto.h ref.h regions.h sc.h stub.h stubs.h sylk.h \
  sysdef.h utils.h window.h list.h ir.h io-gtk.h sort.h
 
-oleo_LDADD = ../lib/liboleo.a
+oleo_LDADD = @INTLLIBS@ ../lib/liboleo.a

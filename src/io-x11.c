@@ -982,7 +982,7 @@ xio_update_status (void)
       dlen = 0;
     }
   
-  ptr = cell_value_string (curow, cucol);
+  ptr = cell_value_string (curow, cucol, 1);
   plen = XTextWidth (thePort->status_font, ptr, strlen (ptr));
   
   assembled = (char *) ck_malloc (plen + dlen + mplen);
@@ -2242,7 +2242,7 @@ xio_flush (void)
 void
 xio_command_loop (int i)
 {
-  command_loop (i);
+  command_loop (i, 0);
 }
 
 void

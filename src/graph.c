@@ -183,28 +183,49 @@ chrs_to_graph_pair_ordering (int pair, int dir)
 }
 
 char *
-graph_quoted_str (char *str)
+line_to_q_char (struct line line)
 {
-  static struct line buf;
+  static struct line tmp_line;
+  char *str;
   
-  set_line (&buf, "\"");
+  str = line.buf;
+
+  set_line (&tmp_line, "\"");
   while (*str)
     {
       switch (*str)
 	{
 	case '"':
-	  catn_line (&buf, "\\\"", 2);
+/* gnupolot doesn't like escaped quotation marks in titles anyway.
+ * If you want to support them, you'll have to protect against
+ * progressive buildup, since this stores the post-escaping string
+ * back into the original char.
+ */
+/*        catn_line (&tmp_line, "\\\"", 2); */
 	  break;
 	default:
-	  catn_line (&buf, str, 1);
+	  catn_line (&tmp_line, str, 1);
 	  break;
 	}
       ++str;
     }
-  catn_line (&buf, "\"", 1);
-  return buf.buf;
+  catn_line (&tmp_line, "\"", 1);
+
+  set_line(&line, tmp_line.buf);
+
+  return line.buf;
 }
 
+char *
+char_to_q_char (char *str)
+{
+  char *tmp;
+
+  static struct line tmp_line;
+  set_line (&tmp_line, str);
+  tmp = line_to_q_char (tmp_line);
+  return (tmp);
+}
 
 
 void
@@ -242,7 +263,7 @@ graph_postscript (char * file, int kind, int spectrum, char * font, int pt_size)
        spectrum);
   sprint_line (&graph_term_cmd,
 	       "postscript %c %c %s %d  # Postscript",
-	       kind, spectrum, graph_quoted_str (font), pt_size);
+	       kind, spectrum, char_to_q_char (font), pt_size);
   set_line (&graph_output_file, file);
   plot_fn = spew_for_ps;
 }
@@ -253,7 +274,7 @@ void
 graph_set_axis_title (int axis_c, char * title)
 {
   enum graph_axis axis = chr_to_axis (axis_c);
-  set_line (&graph_axis_title [axis], graph_quoted_str (title));
+  set_line (&graph_axis_title [axis], char_to_q_char (title));
 }
 
 void
@@ -642,7 +663,7 @@ struct write_tics_frame
 static void
 write_tics_thunk (struct write_tics_frame * fr, CELL * cp, CELLREF r, CELLREF c)
 {
-  char * str = graph_quoted_str (print_cell (cp));
+  char * str = char_to_q_char (print_cell (cp));
   if (fr->tic_cnt)
     fputs (", ", fr->fp);
   fprintf (fr->fp, "%s ", str);
@@ -738,7 +759,7 @@ spew_gnuplot (FILE  * fp, struct line * data_files, char * dir, char * dbase)
   fprintf (fp, "set terminal %s\n", graph_term_cmd.buf);
   fprintf (fp, "set output %s\n",
 	   (graph_output_file.buf[0]
-	    ? graph_quoted_str (graph_output_file.buf)
+	    ? line_to_q_char (graph_output_file)
 	    : ""));
 
   {
@@ -817,10 +838,11 @@ spew_gnuplot (FILE  * fp, struct line * data_files, char * dir, char * dbase)
 		  free (wdf.gsf.names[x]);
 		ck_free (wdf.gsf.names);
 	      }
-	    fprintf (fp, "%s %s title %s with %s",
+	    fprintf (fp, "%s %s %s %s with %s",
 		     need_comma ? "," : "",
-		     graph_quoted_str (data_files [x].buf),
-		     graph_title [x].buf,
+		     line_to_q_char (data_files [x]),
+		     graph_title[x].buf[0] ? " title " : "",
+                     graph_title[x].buf[0] ? line_to_q_char (graph_title [x]) : "",
 		     graph_style [x].buf);
 	    need_comma = 1;
 	    fclose (df);
@@ -889,7 +911,7 @@ gnuplot_writable (int fd)
 {
   FD_CLR (fd, &write_fd_set);
   file_write_hooks [fd].hook_fn = 0;
-  fprintf (pipe_to_gnuplot, "\n\nload %s\n", graph_quoted_str (gnuplot_script));
+  fprintf (pipe_to_gnuplot, "\n\nload %s\n", char_to_q_char (gnuplot_script));
   fflush (pipe_to_gnuplot);
 }
 

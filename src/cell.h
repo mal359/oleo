@@ -153,6 +153,7 @@ extern CELL *next_cell_in_range (void);
 extern CELL *next_row_col_in_range (CELLREF *, CELLREF *);
 extern void no_more_cells (void);
 extern char *decomp (CELLREF, CELLREF, CELL *);
+extern char *decomp_formula (CELLREF, CELLREF, CELL *, int);
 extern void decomp_free (void);
 #else
 extern CELL *find_cell ();

@@ -163,7 +163,17 @@ fini:
 }
 
 void
-bind_set (char * keymap, char * command, char * keyset)
+unbind_key (char * keymap, int ch)
+{
+  int map = map_id (keymap);
+  struct keymap *m;
+  m = the_maps[map];
+  m->keys[ch].vector = -1;
+  m->keys[ch].code = -1;
+}
+
+void
+bind_or_unbind_set (char * keymap, char * command, char * keyset)
 {
   int first;
   int last;
@@ -196,11 +206,19 @@ bind_set (char * keymap, char * command, char * keyset)
   
   while (first <= last)
     {
-      bind_key (keymap, command, first);
+      if (command != "0")
+        bind_key (keymap, command, first);
+      else
+        unbind_key (keymap, first);
       ++first;
     }
 }
 
+void unbind_set (char *keymap, char *keyset)
+{
+  char *command = "0";
+  bind_or_unbind_set (keymap, command, keyset);
+}
 
 void 
 bind_all_keys (char * keymap, char * function)

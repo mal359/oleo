@@ -34,7 +34,7 @@ struct font_names
 				 * the defintion will only scale properly
 				 * if the point size is wild-carded.
 				 */
-  char * ps_name;		/* like `TimesRoman'. */
+  char * ps_name;		/* like `Times-Roman'. */
 };
 
 /* Oleo's concept of a particular set of glyphs (specified as a family + a 

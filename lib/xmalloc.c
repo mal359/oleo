@@ -29,10 +29,19 @@
 
 #if STDC_HEADERS || _LIBC
 #include <stdlib.h>
-static VOID *fixup_null_alloc __P ((size_t n));
-VOID *xmalloc __P ((size_t n));
-VOID *xcalloc __P ((size_t n, size_t s));
-VOID *xrealloc __P ((VOID *p, size_t n));
+
+#ifndef ___P
+#if PROTOTYPES
+#define ___P(protos) protos
+#else /* no PROTOTYPES */
+#define ___P(protos) ()
+#endif /* no PROTOTYPES */
+#endif
+
+static VOID *fixup_null_alloc ___P ((size_t n));
+VOID *xmalloc ___P ((size_t n));
+VOID *xcalloc ___P ((size_t n, size_t s));
+VOID *xrealloc ___P ((VOID *p, size_t n));
 #else
 VOID *calloc ();
 VOID *malloc ();

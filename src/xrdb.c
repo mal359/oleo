@@ -45,9 +45,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 #include <stdio.h>
 #include "sysdef.h"
-#if HAVE_SYSINFO
-#include <sys/systeminfo.h>
-#endif
 
 /* This should be included before the X include files; otherwise, we get
    warnings about redefining NULL under BSD 4.3.  */
@@ -327,11 +324,7 @@ get_environ_db ()
     {
       gethomedir (path);
       strcat (path, ".Xdefaults-");
-#if HAVE_SYSINFO
-      sysinfo (SI_HOSTNAME, path + strlen (path), MAXPATHLEN - strlen (path));
-#else
       gethostname (path + strlen (path), MAXPATHLEN - strlen (path));
-#endif
       p = path;
     }
 

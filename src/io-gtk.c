@@ -157,12 +157,13 @@ gio_redraw_input (GtkWidget *widget)
 		fprintf(stderr, "io-gtk.c: In FULL_REDRAW\n");
 #endif
 		if (iv->expanded_keymap_prompt) {
+			fprintf(stderr, "io-gtk.c: iv->expanded_keymap_prompt\n");
 			text.text = iv->expanded_keymap_prompt;
 			text.lentext = strlen (iv->expanded_keymap_prompt);
 			gdraw_text_item((GtkWidget*)widget, 0, ypos,
 			iv->prompt_wid, input_rows, gtkPort->input_font,
 			&text, 0);
-			iv->redraw_needed = FALSE;
+			iv->redraw_needed = NO_REDRAW;
 			gio_redraw_input_cursor ((GtkWidget*)widget, 1);
 			return;	
 		} else if (iv->prompt_wid) {
@@ -257,7 +258,9 @@ gio_open_display()
 
 	gtkPort->cursor_visible = 1;
 	gtkPort->redisp_needed = 1;
+
 	bzero (&gtkPort->input_view, sizeof (struct input_view));
+
 	gtkPort->input_view.prompt_metric = g_input_metric;
 	gtkPort->input_view.input_metric = g_input_metric;
 	
@@ -559,7 +562,7 @@ gio_update_status(void)
 		dec = 0;
 		dlen = 0;
 	}
-	ptr = cell_value_string (curow, cucol);
+	ptr = cell_value_string (curow, cucol, 1);
 	plen = strlen (ptr);
 
 	assembled = (char *) ck_malloc (plen + dlen + mplen);

@@ -123,7 +123,7 @@ sc_read_file (fp,ismerge)
 				io_error_msg("Line %d: No starting \" in define",lineno);
 				continue;
 			}
-			ptr=new_var_value(ptr,eptr-ptr,eptr+1);
+			ptr = old_new_var_value(ptr,eptr-ptr,eptr+1);
 			if(ptr)
 				io_error_msg("Line %d: %s",ptr);
 		} else if(!strncmp(buf,"leftstring ",11) ||
@@ -210,13 +210,13 @@ sc_write_file (fp,rng)
 	(void)fprintf(fp,"# You probably don't want to edit it.\n\n");
 
 	find_widths(rng->lc,rng->hc);
-	while(w=next_width(&c))
+	while((w=next_width(&c)))
 		fprintf(fp,"format %s %d ???\n",cell_name(MIN_ROW,c),w);
 	sc_fp=fp;
 	sc_rng=rng;
 	for_all_vars(sc_write_var);
 	find_cells_in_range(rng);
-	while(cp=next_row_col_in_range(&r,&c)) {
+	while((cp=next_row_col_in_range(&r,&c))) {
 		switch(GET_TYP(cp)) {
 		case TYP_STR:
 			if((GET_JST(cp)==JST_DEF && default_jst==JST_RGT) || GET_JST(cp)==JST_RGT)

@@ -141,7 +141,17 @@ describe_function (char * name)
     print_info (ib_disp, "%s", name);
     {
       struct info_buffer ib;
-      for (ib.len = 0; cmd->func_doc[ib.len]; ++ib.len) ;
+/* FIXME:
+ * Something is screwed up here.  ib.len is wrongly identified
+ * for help texts defined through name-macro-string.  Looks
+ * like it should always be 1.  I _really_ don't know what I am
+ * doing here.  This is a hack.  And probably stoopid.  But for
+ * now it's better than the current core-dump-on-help behaviour.
+ * 
+ * 
+ *    for (ib.len = 0; cmd->func_doc[ib.len]; ++ib.len) ;
+ */
+      ib.len = 1;
       ib.text = cmd->func_doc;
       ib.name = name;
       expand_help_msg (ib_disp, &ib);

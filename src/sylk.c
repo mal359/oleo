@@ -79,7 +79,7 @@ sylk_read_file (fp, ismerge)
       lineno++;
       if (lineno % 50 == 0)
 	io_info_msg ("Line %d", lineno);
-      if (ptr = (char *)index (cbuf, '\n'))
+      if ((ptr = (char *)index (cbuf, '\n')))
 	*ptr = '\0';
       ptr = cbuf;
       switch (*ptr)
@@ -363,7 +363,7 @@ sylk_read_file (fp, ismerge)
 	  if (!vname || !vval)
 	    goto bad_field;
 	  *ptr = '\0';
-	  ptr = new_var_value (vname, vlen, vval);
+	  ptr = old_new_var_value (vname, vlen, vval);
 	  if (ptr)
 	    io_error_msg ("Line %d: Couldn't set %.*s to %s: %s", lineno, vlen, vname, vval, ptr);
 	  break;

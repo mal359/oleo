@@ -172,6 +172,46 @@ flt_to_str (double val)
   return pr_flt (val, &fxt, PRC_FLT);
 }
 
+/* This is used to return a formatted float for editing.
+ * It is called as an alternative to flt_to_str, but
+ * requires the cell array instead of the value to
+ * do its work.  POSSIBLY this could be merged with
+ * flt_to_str, if the cell arraw cp is available wherever
+ * flt_to_str is used.  For now, though, this does the job.
+ */
+
+char *
+flt_to_str_fmt (CELL *cp)
+{
+  int j = GET_FMT(cp);
+  int p;
+  double f;
+
+  if (j == FMT_DEF)
+    j = default_fmt;
+
+  p = GET_PRC (j);
+
+  if (cp->cell_flt == __plinf)
+    return iname;
+  if (cp->cell_flt == __neinf)
+    return mname;
+  f = fabs (cp->cell_flt);
+  if (f >= 1e6 || (f > 0 && f <= 9.9999e-6))
+    {
+      sprintf (print_buf, "%e", cp->cell_flt);
+      return print_buf;
+    }
+  switch (j | PRC_FLT)
+    {
+      case FMT_FXT:
+      case FMT_DOL:
+      case FMT_PCT:
+        return pr_flt (cp->cell_flt, &fxt, p);
+      default:
+        return flt_to_str (cp->cell_flt);
+    }
+}
 
 char *
 long_to_str (long val)
@@ -221,7 +261,7 @@ print_cell (CELL * cp)
     }
   if (GET_TYP (cp) == TYP_FLT)
     {
-      p = GET_PRC (j);
+      int p = GET_PRC (j);
       switch (j | PRC_FLT)
 	{
 	case FMT_GPH:
@@ -361,10 +401,11 @@ print_cell (CELL * cp)
 }
 
 /* Return the value of ROW,COL in a human-readable fashion
-   In paticular, strings have "" around them, and are \\ed
+ * In particular, strings are \\ed, and if add_quote is true,
+ * they will have "" around them.
  */
 char *
-cell_value_string (CELLREF row, CELLREF col)
+cell_value_string (CELLREF row, CELLREF col, int add_quote)
 {
   CELL *cp;
 
@@ -381,7 +422,7 @@ cell_value_string (CELLREF row, CELLREF col)
       return print_buf;
 
     case TYP_STR:
-      return backslash_a_string (cp->cell_str, 1);
+      return backslash_a_string (cp->cell_str, add_quote);
 
     case TYP_BOL:
       return bname[cp->cell_bol];
@@ -968,18 +1009,23 @@ range_name (struct rng *rng)
   hr = rng->hr;
   hc = rng->hc;
 
-  if (a0)
-    sprintf (ptr, "%s:%s", cell_name (lr, lc), cell_name (hr, hc));
+  if ((lr == hr) && (lc == hc))
+    {
+      sprintf (ptr, "%s", cell_name (lr, lc));
+    }
   else
     {
-      if (lr == hr && lc == hc)
-	sprintf (ptr, "r%uc%u", lr, lc);
-      else if (lr == hr && lc != hc)
-	sprintf (ptr, "r%uc%u:%u", lr, lc, hc);
-      else if (lr != hr && lc == hc)
-	sprintf (ptr, "r%u:%uc%u", lr, hr, lc);
+      if (a0)
+        sprintf (ptr, "%s:%s", cell_name (lr, lc), cell_name (hr, hc));
       else
-	sprintf (ptr, "r%u:%uc%u:%u", lr, hr, lc, hc);
+        {
+          if (lr == hr && lc != hc)
+            sprintf (ptr, "r%uc%u:%u", lr, lc, hc);
+          else if (lr != hr && lc == hc)
+            sprintf (ptr, "r%u:%uc%u", lr, hr, lc);
+          else
+            sprintf (ptr, "r%u:%uc%u:%u", lr, hr, lc, hc);
+        }
     }
   return ptr;
 }

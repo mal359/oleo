@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-AUTOMAKE_OPTIONS = gnu 1.2f
+AUTOMAKE_OPTIONS = gnu 1.3
 
 SUBDIRS = doc lib po intl src
 

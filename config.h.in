@@ -226,17 +226,8 @@
 /* Define if you have the X11 library (-lX11).  */
 #undef HAVE_LIBX11
 
-/* Define if you have the Xext library (-lXext).  */
-#undef HAVE_LIBXEXT
-
-/* Define if you have the gdk library (-lgdk).  */
-#undef HAVE_LIBGDK
-
-/* Define if you have the glib library (-lglib).  */
-#undef HAVE_LIBGLIB
-
-/* Define if you have the gtk library (-lgtk).  */
-#undef HAVE_LIBGTK
+/* Define if you have the guile library (-lguile).  */
+#undef HAVE_LIBGUILE
 
 /* Define if you have the i library (-li).  */
 #undef HAVE_LIBI

@@ -70,7 +70,7 @@ n_alloc (int size, int tightness, char *fmt, ...)
 
 #define n_free(x)	ck_free(x)
 
-static struct pr_node *
+extern struct pr_node *
 byte_decompile (expr)
      unsigned char *expr;
 {
@@ -559,8 +559,22 @@ next_byte:
 /* Actual entry points to this file */
 /* decomp(row, col, cell) returns a string that can be byte_compiled to create
    cell->formula  decomp_free() frees up the allocated string */
+/* Have moved decomp(row, col, cell) to decomp_formula(row, col, cell, tog).
+ * Alias decomp(row, col, cell) behaves exactly as command described
+ * in the comment aboce.  the new int tog argument, if true, can be
+ * used to turn on formatted editing.
+ */
 char *
 decomp (CELLREF r, CELLREF c, CELL *cell)
+{
+  char *tmp;
+
+  tmp = decomp_formula (r, c, cell, 0);
+
+  return (tmp);
+}
+char *
+decomp_formula (CELLREF r, CELLREF c, CELL *cell, int tog)
 {
   struct pr_node *ret;
   char *str;
@@ -584,7 +598,14 @@ decomp (CELLREF r, CELLREF c, CELL *cell)
 	  str[0] = '\0';
 	  break;
 	case TYP_FLT:
-	  str = strdup (flt_to_str (cell->cell_flt));
+          if (tog)
+            {
+              str = strdup (flt_to_str_fmt(cell));
+            }
+          else
+            {
+              str = strdup (flt_to_str (cell->cell_flt));
+            }
 	  break;
 	case TYP_INT:
 	  str = ck_malloc (20);

@@ -2364,16 +2364,16 @@ cell_buffer_contents ()
 
 /* ----------------- Routines for dealing with variables ------------------ */
 
-/* This sets the variable V_NAME to V_NEWVAL
-   It returns error msg, or 0 on success.
-   All the appropriate cells have their ref_fm arrays adjusted appropriatly
-   This could be smarter; when changing a range var, only the cells that
-   were in the old value but not in the new one need their references flushed,
-   and only the cells that are new need references added.
-   This might also be changed to use add_range_ref()?
+/* Either this needs to be redone as a wrapper for the new new_var_value,
+ * or the invocations of it in oleofile.c, sc.c and sylk.c need to be
+ * adjusted so it can be deleted altogether.  The new version has 
+ * been introduced to improve the interface of new set-var.  The
+ * only cost has been the need to introduce and unset-var command,
+ * since the '@' argument type now required by set-var will
+ * only recognize a valid region.
  */
 char *
-new_var_value (char *v_name, int v_namelen, char *v_newval)
+old_new_var_value (char *v_name, int v_namelen, char *v_newval)
 {
   struct var *var;
   int n;
@@ -2428,6 +2428,63 @@ new_var_value (char *v_name, int v_namelen, char *v_newval)
     }
   else
     var->v_rng = tmp_rng;
+
+  var->var_flags = newflag;
+
+  return 0;
+}
+
+/* This sets the variable V_NAME to V_NEWVAL
+ * It returns error msg, or 0 on success.
+ * all the appropriate cells have their ref_fm arrays adjusted appropriately
+ * This could be smarter; when changing a range var, only the cells that
+ * were in the old value but not in the new one need their references flushed,
+ * and only the cells that are new need references added.
+ * This might also be changed to use add_range_ref()?
+ */
+
+char *
+new_var_value (char *v_name, int v_namelen, struct rng *rng)
+{
+  struct var *var;
+  int n = 0;
+  int newflag = 0;
+
+  cur_row = MIN_ROW;
+  cur_col = MIN_COL;
+
+  newflag = ((ROWREL | COLREL) == (R_CELL | ROWREL | COLREL)) ? VAR_CELL : VAR_RANGE;
+
+  var = find_or_make_var (v_name, v_namelen);
+
+  if (var->var_ref_fm)
+    {
+      if (var->var_flags != VAR_UNDEF)
+        {
+          for (n = 0; n < var->var_ref_fm->refs_used; n++)
+            {
+              flush_range_ref (&(var->v_rng),
+                              var->var_ref_fm->fm_refs[n].ref_row,
+                              var->var_ref_fm->fm_refs[n].ref_col);
+            }
+        }
+      var->v_rng = *rng;
+
+      if (var->v_rng.lr != NON_ROW)
+        {
+          for (n = 0; n < var->var_ref_fm->refs_used; n++)
+            {
+              cur_row = var->var_ref_fm->fm_refs[n].ref_row;
+              cur_col = var->var_ref_fm->fm_refs[n].ref_col;
+              add_range_ref (&(var->v_rng));
+            }
+        }
+        for (n = 0; n < var->var_ref_fm->refs_used; n++)
+          push_cell (var->var_ref_fm->fm_refs[n].ref_row,
+                      var->var_ref_fm->fm_refs[n].ref_col);
+    }
+  else
+    var->v_rng = *rng;
 
   var->var_flags = newflag;
 

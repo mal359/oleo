@@ -1249,14 +1249,14 @@ io_read_window_config (char * line)
   if (opts)
     {
       char *np;
-      while (np =(char *) index (opts, ','))
+      while ((np =(char *) index (opts, ',')))
 	{
 	  *np = '\0';
 	  set_options (opts);
 	  *np++ = ';';
 	  opts = np;
 	}
-      if (np = (char *)rindex (opts, '\n'))
+      if ((np = (char *)rindex (opts, '\n')))
 	*np = '\0';
       set_options (opts);
     }

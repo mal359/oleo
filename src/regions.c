@@ -35,6 +35,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "window.h"
 #include "cmd.h"
 #include "sort.h"
+#include "basic.h"
 
 
 struct rng all_rng = {MIN_ROW, MIN_COL, MAX_ROW, MAX_COL};
@@ -634,6 +635,28 @@ move_region (struct rng *fm, struct rng *to)
     }
   if (must_repaint)
     io_repaint ();
+/* Perpetration of an interface change here.  If we really
+ * need to get back to the old region, we can do it by
+ * wrapping the move-region command in macros that set
+ * and return to a hardy mark.  We might, however, want
+ * to jump the moved text again, or reformat it in some
+ * way, so the mark should travel with us.
+ * 
+ * to->lr and to->lc give the lowest column and row (northwest
+ * corner) in the destination region, to->hr and to->hc five the
+ * highest, or southeast corner.  The absolute value if their
+ * difference tells us how far to move over and down from
+ * northwest to mark the region just moved.  This way the new
+ * region can be operated on as a chunk immediately
+ *
+ * --FB 1997.12.17
+ */
+  if (mkrow != NON_ROW)
+    {
+      mkrow = to->lr + abs(to->lr - to->hr);
+      mkcol = to->lc + abs(to->lc - to->hc);
+    }
+  goto_region (to);
   return;
 }
 
@@ -657,6 +680,12 @@ copy_region (struct rng *fm, struct rng *to)
       if (rf == fm->hr)
 	rf = fm->lr - 1;
     }
+  if (mkrow != NON_ROW)
+    {
+      mkrow = to->lr + abs(to->lr - to->hr);
+      mkcol = to->lc + abs(to->lc - to->hc);
+    }
+  goto_region (to);
 }
 
 void

@@ -118,16 +118,6 @@ int (*set_file_opts) () = oleo_set_options;
 void (*show_file_opts) () = oleo_show_options;
 #endif
 
-static char * disclaimer[] = 
-{
-  " Copyright (C) 1990, 1991, 1992, 1997 Free Software Foundation,Inc.\n",
-  "There is ABSOLUTELY NO WARRANTY for Oleo; see the file COPYING\n",
-  "for details.  Oleo is free software and you are welcome to distribute\n",
-  "copies of it under certain conditions; see the file COPYING to see the\n",
-  "conditions.\n\n",
-  0
-};
-
 static char short_options[] = "Vqfxth";
 static struct option long_options[] =
 {
@@ -621,14 +611,14 @@ read_mp_options (char *str)
 {
   char *np;
 
-  while (np = (char *)index (str, ';'))
+  while ((np = (char *)index (str, ';')))
     {
       *np = '\0';
       do_set_option (str);
       *np++ = ';';
       str = np;
     }
-  if (np = (char *)rindex (str, '\n'))
+  if ((np = (char *)rindex (str, '\n')))
     *np = '\0';
   (void) do_set_option (str);
 }
@@ -639,20 +629,37 @@ read_mp_options (char *str)
 /* Commands related to variables. */
 
 void
-set_var (char * var, char * val)
+set_var (struct rng *val, char *var)
 {
   char *ret;
-  if (val)
-    {
-      while (isspace (*val))
-	++val;
-      if (!*val)
-	val = 0;
-    }
+
   modified = 1;
   ret = new_var_value (var, strlen(var), val);
+
   if (ret)
-    io_error_msg ("Can't set-variable %s: %s\n", var, ret);
+    io_error_msg ("Can't set-var %s: %s\n", var, ret);
+}
+
+void
+unset_var (char *var)
+{
+  struct rng tmp_rng;
+  struct var *v;
+
+  v = find_var(var, strlen(var));
+
+  if (!v || v->var_flags == VAR_UNDEF)
+    {
+      io_error_msg ("No variable named %s exists.", var);
+    }
+  else
+    {
+      tmp_rng.lr = tmp_rng.hr = NON_ROW;
+      tmp_rng.lc = tmp_rng.hc = NON_COL;
+      v = find_or_make_var(var, strlen(var));
+      v->v_rng = tmp_rng;
+      v->var_flags = VAR_UNDEF;
+    }
 }
 
 void
@@ -721,7 +728,7 @@ write_a_var (char *name, struct var *v)
   c = v->v_rng.lc;
   if (v->var_flags == VAR_CELL)
     fprintf (write_variable_fp, "%s=%s\n",
-	     v->var_name, cell_value_string (r, c));
+	     v->var_name, cell_value_string (r, c, 1));
 }
 
 void
@@ -1128,7 +1135,7 @@ main (int argc, char **argv)
   while (1)
     {
       setjmp (error_exception);
-      io_command_loop (0);
+      command_loop (0, 0);
     }
 }
 

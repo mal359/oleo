@@ -736,7 +736,7 @@ _io_update_status (void)
       dlen = 0;
     }
   
-  ptr = cell_value_string (curow, cucol);
+  ptr = cell_value_string (curow, cucol, 1);
   plen = strlen (ptr);
   
   if (dec)
@@ -999,7 +999,7 @@ _io_flush (void)
 void
 _io_command_loop (int a)
 {
-	command_loop (a);
+	command_loop (a, 0);
 }
 
 void

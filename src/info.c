@@ -73,6 +73,14 @@ clear_info (struct info_buffer * buf)
   buf->len = 0;
 }
 
+/* This appears to be a source of trouble in the help
+ * system.  Every time help is requested for non-standard
+ * instructions (macros and the like), Oleo dumps core.
+ * It would have been useful to see some sort of note here
+ * re what this is meant to do exactly ... ?
+ * --FB
+ */
+
 void
 print_info (struct info_buffer * buf, char * format, ...)
 {

@@ -43,6 +43,9 @@ LIBS="$LIBS $X_LIBS"
 dnl Checks for X11 Libraries
 AC_CHECK_LIB(X11, main)
 
+dnl Checks for Guile
+AC_CHECK_LIB(guile, scm_boot_guile)
+
 dnl Checks if -DDEBUG is requested
 AC_ARG_WITH(debug,
 [  --with-debug                   Send debugging info to stderr],
@@ -73,10 +76,7 @@ AC_ARG_WITH(gtk,
 [		with_gtk=yes])
 
 if test $with_gtk = yes; then
-	AC_CHECK_LIB(Xext, main)
-	AC_CHECK_LIB(glib, main, ,-lgtk -lgdk)
-	AC_CHECK_LIB(gdk, main, , ,-lglib -lgdk) 
-	AC_CHECK_LIB(gtk, main, , ,-lglib -lgdk)
+	AM_PATH_GTK
 fi
 
 dnl Checks for header files.
@@ -103,5 +103,7 @@ AM_FUNC_OBSTACK
 
 dnl See if we're GNU Gettext friendly
 AM_GNU_GETTEXT
+
+AC_SUBST(LIBOBJS)
 
 AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile po/Makefile.in], [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])

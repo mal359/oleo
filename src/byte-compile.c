@@ -218,7 +218,7 @@ static struct function *__usr_funs[] =
 };
 static int __usr_n_funs[] =	/* Dear hack, this is stupid. never do this. */
 {				/* Maintaining this is a big waste of time. */
-  32, 18, 11, 10		/* Grrr. */
+  32, 18, 11, 12		/* Grrr. */
 };				/* I mean it. */
 
 struct function **usr_funs = __usr_funs;

@@ -1,4 +1,4 @@
-dnl aclocal.m4 generated automatically by aclocal 1.2f
+dnl aclocal.m4 generated automatically by aclocal 1.3
 
 dnl Copyright (C) 1994, 1995, 1996, 1997, 1998 Free Software Foundation, Inc.
 dnl This Makefile.in is free software; the Free Software Foundation
@@ -152,6 +152,7 @@ test "$am_cv_cygwin32" = yes && CYGWIN32=yes])
 
 AC_DEFUN(AM_C_PROTOTYPES,
 [AC_REQUIRE([AM_PROG_CC_STDC])
+AC_REQUIRE([AC_PROG_CPP])
 AC_MSG_CHECKING([for function prototypes])
 if test "$am_cv_prog_cc_stdc" != no; then
   AC_MSG_RESULT(yes)
@@ -256,7 +257,69 @@ case "x$am_cv_prog_cc_stdc" in
 esac
 ])
 
-#serial 3
+# Configure paths for GTK+
+# Owen Taylor     97-11-3
+
+dnl AM_PATH_GTK([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]]])
+dnl Test for GTK, and define GTK_CFLAGS and GTK_LIBS
+dnl
+AC_DEFUN(AM_PATH_GTK,
+[dnl 
+dnl Get the cflags and libraries from the gtk-config script
+dnl
+  AC_PATH_PROG(GTK_CONFIG, gtk-config, no)
+  min_gtk_version=ifelse([$1], ,0.99.7,$1)
+  AC_MSG_CHECKING(for GTK - version >= $min_gtk_version)
+  no_gtk=""
+  if test "$GTK_CONFIG" != "no" ; then
+    GTK_CFLAGS=`$GTK_CONFIG --cflags`
+    GTK_LIBS=`$GTK_CONFIG --libs`
+    ac_save_CFLAGS="$CFLAGS"
+    ac_save_LIBS="$LIBS"
+    CFLAGS="$CFLAGS $GTK_CFLAGS"
+    LIBS="$LIBS $GTK_LIBS"
+dnl
+dnl Now check if the installed GTK is sufficiently new. (Also sanity
+dnl checks the results of gtk-config to some extent
+dnl
+    AC_TRY_RUN([
+#include <gtk/gtk.h>
+#include <stdio.h>
+
+int 
+main ()
+{
+  int major, minor, micro;
+
+  if (sscanf("$min_gtk_version", "%d.%d.%d", &major, &minor, &micro) != 3) {
+     printf("%s, bad version string\n", "$min_gtk_version");
+     exit(1);
+   }
+
+   return !((gtk_major_version > major) ||
+   	    ((gtk_major_version == major) && (gtk_minor_version > minor)) ||
+ 	    ((gtk_major_version == major) && (gtk_minor_version == minor) && (gtk_micro_version >= micro)));
+}
+],, no_gtk=yes,[echo $ac_n "cross compiling; assumed OK... $ac_c"])
+     CFLAGS="$ac_save_CFLAGS"
+     LIBS="$ac_save_LIBS"
+  else
+     no_gtk=yes
+  fi
+  if test "x$no_gtk" = x ; then
+     AC_MSG_RESULT(yes)
+     ifelse([$2], , :, [$2])     
+  else
+     AC_MSG_RESULT(no)
+     GTK_CFLAGS=""
+     GTK_LIBS=""
+     ifelse([$3], , :, [$3])
+  fi
+  AC_SUBST(GTK_CFLAGS)
+  AC_SUBST(GTK_LIBS)
+])
+
+#serial 4
 
 dnl From Jim Meyering.
 dnl FIXME: this should migrate into libit.
@@ -281,6 +344,17 @@ changequote(<<, >>)dnl
 # endif
 #endif
 
+#if HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+
+#if !HAVE_ALARM
+# define alarm(X) /* empty */
+#endif
+
+/* Work around redefinition to rpl_putenv by other config tests.  */
+#undef putenv
+
 static time_t time_t_max;
 
 /* Values we'll use to set the TZ environment variable.  */
@@ -299,6 +373,23 @@ mktime_test (now)
     exit (1);
   now = time_t_max - now;
   if ((lt = localtime (&now)) && mktime (lt) != now)
+    exit (1);
+}
+
+static void
+irix_6_4_bug ()
+{
+  /* Based on code from Ariel Faigon.  */
+  struct tm tm;
+  tm.tm_year = 96;
+  tm.tm_mon = 3;
+  tm.tm_mday = 0;
+  tm.tm_hour = 0;
+  tm.tm_min = 0;
+  tm.tm_sec = 0;
+  tm.tm_isdst = -1;
+  mktime (&tm);
+  if (tm.tm_mon != 2 || tm.tm_mday != 31)
     exit (1);
 }
 
@@ -356,6 +447,7 @@ main ()
         bigtime_test (j);
       bigtime_test (j - 1);
     }
+  irix_6_4_bug ();
   exit (0);
 }
 	      >>,

@@ -5,28 +5,32 @@ Short-term TODO's:
 * Ditto THANKS file. (15 Nov - JB)
 
 * Increase "X" friendliness. (June 1/97 - JB)
+ - Resize NCurses terminal on SIGWINCH
+ - Make arrow keys work on Alpha/i386.
 
 * Add Mouse support with Curses/GPM. (June 1/97 - JB)
 
-* Create proper bug tracking facilities.  GNATS?  (June 1/97 - JB)
-
 * Import/Export Filters. (June 1/97 - JB)
+ - Sylk may need fixing.
+ - CSV would be nice
+ - DBII or DBIII is useful.
+ - Fixed width.
 
 * Tighter link with GNU Plotutils. (Nov 15/97 - JB)
 
-* Scripting Language.  GUILE? (June 1/97 - RMS)
+* Integrate GUILE for Macros (June 1/97 - RMS)
+ - A VB modules on Guile is needed.
 
 * Gtk+ Toolkit Implementation (Nov 15/97 - JB)
 
 * GNU GetText (Nov 15/97 - Joel N. Webber II)
+ - Implement new help system.
 
-* Cleanup source directory (Nov 15/97 - JB)
-
-* Setup Oleo Lists (Nov 15/97 - JB)
+* Update hash.c (Nov 15/97 - JB)
 
 * Fix sort routines (Nov 15/97 - Steve Fisk)
 
-* Get a useful copy of Ansi2Knr going (Nov 29/97 - JB)
+* Modify ansi2knr to work with "..." functions  (Nov 29/97 - JB)
 
 # Figure out why sort.c requires functions passed as args to a function
 (03-14/1998 - JB)

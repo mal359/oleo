@@ -36,6 +36,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "io-generic.h"
 #include "io-term.h"
 #include "cmd.h"
+#include "ref.h"
 
 struct value
   {
@@ -193,6 +194,7 @@ do_curcell (p)
      struct value *p;
 {
   int tmp;
+  CELL *cp;
 
   tmp = cell (curow, cucol, p->String, p);
   if (tmp)
@@ -572,11 +574,66 @@ do_cell (p)
     ERROR (tmp);
 }
 
+/* While writing the macro loader, I found a need for a function
+ * that could report back on whether or not a variable was defined.
+ * The function below does that and more.  It accepts an integer
+ * and two strings as arguments.  The integer specifies a corner;
+ * 0 for NW, 1 for NE, 2 for SE and 3 for SW.  The first string
+ * argument should specify a variable name.  The second should
+ * specify one of the elements accepted by cell().  If the
+ * variable has not been defined, this reports back its bare
+ * name as a string.
+ */
+
+static void
+do_varval (struct value *p)
+{
+  struct rng *rng;
+  int tmp;
+  int vr;
+  int vc;
+  struct var * v;
+
+  v = find_var ((p+1)->String, strlen((p+1)->String));
+
+  if (!v || v->var_flags == VAR_UNDEF) {
+    p->type = TYP_STR;
+    p->String = (p+1)->String;
+  } else {
+    switch(p->Int) {
+      case 0:
+        vr = v->v_rng.lr;
+        vc = v->v_rng.lc;
+        break;
+      case 1:
+        vr = v->v_rng.lr;
+        vc = v->v_rng.hc;
+        break;
+      case 2:
+        vr = v->v_rng.hr;
+        vc = v->v_rng.hc;
+        break;
+      case 3:
+        vr = v->v_rng.hr;
+        vc = v->v_rng.lc;
+        break;
+      default:
+        ERROR(OUT_OF_RANGE);
+        return;
+    }
+    p->String = (p+2)->String;
+    tmp = cell (vr, vc, p->String, p);
+    if (tmp)
+      ERROR (tmp);
+  }
+}
+
 struct function cells_funs[] =
 {
   {C_FN1 | C_T, X_A1, "S", do_curcell, "curcell"},
   {C_FN1 | C_T, X_A1, "S", do_my, "my"},
   {C_FN3 | C_T, X_A3, "IIS", do_cell, "cell"},
+  {C_FN3 | C_T, X_A3, "ISS", do_varval, "varval"},
 
   {C_FN2, X_A2, "RA", do_member, "member"},
   {C_FN2, X_A2, "RS", do_smember, "smember"},

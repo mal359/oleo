@@ -4,8 +4,7 @@ noinst_LIBRARIES = liboleo.a
 liboleo_a_SOURCES = getdate.y getopt.c getopt1.c xmalloc.c error.c \
 	random.c
 
-noinst_HEADERS = getopt.h error.h getdate.h
+noinst_HEADERS = getopt.h error.h getdate.h obstack.h mktime.c obstack.c
 
-liboleo_a_LIBADD = 
-liboleo_a_DEPENDENCIES = $(libfu_a_LIBADD)
+liboleo_a_LIBADD = @LIBOBJS@
 

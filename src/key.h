@@ -88,7 +88,9 @@ extern char **map_prompts;
 #ifdef __STDC__
 extern int search_map_for_cmd (struct line * line, int map, int vec, int code);
 extern void bind_key (char * keymap, char * function, int ch);
-extern void bind_set (char * keymap, char * command, char * keyset);
+extern void unbind_key (char * keymap, int ch);
+extern void bind_or_unbind_set (char * keymap, char * command, char * keyset);
+extern void unbind_set (char *keymap, char *keyset);
 extern void bind_all_keys (char * keymap, char * function);
 extern void write_keys_cmd (FILE *fp);
 extern void clear_keymap (struct keymap *m);
