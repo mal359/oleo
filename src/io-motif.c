@@ -1,6 +1,6 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.49 1999/08/31 08:45:07 danny Exp $
+ *  $Id: io-motif.c,v 1.50 1999/09/02 22:53:44 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -22,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.49 1999/08/31 08:45:07 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.50 1999/09/02 22:53:44 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -122,6 +122,8 @@ static void FixA0();
 static void PopDownSplash();
 static void UpdateStatus(void);
 void helpUsingCB(Widget w, XtPointer client, XtPointer call);
+static void MotifSelectGlobal(Widget);
+Widget GscBuildMainWindow(Widget parent);
 
 Widget ConfigureBarChart(Widget parent);
 Widget ConfigurePieChart(Widget parent);
@@ -220,6 +222,8 @@ void none(Widget w, XtPointer client, XtPointer call)
 	XmString	xms;
 	char		*s = NULL;
 
+	MotifSelectGlobal(w);
+
 	XtVaGetValues(w, XmNlabelString, &xms, NULL);
 	if (XmStringGetLtoR(xms, XmFONTLIST_DEFAULT_TAG, &s)) {
 		MessageAppend(False, "%s: not implemented yet\n", s);
@@ -249,11 +253,15 @@ void PrintDebug(Widget w, XtPointer client, XtPointer call)
 
 void FocusCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	ActiveRangeSelectionWidget = w;
 }
 
 void LoseFocusCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 #if 0
 	if (ActiveRangeSelectionWidget == w)
 		ActiveRangeSelectionWidget = NULL;
@@ -266,6 +274,8 @@ void SelectCellCB(Widget w, XtPointer client, XtPointer call)
 	XbaeMatrixSelectCellCallbackStruct *cbp =
 		(XbaeMatrixSelectCellCallbackStruct *)call;
 	int		i, j;
+
+	MotifSelectGlobal(w);
 
 #if 0
 	fprintf(stderr, "SelectCell(%s, %d %d)\n",
@@ -489,6 +499,8 @@ void CreateGraph(Widget w, XtPointer client, XtPointer call)
 	Widget	f, sw, sep, ok;
 	int	i;
 
+	MotifSelectGlobal(w);
+
 	if (gs)
 		return;
 
@@ -556,6 +568,8 @@ void CreateGraph(Widget w, XtPointer client, XtPointer call)
 #ifdef	HAVE_SciPlot_H
 void ShowGraph(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	CreateGraph(w, client, call);
 	XtPopup(gs, XtGrabNone);
 }
@@ -566,6 +580,8 @@ void ShowGraph(Widget w, XtPointer client, XtPointer call)
  */
 void ReallyPrintGraph(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	if (gs == NULL)
 		CreateGraph(w, client, call);
 	else
@@ -582,6 +598,8 @@ void ReallyPrintGraph(Widget w, XtPointer client, XtPointer call)
  */
 void PrintGraph(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	ReallyPrintGraph(w, client, call);
 }
 #endif
@@ -591,6 +609,8 @@ void PrintGraph(Widget w, XtPointer client, XtPointer call)
  */
 void PrintOptionsOk(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 }
 
 void PrintOptionsReset(Widget w)
@@ -603,6 +623,8 @@ void PrintOptionsCB(Widget w, XtPointer client, XtPointer call)
 	XmString	xms;
 	Arg		al[5];
 	int		ac;
+
+	MotifSelectGlobal(w);
 
 	if (! optionsDialog) {
 		ac = 0;
@@ -679,6 +701,7 @@ void PrintOptionsCB(Widget w, XtPointer client, XtPointer call)
 			NULL);
 
 		XtAddCallback(ok, XmNactivateCallback, PrintOptionsOk, optionsDialog);
+		XtAddCallback(cancel, XmNactivateCallback, CancelTemplate, optionsDialog);
 
 		/* FIX ME need something to call the help system */
 	}
@@ -705,6 +728,8 @@ Widget CreateConfigureGraph(Widget parent)
 {
 	Widget	toprc, frame, w, rc, cap;
 	struct ConfigureWidgets	*cw;
+
+	MotifSelectGlobal(w);
 
 	cw = (struct ConfigureWidgets *)XtMalloc(
 		sizeof(struct ConfigureWidgets));
@@ -832,6 +857,8 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 	char			*s, *p;
 	struct rng		rngx;
 	int			r;
+
+	MotifSelectGlobal(w);
 
 	XtVaGetValues(f, XmNuserData, &cw, NULL);
 
@@ -1027,6 +1054,8 @@ void ConfigureGraph(Widget w, XtPointer client, XtPointer call)
 	int		ac;
 	Arg		al[5];
 
+	MotifSelectGlobal(w);
+
 	if (! configureGraph) {
 		ac = 0;
 		XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
@@ -1088,6 +1117,7 @@ void ConfigureGraph(Widget w, XtPointer client, XtPointer call)
 			NULL);
 
 		XtAddCallback(ok, XmNactivateCallback, ConfigureGraphOk, inside);
+		XtAddCallback(cancel, XmNactivateCallback, CancelTemplate, configureGraph);
 
 		/* FIX ME need something to call the help system */
 	}
@@ -1106,6 +1136,8 @@ void NoPlotutils(Widget w, XtPointer client, XtPointer call)
 	XmString	xms;
 	char		*s = NULL;
 
+	MotifSelectGlobal(w);
+
 	XtVaGetValues(w, XmNlabelString, &xms, NULL);
 	if (XmStringGetLtoR(xms, XmFONTLIST_DEFAULT_TAG, &s)) {
 		MessageAppend(False, "%s: GNU Plotutils not linked in\n", s);
@@ -1122,6 +1154,8 @@ void NoPlotutils(Widget w, XtPointer client, XtPointer call)
 static void RedrawPlotutilsWindow(Widget w, XtPointer client, XtPointer call)
 {
 	void (*f)(char *, FILE *) = client;
+
+	MotifSelectGlobal(w);
 
 	(*f)("Xdrawable", stdout);
 }
@@ -1140,6 +1174,8 @@ void PuShowChart(Widget w, XtPointer client, XtPointer call)
 	Arg		al[5];
 	int		ac;
 	void (*f)(char *, FILE *) = client;
+
+	MotifSelectGlobal(w);
 
 	PlotInit();
 
@@ -1201,6 +1237,8 @@ void PuSelectPlotter(Widget w, XtPointer client, XtPointer call)
 {
 	XmString	xms;
 	char		p[PLOTLEN+20];
+
+	MotifSelectGlobal(w);
 
 	PuPlotter = (int)client;
 
@@ -1273,6 +1311,8 @@ void PuPrintOk(Widget w, XtPointer client, XtPointer call)
 	XmFileSelectionBoxCallbackStruct	*cbp = (XmFileSelectionBoxCallbackStruct *)call;
 	char					*fn;
 
+	MotifSelectGlobal(w);
+
 	if (! XmStringGetLtoR(cbp->value, XmFONTLIST_DEFAULT_TAG, &fn)) {
 		/* FIX ME */
 		return;
@@ -1295,6 +1335,8 @@ void PuPrintDialog(Widget w, XtPointer client, XtPointer call)
 	XmString	xms;
 	Widget		cb, menu, b;
 
+	MotifSelectGlobal(w);
+
 	ac = 0;
 	XtSetArg(al[ac], XmNautoUnmanage, True); ac++;
 	xms = XmStringCreateSimple(_("*.oleo"));
@@ -1316,6 +1358,8 @@ void PuPrintPie(Widget w, XtPointer client, XtPointer call)
 #ifdef	HAVE_LIBPLOT
 	ThisPuFunction = PuPieChart;
 
+	MotifSelectGlobal(w);
+
 	if (! pufsd) PuPrintDialog(w, client, call);
 	XtManageChild(pufsd);
 #endif
@@ -1327,6 +1371,8 @@ void PuPrintBar(Widget w, XtPointer client, XtPointer call)
 #ifdef	HAVE_LIBPLOT
 	ThisPuFunction = PuBarChart;
 
+	MotifSelectGlobal(w);
+
 	if (! pufsd) PuPrintDialog(w, client, call);
 	XtManageChild(pufsd);
 #endif
@@ -1336,6 +1382,8 @@ void PuPrintXY(Widget w, XtPointer client, XtPointer call)
 {
 #ifdef	HAVE_LIBPLOT
 	ThisPuFunction = PuXYChart;
+
+	MotifSelectGlobal(w);
 
 	if (! pufsd) PuPrintDialog(w, client, call);
 	XtManageChild(pufsd);
@@ -1352,6 +1400,8 @@ Widget ConfigureXYChart(Widget parent)
 	Widget	frame, form, w, te, l, t;
 	Arg	al[10];
 	int	ac;
+
+	MotifSelectGlobal(w);
 
 	ac = 0;
 	frame = XmCreateFrame(parent, "puselectfile", al, ac);
@@ -1611,6 +1661,8 @@ void ReallyPrintCB(Widget w, XtPointer client, XtPointer call)
 	char		*fn, *s, *p;
 	int		r;
 
+	MotifSelectGlobal(w);
+
 	XtUnmanageChild(PrintDialog);
 
 	if (XmToggleButtonGadgetGetState(PrintWidgets.PrinterToggle)) {
@@ -1690,6 +1742,8 @@ static void MotifSetPrintType(Widget w, XtPointer client, XtPointer call)
 {
 	char	*s = (char *)client;
 
+	MotifSelectGlobal(w);
+
 	MessageAppend(False, "Set printer type to %s\n", s);
 	PrintSetType(s);
 }
@@ -1697,6 +1751,8 @@ static void MotifSetPrintType(Widget w, XtPointer client, XtPointer call)
 static void MotifSetPrintPage(Widget w, XtPointer client, XtPointer call)
 {
 	int	i = (int) client;
+
+	MotifSelectGlobal(w);
 
 	MessageAppend(False, "Set page format to %s\n", PrintGetPageName(i));
 	PrintSetPage(PrintGetPageName(i));
@@ -1710,6 +1766,8 @@ void PrintBrowseFileCBOk(Widget w, XtPointer client, XtPointer call)
 	char	*fn;
 	XmFileSelectionBoxCallbackStruct *cbp = (XmFileSelectionBoxCallbackStruct *)call;
 
+	MotifSelectGlobal(w);
+
 	if (! XmStringGetLtoR(cbp->value, XmFONTLIST_DEFAULT_TAG, &fn))
 		return;
 
@@ -1718,6 +1776,8 @@ void PrintBrowseFileCBOk(Widget w, XtPointer client, XtPointer call)
 
 void PrintBrowseFileCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	if (! pfsd) {
 		XmString	xms;
 		Arg		al[5];
@@ -1743,6 +1803,8 @@ void CupsSelectPrinter(Widget w, XtPointer client, XtPointer call)
 {
 	Widget tf = (Widget)client;
 
+	MotifSelectGlobal(w);
+
 	XmTextFieldSetString(tf, XtName(w));
 }
 
@@ -1760,6 +1822,8 @@ Widget MotifCreatePrintDialog(Widget s)
 	XmString	xms;
 	int		defaultprint = 0;
 	char		**printers;
+
+	MotifSelectGlobal(w);
 
 	ac = 0;
 	form = XmCreateForm(s, "printForm", al, ac);
@@ -1998,6 +2062,8 @@ void printCB(Widget w, XtPointer client, XtPointer call)
 	Arg	al[5];
 	int	ac;
 
+	MotifSelectGlobal(w);
+
 	if (PrintDialog == NULL) {
 		ac = 0;
 		XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
@@ -2025,6 +2091,8 @@ void SetDefaultFileCB(Widget w, XtPointer client, XtPointer call)
 	char	*s, *xx;
 	Widget	tf, f;
 
+	MotifSelectGlobal(w);
+
 	f = XtParent(w);
 
 	/* Set default file format */
@@ -2046,12 +2114,15 @@ void CancelTemplate(Widget w, XtPointer client, XtPointer call)
 {
 	Widget	bb = (Widget)client;
 
+	MotifSelectGlobal(w);
 	XtUnmanageChild(bb);
 }
 
 void DestroyTemplate(Widget w, XtPointer client, XtPointer call)
 {
 	Widget	bb = (Widget)client;
+
+	MotifSelectGlobal(w);
 
 	XtDestroyWidget(bb);
 }
@@ -2060,12 +2131,16 @@ void CancelDialog(Widget w, XtPointer client, XtPointer call)
 {
 	Widget	shell = (Widget)client;
 
+	MotifSelectGlobal(w);
+
 	XtPopdown(shell);
 }
 
 void DefaultFileFormatCB(Widget w, XtPointer client, XtPointer call)
 {
 	char		*f = (char *)client;
+
+	MotifSelectGlobal(w);
 
 	file_set_default_format(f);
 }
@@ -2074,6 +2149,8 @@ void DefaultFileDialogReset(void)
 {
 	Widget	tw, menu, b;
 	char	s[2], ffs[16], *ff;
+
+	MotifSelectGlobal(w);
 
 	s[0] = list_get_separator();
 	s[1] = '\0';
@@ -2212,6 +2289,8 @@ Widget MotifCreateDefaultFileDialog(Widget s)
 
 void DefaultFileCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	if (DefaultFileShell == NULL) {
 		DefaultFileShell = XtVaCreatePopupShell("defaultFileShell",
 				topLevelShellWidgetClass,
@@ -2242,6 +2321,8 @@ void LeaveCell(Widget w, XtPointer client, XtPointer call)
 	CELL	*cp;
 	XbaeMatrixLeaveCellCallbackStruct *cbp =
 		(XbaeMatrixLeaveCellCallbackStruct *)call;
+
+	MotifSelectGlobal(w);
 
 	cbp->doit = True;
 
@@ -2306,6 +2387,8 @@ void EnterCell(Widget w, XtPointer client, XtPointer call)
 		(XbaeMatrixEnterCellCallbackStruct *)call;
 	char		*dec;
 
+	MotifSelectGlobal(w);
+
 	Debug(__FILE__, "EnterCell (%d, %d)\n", cbp->row, cbp->column);
 
 	/* Tell oleo to move */
@@ -2339,6 +2422,8 @@ void ModifyVerify(Widget w, XtPointer client, XtPointer call)
 	XbaeMatrixModifyVerifyCallbackStruct *cbp =
 		(XbaeMatrixModifyVerifyCallbackStruct *)call;
 
+	MotifSelectGlobal(w);
+
 	Debug(__FILE__, "ModifyVerify(%d,%d) '%s'\n",
 		cbp->row, cbp->column,
 		cbp->prev_text);
@@ -2349,6 +2434,8 @@ void WriteCell(Widget w, XtPointer client, XtPointer call)
 	XbaeMatrixWriteCellCallbackStruct *cbp =
 		(XbaeMatrixWriteCellCallbackStruct *)call;
 
+	MotifSelectGlobal(w);
+
 	Debug(__FILE__, "WriteCell(%d, %d, %s)\n",
 		cbp->row, cbp->column, cbp->string);
 }
@@ -2358,6 +2445,8 @@ void DrawCell(Widget w, XtPointer client, XtPointer call)
 	/* This needs to be called otherwise WriteCell won't work. */
 	XbaeMatrixDrawCellCallbackStruct *cbp =
 		(XbaeMatrixDrawCellCallbackStruct *)call;
+
+	MotifSelectGlobal(w);
 
 	cbp->type = XbaeString;
 #if 1
@@ -2383,6 +2472,8 @@ void FormulaCB(Widget w, XtPointer client, XtPointer call)
 {
 	char	*s, *r;
 
+	MotifSelectGlobal(w);
+
 	s = XmTextFieldGetString(w);
 	Debug(__FILE__, "FormulaCB(%s) -> %d,%d\n", s, curow, cucol);
 
@@ -2406,6 +2497,8 @@ void ResizeColumnCB(Widget w, XtPointer client, XtPointer call)
 		(XbaeMatrixResizeColumnCallbackStruct *)call;
 	struct rng	rng;
 	char		wid[20];
+
+	MotifSelectGlobal(w);
 
 	/* Set a range which is a column */
 	rng.lr = 0;
@@ -2444,6 +2537,8 @@ void FileFormatCB(Widget w, XtPointer client, XtPointer call)
 	char		*f = (char *)client, *p;
 	XmString	xms;
 
+	MotifSelectGlobal(w);
+
 	p = file_get_pattern(f);
 	if (p == NULL)
 		p = f;
@@ -2464,6 +2559,8 @@ void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 		(XmFileSelectionBoxCallbackStruct *)call;
 	FILE	*fp;
 	char	*s;
+
+	MotifSelectGlobal(w);
 
 	if (! XmStringGetLtoR(cbp->value, XmFONTLIST_DEFAULT_TAG, &s)) {
 		/* handle error */
@@ -2520,6 +2617,8 @@ void DefaultFileResetCB(Widget w, XtPointer client, XtPointer call)
 	char		format[32], *f, *p;
 	XmString	xms;
 
+	MotifSelectGlobal(w);
+
 	f = file_get_default_format();
 
 	strcpy(format, "*.");
@@ -2567,6 +2666,8 @@ void LoadCB(Widget w, XtPointer client, XtPointer call)
 	Arg	al[10];
 	int	ac = 0;
 
+	MotifSelectGlobal(w);
+
 	if (fsd == NULL)
 		CreateFSD();
 
@@ -2581,17 +2682,48 @@ void LoadCB(Widget w, XtPointer client, XtPointer call)
 
 void NewCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	/* FIX ME Open a new window */
 	none(w, client, call);
 }
 
 void OpenCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	LoadCB(w, client, call);
 }
 
+/* Experimental code to open a second window */
+
+void OpenNewCB(Widget w, XtPointer client, XtPointer call)
+{
+	Widget	m;
+	Display	*d = XtDisplayOfObject(w);
+	XtAppContext appc = Global->MotifGlobal->app_c;
+
+	MdiOpen();
+	/* Now we've got another Global pointer */
+	Global->MotifGlobal->app_c = appc;
+
+	toplevel = XtVaAppCreateShell(PACKAGE, PACKAGE,
+		topLevelShellWidgetClass, d, NULL);
+
+	/* Without this we have NULL in cwin. */
+	io_init_windows(AppRes.rows, AppRes.columns, 1, 2, 1, 1, 1, 1);
+
+	m = GscBuildMainWindow(toplevel);
+	XtManageChild(m);
+	XtRealizeWidget(toplevel);
+}
+
+/* End experimental code to open a second window */
+
 void CloseCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	MessageAppend(False, "This should close the current window\n");
 
 	MdiClose();
@@ -2664,6 +2796,8 @@ void ReallySaveCB(Widget w, XtPointer client, XtPointer call)
 		(XmFileSelectionBoxCallbackStruct *)call;
 	char	*s, *t;
 
+	MotifSelectGlobal(w);
+
 	if (! XmStringGetLtoR(cbp->value, XmFONTLIST_DEFAULT_TAG, &s)) {
 		/* handle error */
 		MessageAppend(True,
@@ -2684,6 +2818,8 @@ void SaveAsCB(Widget w, XtPointer client, XtPointer call)
 	Arg	al[10];
 	int	ac = 0;
 
+	MotifSelectGlobal(w);
+
 	if (fsd == NULL)
 		CreateFSD();
 
@@ -2703,6 +2839,9 @@ void SaveAsCB(Widget w, XtPointer client, XtPointer call)
 void SaveCB(Widget w, XtPointer client, XtPointer call)
 {
 	char	*s;
+
+	MotifSelectGlobal(w);
+
 	if (s = FileGetCurrentFileName()) {
 		ReallySave(s);
 		return;
@@ -2723,8 +2862,10 @@ anchorCB(Widget widget, XtPointer client, XtPointer call)
         XmHTMLAnchorCallbackStruct *cbs = (XmHTMLAnchorCallbackStruct *) call;
 	char	*anchor;
 
+	MotifSelectGlobal(w);
+#if 0
 	fprintf(stderr, "AnchorCB(%s)\n", cbs->href);
-
+#endif
         cbs->doit = True;
         cbs->visited = True;
 
@@ -2871,6 +3012,8 @@ HelpLoadFile(char *fn, char *anchor)
 void helpUsingCB(Widget w, XtPointer client, XtPointer call)
 {
 #ifdef	HAVE_XmHTML_H
+	MotifSelectGlobal(w);
+
 	HelpBuildWindow();
 	HelpLoadFile("oleo.html", client);
 	XtPopup(hd, XtGrabNone);
@@ -2880,11 +3023,15 @@ void helpUsingCB(Widget w, XtPointer client, XtPointer call)
 
 void helpAboutCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	/* FIX ME */	versionCB(w, client, call);
 }
 
 void helpVersionCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	/* FIX ME */	versionCB(w, client, call);
 }
 
@@ -2987,6 +3134,8 @@ static void FixA0()
 
 void ToggleA0(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	if (Global->a0)
 		Global->a0 = 0;
 	else
@@ -3002,11 +3151,15 @@ void ToggleA0(Widget w, XtPointer client, XtPointer call)
  ****************************************************************/
 void UndoCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	none(w, client, call);
 }
 
 void EditInsertCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	/* FIX ME */
 		/* Need to figure out whether to insert row or column */
 		/* Need to figure out how many rows/columns to treat */
@@ -3017,6 +3170,8 @@ void EditInsertCB(Widget w, XtPointer client, XtPointer call)
 
 void EditDeleteCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	/* FIX ME */
 		/* Need to figure out whether to delete row or column */
 		/* Need to figure out how many rows/columns to treat */
@@ -3027,6 +3182,8 @@ void EditDeleteCB(Widget w, XtPointer client, XtPointer call)
 
 void EditRecalculateCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	recalculate(1);
 	MotifUpdateDisplay();
 }
@@ -3049,16 +3206,22 @@ void EditRecalculateCB(Widget w, XtPointer client, XtPointer call)
  */
 void CopyCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	none(w, client, call);
 }
 
 void CutCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	none(w, client, call);
 }
 
 void PasteCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	none(w, client, call);
 }
 
@@ -3106,6 +3269,7 @@ void CreateCopyDialog(char *t, void (*cb)(Widget, XtPointer, XtPointer))
 
 	XtRemoveAllCallbacks(copyDialog, XmNokCallback);
 	XtAddCallback(copyDialog, XmNokCallback, cb, NULL);
+	XtAddCallback(copyDialog, XmNcancelCallback, CancelTemplate, copyDialog);
 
 	XtVaSetValues(XtParent(copyDialog), XmNtitle, t, NULL);
 }
@@ -3116,6 +3280,8 @@ void ReallyCopyRegionCB(Widget w, XtPointer client, XtPointer call)
 	char		*f, *t, *p;
 	struct rng	from, to;
 	int		r;
+
+	MotifSelectGlobal(w);
 
 	ft = XtNameToWidget(copyDialog, "*r1");
 	tt = XtNameToWidget(copyDialog, "*r2");
@@ -3159,6 +3325,8 @@ void ReallyMoveCB(Widget w, XtPointer client, XtPointer call)
 	char		*f, *t, *p;
 	struct rng	from, to;
 	int		r;
+
+	MotifSelectGlobal(w);
 
 	ft = XtNameToWidget(copyDialog, "*r1");
 	tt = XtNameToWidget(copyDialog, "*r2");
@@ -3204,6 +3372,8 @@ void ReallyCopyValuesCB(Widget w, XtPointer client, XtPointer call)
 	struct rng	from, to;
 	int		r;
 
+	MotifSelectGlobal(w);
+
 	ft = XtNameToWidget(copyDialog, "*r1");
 	tt = XtNameToWidget(copyDialog, "*r2");
 
@@ -3241,32 +3411,44 @@ void ReallyCopyValuesCB(Widget w, XtPointer client, XtPointer call)
 
 void CopyRegionCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	CreateCopyDialog(_("Copy a region"), ReallyCopyRegionCB);
 	XtManageChild(copyDialog);
 }
 
 void CopyValuesCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	CreateCopyDialog(_("Copy Values"), ReallyCopyValuesCB);
 	XtManageChild(copyDialog);
 }
 
 void MoveCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	CreateCopyDialog(_("Move"), ReallyMoveCB);
 	XtManageChild(copyDialog);
 }
 
 void MarkCellCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 }
 
 void MarkRegionCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 }
 
 void MarkFromDialogCB(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 }
 
 /****************************************************************
@@ -3305,6 +3487,8 @@ static int formats_list[] = {
  */
 void Yeah(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	Global->MotifGlobal->fmt = formats_list[(int) client];
 #if 0
 	fprintf(stderr, "Yeah %d->%d\n", (int)client, Global->MotifGlobal->fmt);
@@ -3314,6 +3498,8 @@ void Yeah(Widget w, XtPointer client, XtPointer call)
 int	date_format;
 void MotifDateFormat(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	date_format = (int) client;
 }
 
@@ -3489,6 +3675,9 @@ void FormatsDialogOk(Widget w, XtPointer client, XtPointer call)
 	char		*p, *s = NULL, *prec = NULL;
 	int		r, precision;
 
+	MotifSelectGlobal(w);
+	XtUnmanageChild(FormatD);
+
 	om = XtNameToWidget(FormatD, "*formatsFrame*formatsOption*formatsOption");
 	tf = XtNameToWidget(FormatD, "*formatsFrame*formatsTf");
 	pr = XtNameToWidget(FormatD, "*formatsFrame*precisionTf");
@@ -3558,6 +3747,8 @@ void FormatsDialog(Widget w, XtPointer client, XtPointer call)
 	int	c = (int)client, ac;
 	Arg	al[5];
 
+	MotifSelectGlobal(w);
+
 	if (! FormatD) {
 		ac = 0;
 		XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
@@ -3575,6 +3766,7 @@ void FormatsDialog(Widget w, XtPointer client, XtPointer call)
 			(XtPointer)client);	/* Whether or not it's a default setting */
 		XtAddCallback(help, XmNactivateCallback, helpUsingCB,
 			(XtPointer)"#HelpFormats");
+		XtAddCallback(cancel, XmNactivateCallback, CancelTemplate, FormatD);
 	}
 
 	tf = XtNameToWidget(FormatD, "*formatsFrame*formatsTf");
@@ -3621,6 +3813,10 @@ UserPreferencesOk(Widget w, XtPointer client, XtPointer call)
 	int		nmissing = 0;
 	Display		*d = XtDisplayOfObject(w);
 
+	MotifSelectGlobal(w);
+
+	XtUnmanageChild(UserPref);
+
 	mft = XtNameToWidget(UserPref, "*matrixfonttf");
 	ft = XtNameToWidget(UserPref, "*fonttf");
 
@@ -3657,6 +3853,8 @@ ChooseFont(Widget w, XtPointer client, XtPointer call)
 	char	*s;
 	Widget	tf;
 
+	MotifSelectGlobal(w);
+
 	XtVaGetValues(w, XltNfontName, &s, NULL);
 
 	fprintf(stderr, "Selected font '%s'\n", s);
@@ -3674,6 +3872,8 @@ FontChooserCB(Widget w, XtPointer client, XtPointer call)
 	Widget	tf = (Widget)client, fc;
 	Arg	al[5];
 	int	ac;
+
+	MotifSelectGlobal(w);
 
 	ac = 0;
 	fc = XltCreateFontChooserDialog(w, "font chooser", al, ac);
@@ -3794,6 +3994,8 @@ DoUserPreferences(Widget w, XtPointer client, XtPointer call)
 	int	c = (int)client, ac;
 	Arg	al[5];
 
+	MotifSelectGlobal(w);
+
 	if (! UserPref) {
 		ac = 0;
 		XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
@@ -3809,6 +4011,7 @@ DoUserPreferences(Widget w, XtPointer client, XtPointer call)
 			NULL);
 
 		XtAddCallback(ok, XmNactivateCallback, UserPreferencesOk, NULL);
+		XtAddCallback(cancel, XmNactivateCallback, CancelTemplate, UserPref);
 		XtAddCallback(help, XmNactivateCallback, helpUsingCB,
 			(XtPointer)"#HelpUserPreferences");
 	}
@@ -3820,6 +4023,8 @@ DoUserPreferences(Widget w, XtPointer client, XtPointer call)
 void
 SaveUserPreferences(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	save_preferences();
 }
 
@@ -3831,24 +4036,32 @@ SaveUserPreferences(Widget w, XtPointer client, XtPointer call)
 void
 DoMySQLRead(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	none(w, client, call);
 }
 
 void
 DoMySQLWrite(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	none(w, client, call);
 }
 
 void
 DoXbaseRead(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	none(w, client, call);
 }
 
 void
 DoXbaseWrite(Widget w, XtPointer client, XtPointer call)
 {
+	MotifSelectGlobal(w);
+
 	none(w, client, call);
 }
 
@@ -3860,6 +4073,8 @@ MySQLDialogOk(Widget w, XtPointer client, XtPointer call)
 		dbnametf = XtNameToWidget(d, "*dbnametf"),
 		dbusertf = XtNameToWidget(d, "*dbusertf");
 	char	*h, *n, *u;
+
+	MotifSelectGlobal(w);
 
 	if (dbhosttf == NULL || dbnametf == NULL)
 		return;
@@ -3973,6 +4188,8 @@ ConfigureMySQL(Widget w, XtPointer client, XtPointer call)
 	int	c = (int)client, ac;
 	Arg	al[5];
 
+	MotifSelectGlobal(w);
+
 	if (! MySQLDialog) {
 		ac = 0;
 		XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
@@ -3989,14 +4206,54 @@ ConfigureMySQL(Widget w, XtPointer client, XtPointer call)
 		XtAddCallback(ok, XmNactivateCallback, MySQLDialogOk, NULL);
 		XtAddCallback(help, XmNactivateCallback, helpUsingCB,
 			(XtPointer)"#HelpMySQL");
+		XtAddCallback(cancel, XmNactivateCallback, CancelTemplate, MySQLDialog);
 	}
 
 	ConfigureMySQLDialogReset(MySQLDialog);
 	XtManageChild(MySQLDialog);
 }
 
+void
+ExecuteCommandOk(Widget w, XtPointer client, XtPointer call)
+{
+	XmSelectionBoxCallbackStruct *cbp = (XmSelectionBoxCallbackStruct *)call;
+	String	s;
 
+	MotifSelectGlobal(w);
 
+	if (! XmStringGetLtoR(cbp->value, XmFONTLIST_DEFAULT_TAG, &s)) {
+		MessageAppend(True, "Couldn't convert XmString into string\n");
+		return;
+	}
+
+	MessageAppend(False, "Executing command '%s'\n", s);
+
+	execute_command(s);
+	XtFree(s);
+}
+
+void
+ExecuteCommandCB(Widget w, XtPointer client, XtPointer call)
+{
+	int	ac;
+	Arg	al[5];
+
+	MotifSelectGlobal(w);
+
+	if (! ExecuteCommandDialog) {
+		ac = 0;
+		XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
+		ExecuteCommandDialog = XmCreatePromptDialog(mw, "executeCommandDialog", al, ac);
+
+		XtAddCallback(ExecuteCommandDialog, XmNokCallback, ExecuteCommandOk, NULL);
+		XtAddCallback(ExecuteCommandDialog, XmNhelpCallback, helpUsingCB,
+			(XtPointer)"#HelpExecuteCommand");
+		XtAddCallback(ExecuteCommandDialog, XmNcancelCallback, CancelTemplate,
+			(XtPointer)ExecuteCommandDialog);
+	}
+
+	XtManageChild(ExecuteCommandDialog);
+}
 
 /****************************************************************
  *								*
@@ -4620,6 +4877,15 @@ GscBuildMainWindow(Widget parent)
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, Traverse, NULL);
 
+	w = XtVaCreateManagedWidget("OpenNew", xmPushButtonGadgetClass, testmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, OpenNewCB, NULL);
+
+	w = XtVaCreateManagedWidget("ExecuteCommand", xmPushButtonGadgetClass, testmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, ExecuteCommandCB, NULL);
+
+
 #endif	/* HAVE_TEST */
 
 	/*
@@ -5063,11 +5329,17 @@ xio_command_loop (int i)
 
 void PopDownSplash()
 {
-	XtDestroyWidget(SplashShell);
+	if (SplashShell)
+		XtDestroyWidget(SplashShell);
+	SplashShell = 0;
 }
 
 void MotifGlobalInitialize(void)
 {
+	if (Global->MotifGlobal)
+		return;
+
+	Global->MotifGlobal = (struct MotifGlobalType *)XtMalloc(sizeof(struct MotifGlobalType));
 	memset(Global->MotifGlobal, 0, sizeof(struct MotifGlobalType));
 
 	Global->MotifGlobal->input_buf_allocated = 1024;
@@ -5079,7 +5351,6 @@ void MotifGlobalInitialize(void)
 
 void motif_init(int *argc, char **argv)
 {
-	Global->MotifGlobal = (struct MotifGlobalType *)XtMalloc(sizeof(struct MotifGlobalType));
 	MotifGlobalInitialize();
 
 	io_command_loop = xio_command_loop;
@@ -5163,7 +5434,8 @@ void RaiseSplash()
 {
 	/* This needs to be triggered by a timeout because otherwise it won't work */
 
-	XRaiseWindow(XtDisplay(SplashShell), XtWindow(SplashShell));
+	if (SplashShell)
+		XRaiseWindow(XtDisplay(SplashShell), XtWindow(SplashShell));
 }
 
 void motif_build_gui(void)
@@ -5198,6 +5470,8 @@ void quitCB(Widget w, XtPointer client, XtPointer call)
 	Arg		al[4];
 	int		ac;
 
+	MotifSelectGlobal(w);
+
 	if (Global->modified && !option_filter) {
 		XmString xms = XmStringCreateLtoR(
 			_("There are unsaved changes.\n"
@@ -5230,7 +5504,8 @@ void gplCB(Widget w, XtPointer client, XtPointer call)
 	Arg		al[4];
 	int		ac;
 
-	
+	MotifSelectGlobal(w);
+
 	ac = 0;
 	XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
 	x = XmCreateTemplateDialog(w, "versionD", al, ac);
@@ -5256,6 +5531,8 @@ void versionCB(Widget w, XtPointer client, XtPointer call)
 	Arg		al[2];
 	int		ac;
 	char		xbae[20];
+
+	MotifSelectGlobal(w);
 
 	xms1 = XmStringCreateLtoR(GNU_PACKAGE " " VERSION,
 		XmFONTLIST_DEFAULT_TAG);
@@ -5343,4 +5620,19 @@ void x11_graphics(void)
 void motif_main_loop(void)
 {
 	XtAppMainLoop(app);
+}
+
+/*
+ *
+ */
+static void
+MotifSelectGlobal(Widget w)
+{
+	Widget	p;
+
+	for (p=w; XtParent(p); p=XtParent(p)) ;
+
+	MdiSelectGlobal(offsetof(struct OleoGlobal, MotifGlobal),
+		offsetof(struct MotifGlobalType, toplevel_w),
+		p);
 }

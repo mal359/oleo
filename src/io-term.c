@@ -815,25 +815,8 @@ continue_oleo (int sig)
     cont_curses ();
 }
 
-int 
-main (int argc, char **argv)
+void InitializeGlobals(void)
 {
-  volatile int ignore_init_file = 0;
-  FILE * init_fp[2];
-  char * init_file_names[2];
-  volatile int init_fpc = 0;
-  int command_line_file = 0;	/* was there one? */
-
-#if 1	/* ENABLE_NLS */
-  setlocale(LC_ALL, "");
-  bindtextdomain(PACKAGE, LOCALEDIR);
-  textdomain(PACKAGE);
-#endif
-
-  MdiInitialize();	/* Create initial Global structure */
-  PlotInit();
-  AllocateDatabaseGlobal();
-
   Global->display_opened = 0;
 
   /* Initialize stuff that's now in Global */
@@ -882,6 +865,27 @@ main (int argc, char **argv)
   /* End initialize */
 
   __make_backups = 1;
+}
+
+int 
+main (int argc, char **argv)
+{
+  volatile int ignore_init_file = 0;
+  FILE * init_fp[2];
+  char * init_file_names[2];
+  volatile int init_fpc = 0;
+  int command_line_file = 0;	/* was there one? */
+
+#if 1	/* ENABLE_NLS */
+  setlocale(LC_ALL, "");
+  bindtextdomain(PACKAGE, LOCALEDIR);
+  textdomain(PACKAGE);
+#endif
+
+  MdiInitialize();	/* Create initial Global structure */
+  PlotInit();
+  AllocateDatabaseGlobal();
+  InitializeGlobals();
 
   /* Set up the minimal io handler. */
 #if 0

@@ -1,5 +1,5 @@
 /*
- *  $Id: mdi.c,v 1.1 1999/08/30 01:37:47 danny Exp $
+ *  $Id: mdi.c,v 1.2 1999/09/02 22:53:48 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: mdi.c,v 1.1 1999/08/30 01:37:47 danny Exp $";
+static char rcsid[] = "$Id: mdi.c,v 1.2 1999/09/02 22:53:48 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -39,6 +39,14 @@ static struct OleoGlobal	*globals = 0;
 
 #define	NGLOBALS_INC	10
 
+static void AllocateSubStructures(void)
+{
+	PlotInit();
+	AllocateDatabaseGlobal();
+	MotifGlobalInitialize();
+	InitializeGlobals();
+}
+
 void
 MdiInitialize(void)
 {
@@ -48,6 +56,8 @@ MdiInitialize(void)
 
 	Global = &globals[0];
 	globals[0].valid = 1;
+
+	AllocateSubStructures();
 }
 
 /*
@@ -58,6 +68,30 @@ MdiInitialize(void)
 void
 MdiOpen()
 {
+	int	i, j, found = 0;
+
+	for (i=0; i<nglobals; i++)
+		if (globals[i].valid == 0) {
+			found = 1;
+			break;
+		}
+	/* If none free, allocate more entries */
+	if (! found) {
+		i = nglobals;
+		nglobals += NGLOBALS_INC;
+		globals = realloc(globals, nglobals * sizeof(struct OleoGlobal));
+		for (j=i; j<nglobals; j++)
+			globals[j].valid = 0;
+	}
+
+	/* Grab it */
+	globals[i].valid = 1;
+
+	/* Start using it */
+	Global = &globals[i];
+
+	/* Allocate the sub-structures */
+	AllocateSubStructures();
 }
 
 /*
@@ -72,13 +106,13 @@ void
 MdiSelectGlobal(int offset1, int offset2, void *ptr)
 {
 	int	i;
-	char	*p, *q;
+	char	**p, **q;
 
 	for (i=0; i < nglobals; i++)
 		if (globals[i].valid) {
-			p = ((char *)&globals[i]) + offset1;
-			q = (p + offset2);
-			if (*(char **)q == ptr) {
+			p = (char **) (((char *)&globals[i]) + offset1);
+			q = (char **) (*p + offset2);
+			if (*q == ptr) {
 				Global = &globals[i];
 				return;
 			}

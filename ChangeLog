@@ -1,4 +1,12 @@
-$Id: ChangeLog,v 1.102 1999/08/31 08:44:45 danny Exp $
+$Id: ChangeLog,v 1.103 1999/09/02 22:53:35 danny Exp $
+
+Fri  3 Sep 00:56:31 1999, Danny Backx
+	* A bugfix prompted by Dag Nygren's report that
+	  PostScript printing crashes for him. Fixed the crash,
+	  don't generate the right printout yet.
+	* Fix a few bugs in io-motif.c, now I can open more than one
+	  window in Motif, and have different spreadsheets in them.
+	  Yeah !!
 
 Tue 31 Aug 10:46:39 1999, Danny Backx
 	* plot.c : support LineToOffScreen in XY plots (don't draw

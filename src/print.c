@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.13 1999/08/31 08:45:18 danny Exp $
+ * $Id: print.c,v 1.14 1999/09/02 22:53:47 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -333,10 +333,19 @@ print_region_cmd (struct rng *print, FILE *fp)
 		    if (!cp || !GET_TYP (cp)) {
 			Global->CurrentPrintDriver->field("", w, 0, 1, fp);
 		    } else {
+			char	*s;
+
+			/*
+			 * Madness because we can't always write in the result of
+			 * print_cell. If it's e.g. #NON_NUMBER this is a string in
+			 * a constant array which GCC allocates in read-only memory.
+			 */
 			ptr = print_cell (cp);
-			if (strlen(ptr) > w)
-				if (w > 1) ptr[w-1] = 0;
+			s = strdup(ptr);
+			if (strlen(s) > w)
+				if (w > 1) s[w-1] = 0;
 			Global->CurrentPrintDriver->field(ptr, w, GET_JST(cp), 1, fp);
+			free(s);
 		    }
 		} else {
 		    if (!cp || !GET_TYP (cp)) {
