@@ -1,3 +1,9 @@
+Wed Jan 27 21:21:31 1999, Danny Backx (danny@gnu.org)
+	* Clean up a number of files that don't belong in CVS: Makefile.in
+	  in several places, configure, gtk.m4 .
+	* Fix the build somewhat.
+	* Fix AC_FIND_MOTIF so it knows the difference between stuff installed
+	  in the standard place and absent. I hope.
 	* Build can handle SciPlot in Xlt. Xlt is a library of contributed
 	  widgets that comes with LessTif.
 

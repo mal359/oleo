@@ -2,7 +2,7 @@
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
+# , fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: GNU oleo 1.6.7\n"
@@ -14,13 +14,13 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: ENCODING\n"
 
+# , c-format
 #: src/io-term.c:690
-#, c-format
 msgid "Usage: %s [OPTION]... [FILE]...\n"
 msgstr "Utilisage: %s [OPTION]... [FILE]...\n"
 
+# , fuzzy
 #: src/io-term.c:693
-#, fuzzy
 msgid ""
 "\n"
 "  -h, --help               display this help and exit\n"
@@ -46,8 +46,8 @@ msgstr ""
 "\n"
 "Veuillez rapporter des erreurs dans oleo à <bug-oleo@gnu.org>.\n"
 
+# , c-format
 #: src/io-term.c:762
-#, c-format
 msgid "%s %s\n"
 msgstr ""
 
@@ -55,13 +55,13 @@ msgstr ""
 msgid "Copyright (C) 1997-1998 Free Software Foundation, Inc.\n"
 msgstr ""
 
+# , c-format
 #: src/io-term.c:764
-#, c-format
 msgid "%s comes with ABSOLUTELY NO WARRANTY.\n"
 msgstr ""
 
+# , c-format
 #: src/io-term.c:765
-#, c-format
 msgid "You may redistribute copies of %s\n"
 msgstr ""
 
@@ -77,8 +77,8 @@ msgstr ""
 msgid "see the files named COPYING.\n"
 msgstr ""
 
+# , c-format
 #: src/io-motif.c:627
-#, c-format
 msgid "Conversion error: cannot convert '%s' to a %s\n"
 msgstr "Conversion error: cannot convert '%s' to a %s\n"
 
@@ -86,10 +86,7 @@ msgstr "Conversion error: cannot convert '%s' to a %s\n"
 msgid "Cannot find XmNuserData\n"
 msgstr "Internal error: Cannot find XmNuserData\n"
 
-#: src/io-motif.c:679 src/io-motif.c:699 src/io-motif.c:826
-#: src/io-motif.c:2027 src/io-motif.c:2036 src/io-motif.c:2072
-#: src/io-motif.c:2081 src/io-motif.c:2116 src/io-motif.c:2125
-#: src/io-motif.c:2348
+#: src/io-motif.c:679 src/io-motif.c:699 src/io-motif.c:826 src/io-motif.c:2027 src/io-motif.c:2036 src/io-motif.c:2072 src/io-motif.c:2081 src/io-motif.c:2116 src/io-motif.c:2125 src/io-motif.c:2348
 msgid "range"
 msgstr "range"
 
@@ -97,14 +94,14 @@ msgstr "range"
 msgid "File Format"
 msgstr ""
 
+# , c-format
 #. enough
 #: src/io-motif.c:1383
-#, c-format
 msgid "[Oleo: %s]"
 msgstr "[Oleo: %s]"
 
+# , c-format
 #: src/io-motif.c:1455
-#, c-format
 msgid "Read file '%s'\n"
 msgstr "Read file '%s'\n"
 
@@ -116,18 +113,18 @@ msgstr ""
 msgid "Choose a file to load"
 msgstr ""
 
+# , c-format
 #: src/io-motif.c:1514
-#, c-format
 msgid "OleoOpenForWrite: can't move %s to %s"
 msgstr ""
 
+# , c-format
 #: src/io-motif.c:1526
-#, c-format
 msgid "OleoOpenForWrite: couldn't open file '%s' for write"
 msgstr ""
 
+# , c-format
 #: src/io-motif.c:1542
-#, c-format
 msgid "ReallySaveCB(%s): couldn't open file for writing"
 msgstr ""
 
@@ -136,8 +133,8 @@ msgstr ""
 msgid "ReallySaveCB: file close failed"
 msgstr ""
 
+# , c-format
 #: src/io-motif.c:1556
-#, c-format
 msgid "Saved file '%s'\n"
 msgstr "Saved file '%s'\n"
 
@@ -155,8 +152,8 @@ msgid ""
 "</body></html>"
 msgstr ""
 
+# , c-format
 #: src/io-motif.c:1754
-#, c-format
 msgid "Help requested on '%s'"
 msgstr ""
 
@@ -269,9 +266,3 @@ msgid ""
 "There are unsaved changes.\n"
 "Do you want to quit anyway ?"
 msgstr ""
-
-#~ msgid "Plotting X in %d [%d.%d], A in %d [%d.%d]\n"
-#~ msgstr "Plotting X in %d [%d.%d], A in %d [%d.%d]\n"
-
-#~ msgid "Graph X [%s] A [%s]\n"
-#~ msgstr "Graph X [%s] A [%s]\n"

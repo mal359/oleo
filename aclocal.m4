@@ -290,6 +290,8 @@ dnl
 dnl The link_motif and include_motif variables should be fit to put on
 dnl your application's link line in your Makefile.
 dnl
+dnl Oleo CVS $Id: aclocal.m4,v 1.22 1999/01/27 20:32:50 danny Exp $
+dnl
 AC_DEFUN(AC_FIND_MOTIF,
 [
 AC_REQUIRE([AC_PATH_XTRA])
@@ -328,6 +330,7 @@ CFLAGS="$X_CFLAGS $CFLAGS"
 CPPFLAGS="$X_CFLAGS $CPPFLAGS"
 LDFLAGS="$X_LIBS $LDFLAGS"
 #
+ac_cv_motif_includes="none"
 AC_TRY_COMPILE([#include <Xm/Xm.h>],[int a;],
 [
 # Xm/Xm.h is in the standard search path.
@@ -342,7 +345,6 @@ ac_cv_motif_includes=
 # /usr/dt is used on Solaris (Motif).
 # /usr/openwin is used on Solaris (X and Athena).
 # Other directories are just guesses.
-ac_cv_motif_includes="none"
 for dir in "$x_includes" "${prefix}/include" /usr/include /usr/local/include \
            /usr/include/Motif2.0 /usr/include/Motif1.2 /usr/include/Motif1.1 \
            /usr/include/X11R6 /usr/include/X11R5 /usr/include/X11R4 \
@@ -381,6 +383,7 @@ CFLAGS="$X_CFLAGS $CFLAGS"
 CPPFLAGS="$X_CFLAGS $CPPFLAGS"
 LDFLAGS="$X_LIBS $LDFLAGS"
 #
+ac_cv_motif_libraries="none"
 AC_TRY_LINK([#include <Xm/Xm.h>],[XtToolkitInitialize();],
 [
 # libXm.a is in the standard search path.
@@ -396,7 +399,6 @@ ac_cv_motif_libraries=
 # /usr/lesstif is used on Linux (Lesstif).
 # /usr/openwin is used on Solaris (X and Athena).
 # Other directories are just guesses.
-ac_cv_motif_libraries="none"
 for dir in "$x_libraries" "${prefix}/lib" /usr/lib /usr/local/lib \
            /usr/lib/Motif2.0 /usr/lib/Motif1.2 /usr/lib/Motif1.1 \
            /usr/lib/X11R6 /usr/lib/X11R5 /usr/lib/X11R4 /usr/lib/X11 \
