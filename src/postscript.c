@@ -1,5 +1,5 @@
 /*
- *  $Id: postscript.c,v 1.2 1999/04/28 22:43:28 danny Exp $
+ *  $Id: postscript.c,v 1.3 1999/04/29 22:30:11 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -28,7 +28,7 @@
  * There shouldn't be much spreadsheet functionality here...
  */
 
-static char rcsid[] = "$Id: postscript.c,v 1.2 1999/04/28 22:43:28 danny Exp $";
+static char rcsid[] = "$Id: postscript.c,v 1.3 1999/04/29 22:30:11 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -545,7 +545,7 @@ static float	x, y;
 
 void PostScriptPageHeader(char *str, FILE *fp)
 {
-	fprintf(fp, "%%%%BeginPage %s\n", str);
+	fprintf(fp, "%%%%Page: %s\n", str);
 	x = 10.0;
 	y = 760.0;
 }
@@ -555,7 +555,7 @@ void PostScriptPageFooter(char *str, FILE *fp)
 	fprintf(fp, "showpage\n");
 }
 
-void PostScriptField(char *str, int wid, int rightborder, FILE *fp)
+void PostScriptField(char *str, int wid, int justify, int rightborder, FILE *fp)
 {
 	float	w = 8 * wid;
 
@@ -585,6 +585,11 @@ void PostScriptNewLine(int ht, FILE *fp)
 	y -= ht;
 }
 
+int PostScriptPrinterJustifies(void)
+{
+	return 1;
+}
+
 struct PrintDriver PostScriptPrintDriver = {
 	"PostScript",
 	&PostScriptJobHeader,
@@ -594,5 +599,6 @@ struct PrintDriver PostScriptPrintDriver = {
 	&PostScriptField,
 	&PostScriptBorders,
 	&PostScriptFont,
-	&PostScriptNewLine
+	&PostScriptNewLine,
+	&PostScriptPrinterJustifies
 };

@@ -23,7 +23,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "funcdef.h"
 #include <stdio.h>
 
-#if HAVE_LIBNCURSES
+#if defined(HAVE_LIBNCURSES) && defined(HAVE_NCURSES_H)
 #include <ncurses.h>
 #else
 #include <curses.h>

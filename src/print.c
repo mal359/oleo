@@ -248,7 +248,8 @@ print_region_cmd (struct rng *print, FILE *fp)
 	int spaces;
 	CELLREF c_lo, c_hi;
 	int	print_width, print_height, totht, totwid,
-		wid, ht, npages;
+		ht, npages;
+	char	pg[32];
 
 #ifdef OLD_PRINT
 	psprint_region (fp, rng, default_pswid, default_pshgt, 0);
@@ -281,20 +282,139 @@ print_region_cmd (struct rng *print, FILE *fp)
 
 	CurrentPrintDriver->page_header("page 1", fp);
 
+#if 0
+	/* Simplistic case - everything fits on a page */
 	for (rr = print->lr; rr <= print->hr; rr++) {
 		ht = get_height(rr) * 20;
 
 		for (cc = print->lc; cc <= print->hc; cc++) {
-			wid = get_width(cc);
+			w = get_width(cc);
 			cp = find_cell (rr, cc);
 			ptr = print_cell (cp);
 			lenstr = strlen (ptr);
-			if (lenstr > wid)
-				if (wid > 1) ptr[wid-1] = 0;
-			CurrentPrintDriver->field(ptr, wid, 1, fp);
+			if (lenstr > w)
+				if (w > 1) ptr[w-1] = 0;
+			CurrentPrintDriver->field(ptr, w, 1, fp);
 		}
 		CurrentPrintDriver->newline(ht, fp);
 	}
+#else
+	/* Adapted from txt_print_region */
+
+	for (c_lo = print->lc, c_hi = 0; c_hi != print->hc; c_lo = c_hi + 1) {
+	    w = 0;
+
+	    /* Figure out which columns we can print */
+	    cc = c_lo;
+	    for (w = get_width (cc); w <= print_width && cc <= print->hc; w += get_width (++cc))
+		;
+	    if (cc != c_lo)
+		--cc;
+	    c_hi = cc;		/* The last column to print on the current page */
+
+	    totht = 0;		/* Start counting height taken up on a page */
+	    npages = 1;
+	    for (rr = print->lr; rr <= print->hr; rr++) {
+		ht = get_height(rr) * 20;
+		spaces = 0;
+		for (cc = c_lo; cc <= c_hi; cc++) {
+		    w = get_width (cc);
+		    if (!w)
+			continue;
+		    cp = find_cell (rr, cc);
+		if (CurrentPrintDriver->printer_justifies()) {
+		    if (!cp || !GET_TYP (cp)) {
+			CurrentPrintDriver->field("", w, 0, 1, fp);
+		    } else {
+			ptr = print_cell (cp);
+			if (strlen(ptr) > w)
+				if (w > 1) ptr[w-1] = 0;
+			CurrentPrintDriver->field(ptr, w, GET_JST(cp), 1, fp);
+		    }
+		} else {
+		    if (!cp || !GET_TYP (cp)) {
+			spaces += w;
+			continue;
+		    }
+		    ptr = print_cell (cp);
+		    lenstr = strlen (ptr);
+		    if (lenstr == 0) {
+			spaces += w;
+			continue;
+		    }
+		    if (spaces) {
+			fprintf (fp, "%*s", spaces, "");
+			spaces = 0;
+		    }
+		    j = GET_JST (cp);
+		    if (j == JST_DEF)
+			j = default_jst;
+		    if (lenstr <= w - 1) {
+			if (j == JST_LFT) {
+			    fprintf (fp, "%s", ptr);
+			    spaces = w - lenstr;
+			} else if (j == JST_RGT) {
+			    fprintf (fp, "%*s", w - 1, ptr);
+			    spaces = 1;
+			} else if (j == JST_CNT) {
+			    w = (w - 1) - lenstr;
+			    fprintf (fp, "%*s", w / 2 + lenstr, ptr);
+			    spaces = (w + 3) / 2;
+			}
+		    } else {
+			CELLREF ccc = cc;
+			CELL *ccp;
+			int tmp_wid;
+			unsigned int ww;
+
+			for (ww = w;; tmp_wid = get_width (ccc), w += tmp_wid, spaces -= tmp_wid) {
+			    if (lenstr < w - 1)
+				break;
+			    if (++ccc > c_hi)
+				break;
+			    ccp = find_cell (rr, ccc);
+			    if (!ccp || !GET_TYP (ccp) || GET_FORMAT (ccp) == FMT_HID)
+				continue;
+			    if (GET_FORMAT (ccp) == FMT_DEF && default_fmt == FMT_HID)
+				continue;
+				break;
+			}
+			if (lenstr > w - 1) {
+				if (GET_TYP (cp) == TYP_FLT) {
+				    ptr = adjust_prc (ptr, cp, w - 1, ww - 1, j);
+				    lenstr = strlen (ptr);
+				} else if (GET_TYP (cp) == TYP_INT) {
+				    ptr = numb_oflo;
+				    lenstr = 80;
+				}
+				fprintf (fp, "%.*s", w - 1, ptr);
+				if (lenstr < w)
+				    spaces += w - lenstr;
+				else
+				    spaces++;
+			} else {
+			    fprintf (fp, "%s", ptr);
+			    spaces += w - lenstr;
+			}
+		    }
+		}
+		}
+		CurrentPrintDriver->newline(ht, fp);
+		totht += ht;
+		if (totht >= print_height) {
+			totht = 0;
+
+			sprintf(pg, "page %d", npages);
+			CurrentPrintDriver->page_footer(pg, fp);
+
+			npages++;
+
+			sprintf(pg, "page %d", npages);
+			CurrentPrintDriver->page_header(pg, fp);
+		}
+	    }
+	}
+#endif
 	CurrentPrintDriver->page_footer("end page 1", fp);
 	CurrentPrintDriver->job_trailer(fp);
 #endif

@@ -20,7 +20,7 @@ void TextPageFooter(char *str, FILE *fp)
 {
 }
 
-void TextField(char *str, int wid, int rightborder, FILE *fp)
+void TextField(char *str, int wid, int justify, int rightborder, FILE *fp)
 {
 }
 
@@ -36,6 +36,11 @@ void TextNewLine(int ht, FILE *fp)
 {
 }
 
+int TextPrinterJustifies(void)
+{
+	return 0;
+}
+
 struct PrintDriver TextPrintDriver = {
 	"Text",
 	&TextJobHeader,
@@ -45,5 +50,6 @@ struct PrintDriver TextPrintDriver = {
 	&TextField,
 	&TextBorders,
 	&TextFont,
-	&TextNewLine
+	&TextNewLine,
+	&TextPrinterJustifies
 };

@@ -1,3 +1,14 @@
+Fri 30 Apr 00:14:39 1999, Danny Backx
+	* configure.in : don't just check for libncurses,
+	  also check for <ncurses.h>. Only go for it if
+	  both are present.
+	* Printing : code can print multiple pages already,
+	  however it's currently not based on decent font
+	  metrics, just on some numbers and font names that
+	  seem to work.
+	  The current state already works way better than
+	  the original PostScript driver.
+
 Thu 29 Apr 00:27:02 1999, Danny Backx
 	* print.c changes into a generic print mechanism, the
 	  print specific code is in other files.

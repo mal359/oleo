@@ -44,10 +44,11 @@ struct PrintDriver {
 	void	(*page_header)(char *str, FILE *);
 	void	(*page_footer)(char *str, FILE *);
 
-	void	(*field)(char *str, int wid, int rightborder, FILE *);
+	void	(*field)(char *str, int wid, int justify, int rightborder, FILE *);
 	void	(*borders)(/* ... , */ FILE *);
 	void	(*font)(char *fn, FILE *);
 	void	(*newline)(int ht, FILE *);
+	int	(*printer_justifies)(void);
 };
 
 char *PrintGetType(int);

@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.58 1999/04/27 18:28:10 danny Exp $
+dnl $Id: configure.in,v 1.59 1999/04/29 22:30:04 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -74,6 +74,8 @@ AC_CHECK_LIB(ncurses, waddch, ,
 	AC_CHECK_LIB(curses, addch, ,
 		AC_CHECK_LIB(termlib, tgetent, ,
 			AC_CHECK_LIB(termcap, tgetent))))
+
+AC_CHECK_HEADERS(ncurses.h, break, ac_cv_lib_ncurses_waddch="no")
 
 dnl Check for sys_errlist[] and sys_nerr, check for declaration
 AC_MSG_CHECKING([for sys_errlist and sys_nerr])
