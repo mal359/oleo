@@ -1,5 +1,8 @@
 
-$Id: ChangeLog,v 1.143 2001/02/07 03:32:59 pw Exp $
+$Id: ChangeLog,v 1.144 2001/02/08 00:30:01 pw Exp $
+
+Wed Feb  7 19:20:13 EST 2001  Pete Wyckoff  (pw@osc.edu)
+	* Clean up everything not in the CVS tree with maintainer-clean.
 
 Tue Feb  6 22:11:27 EST 2001  Pete Wyckoff  (pw@osc.edu)
 	* Add CVS complation instructions in README.
