@@ -3,7 +3,7 @@
 #
 # Process this file with automake to produce Makefile.in
 #
-# $Header: /home/matt/cvs/oleo/oleo/Makefile.am,v 1.26 1999/04/09 11:46:28 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/Makefile.am,v 1.27 1999/07/23 16:23:41 danny Exp $
 #
 AUTOMAKE_OPTIONS = gnu 1.4 readme-alpha
 ACLOCAL_AMFLAGS = -I m4
@@ -22,14 +22,17 @@ EXTRA_DIST = oleobug.in FAQ oleo.spec.in oleo.spec \
 # Use this only for real end-user-ready releases of Oleo
 #
 release:	oleo-$(VERSION).tar.gz
-	sed -e s/Old/$D/ <ftp.dist | sed -e s/version/$(VERSION)/ | ftp gnudist.gnu.org 
+	rcp oleo_web.html gnudist.gnu.org:/home/www/html/software/oleo/oleo.html
+	rcp oleo-$(VERSION).tar.gz gnudist.gnu.org:/home/ftp/gnu/oleo/oleo-$(VERSION).tar.gz
+	rcp ChangeLog gnudist.gnu.org:/home/www/html/software/oleo/ChangeLog
 
 #
 # This can be used to put the files in place for alpha releases.
 #
 release.alpha:	oleo-$(VERSION).tar.gz
-	sed -e s/version/$(VERSION)/ <ftp.alpha | ftp alpha.gnu.org 
-	sed -e s/Old/$D/ <ftp.gnudist | ftp gnudist.gnu.org 
+	rcp oleo-$(VERSION).tar.gz alpha.gnu.org:/fs/share/ftp/gnu/oleo/oleo-$(VERSION).tar.gz
+	rcp oleo_web.html gnudist.gnu.org:/home/www/html/software/oleo/oleo.html
+	rcp ChangeLog gnudist.gnu.org:/home/www/html/software/oleo/ChangeLog
 
 docdir=        $(prefix)/Oleo
 doc_DATA=	AUTHORS FAQ

@@ -1,5 +1,5 @@
 /*
- *  $Id: xbase.cpp,v 1.4 1999/03/21 16:19:41 danny Exp $
+ *  $Id: xbase.cpp,v 1.5 1999/07/23 16:23:52 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -23,7 +23,7 @@
 
 extern "C" {
 
-static char rcsid[] = "$Id: xbase.cpp,v 1.4 1999/03/21 16:19:41 danny Exp $";
+static char rcsid[] = "$Id: xbase.cpp,v 1.5 1999/07/23 16:23:52 danny Exp $";
 
 #include "config.h"
 
@@ -133,7 +133,7 @@ CppReadXbaseFile(char *fn, int ismerge)
 
 	db.CloseDatabase();
 
-	modified = 1;
+	Global->modified = 1;
 	recalculate(1);
 }
 

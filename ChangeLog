@@ -1,4 +1,20 @@
-$Id: ChangeLog,v 1.98 1999/07/22 22:13:26 danny Exp $
+$Id: ChangeLog,v 1.99 1999/07/23 16:23:39 danny Exp $
+
+Fri 23 Jul 18:25:18 1999, Danny Backx
+	* Updated Makefile.am in top directory to use rcp
+	  for uploads to the gnu.org systems.
+	* User interface for administrative dbms things.
+	  (server host, db name, username).
+	* Implement a simple table-driven options processing
+	  that's easier to maintain than the list of if
+	  statements.
+	* Add configuration option to find CUPS, the Common
+	  UNIX Printing System (http://www.cups.org).
+	  Use it to find printers in the print dialog.
+	* Menu item to save options in ~/.oleorc, based on
+	  the table for option processing. Saves options only
+	  if indicated in the table, and then only when they
+	  have the right value.
 
 Fri 23 Jul 00:13:42 1999, Danny Backx
 	* src/mysql.c contains a simple attempt at getting

@@ -23,11 +23,12 @@ Currently there are three ways of accessing databases from Oleo :
 @item reading the single result of an SQL query (to MySQL) into a cell
 @end itemize
 
-@node MySQL, Xbase, Database Access Introduction, Database Access
-@section MySQL
 @ifhtml
 <A NAME="HelpMySQL">
 @end ifhtml
+
+@node MySQL, Xbase, Database Access Introduction, Database Access
+@section MySQL
 
 You can get a value from a database into a cell by putting a statement
 like 

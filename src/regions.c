@@ -74,7 +74,7 @@ delete_region (struct rng *where)
   CELLREF rr, cc;
   CELL *pp;
 
-  modified = 1;
+  Global->modified = 1;
 
   find_cells_in_range (where);
   while ((pp = next_row_col_in_range (&rr, &cc)))
@@ -104,7 +104,7 @@ lock_region (struct rng *where, int locked)
 {
   CELL *cp;
 
-  modified = 1;
+  Global->modified = 1;
   make_cells_in_range (where);
   while ((cp = next_cell_in_range ()))
     SET_LCK (cp, locked);
@@ -116,7 +116,7 @@ format_region (struct rng *where, int fmt, int just)
   CELL *cp;
   CELLREF rr, cc;
 
-  modified = 1;
+  Global->modified = 1;
   make_cells_in_range (where);
   while ((cp = next_row_col_in_range (&rr, &cc)))
     {
@@ -135,7 +135,7 @@ precision_region (struct rng *where, int precision)
   CELL *cp;
   CELLREF rr, cc;
 
-  modified = 1;
+  Global->modified = 1;
   make_cells_in_range (where);
   while ((cp = next_row_col_in_range (&rr, &cc)))
     {
@@ -344,7 +344,7 @@ set_to_region (struct rng *fm, struct rng *to)
   if (((fm->lr <= to->lr && to->lr <= fm->hr) || (fm->lr <= to->hr && to->hr <= fm->hr))
       && ((fm->lc <= to->lc && to->lc <= fm->hc) || (fm->lc <= to->hc && to->hc <= fm->hc)))
     return -1;
-  modified = 1;
+  Global->modified = 1;
   return ret;
 }
 
@@ -770,7 +770,7 @@ sort_region (void)
       io_error_msg ("Can't sort this region!");
       return;
     }
-  modified = 1;
+  Global->modified = 1;
   if (scdiff != ecdiff)
     {
       erdiff = 0;

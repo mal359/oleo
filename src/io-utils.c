@@ -1474,36 +1474,33 @@ fmt_get_format()
 {
 }
 
-static char	*current_file = NULL;
-
 void FileSetCurrentFileName(const char *s)
 {
-	if (current_file)
-		free(current_file);
-	current_file = NULL;
+	if (Global->FileName)
+		free(Global->FileName);
+	Global->FileName = NULL;
 	if (s)
-		current_file = strdup(s);
+		Global->FileName = strdup(s);
 
 #if HAVE_MOTIF
 	if (using_motif)
-		MotifSetWindowName(current_file);
+		MotifSetWindowName(Global->FileName);
 #endif
 }
 
 char *FileGetCurrentFileName(void)
 {
-	return current_file;
+	return Global->FileName;
 }
 
 void FileCloseCurrentFile(void)
 {
-	if (current_file)
-		free(current_file);
-	current_file = NULL;
+	if (Global->FileName)
+		free(Global->FileName);
+	Global->FileName = NULL;
 
 #if HAVE_MOTIF
 	if (using_motif)
 		MotifSetWindowName("");
 #endif
 }
-

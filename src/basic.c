@@ -837,7 +837,7 @@ save_mark_to_cell (struct rng * rng)
     set_rng (&r, curow, cucol, curow, cucol);
   error = new_value (row, col, backslash_a_string(range_name(&r), 1));
     if (!error)
-      modified = 1;
+      Global->modified = 1;
     else
       io_error_msg (error);
 }
@@ -856,7 +856,7 @@ save_point_to_cell (struct rng * rng)
 
   error = new_value (row, col, backslash_a_string(range_name(&r), 1));
     if (!error)
-      modified = 1;
+      Global->modified = 1;
     else
       io_error_msg (error);
 }
@@ -964,7 +964,7 @@ kill_cell_cmd (void)
   new_value (curow, cucol, "");
   bzero(&(cp->cell_flags), sizeof(cp->cell_flags));
   cp->cell_font = 0;
-  modified = 1;
+  Global->modified = 1;
 }
 
 
@@ -1268,7 +1268,7 @@ edit_cell (char * new_formula)
   if (fail)
     io_error_msg (fail);
   else
-    modified = 1;
+    Global->modified = 1;
 }
 
 
@@ -1282,7 +1282,7 @@ set_region_formula (struct rng * rng, char * str)
       {
 	char * error = new_value (row, col, str);
 	if (!error)
-	  modified = 1;
+	  Global->modified = 1;
 	if (error)
 	  {
 	    io_error_msg (error);
@@ -1384,7 +1384,7 @@ write_cmd (FILE *fp, char * name)
 {
   FileSetCurrentFileName(name ? ck_savestr (name) : 0);
   (*write_file) (fp, 0);
-  modified = 0;
+  Global->modified = 0;
 }
 
 void

@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.35 1999/07/10 07:38:18 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.36 1999/07/23 16:23:47 danny Exp $
 #
 localedir = $(prefix)/share/locale
 
@@ -16,7 +16,7 @@ GUI =
 endif
 
 if HaveMySQL
-MYSQL = mysql.c
+MYSQL = mysql.c oleosql.h
 else
 MYSQL =
 endif
@@ -37,8 +37,8 @@ oleo_LINK=	$(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
 endif
 
 oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
- decompile.c sort.c regions.c utils.c lists.c\
- io-term.c io-utils.c io-x11.c window.c io-edit.c\
+ decompile.c sort.c regions.c utils.c lists.c \
+ io-term.c io-utils.c io-x11.c window.c io-edit.c userpref.h \
  line.c key.c format.c funcs.c \
  hash.c ir.c io-curses.c font.c display.c init.c \
  sylk.c oleofile.c sc.c list.c busi.c string.c cells.c \

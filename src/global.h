@@ -22,22 +22,6 @@
 #include "sysdef.h"
 #include "utils.h"
 
-typedef	CursesGlobalType;
-typedef	MotifGlobalType;
-
-/*
- * This structure is a start at cleaning up global variables that are
- * around all over.
- */
-struct OleoGlobal {
-	char			*FileName;	/* current_file in io-utils.c */
-	int			modified;
-	MotifGlobalType		*MotifGlobal;
-	CursesGlobalType	*CursesGlobal;
-};
-
-extern struct OleoGlobal *Global;
-
 /*
  * All kinds of other global stuff
  */
@@ -205,5 +189,27 @@ extern unsigned char parse_cell_or_range (char **, struct rng *);
 
 struct var; /* in case it hasn't been declared yet */
 extern void for_all_vars (void (*)(char *, struct var *));
+
+/*
+ * Forward declarations required to get the global variable to compile
+ */
+struct	CursesGlobalType;
+struct	MotifGlobalType;
+struct	DatabaseGlobalType;
+
+/*
+ * This structure is a start at cleaning up global variables that are
+ * around all over.
+ */
+struct OleoGlobal {
+	char				*FileName;	/* current_file in io-utils.c */
+	int				modified;
+	CELLREF				cur_row, cur_col;
+	struct MotifGlobalType		*MotifGlobal;
+	struct CursesGlobalType		*CursesGlobal;
+	struct DatabaseGlobalType	*DatabaseGlobal;
+};
+
+extern struct OleoGlobal *Global;
 
 #endif	/* GLOBALH */

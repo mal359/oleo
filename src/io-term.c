@@ -1,21 +1,22 @@
-/*	Copyright (C) 1990, 1992, 1993 Free Software Foundation, Inc.
-
-This file is part of Oleo, the GNU Spreadsheet.
-
-Oleo is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
-
-Oleo is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with Oleo; see the file COPYING.  If not, write to
-the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-
+/*
+ * Copyright (C) 1990, 1992, 1993, 1999 Free Software Foundation, Inc.
+ * 
+ * This file is part of Oleo, the GNU Spreadsheet.
+ * 
+ * Oleo is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ * 
+ * Oleo is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with Oleo; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -57,6 +58,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "funcs.h"
 #include "graph.h"
 
+#include "userpref.h"
+
 #ifdef	HAVE_MOTIF
 #include "io-motif.h"
 #include <Xm/Xm.h>
@@ -77,10 +80,17 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 /*
  * The ultimate global variable
  */
+#if 0
 struct OleoGlobal *Global = NULL;
+#endif
+struct OleoGlobal	__tempGlobal,
+			*Global = &__tempGlobal;
 
+#if 0
 /* This variable is non-zero if the spreadsheet has been changed in any way */ 
+/* Moved to Global */
 int modified = 0;
+#endif
 
 /* User settable options */
 int bkgrnd_recalc = 1;
@@ -171,15 +181,69 @@ got_sig (int sig)
 {
 }
 
+/*
+ * Simple table of variables to set
+ *	All these variables belong in a UserPreferences structure.
+ */
+
+struct UserPreferences UserPreferences;
+
+/*
+ * How to use this ?
+ *
+ * Set "name" to the string we'll find in the .oleorc.
+ * Put a pointer to the variable to assign to in "var".
+ *
+ * If a function needs to be called upon encountering this option,
+ *	put its address in "trigger".
+ * If it's an integer, put the value to assign in "value".
+ * If it's a string, set "copynext" to 1. The string in the option will be
+ *	copied to the variable.
+ *
+ * Set "write" to 1 if this needs to be saved in .oleorc.
+ *	Even then, only saved to file if integer has the "value" from the table,
+ *	or if the string is non-empty.
+ */
+static struct pref {
+	char	*name;
+	void	*var;
+	int	value;
+	void	(*trigger)(char *);
+	int	copynext;
+	int	write;
+} Preferences [] = {
+	{ "a0",		&UserPreferences.a0,		1,	NULL,	0, 1 },
+	{ "noa0",	&UserPreferences.a0,		0,	NULL,	0, 1 },
+	{ "bgcolor",	&UserPreferences.bgcolor,	0,	NULL,	1, 0 },
+	{ "file",	&UserPreferences.file_type,	0,	NULL,	1, 1 },
+	{ NULL,	0 }
+};
+
 /* An parser for the language grokked by option setting commands. */
 
 static int 
 do_set_option (char *ptr)
 {
-  int set_opt = 1;
+  int	set_opt = 1;
+  int	i;
 
   while (*ptr == ' ')
     ptr++;
+
+  for (i=0; Preferences[i].name; i++)
+	if (strcmp(ptr, Preferences[i].name) == 0) {
+		if (Preferences[i].trigger != NULL)
+			(Preferences[i].trigger)(ptr);
+
+		if (Preferences[i].copynext) {
+			ptr += strlen(Preferences[i].name) + 1;
+			((char *)Preferences[i].var) = strdup(ptr);
+		} else if (Preferences[i].var)
+			*((int *)Preferences[i].var) = Preferences[i].value;
+
+		break;
+	}
+
   if (!strincmp ("no", ptr, 2))
     {
       ptr += 2;
@@ -290,6 +354,52 @@ do_set_option (char *ptr)
       return 0;
     }
   return 1;
+}
+
+void
+save_preferences(void)
+{
+	char	*home = getenv("HOME");
+	char	*rc, *rc2;
+	FILE	*fp;
+	int	i;
+
+	rc = malloc(strlen(home) + strlen(RCFILE) + 4);
+	rc2 = malloc(strlen(home) + strlen(RCFILE) + 4);
+
+	sprintf(rc, "%s/%s", home, RCFILE);
+	sprintf(rc2, "%s/%s.bak", home, RCFILE);
+
+	(void)unlink(rc2);
+	rename(rc, rc2);
+
+	free(rc2);
+
+	fp = fopen(rc, "w");
+	if (fp == NULL) {
+		io_info_msg("Couldn't save preferences in %s: %s",
+			rc, strerror(errno));
+		free(rc);
+		return;
+	}
+
+	for (i=0; Preferences[i].name; i++)
+		if (Preferences[i].write) {
+			if (Preferences[i].copynext) {
+				if (strlen((char *)Preferences[i].var) != 0)
+				    fprintf(fp, "set-option %s %s\n",
+					Preferences[i].name,
+					(char *) Preferences[i].var);
+			} else if (Preferences[i].value == *(int *)Preferences[i].var)
+				fprintf(fp, "set-option %s\n",
+					Preferences[i].name);
+		}
+
+	fclose(fp);
+
+	io_info_msg("Saved preferences to %s", rc);
+
+	free(rc);
 }
 
 void
@@ -483,7 +593,7 @@ set_var (struct rng *val, char *var)
 {
   char *ret;
 
-  modified = 1;
+  Global->modified = 1;
   ret = new_var_value (var, strlen(var), val);
 
   if (ret)
@@ -641,7 +751,7 @@ read_variables (FILE * fp)
 			return;	/* actually, io_error_msg never returns. */
 		      }
 		    else
-		      modified = 1;
+		      Global->modified = 1;
 		    break;
 		  }
 		case VAR_RANGE:

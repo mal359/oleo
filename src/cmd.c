@@ -1436,7 +1436,7 @@ command_loop (int prefix, int iscmd)
 		    goto next_arg;
 		  }
 		case 'M':
-		  if (modified)
+		  if (Global->modified)
 		    {
 		      ++prompt;
 		      if (get_argument (prompt, &yes_style))

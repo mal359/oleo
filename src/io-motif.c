@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.45 1999/07/22 22:13:40 danny Exp $
+ *  $Id: io-motif.c,v 1.46 1999/07/23 16:23:49 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.45 1999/07/22 22:13:40 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.46 1999/07/23 16:23:49 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -70,6 +70,11 @@ static char rcsid[] = "$Id: io-motif.c,v 1.45 1999/07/22 22:13:40 danny Exp $";
 #ifdef	HAVE_LIBMYSQLCLIENT
 #include <mysql/mysql_version.h>
 #endif
+#include "oleosql.h"
+
+#ifdef	HAVE_LIBCUPS
+#include <cups/cups.h>
+#endif
 
 #include "global.h"
 #include "utils.h"
@@ -108,6 +113,7 @@ Widget	fsd = NULL;
 Widget	hd, html = NULL, gs = NULL;
 Widget	FormatD = NULL;
 Widget	MySQLDialog = NULL;
+Widget	UserPref = NULL;
 Widget	PrintDialog = NULL;
 Widget	DefaultFileDialog, DefaultFileShell = NULL;
 Widget	ConfigureGraphNotebook;
@@ -1705,6 +1711,13 @@ void PrintBrowseFileCB(Widget w, XtPointer client, XtPointer call)
 	XtManageChild(fsd);
 }
 
+void CupsSelectPrinter(Widget w, XtPointer client, XtPointer call)
+{
+	Widget tf = (Widget)client;
+
+	XmTextFieldSetString(tf, XtName(w));
+}
+
 /*
  * The print dialog :
  *	- select where to print to (program, printer, file)
@@ -1713,11 +1726,12 @@ void PrintBrowseFileCB(Widget w, XtPointer client, XtPointer call)
  */
 Widget MotifCreatePrintDialog(Widget s)
 {
-	Widget		form, menu, cb, w, frame, radio, form2, cb1;
-	int		npages, i, ac;
+	Widget		form, menu, cb, w, frame, radio, form2, cb1, cupsmenu;
+	int		npages, i, ac, nprinters;
 	Arg		al[5];
 	XmString	xms;
 	int		defaultprint = 0;
+	char		**printers;
 
 	ac = 0;
 	form = XmCreateForm(s, "printForm", al, ac);
@@ -1780,8 +1794,43 @@ Widget MotifCreatePrintDialog(Widget s)
 	w = XtVaCreateManagedWidget("printerTF", xmTextFieldWidgetClass,
 			radio, NULL);
 	XmTextFieldSetString(w, AppRes.printer);
-	/* Filler */ XtVaCreateManagedWidget("", xmLabelGadgetClass, radio,
-		NULL);
+
+	/*
+	 * Build an option menu with a list of known printers.
+	 *
+	 * We can do this if we have CUPS (www.cups.org), otherwise
+	 * make the damned thing insensitive.
+	 */
+	cupsmenu = XmCreatePulldownMenu(radio, "cupsMenu", NULL, 0);
+	ac=0;
+	XtSetArg(al[ac], XmNsubMenuId, cupsmenu); ac++;
+	xms = XmStringCreateSimple(_("Select Printer"));
+	XtSetArg(al[ac], XmNlabelString, xms); ac++;
+	w = XmCreateOptionMenu(radio, "printerOption", al, ac);
+	XtManageChild(w);
+#ifndef	HAVE_LIBCUPS
+	XtSetSensitive(w, False);
+#endif
+	XmStringFree(xms);
+
+#ifdef	HAVE_LIBCUPS
+	printers = NULL;
+	nprinters = cupsGetPrinters(&printers);
+
+	for (i=0; nprinters; i++) {
+		Widget	b;
+		b = XtVaCreateManagedWidget(printers[i],
+			xmPushButtonGadgetClass, cupsmenu, NULL);
+		XtAddCallback(b, XmNactivateCallback, CupsSelectPrinter,
+			(XtPointer)PrintWidgets.printerTF);
+	}
+	if (nprinters == 0) {
+		w = XtVaCreateManagedWidget("No printers available from CUPS",
+			xmPushButtonGadgetClass, cupsmenu, NULL);
+		XtAddCallback(w, XmNactivateCallback, CupsSelectPrinter,
+			(XtPointer)PrintWidgets.printerTF);
+	}
+#endif
 
 	PrintWidgets.FileToggle =
 	w = XtVaCreateManagedWidget("file", xmToggleButtonGadgetClass,
@@ -2186,7 +2235,7 @@ void LeaveCell(Widget w, XtPointer client, XtPointer call)
 		MessageAppend(True, r);
 		cbp->doit = False;	/* veto */
 	} else {
-		modified = 1;
+		Global->modified = 1;
 
 		recalculate(1);
 
@@ -2306,7 +2355,7 @@ void FormulaCB(Widget w, XtPointer client, XtPointer call)
 	if (r) {
 		MessageAppend(True, r);
 	} else
-		modified = 1;
+		Global->modified = 1;
 
 #ifdef	FREE_TF_STRING
 	XtFree(s);
@@ -2388,7 +2437,7 @@ void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 		return;
 	}
 
-	if (modified) {
+	if (Global->modified) {
 		/* Handle unsaved changes */
 	}
 
@@ -2422,7 +2471,7 @@ void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 	MotifUpdateDisplay();
 
 	/* Set the widget as well as the spreadsheet to a default state. */
-	modified = 0;
+	Global->modified = 0;
 	curow = cucol = 1;
 	XbaeMatrixEditCell(mat, 0, 0);
 
@@ -2553,7 +2602,7 @@ void ReallySave(const char *s)
 		return;
 	}
 
-	modified = 0;
+	Global->modified = 0;
 	MessageAppend(False, _("Saved file '%s'\n"), s);
 	MotifSetWindowName(s);
 }
@@ -3046,7 +3095,7 @@ void ReallyCopyRegionCB(Widget w, XtPointer client, XtPointer call)
 	}
 
 	copy_region(&from, &to);
-	modified = 1;
+	Global->modified = 1;
 
 	recalculate(1);
 	MotifUpdateDisplay();
@@ -3091,7 +3140,7 @@ void ReallyMoveCB(Widget w, XtPointer client, XtPointer call)
 	}
 
 	move_region(&from, &to);
-	modified = 1;
+	Global->modified = 1;
 
 	recalculate(1);
 	MotifUpdateDisplay();
@@ -3133,7 +3182,7 @@ void ReallyCopyValuesCB(Widget w, XtPointer client, XtPointer call)
 	}
 
 	copy_values_region(&from, &to);
-	modified = 1;
+	Global->modified = 1;
 
 	recalculate(1);
 	MotifUpdateDisplay();
@@ -3492,22 +3541,211 @@ void FormatsDialog(Widget w, XtPointer client, XtPointer call)
 
 /****************************************************************
  *								*
+ *		Generic Dialog Support				*
+ *								*
+ ****************************************************************/
+/*
+ * Walk up widget tree until a shell is found.
+ * The previous widget is the one returned.
+ */
+static Widget FindDialog(Widget w)
+{
+	Widget	p, q;
+
+	p = q = w;
+	for (p=q=w; q=p, p=XtParent(p); p != NULL && q != NULL & !XmIsDialogShell(p)) ;
+
+	return q;
+}
+
+/****************************************************************
+ *								*
+ *		User Preferences				*
+ *								*
+ ****************************************************************/
+void
+UserPreferencesOk(Widget w, XtPointer client, XtPointer call)
+{
+	/* set preferences now */
+}
+
+void
+UserPreferencesReset(Widget w)
+{
+}
+
+void
+CreateUserPreferences(Widget parent)
+{
+	Widget	form, l, t;
+
+	form = XtVaCreateManagedWidget("form", xmFormWidgetClass,
+		parent,
+		NULL);
+	XtManageChild(form);
+
+	l = XtVaCreateManagedWidget("dbhostlabel", xmLabelGadgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_FORM,
+			XmNtopOffset,		10,
+			XmNleftAttachment,	XmATTACH_FORM,
+			XmNleftOffset,		10,
+			XmNrightAttachment,	XmATTACH_NONE,
+			XmNbottomAttachment,	XmATTACH_NONE,
+		NULL);
+
+	t = XtVaCreateManagedWidget("dbhosttf", xmTextFieldWidgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_FORM,
+			XmNtopOffset,		10,
+			XmNleftAttachment,	XmATTACH_WIDGET,
+			XmNleftOffset,		10,
+			XmNleftWidget,		l,
+			XmNrightAttachment,	XmATTACH_FORM,
+			XmNrightOffset,		10,
+			XmNbottomAttachment,	XmATTACH_NONE,
+		NULL);
+
+	l = XtVaCreateManagedWidget("dbnamelabel", xmLabelGadgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_WIDGET,
+			XmNtopOffset,		10,
+			XmNtopWidget,		t,
+			XmNleftAttachment,	XmATTACH_FORM,
+			XmNleftOffset,		10,
+			XmNrightAttachment,	XmATTACH_NONE,
+			XmNbottomAttachment,	XmATTACH_NONE,
+		NULL);
+
+	t = XtVaCreateManagedWidget("dbnametf", xmTextFieldWidgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_WIDGET,
+			XmNtopOffset,		10,
+			XmNtopWidget,		t,
+			XmNleftAttachment,	XmATTACH_WIDGET,
+			XmNleftOffset,		10,
+			XmNleftWidget,		l,
+			XmNrightAttachment,	XmATTACH_FORM,
+			XmNrightOffset,		10,
+			XmNbottomAttachment,	XmATTACH_NONE,
+		NULL);
+
+	l = XtVaCreateManagedWidget("dbuserlabel", xmLabelGadgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_WIDGET,
+			XmNtopOffset,		10,
+			XmNtopWidget,		t,
+			XmNleftAttachment,	XmATTACH_FORM,
+			XmNleftOffset,		10,
+			XmNrightAttachment,	XmATTACH_NONE,
+			XmNbottomAttachment,	XmATTACH_NONE,
+		NULL);
+
+	t = XtVaCreateManagedWidget("dbusertf", xmTextFieldWidgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_WIDGET,
+			XmNtopOffset,		10,
+			XmNtopWidget,		t,
+			XmNleftAttachment,	XmATTACH_WIDGET,
+			XmNleftOffset,		10,
+			XmNleftWidget,		l,
+			XmNrightAttachment,	XmATTACH_FORM,
+			XmNrightOffset,		10,
+			XmNbottomAttachment,	XmATTACH_NONE,
+		NULL);
+}
+
+void
+DoUserPreferences(Widget w, XtPointer client, XtPointer call)
+{
+	Widget	ok, cancel, help, tf;
+	int	c = (int)client;
+
+	if (! UserPref) {
+		UserPref = XmCreateTemplateDialog(mw, "UserPreferences",
+			NULL, 0);
+		CreateUserPreferences(UserPref);
+
+		ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass,
+			UserPref,
+			NULL);
+		cancel = XtVaCreateManagedWidget("cancel",
+			xmPushButtonGadgetClass, UserPref,
+			NULL);
+		help = XtVaCreateManagedWidget("help", xmPushButtonGadgetClass,
+			UserPref,
+			NULL);
+
+		XtAddCallback(ok, XmNactivateCallback, UserPreferencesOk, NULL);
+		XtAddCallback(help, XmNactivateCallback, helpUsingCB,
+			(XtPointer)"#HelpUserPreferences");
+	}
+
+	UserPreferencesReset(UserPref);
+	XtManageChild(UserPref);
+}
+
+void
+SaveUserPreferences(Widget w, XtPointer client, XtPointer call)
+{
+	save_preferences();
+}
+
+/****************************************************************
+ *								*
  *		Database Interaction				*
  *								*
  ****************************************************************/
 void
 DoMySQLRead(Widget w, XtPointer client, XtPointer call)
 {
+	none(w, client, call);
+}
+
+void
+DoMySQLWrite(Widget w, XtPointer client, XtPointer call)
+{
+	none(w, client, call);
 }
 
 void
 DoXbaseRead(Widget w, XtPointer client, XtPointer call)
 {
+	none(w, client, call);
+}
+
+void
+DoXbaseWrite(Widget w, XtPointer client, XtPointer call)
+{
+	none(w, client, call);
 }
 
 void
 MySQLDialogOk(Widget w, XtPointer client, XtPointer call)
 {
+	Widget	d = FindDialog(w),
+		dbhosttf = XtNameToWidget(d, "*dbhosttf"),
+		dbnametf = XtNameToWidget(d, "*dbnametf"),
+		dbusertf = XtNameToWidget(d, "*dbusertf");
+	char	*h, *n, *u;
+
+	if (dbhosttf == NULL || dbnametf == NULL)
+		return;
+
+	h = XmTextFieldGetString(dbhosttf);
+	DatabaseSetHost(h);
+
+	n = XmTextFieldGetString(dbnametf);
+	DatabaseSetName(n);
+
+	u = XmTextFieldGetString(dbusertf);
+	DatabaseSetUser(u);
+
+	MessageAppend(False, "Database host %s name %s user %s", h, n, u);
+
+	XtFree(h);
+	XtFree(n);
+	XtFree(u);
 }
 
 void
@@ -3559,6 +3797,30 @@ CreateConfigureMySQLDialog(Widget parent)
 		NULL);
 
 	t = XtVaCreateManagedWidget("dbnametf", xmTextFieldWidgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_WIDGET,
+			XmNtopOffset,		10,
+			XmNtopWidget,		t,
+			XmNleftAttachment,	XmATTACH_WIDGET,
+			XmNleftOffset,		10,
+			XmNleftWidget,		l,
+			XmNrightAttachment,	XmATTACH_FORM,
+			XmNrightOffset,		10,
+			XmNbottomAttachment,	XmATTACH_NONE,
+		NULL);
+
+	l = XtVaCreateManagedWidget("dbuserlabel", xmLabelGadgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_WIDGET,
+			XmNtopOffset,		10,
+			XmNtopWidget,		t,
+			XmNleftAttachment,	XmATTACH_FORM,
+			XmNleftOffset,		10,
+			XmNrightAttachment,	XmATTACH_NONE,
+			XmNbottomAttachment,	XmATTACH_NONE,
+		NULL);
+
+	t = XtVaCreateManagedWidget("dbusertf", xmTextFieldWidgetClass,
 		form,
 			XmNtopAttachment,	XmATTACH_WIDGET,
 			XmNtopOffset,		10,
@@ -4136,6 +4398,19 @@ GscBuildMainWindow(Widget parent)
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, none, NULL);
 
+	XtVaCreateManagedWidget("sep3", xmSeparatorGadgetClass, optionsmenu,
+		NULL);
+
+	w = XtVaCreateManagedWidget("userpreferences", xmPushButtonGadgetClass,
+		optionsmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, DoUserPreferences, NULL);
+
+	w = XtVaCreateManagedWidget("saveuserpreferences", xmPushButtonGadgetClass,
+		optionsmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, SaveUserPreferences, NULL);
+
 	/*
 	 * Database Access
 	 */
@@ -4157,6 +4432,22 @@ GscBuildMainWindow(Widget parent)
 		dbmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, DoMySQLRead, NULL);
+
+	w = XtVaCreateManagedWidget("writemysql", xmPushButtonGadgetClass,
+		dbmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, DoMySQLWrite, NULL);
+#endif
+
+#if defined(HAVE_LIBMYSQLCLIENT) && defined(HAVE_LIBXBASE)
+	w = XtVaCreateManagedWidget("sep", xmSeparatorGadgetClass,
+		dbmenu,
+		NULL);
+#else
+	/* This only happens if no db linked in */
+	w = XtVaCreateManagedWidget("nodbms", xmLabelGadgetClass,
+		dbmenu,
+		NULL);
 #endif
 
 #ifdef	HAVE_LIBXBASE
@@ -4164,6 +4455,11 @@ GscBuildMainWindow(Widget parent)
 		dbmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, DoXbaseRead, NULL);
+
+	w = XtVaCreateManagedWidget("writexbase", xmPushButtonGadgetClass,
+		dbmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, DoXbaseWrite, NULL);
 #endif
 
 	/*
@@ -4756,7 +5052,7 @@ void quitCB(Widget w, XtPointer client, XtPointer call)
 	Arg		al[4];
 	int		ac;
 
-	if (modified && !option_filter) {
+	if (Global->modified && !option_filter) {
 		XmString xms = XmStringCreateLtoR(
 			_("There are unsaved changes.\n"
 			  "Do you want to quit anyway ?"),

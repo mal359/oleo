@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.16 1999/07/22 22:13:39 danny Exp $
+ *  $Id: fallback.c,v 1.17 1999/07/23 16:23:48 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -124,6 +124,8 @@ char *fallback[] = {
 	"*listvariables.sensitive:		no",
 	"*showoptions.labelString:		Show Options",
 	"*showoptions.sensitive:		no",
+	"*userpreferences.labelString:		User Preferences",
+	"*saveuserpreferences.labelString:	Save User Preferences",
 /* Graph */
 	"*graphcascade.labelString:		Graph",
 	"*graphmenu.define.labelString:		Define Graph",
@@ -140,10 +142,15 @@ char *fallback[] = {
 	"*dbcascade.labelString:		Database",
 	"*dbcascade.mnemonic:			D",
 	"*configuremysql.labelString:		Configure MySQL Access",
+	"*mySQLDialog_popup.title:		Configure MySQL Access",
 	"*dbmenu*readmysql.labelString:		Read MySQL",
+	"*dbmenu*writemysql.labelString:	Write MySQL",
 	"*dbmenu*readxbase.labelString:		Read Xbase",
+	"*dbmenu*writexbase.labelString:	Write Xbase",
+	"*dbmenu*nodbms.labelString:		No database access linked in",
 	"*dbhostlabel.labelString:		DBMS Server Host",
 	"*dbnamelabel.labelString:		Database Name",
+	"*dbuserlabel.labelString:		User Name",
 /* Test */
 	"*testcascade.labelString:		Test",
 	"*testcascade.mnemonic:			T",
@@ -169,6 +176,7 @@ char *fallback[] = {
 	"*selectfile_popup.title:	Select a file to load or save",
 	"*versionD_popup.title:		Oleo Version Dialog",
 	"*helpShell.title:		Oleo Help Window",
+	"*UserPreferences_popup.title:	Oleo User Preferences",
 /* Help Dialog */
 	"*versionD*Help*labelString:	GPL",
 /* Configuration Dialogs */

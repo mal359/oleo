@@ -1,5 +1,5 @@
 /*
- *  $Id: mysql.c,v 1.2 1999/07/22 22:13:43 danny Exp $
+ *  $Id: mysql.c,v 1.3 1999/07/23 16:23:51 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,11 +21,13 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: mysql.c,v 1.2 1999/07/22 22:13:43 danny Exp $";
+static char rcsid[] = "$Id: mysql.c,v 1.3 1999/07/23 16:23:51 danny Exp $";
 
 #ifndef	TEST
 
 #include "config.h"
+#include "global.h"
+#include "oleosql.h"
 #include "cmd.h"
 #include "io-term.h"
 
@@ -99,12 +101,22 @@ do_mysql_query(struct value *p)
 	char		*result;
 	double		d;
 
-	if (mysql_connect(&db, "localhost", "danny", "") == NULL) {
+	if (Global->DatabaseGlobal == NULL) {
+		io_error_msg("Need to initialize database");
+		return;
+	}
+	if (Global->DatabaseGlobal->name == 0 || Global->DatabaseGlobal->user == 0) {
+		io_error_msg("Database Access requires db name and user name");
+		return;
+	}
+
+	if (mysql_connect(&db, Global->DatabaseGlobal->host, Global->DatabaseGlobal->user, "")
+			== NULL) {
 		fprintf(stderr, "MySQL error '%s'\n", mysql_error(&db));
 		return;		/* FIX ME */
 	}
 
-	r = mysql_select_db(&db, "test");
+	r = mysql_select_db(&db, Global->DatabaseGlobal->name);
 
 	if (r != 0) {
 		fprintf(stderr, "MySQL error '%s'\n", mysql_error(&db));
@@ -291,7 +303,7 @@ MySQLRead(void)
 	mysql_close(&db);
 	free(types_list);
 
-	modified = 1;
+	Global->modified = 1;
 	recalculate(1);
 
 	return;
@@ -398,3 +410,38 @@ enum enum_field_types {
 	mysql_close(&db);
 }
 #endif	/* TEST */
+
+static void AllocateDatabaseGlobal(void)
+{
+	if (Global->DatabaseGlobal == NULL) {
+		Global->DatabaseGlobal = malloc(sizeof(struct DatabaseGlobalType));
+		memset(Global->DatabaseGlobal, 0, sizeof(struct DatabaseGlobalType));
+	}
+}
+
+void DatabaseSetName(const char *name)
+{
+	AllocateDatabaseGlobal();
+
+	if (Global->DatabaseGlobal->name)
+		free(Global->DatabaseGlobal->name);
+	Global->DatabaseGlobal->name = strdup(name);
+}
+
+void DatabaseSetHost(const char *host)
+{
+	AllocateDatabaseGlobal();
+
+	if (Global->DatabaseGlobal->host)
+		free(Global->DatabaseGlobal->host);
+	Global->DatabaseGlobal->host = strdup(host);
+}
+
+void DatabaseSetUser(const char *user)
+{
+	AllocateDatabaseGlobal();
+
+	if (Global->DatabaseGlobal->user)
+		free(Global->DatabaseGlobal->user);
+	Global->DatabaseGlobal->user = strdup(user);
+}
