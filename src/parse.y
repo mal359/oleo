@@ -1,6 +1,6 @@
 %{
 /*
- * $Id: parse.y,v 1.10 2000/07/22 06:13:16 danny Exp $
+ * $Id: parse.y,v 1.11 2001/02/04 00:03:48 pw Exp $
  *
  * Copyright (C) 1990, 1992, 1993, 1999 Free Software Foundation, Inc.
  *
@@ -149,6 +149,15 @@ exp:	  L_CONST
 	| L_FN3R '(' L_VAR ',' exp ',' exp ')' {
 		($1)->n_x.v_subs[0]=make_list($3,$5);
  		($1)->n_x.v_subs[1]=$7;
+ 		$$=$1;}
+
+	| L_FN4R '(' L_RANGE ',' exp ',' exp ',' exp ')' {
+		($1)->n_x.v_subs[0]=make_list($3,$5);
+ 		($1)->n_x.v_subs[1]=make_list($7,$9);
+ 		$$=$1;}
+	| L_FN4R '(' L_VAR ',' exp ',' exp ',' exp ')' {
+		($1)->n_x.v_subs[0]=make_list($3,$5);
+ 		($1)->n_x.v_subs[1]=make_list($7,$9);
  		$$=$1;}
 
 	| L_FNNR '(' range_exp_list ')' {
@@ -1056,7 +1065,6 @@ noa0_parse_cell_or_range(char **ptr, struct rng *retp)
 unsigned char
 parse_cell_or_range(char **ptr, struct rng *retp)
 {
-	char		*p = *ptr;	/* Only for the printing */
 	unsigned char	r;
 
 	if (Global->a0)
@@ -1068,7 +1076,7 @@ parse_cell_or_range(char **ptr, struct rng *retp)
 	 * Use this to print out whatever parse_cell_or_range() does.
 	 */
 	fprintf(stderr, "parse_cell_or_range(%s) -> [%d..%d, %d..%d], %d\n",
-		p, retp->lr, retp->hr, retp->lc, retp->hc, r);
+		*ptr, retp->lr, retp->hr, retp->lc, retp->hc, r);
 	fprintf(stderr, "parse_cell_or_range -> remaining string is '%s'\n", *ptr);
 #endif
 	return r;
