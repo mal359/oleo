@@ -37,3 +37,10 @@ oleo-*.tar.gz
 Makefile.in
 Makefile
 aclocal.m4
+stamp-h
+config.status
+config.cache
+config.h
+config.log
+config.h.in
+stamp-h.in
