@@ -1,11 +1,13 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.40 1999/09/19 09:26:26 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.41 1999/10/12 00:55:11 jbailey Exp $
 #
 localedir = $(prefix)/share/locale
 
 AUTOMAKE_OPTIONS = ../lib/ansi2knr dejagnu
 
 EXTRA_DIST=	xbase.cpp oleo_xb.h mysql.c
+
+YFLAGS = -d
 
 bin_PROGRAMS = oleo
 
@@ -81,7 +83,6 @@ noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  io-abstract.h io-curses.h io-edit.h io-generic.h io-term.h \
  io-utils.h io-x11.h \
  ir.h key.h line.h lists.h node.h oleofile.h \
- parse.h \
  graph.h oleo_plot.h \
  proto.h ref.h regions.h \
  sc.h stub.h stubs.h sylk.h \

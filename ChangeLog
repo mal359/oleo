@@ -1,4 +1,10 @@
-$Id: ChangeLog,v 1.107 1999/10/05 21:32:10 danny Exp $
+1999-10-11  Jeff Bailey  <jbailey@cr499794-a.crdva1.bc.wave.home.com>
+
+	* src/Makefile.am: add YFLAGS -d to general parse.h.  Remove parse.h
+	reference in includes.
+
+	* mkinstalldirs, INSTALL, COPYING, missing: Delete.  Automake
+	provides these and they should not be in the repository.
 
 Tue Oct  5 23:31:50 1999, Danny
 	* Release 1.99.6 .
