@@ -1,7 +1,7 @@
 #undef	I18N_VERBOSE
 #undef	X_I18N
 /*
- * $Id: io-x11.c,v 1.25 2000/08/10 21:02:50 danny Exp $
+ * $Id: io-x11.c,v 1.26 2001/02/04 00:02:42 pw Exp $
  *
  *	Copyright © 1992, 1993, 1999 Free Software Foundation, Inc.
  * 	
@@ -606,7 +606,7 @@ xio_redraw_input (void)
 	    text.chars = iv->expanded_keymap_prompt;
 	    text.nchars = strlen (iv->expanded_keymap_prompt);
 	    xdraw_text_item (thePort,
-			    0, ypos, scr_cols, input_rows,
+			    0, ypos, Global->scr_cols, input_rows,
 			    thePort->input_font, thePort->input_gc,
 			    &text, 0);
 	    iv->redraw_needed = NO_REDRAW;
@@ -630,7 +630,7 @@ xio_redraw_input (void)
       {
 	XFillRectangle (thePort->dpy, thePort->window, thePort->neutral_gc,
 			iv->prompt_wid, ypos,
-			scr_cols - iv->prompt_wid, input_rows);
+			Global->scr_cols - iv->prompt_wid, input_rows);
 	iv->redraw_needed = NO_REDRAW;
 	return;
       }
@@ -646,7 +646,7 @@ xio_redraw_input (void)
 		    + XTextWidth (thePort->input_font,
 				  iv->input_area->buf + iv->visibility_begin,
 				  pos - iv->visibility_begin));
-	int wid = scr_cols - xpos;
+	int wid = Global->scr_cols - xpos;
 	int hgt = input_rows;
 
 	XTextItem text;
@@ -1047,11 +1047,11 @@ draw_input (void)
   if (!input_text.chars)
     {
       XFillRectangle (thePort->dpy, thePort->window, thePort->neutral_gc,
-		      Global->input, 0, scr_cols, input_rows);
+		      Global->input, 0, Global->scr_cols, input_rows);
       return;
     }
   input_text.font = thePort->input_font->fid;
-  xdraw_text_item (thePort, 0, Global->input, scr_cols, input_rows, thePort->input_font,
+  xdraw_text_item (thePort, 0, Global->input, Global->scr_cols, input_rows, thePort->input_font,
 		  thePort->input_gc, &input_text, 1);
   if (input_more_mode)
     {
@@ -1061,7 +1061,7 @@ draw_input (void)
       more_text.nchars = 6;
       more_text.delta = 0;
       more_text.font = thePort->input_font->fid;
-      xdraw_text_item (thePort, scr_cols - mwid, Global->input, mwid, input_rows,
+      xdraw_text_item (thePort, Global->scr_cols - mwid, Global->input, mwid, input_rows,
 		      thePort->input_font, thePort->standout_input_gc,
 		      &more_text, 1);
     }
@@ -1134,7 +1134,7 @@ xdraw_status (void)
   if (!x11_opened || thePort->input_view.current_info)
     return;
   if (user_status)
-    xdraw_text_item (thePort, 0, Global->status, scr_cols,
+    xdraw_text_item (thePort, 0, Global->status, Global->scr_cols,
 		    status_rows, thePort->status_font,
 		    thePort->status_gc, &status_text, 1);
 }
@@ -1212,7 +1212,7 @@ xio_update_status (void)
     int wid;
     
     l = strlen (ptr);
-    c = cram (scr_cols - mplen - thePort->status_font->max_bounds.width,
+    c = cram (Global->scr_cols - mplen - thePort->status_font->max_bounds.width,
 	      thePort->status_font, ptr, l, (dec ? " [...]" : "..."));
     if (c)
       bcopy (ptr, pos, c);
@@ -1238,7 +1238,7 @@ xio_update_status (void)
     if (dec)
       {
 	l = strlen (dec);
-	c = cram (scr_cols - wid, thePort->status_font, dec, l, "[...]");
+	c = cram (Global->scr_cols - wid, thePort->status_font, dec, l, "[...]");
 	*pos++ = '[';
 	if (c < l)
 	  {
@@ -1913,8 +1913,8 @@ draw_labels (void)
 	
 	rect.x = 0;
 	rect.y = 0;
-	rect.width = scr_cols;
-	rect.height = scr_lines;
+	rect.width = Global->scr_cols;
+	rect.height = Global->scr_lines;
 	XSetClipRectangles (thePort->dpy, thePort->label_standout_gc,
 			    0, 0, &rect, 1, YXBanded);
 	{
@@ -1965,8 +1965,8 @@ draw_labels (void)
 	    }
 	  rect.x = 0;
 	  rect.y = 0;
-	  rect.width = scr_cols;
-	  rect.height = scr_lines;
+	  rect.width = Global->scr_cols;
+	  rect.height = Global->scr_lines;
 	  XSetClipRectangles (thePort->dpy, thePort->label_standout_gc,
 			      0, 0, &rect, 1, YXBanded);
 	  
@@ -2034,7 +2034,7 @@ xio_redisp (void)
       if (thePort->input_view.info_redraw_needed)
 	{
 	  int ipos = thePort->input_view.info_pos;
-	  int top = ipos + (scr_lines - input_rows) / info_rows - 1;
+	  int top = ipos + (Global->scr_lines - input_rows) / info_rows - 1;
 	  int ypos;
 	  XTextItem text;
 
@@ -2048,7 +2048,7 @@ xio_redisp (void)
 	    {
 	      text.chars = thePort->input_view.current_info->text[ipos];
 	      text.nchars = strlen (text.chars);
-	      xdraw_text_item (thePort, 0, ypos, scr_cols, input_rows,
+	      xdraw_text_item (thePort, 0, ypos, Global->scr_cols, input_rows,
 			      thePort->text_line_font, thePort->text_line_gc,
 			      &text, 0);
 	      ypos += info_rows;
@@ -2056,7 +2056,7 @@ xio_redisp (void)
 	    }
 	  XFillRectangle (thePort->dpy, thePort->window,
 			  thePort->neutral_gc, 0, ypos,
-			  scr_cols, scr_lines - ypos - 1);
+			  Global->scr_cols, Global->scr_lines - ypos - 1);
 	  thePort->input_view.redraw_needed = FULL_REDRAW;
 	  xio_redraw_input ();
 	  thePort->input_view.info_redraw_needed = 0;
@@ -2528,7 +2528,7 @@ set_x_default_point_size (int l)
 	Global->height_scale = cgc->font->ascent + cgc->font->descent;
 	Global->width_scale = cgc->font->max_bounds.width;
       }
-      io_set_scr_size (scr_lines, scr_cols);
+      io_set_scr_size (Global->scr_lines, Global->scr_cols);
     }
 }
 
