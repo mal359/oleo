@@ -1,3 +1,9 @@
+Sun Sep 14 18:01:00 1997  Jeff Bailey  (jbailey@nisa.net)
+
+       * Remove parse.y dependancy on funcdef.h kludge.
+       * Remove ugly function mappings from funcdef.h.
+       * Update src/Makefile.am to include header files.
+
 Sat Sep 13 17:02:00 1997  Jeff Bailey  (jbailey@nisa.net)
 
 	* Update obstack.[ch] from Glibc.
