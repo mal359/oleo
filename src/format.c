@@ -27,9 +27,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "io-abstract.h"
 #include "io-generic.h"
 
-
-
-
 char *
 fmt_to_str (int fmt)
 {
@@ -111,18 +108,12 @@ static struct fmt simple[] =
   {0, 0}
 };
 
-char *gen_names[] =
-{"general.", "gen.", "G", 0};
-char *dol_names[] =
-{"dollar.", "dol.", "$", 0};
-char *cma_names[] =
-{"comma.", "com.", ",", 0};
-char *pct_names[] =
-{"percent.", "pct.", "%", 0};
-char *fxt_names[] =
-{"fixed.", "fxt.", "F", 0};
-char *exp_names[] =
-{"exponent.", "exp.", "E", 0};
+char *gen_names[] =	{"general.",	"gen.", "G", 0};
+char *dol_names[] =	{"dollar.",	"dol.", "$", 0};
+char *cma_names[] =	{"comma.",	"com.", ",", 0};
+char *pct_names[] =	{"percent.",	"pct.", "%", 0};
+char *fxt_names[] =	{"fixed.",	"fxt.", "F", 0};
+char *exp_names[] =	{"exponent.",	"exp.", "E", 0};
 
 static struct fmt withprec[] =
 {
@@ -223,4 +214,3 @@ chr_to_jst (int chr)
     return JST_CNT;
   return -1;
 }
-

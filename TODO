@@ -10,6 +10,9 @@ TODO's:
 * Use GNU PlotUtils instead of GnuPlot.
   In the process, make the plotting user interface more transparent.
 
+* Add "date" and "time" formats, allow them to be input and allow
+  for arithmetic with them.
+
 Longer term TODO's :
 
 * Import/Export Filters. (June 1/97 - JB)

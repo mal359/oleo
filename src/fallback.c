@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.1 1999/01/29 06:58:09 danny Exp $
+ *  $Id: fallback.c,v 1.2 1999/02/04 22:32:50 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -21,6 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 #include <stdio.h>
+#include <Xm/Xm.h>
 
 char *fallback[] = {
 /* Global */
@@ -96,8 +97,8 @@ char *fallback[] = {
 	"*show.labelString:		Show Graph",
 	"*graphmenu.print.labelString:	Print Graph",
 	"*graphmenu.pulabel.labelString:	GNU Plotutils",
-	"*graphmenu.pushow.labelString:		Show Graph",
-	"*graphmenu.puprint.labelString:	Print Graph",
+	"*graphmenu.pushow.labelString:		Show Pie Chart",
+	"*graphmenu.puprint.labelString:	Print Pie Chart",
 	"*graphmenu.pushowbar.labelString:	Show Bar Chart",
 	"*graphmenu.pushowxy.labelString:	Show XY Chart",
 /* Help */

@@ -1,6 +1,6 @@
 dnl
 dnl This is the configuration file for GNU oleo.
-dnl $Id: configure.in,v 1.38 1999/01/29 00:38:09 danny Exp $
+dnl $Id: configure.in,v 1.39 1999/02/04 22:32:47 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -184,6 +184,12 @@ AM_FUNC_OBSTACK
 
 dnl See if we're GNU Gettext friendly
 AM_GNU_GETTEXT
+
+dnl
+dnl This used to cause all kinds of problems in an earlier revision
+dnl	of oleo.
+dnl
+AC_LINK_FILES($nls_cv_header_libgt, $nls_cv_header_intl)
 
 dnl
 dnl Xbase

@@ -35,6 +35,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "ref.h"
 #include "io-utils.h"
 
+#include <plot.h>
+
 static int handle;
 
 static char	*defaultcolor = "black";
@@ -124,6 +126,7 @@ PuPieChart(char *plotter, FILE *outfile)
 	num = 0;
 	make_cells_in_range(&rngx);
 	while ((cp = next_cell_in_range())) {
+fprintf(stderr, "PuPieChart #%d Data %f\n", num+1, float_cell(cp));
 		total += float_cell(cp);
 		num++;
 	}
@@ -200,7 +203,7 @@ void
 PuBarChart(char *plotter, FILE *outfile, int stacked)
 {
 	int		i;
-	double		x, y;
+	double		x, y, y1, y2;
 	struct rng	rngx;
 	CELL		*cp;
 
@@ -215,12 +218,23 @@ PuBarChart(char *plotter, FILE *outfile, int stacked)
 	fline(0., 0., 0., 10.);
 	fline(0., 0., 10., 0.);
 
+	/* Find Y boundaries */
+	make_cells_in_range(&rngx);
+	i = 1;
+	while ((cp = next_cell_in_range())) {
+		y = float_cell(cp);
+		if (i == 1) y1 = y2 = y;
+		if (y < y1) y1 = y;
+		if (y > y2) y2 = y;
+		i++;
+	}
+
 	make_cells_in_range(&rngx);
 	i = 1;
 	while ((cp = next_cell_in_range())) {
 		x = i;
 		y = float_cell(cp);
-		fbox(x - 0.6, 0.0, x, y);
+		if (y2) fbox(x - 0.6, 0.0, x, y / y2 * 10.);
 		i++;
 	}
 

@@ -264,29 +264,36 @@ dnl
 dnl The link_motif and include_motif variables should be fit to put on
 dnl your application's link line in your Makefile.
 dnl
-dnl Oleo CVS $Id: aclocal.m4,v 1.24 1999/01/29 00:38:08 danny Exp $
+dnl Oleo CVS $Id: aclocal.m4,v 1.25 1999/02/04 22:32:47 danny Exp $
 dnl
 AC_DEFUN(AC_FIND_MOTIF,
 [
+
 AC_REQUIRE([AC_PATH_XTRA])
+
 motif_includes=
 motif_libraries=
+
 AC_ARG_WITH(motif,
 [  --without-motif         do not use Motif widgets])
 dnl Treat --without-motif like
 dnl --without-motif-includes --without-motif-libraries.
 if test "$with_motif" = "no"
 then
-motif_includes=none
-motif_libraries=none
+  motif_includes=none
+  motif_libraries=none
 fi
+
 AC_ARG_WITH(motif-includes,
 [  --with-motif-includes=DIR    Motif include files are in DIR],
 motif_includes="$withval")
+
 AC_ARG_WITH(motif-libraries,
 [  --with-motif-libraries=DIR   Motif libraries are in DIR],
 motif_libraries="$withval")
+
 AC_MSG_CHECKING(for Motif)
+
 #
 #
 # Search the include files.
@@ -399,7 +406,18 @@ fi
 #
 # Provide an easier way to link
 #
-if test "$motif_includes" != "" && test "$motif_includes" != "$x_includes" && test "$motif_includes" != "none" ; then
+if test "$motif_includes" != "none" ; then
+	with_motif="yes"
+elif test "$motif_libraries" != "none"; then
+	with_motif="yes"
+elif test "$motif_includes" != ""; then
+	with_motif="yes"
+elif test "$motif_libraries" != ""; then
+	with_motif="yes"
+fi
+
+#
+if test "$with_motif" != "no"; then
 	link_motif="-L$motif_libraries -lXm"
 	MOTIF_LIBS="-L$motif_libraries -lXm"
 	include_motif="-I$motif_includes"

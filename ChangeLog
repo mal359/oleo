@@ -1,3 +1,8 @@
+	* Fix bad error in m4/motif.m4 which prevented Motif to be found
+	  on many systems.
+	* Added AM_LINK_FILES again. Hopefully nobody gets hard links to
+	  the root directory any more.
+	* intl/Makefile.am added.
 	* Rule to build gpl.h should reference $(srcdir)/gpl.sed, not just
 	  gpl.sed.
 	* Remove lib/error.c lib/error.h lib/xmalloc.c, they're not used.

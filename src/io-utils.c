@@ -123,8 +123,9 @@ struct user_fmt cma =
 { "comma", 0, "(", 0, ")", "0", ",", ".", PRC_FLT, 1};
 
 struct user_fmt pct =
-{ "percent", 0, "-", "%", "%", "0%", 0, ".", 3, 100};
 #if 0
+{ "percent", 0, "-", "%", "%", "0%", 0, ".", 3, 100};
+#else
 { "percent", 0, "-", "%", "%", "0%", 0, ".", PRC_FLT, 100};
 #endif
 
