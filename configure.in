@@ -1,6 +1,6 @@
 dnl
 dnl This is the configuration file for GNU oleo.
-dnl $Id: configure.in,v 1.37 1999/01/27 23:23:39 danny Exp $
+dnl $Id: configure.in,v 1.38 1999/01/29 00:38:09 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -110,12 +110,12 @@ if test "$with_motif" = "yes"; then
   AC_FIND_XLT
   if test "$have_xlt" = "yes"; then
     CFLAGS="$XLT_CFLAGS $MOTIF_CFLAGS $X_CFLAGS $CFLAGS"
-    LIBS="$X_PRE_LIBS $XLT_LIBS $MOTIF_LIBS $X_LIBS $LIBS"
+    LIBS="$XLT_LIBS $MOTIF_LIBS $X_LIBS $X_PRE_LIBS -lXt -lX11 $X_EXTRA_LIBS $LIBS"
     AC_DEFINE(HAVE_SciPlot_H)
   else
     ICE_FIND_SciPlot
     CFLAGS="$MOTIF_CFLAGS $X_CFLAGS $CFLAGS"
-    LIBS="$X_PRE_LIBS $MOTIF_LIBS $X_LIBS $LIBS"
+    LIBS="$MOTIF_LIBS $X_LIBS $X_PRE_LIBS -lXt -lX11 $X_EXTRA_LIBS $LIBS"
   fi
 fi
 

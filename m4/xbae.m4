@@ -97,7 +97,7 @@ CFLAGS="$X_CFLAGS $CFLAGS"
 CPPFLAGS="$X_CFLAGS $CPPFLAGS"
 LDFLAGS="$X_LIBS $LDFLAGS"
 #
-AC_TRY_LINK([#include <Xbae/Matrix.h>],[XbaeMatrixAddRows();],
+AC_TRY_LINK([#include <Xbae/Matrix.h>],[Widget w; XbaeMatrixRefresh(w);],
 [
 # libXm.a is in the standard search path.
 ice_cv_xbae_libraries=

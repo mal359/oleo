@@ -264,7 +264,7 @@ dnl
 dnl The link_motif and include_motif variables should be fit to put on
 dnl your application's link line in your Makefile.
 dnl
-dnl Oleo CVS $Id: aclocal.m4,v 1.23 1999/01/27 23:23:38 danny Exp $
+dnl Oleo CVS $Id: aclocal.m4,v 1.24 1999/01/29 00:38:08 danny Exp $
 dnl
 AC_DEFUN(AC_FIND_MOTIF,
 [
@@ -523,7 +523,7 @@ CFLAGS="$X_CFLAGS $CFLAGS"
 CPPFLAGS="$X_CFLAGS $CPPFLAGS"
 LDFLAGS="$X_LIBS $LDFLAGS"
 #
-AC_TRY_LINK([#include <Xbae/Matrix.h>],[XbaeMatrixAddRows();],
+AC_TRY_LINK([#include <Xbae/Matrix.h>],[Widget w; XbaeMatrixRefresh(w);],
 [
 # libXm.a is in the standard search path.
 ice_cv_xbae_libraries=
@@ -775,7 +775,6 @@ dnl your application's link line in your Makefile.
 dnl
 AC_DEFUN(AC_FIND_XLT,
 [
-AC_REQUIRE([AC_PATH_XTRA])
 AC_REQUIRE([AC_FIND_MOTIF])
 xlt_includes=
 xlt_libraries=
