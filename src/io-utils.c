@@ -1,5 +1,5 @@
 /*
- * $Id: io-utils.c,v 1.40 2001/04/19 00:05:27 pw Exp $
+ * $Id: io-utils.c,v 1.41 2001/05/12 16:33:18 pw Exp $
  *
  * Copyright © 1990, 1992, 1993, 2000, 2001 Free Software Foundation, Inc.
  *
@@ -1330,7 +1330,7 @@ file_set_default_format(char *s)
 	if (s == NULL)
 		defaultformat = strdup("oleo");
 	else
-		defaultformat = s;
+		defaultformat = strdup(s);
 }
 
 char *
@@ -1454,7 +1454,7 @@ file_get_pattern(char *fmt)
 	int	i, m = sizeof(file_formats) / sizeof(struct file_formats_s) - 1;
 
 	for (i=0; i<m; i++) {
-		if (strcmp(fmt, file_formats[i].name) == 0)
+		if (stricmp(fmt, file_formats[i].name) == 0)
 			return file_formats[i].format;
 	}
 	return NULL;

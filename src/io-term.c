@@ -1,5 +1,5 @@
 /*
- * $Id: io-term.c,v 1.53 2001/04/19 00:05:27 pw Exp $
+ * $Id: io-term.c,v 1.54 2001/05/12 16:33:18 pw Exp $
  *
  * Copyright © 1990, 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 
@@ -20,7 +20,7 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char *rcsid = "$Id: io-term.c,v 1.53 2001/04/19 00:05:27 pw Exp $";
+static char *rcsid = "$Id: io-term.c,v 1.54 2001/05/12 16:33:18 pw Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -233,8 +233,8 @@ do_set_option (char *ptr)
 			(Preferences[i].trigger)(ptr);
 
 		if (Preferences[i].copynext) {
-			ptr += strlen(Preferences[i].name) + 1;
-			*(char **)Preferences[i].var = strdup(ptr);
+			*(char **)Preferences[i].var = strdup(ptr +
+			  strlen(Preferences[i].name) + 1);
 		} else if (Preferences[i].var)
 			*(int *)Preferences[i].var = Preferences[i].value;
 
