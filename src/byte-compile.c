@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Oleo; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -45,7 +45,6 @@ local_free (p)
 #include "eval.h"
 #include "hash.h"
 #include "ref.h"
-
 
 extern int yyparse (void);
 
@@ -57,7 +56,6 @@ extern char *instr;
 extern int parse_error;
 extern struct node *parse_return;
 extern void sort ();
-
 
 static void add_backpatch (unsigned, unsigned);
 

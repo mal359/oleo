@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Oleo; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -672,6 +672,10 @@ set_width (CELLREF col, int wid)
 
   ptr = make (col, &wids, sizeof (int), COL_BUF);
   *ptr = wid;
+
+#ifdef	HAVE_MOTIF
+  MotifUpdateWidth(col, wid);
+#endif
 }
 
 void 

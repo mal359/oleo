@@ -1,4 +1,23 @@
-
+Thu Dec 24 01:19:42 1998, Danny Backx (danny@gnu.org)
+	* Getting ready for release 1.6.12.
+	* Add a --filter option which currently already reads a file from
+	  stdin at startup.
+	  This option is dangerous: it'll likely lock up your terminal or your
+	  xterm window if you're using character mode.
+	  Use as in "oleo --filter -F list --space" .
+	  Then type "1 2 3" then Ctrl-D (to end the file).
+	* Add a pointer to Motif in the beginning of the documentation.
+	  Also update its last changed date and the oleo version number.
+	  Added a pointer to ftp.x.org for finding Xbae, and mention the need
+	  to have GNU texinfo 3.12 for building.
+	  Texinfo 3.9 is known not to work.
+	* Resizing a column with the GUI (shift-MB2) registers changed column
+	  width in the oleo structures. Reading back such a file works too.
+	* List file format can read string entries that are delimited by "".
+	* Formula editor now properly displays something other than a formula
+	  as well.
+	* a0 mode is properly set after reading a file.
+	* Clean up the print dialog graphically.
 	* Make include files ANSI C. Remove non-ANSI declarations.
 	* Try to get Formats dialog to work. Not yet.
 	* Fixed the bug in range selection. Translations need to contain \n,

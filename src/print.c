@@ -370,7 +370,11 @@ psprint_region (FILE * fp, struct rng * rng,
 	  if (cd->unclipped)
 	    {
 	      fprintf (fp, "/S ");
-	      put_ps_string (cd->unclipped, fp);
+#if 1
+	      put_ps_string (cd->unclipped, fp);     /* <= print cell content */
+#else
+	      put_ps_string(print_cell(find_cell(ri, ci)), fp);
+#endif
 	      fprintf (fp, " def \nS ");
 	      switch (cd->justification)
 		{

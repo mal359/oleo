@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.h,v 1.8 1998/12/09 23:03:07 danny Exp $
+ *  $Id: fallback.h,v 1.9 1998/12/24 00:24:33 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -36,7 +36,7 @@ char *fallback[] = {
 	"*XmMainWindow.showSeparator:	true",
 	"*background:			#AAAAAA",
 	"*bae.background:		#CCCCCC",
-	"*formula.columns:		40",
+	"*formula.columns:		80",
 	"*splash.fontList:		-b&h-lucidatypewriter-bold-r-normal-sans-64-*-*-*-*-*-iso8859-1=large,-b&h-lucida-medium-i-normal-sans-18-*-*-*-*-*-iso8859-1=small",
 	"*splash.background:		#AAAAAA",
 	"*splash.foreground:		red",
@@ -201,6 +201,9 @@ char *fallback[] = {
 	"*printForm*printer.labelString:	Printer",
 	"*printForm*file.labelString:	File",
 	"*printForm*program.labelString:	Program",
+	"*printForm*fileTFBrowse.labelString:	Browse ...",
+	"*printForm*printRangeFrameTitle.labelString:	Print Range",
+	"*printShell.title:		Print Dialog",
 /* Default File Dialog */
 	"*listSeparatorFrameTitle.labelString:	List File Separator",
 	"*defaultFileShell.title:	Default File Format Dialog",
@@ -210,6 +213,7 @@ char *fallback[] = {
 	"*cancel.labelString:		Cancel",
 	"*help.labelString:		Help",
 /* Formats Dialog */
+	"*formatsDialog_popup.title:		Formats Dialog",
 	"*formatsFrameTitle.labelString:	Cell Format",
 	"*formatsFrame*formatsL.labelString:	Cell Range",
 	"*formatsFrame*precisionL.labelString:	Precision",

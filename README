@@ -53,6 +53,8 @@ that are required:
 * GNU Gettext 0.10.32 (currently included in oleo)
 * Motif or LessTif if you want the Motif GUI (incomplete)
 * Gtk+ if you want the Gnome GUI (very incomplete)
+* GNU texinfo (3.12) to build the documentation
+* texi2html to convert the documentation to html
 
 That GNU Oleo is strongly dependant on those applications is a clear
 indication of my lack of desire to support these applications myself.
@@ -75,9 +77,6 @@ There is a mailing list set up for your convenience:
 
 Please remember a couple quick points when emailing these lists:
 
-	o Oleo suffered a long period of inactivity.  It's popularity is just
-	  beginning to increase again.
-
 	o We're all volunteers, be nice =)
 
 	o More detail is good.  Suggestions as to what you think the problem
@@ -86,8 +85,3 @@ Please remember a couple quick points when emailing these lists:
 	o Please make sure you're running a recent version before reporting the
 	  bug. Excessively old version won't be patched if the fix already
 	  exists in a more recent version.
-
-Tks,
-Jeff Bailey
-Jan 11, 1998.
-

@@ -84,4 +84,6 @@ extern int main (int argc, char **argv);
 #define TRUE 1
 #endif /* TRUE */
 
+extern int option_filter;
+
 #endif /* IO_TERMH */

@@ -515,6 +515,12 @@ recalculate (int all)
 void
 kill_oleo (void)
 {
+  extern int option_filter;
+
+  if (option_filter) {
+	write_file_generic(stdout, NULL, NULL);
+  }
+
   io_close_display ();
   exit (0);
 }
@@ -1338,12 +1344,21 @@ read_file_and_run_hooks (FILE * fp, int ismerge, char * name)
   {
 	char	*ext = NULL;
 	ext = strrchr(name, '.');
+#if 1
+	if (! ext) {
+		read_file_generic(fp, ismerge, NULL);
+	} else {
+		ext++;
+		read_file_generic(fp, ismerge, ext);
+	}
+#else
 	if (! ext) {
 		(*read_file)(fp, ismerge);
 	} else {
 		ext++;
 		read_file_generic(fp, ismerge, ext);
 	}
+#endif
   }
 #else
   (*read_file)(fp, ismerge);

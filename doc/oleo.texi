@@ -6,9 +6,9 @@
 @defcodeindex cm
 @c %**end of header
 
-@set version 1.6
-@set update-date Dec 15 1994
-@set update-month Dec 1994
+@set version 1.6.12
+@set update-date December 23 1998
+@set update-month December 1998
 
 @clear smallbook
 
@@ -33,9 +33,9 @@ This file documents Oleo, the GNU spreadsheet.  This texinfo file was
 hacked together from the USING, KEYS and forminfo.c files of the
 oleo-1.6 distribution by kai@@nimbus.som.cwru.edu
 
-This file could be part of GNU Oleo.
+This file is part of GNU Oleo.
 
-Copyright (C) 1993 Free Software Foundation, Inc.
+Copyright (C) 1993-1999 Free Software Foundation, Inc.
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice

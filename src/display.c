@@ -13,7 +13,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -24,7 +23,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "lists.h"
 #include "cell.h"
 #include "io-utils.h"
-
+
 struct cell_display *
 cell_display_of (struct display *disp, CELLREF r, CELLREF c)
 {
@@ -38,7 +37,6 @@ cell_display_of (struct display *disp, CELLREF r, CELLREF c)
   c -= disp->range.lc;
   return disp->cells + r * cols + c;
 }
-
 
 void 
 free_display (disp)
@@ -149,7 +147,7 @@ pr_display_cell (struct display *disp, CELLREF r, CELLREF c, CELL *cp)
     }
   return 1;
 }
-
+
 static void null_metric (cd, disp)
      struct cell_display * cd;
      struct display * disp;
@@ -216,7 +214,7 @@ build_unscaled_display (disp, range, metric, vdata)
 {
   _build_display (disp, range, metric, vdata, 0);
 }
-
+
 void 
 display_range (rng, disp, x, y, w, h)
      struct rng *rng;
@@ -258,7 +256,7 @@ display_range (rng, disp, x, y, w, h)
     }
   rng->hc = t + winrng->lc;
 }
-
+
 extern void 
 record_display_damage (disp, x, y, w, h)
      struct display *disp;
@@ -271,7 +269,7 @@ record_display_damage (disp, x, y, w, h)
     for (c = rng.lc; c <= rng.hc && c > 0; ++c)
       damage (disp, cell_display_of (disp, r, c));
 }
-
+
 
 void 
 layout (disp)

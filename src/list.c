@@ -80,24 +80,39 @@ list_read_file (fp, ismerge)
 	    }
 	  string = 0;
 	  for (ptr = bptr; ptr != eptr; ptr++)
-#if 0
-	    if (!isdigit (*ptr) && *ptr != '.' && *ptr != 'e' && *ptr != 'E')
-#else
 	    if (!isdigit (*ptr) && *ptr != '.' && *ptr != 'e' && *ptr != 'E'
 		&& *ptr != '+' && *ptr != '-')
-#endif
 	      {
 		string++;
 		break;
 	      }
 	  if (string)
 	    {
-	      bptr[-1] = '"';
-	      eptr[0] = '"';
-	      tchar = eptr[1];
-	      eptr[1] = '\0';
-	      new_value (row, col, &bptr[-1]);
-	      eptr[1] = tchar;
+	      if (bptr[0] == '"') {
+		/* Code to deal with "xxx" fields */
+		char *p = strchr(&bptr[1], '"');
+		if (p) {
+			p++;
+			tchar = *p;
+			*p = '\0';
+			new_value (row, col, &bptr[0]);
+			*p = tchar;
+		} else {
+			bptr[-1] = '"';
+			eptr[0] = '"';
+			tchar = eptr[1];
+			eptr[1] = '\0';
+			new_value (row, col, &bptr[-1]);
+			eptr[1] = tchar;
+		}
+	      } else {
+		bptr[-1] = '"';
+		eptr[0] = '"';
+		tchar = eptr[1];
+		eptr[1] = '\0';
+		new_value (row, col, &bptr[-1]);
+		eptr[1] = tchar;
+	      }
 	    }
 	  else
 	    {

@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.18 1998/12/09 23:03:11 danny Exp $
+ *  $Id: io-motif.c,v 1.19 1998/12/24 00:24:34 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.18 1998/12/09 23:03:11 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.19 1998/12/24 00:24:34 danny Exp $";
 
 #include "config.h"
 
@@ -82,13 +82,13 @@ static char rcsid[] = "$Id: io-motif.c,v 1.18 1998/12/09 23:03:11 danny Exp $";
 
 XtAppContext app;
 Widget	toplevel, splash, SplashShell, plot;
-Widget	mw, mat, mb, filemenu, editmenu, stylemenu,
+Widget	mw, mat = NULL, mb, filemenu, editmenu, stylemenu,
 	optionsmenu, helpmenu, graphmenu;
 Widget	msgtext = NULL, statustf = NULL, formulatf = NULL;
 Widget	fsd = NULL;
 Widget	hd, html = NULL, gs = NULL;
 Widget	FormatD = NULL;
-Widget	PrintDialog, PrintShell = NULL;
+Widget	PrintDialog = NULL;
 Widget	DefaultFileDialog, DefaultFileShell = NULL;
 
 static Widget	w;
@@ -107,6 +107,10 @@ static char	input_buf[1024];
 static int	input_buf_allocated = 1024;
 
 static int	chars_buffered = 0;
+
+/* Forward declarations */
+void CancelTemplate(Widget w, XtPointer client, XtPointer call);
+static void FixA0();
 
 /*
  * This is used in two places.
@@ -271,6 +275,8 @@ void MotifUpdateDisplay()
 {
         XbaeMatrixRefresh(mat); /* refresh */
  
+	FixA0();
+
         /*
          * Apparently the refresh above doesn't refresh the cell whose
          * formula we just changed, and which therefore almost certainly
@@ -801,7 +807,7 @@ void ReallyPrintCB(Widget w, XtPointer client, XtPointer call)
 	char		*fn, *s, *p;
 	int		r;
 
-	XtPopdown(PrintShell);
+	XtUnmanageChild(PrintDialog);
 
 	fn = XmTextFieldGetString(PrintWidgets.fileTF);
 
@@ -831,7 +837,7 @@ void ReallyPrintCB(Widget w, XtPointer client, XtPointer call)
 	psprint_region_cmd(&rng, fp);
 	fclose(fp);
 
-	MessageAppend(False, "Printed a1.j10 to %s\n", fn);
+	MessageAppend(False, "Printed %s to %s\n", range_name(&rng), fn);
 
 #ifdef	FREE_TF_STRING
 	XtFree(fn);
@@ -848,7 +854,7 @@ static void MotifSetPrintPage(Widget w, XtPointer client, XtPointer call)
 
 Widget MotifCreatePrintDialog(Widget s)
 {
-	Widget		form, menu, cb, w, ok, frame, radio;
+	Widget		form, menu, cb, w, frame, radio;
 	int		npages, i, ac;
 	Arg		al[5];
 	XmString	xms;
@@ -877,6 +883,8 @@ Widget MotifCreatePrintDialog(Widget s)
 				xmRowColumnWidgetClass, frame,
 			XmNradioBehavior,	True,
 			XmNradioAlwaysOne,	True,
+			XmNnumColumns,		3,
+			XmNorientation,		XmHORIZONTAL,
 		NULL);
 
 	w = XtVaCreateManagedWidget("printer", xmToggleButtonGadgetClass,
@@ -887,6 +895,9 @@ Widget MotifCreatePrintDialog(Widget s)
 	w = XtVaCreateManagedWidget("printerTF", xmTextFieldWidgetClass,
 			radio, NULL);
 	XmTextFieldSetString(w, AppRes.printer);
+	/* Filler */ XtVaCreateManagedWidget("", xmLabelGadgetClass, radio,
+		NULL);
+
 	w = XtVaCreateManagedWidget("file", xmToggleButtonGadgetClass,
 		radio, NULL);
 	PrintWidgets.fileTF = 
@@ -953,6 +964,8 @@ Widget MotifCreatePrintDialog(Widget s)
 			XmNtopOffset,		10,
 			XmNleftAttachment,	XmATTACH_FORM,
 			XmNleftOffset,		10,
+			XmNrightAttachment,	XmATTACH_FORM,
+			XmNrightOffset,		10,
 		NULL);
 
 	w = XtVaCreateManagedWidget("printRangeFrameTitle",
@@ -967,34 +980,35 @@ Widget MotifCreatePrintDialog(Widget s)
 		NULL);
 	RegisterRangeSelector(w);
 
-	/* FIX ME : buttons */
-	ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass, form,
-			XmNtopAttachment,	XmATTACH_WIDGET,
-			XmNtopOffset,		10,
-			XmNtopWidget,		frame,
-			XmNleftAttachment,	XmATTACH_FORM,
-			XmNleftOffset,		10,
-			XmNrightAttachment,	XmATTACH_NONE,
-			XmNbottomAttachment,	XmATTACH_FORM,
-			XmNbottomOffset,	10,
-		NULL);
-	XtAddCallback(ok, XmNactivateCallback, ReallyPrintCB, NULL);
-
 	return form;
 }
 
 void printCB(Widget w, XtPointer client, XtPointer call)
 {
-	if (PrintShell == NULL) {
-		PrintShell = XtVaCreatePopupShell("printShell",
-				topLevelShellWidgetClass,
-				toplevel,
+	Widget	d, ok, cancel, help;
+
+	if (PrintDialog == NULL) {
+		PrintDialog = XmCreateTemplateDialog(mw, "printDialog",
+			NULL, 0);
+		d = MotifCreatePrintDialog(PrintDialog);
+		XtManageChild(d);
+
+		ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass,
+			PrintDialog,
 			NULL);
-		PrintDialog = MotifCreatePrintDialog(PrintShell);
+		XtAddCallback(ok, XmNactivateCallback, ReallyPrintCB, NULL);
+
+		cancel = XtVaCreateManagedWidget("cancel",
+			xmPushButtonGadgetClass, PrintDialog, NULL);
+		XtAddCallback(cancel, XmNactivateCallback,
+			CancelTemplate, PrintDialog);
+
+		help = XtVaCreateManagedWidget("help",
+			xmPushButtonGadgetClass, PrintDialog, NULL);
+
 	}
 
 	XtManageChild(PrintDialog);
-	XtPopup(PrintShell, XtGrabNone);
 }
 
 void SetDefaultFileCB(Widget w, XtPointer client, XtPointer call)
@@ -1016,6 +1030,13 @@ void SetDefaultFileCB(Widget w, XtPointer client, XtPointer call)
 	}
 
 	XtPopdown(DefaultFileShell);
+}
+
+void CancelTemplate(Widget w, XtPointer client, XtPointer call)
+{
+	Widget	bb = (Widget)client;
+
+	XtUnmanageChild(bb);
 }
 
 void CancelDialog(Widget w, XtPointer client, XtPointer call)
@@ -1247,12 +1268,21 @@ void EnterCell(Widget w, XtPointer client, XtPointer call)
 	goto_region(&r);
 
 	/* Change Formula editor */
+#if 1
+	if (cp = find_cell (curow, cucol)) {
+		dec = decomp (curow, cucol, cp);
+		XmTextFieldSetString(formulatf, dec);
+	} else {
+		XmTextFieldSetString(formulatf, "");
+	}
+#else
 	if ((cp = find_cell (curow, cucol)) && cp->cell_formula) {
 		dec = decomp (curow, cucol, cp);
 		XmTextFieldSetString(formulatf, dec);
 	} else {
 		XmTextFieldSetString(formulatf, "");
 	}
+#endif
 }
 
 void ModifyVerify(Widget w, XtPointer client, XtPointer call)
@@ -1314,6 +1344,27 @@ void FormulaCB(Widget w, XtPointer client, XtPointer call)
 
 	recalculate(1);		/* 1 is recalculate all */
 	MotifUpdateDisplay();	/* refresh */
+}
+
+void ResizeColumnCB(Widget w, XtPointer client, XtPointer call)
+{
+	XbaeMatrixResizeColumnCallbackStruct *cbp =
+		(XbaeMatrixResizeColumnCallbackStruct *)call;
+	struct rng	rng;
+	char		wid[20];
+
+	/* Set a range which is a column */
+	rng.lr = 0;
+	rng.hr = -1;
+	rng.lc = rng.hc = cbp->which + 1;
+#if 0
+	fprintf(stderr, "Resize column %d to %d, using range %s\n",
+		cbp->which,
+		cbp->column_widths[cbp->which],
+		range_name(&rng));
+#endif
+	sprintf(wid, "%d", cbp->column_widths[cbp->which]);
+	set_region_width(&rng, wid);
 }
 
 /****************************************************************
@@ -1386,6 +1437,7 @@ void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 		XtFree(s);
 		return;
 	}
+	FixA0();
 
 	/* Force calculate */
 	recalculate(1);		/* 1 is all */
@@ -1710,8 +1762,18 @@ void helpVersionCB(Widget w, XtPointer client, XtPointer call)
 /*
  * Row and column labels
  */
-char	**rowlabels, **columnlabels, **columnmaxlengths;
-short	*columnwidths;
+char	**rowlabels = NULL, **columnlabels = NULL, **columnmaxlengths = NULL;
+short	*columnwidths = NULL;
+
+void
+ResetColumnWidths(void)
+{
+	int	i;
+
+	columnwidths = (short *)XtCalloc(AppRes.columns, sizeof(short));
+	for (i=0; i<AppRes.columns; i++)
+		columnwidths[i] = AppRes.columnWidth;
+}
 
 void
 SetRowColumnLabels(void)
@@ -1722,7 +1784,6 @@ SetRowColumnLabels(void)
 	rowlabels = (char **)XtCalloc(AppRes.rows, sizeof(char *));
 	columnlabels = (char **)XtCalloc(AppRes.columns, sizeof(char *));
 	columnmaxlengths = (char **)XtCalloc(AppRes.columns, sizeof(char *));
-	columnwidths = (short *)XtCalloc(AppRes.columns, sizeof(short));
 
 	for (i=0; i<AppRes.rows; i++) {
 		sprintf(tmp, a0 ? "%d" : "R%d", i + 1);
@@ -1736,7 +1797,6 @@ SetRowColumnLabels(void)
 			columnlabels[i] = XtNewString(tmp);
 		}
 		columnmaxlengths[i] = "64000";		/* ??? */
-		columnwidths[i] = AppRes.columnWidth;
 	}
 }
 
@@ -1763,17 +1823,32 @@ ChangeRowColumnLabels(void)
 	}
 }
 
+void
+MotifUpdateWidth(int col, int wid)
+{
+	if (! columnwidths)
+		ResetColumnWidths();
+	columnwidths[col - 1] = wid;
+
+	if (mat)
+		XtVaSetValues(mat,
+				XmNcolumnWidths,	columnwidths,
+			NULL);
+}
+
 /****************************************************************
  *								*
  *		Some option settings				*
  *								*
  ****************************************************************/
-void ToggleA0(Widget w, XtPointer client, XtPointer call)
+static void FixA0()
 {
-	if (a0)
-		a0 = 0;
-	else
-		a0 = 1;
+	static int	havea0 = -1;
+
+	if (havea0 == a0)
+		return;
+
+	havea0 = a0;
 
 	/* Update matrix */
 	ChangeRowColumnLabels();
@@ -1781,6 +1856,16 @@ void ToggleA0(Widget w, XtPointer client, XtPointer call)
 			XmNrowLabels,		rowlabels,
 			XmNcolumnLabels,	columnlabels,
 		NULL);
+}
+
+void ToggleA0(Widget w, XtPointer client, XtPointer call)
+{
+	if (a0)
+		a0 = 0;
+	else
+		a0 = 1;
+
+	FixA0();
 }
 
 /****************************************************************
@@ -2453,6 +2538,8 @@ GscBuildMainWindow(Widget parent)
 	/*
 	 * Row- and column labels
 	 */
+	if (! columnwidths)
+		ResetColumnWidths();
 	SetRowColumnLabels();
 
 	/*
@@ -2475,6 +2562,7 @@ GscBuildMainWindow(Widget parent)
 	XtAddCallback(mat, XmNdrawCellCallback, DrawCell, NULL);
 	XtAddCallback(mat, XmNwriteCellCallback, WriteCell, NULL);
 	XtAddCallback(mat, XmNselectCellCallback, SelectCellCB, NULL);
+	XtAddCallback(mat, XmNresizeColumnCallback, ResizeColumnCB, NULL);
 
 	/*
 	 * We're building a small combo of two widgets which will represent
@@ -3357,7 +3445,7 @@ void motif_build_gui(void)
 
 void ReallyQuit(Widget w, XtPointer client, XtPointer call)
 {
-	exit(0);
+	kill_oleo();
 }
 
 void quitCB(Widget w, XtPointer client, XtPointer call)
@@ -3366,7 +3454,7 @@ void quitCB(Widget w, XtPointer client, XtPointer call)
 	Arg		al[4];
 	int		ac;
 
-	if (modified) {
+	if (modified && !option_filter) {
 		ac = 0;
 		/* Application resource for message allow i18n */
 #if 0
@@ -3382,7 +3470,7 @@ void quitCB(Widget w, XtPointer client, XtPointer call)
 		return;
 	}
 
-	exit(0);
+	kill_oleo();
 }
 
 static char *gpl_string =

@@ -118,6 +118,7 @@ void (*show_file_opts) () = oleo_show_options;
 
 static int	option_separator = '\t';
 static char	*option_format = NULL;
+int		option_filter = 0;
 
 static char short_options[] = "VqfxthsFS";
 static struct option long_options[] =
@@ -131,6 +132,7 @@ static struct option long_options[] =
 	{"separator",		1,	&option_separator,	's'},
 	{"space",		0,	NULL,			'S'},
 	{"format",		1,	NULL,			'F'},
+	{"filter",		0,	NULL,			'-'},
 	{NULL,			0,	NULL,			0}
 };
 
@@ -877,6 +879,7 @@ Usage: %s [OPTION]... [FILE]...\n\
   -s x, --separator x	   set separator for 'list' file type to x\n\
   -S, --space		   set separator for 'list' file type to a space\n\
   -F x, --format x	   set default file type to x (oleo, list, sc  ...)\n\
+  --filter		   read file from stdin, write to stdout on exit\n\
 \n\
 Report bugs to <bug-oleo@gnu.org>.\n\
 "));
@@ -924,6 +927,13 @@ main (int argc, char **argv)
 	if (opt == EOF)
 		break;
 
+	if (opt)
+		fprintf(stderr, PACKAGE " option %c\n", opt);
+	else {
+		fprintf(stderr, PACKAGE " optind %d option %s strange ...\n",
+			optind, argv[optind]);
+	}
+
 	switch (opt)
 	  {
 	  case 'V':
@@ -962,10 +972,16 @@ main (int argc, char **argv)
 	    list_set_separator(option_separator);
 	    break;
 	  case 'F':
+	fprintf(stderr, "F: optind %d argv[optind] '%s' optopt %d %c\n",
+		optind, argv[optind], optopt, optopt);
 	    option_format = argv[optind];
 	    file_set_default_format(option_format);
 	    optind++;
 	    break;
+	  case '-':
+		fprintf(stderr, "Filter mode\n");
+		option_filter = 1;
+		break;
 	  }
       }
   }
@@ -1143,25 +1159,25 @@ main (int argc, char **argv)
   }
 
 
-  if (argc - optind == 1)
-    {
+  if (option_filter) {
+	    read_file_and_run_hooks(stdin, 0, "stdin");
+  } else if (argc - optind == 1) {
       FILE * fp;
       /* fixme: record file name */
 
-      if ((fp = fopen (argv[optind], "r")))
-	{
+    if ((fp = fopen (argv[optind], "r"))) {
 	  if (setjmp (error_exception))
 	    fprintf (stderr, "  error occured reading %s", argv[optind]);
 	  else
 	    read_file_and_run_hooks (fp, 0, argv[optind]);
 	  fclose (fp);
 	  command_line_file = 1;
-	}
-      else
+    } else
 	fprintf (stderr, "Can't open %s: %s", argv[optind], err_msg ());
 
-      optind++;
-    }
+    optind++;
+  }
+
   /* Force the command frame to be rebuilt now that the keymaps exist. */
   {
     struct command_frame * last_of_the_old = the_cmd_frame->next;

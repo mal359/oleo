@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Oleo; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -46,12 +46,7 @@ extern long random (void);
 #define rint(x) (((x)<0) ? ceil((x)-.5) : floor((x)+.5))
 #endif
 
-
-
 extern int n_usr_funs;
-
-
-
 
 double to_int ();
 static int deal_area ();
@@ -70,8 +65,6 @@ int __to_str (struct value *);
 int __to_bol (struct value *);
 int __to_rng (struct value *);
 #endif
-
-
 
 struct value
   {
