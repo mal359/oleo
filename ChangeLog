@@ -1,5 +1,9 @@
 
-$Id: ChangeLog,v 1.141 2001/02/05 00:17:07 pw Exp $
+$Id: ChangeLog,v 1.142 2001/02/06 02:40:57 pw Exp $
+
+Sun Feb  5 21:35:07 EST 2001  Pete Wyckoff  (pw@osc.edu)
+	* Rewrite real_get_chr() slightly so that curses mode doesn't
+	  hang on endless-loop situations.
 
 Sun Feb  4 19:10:25 EST 2001  Pete Wyckoff  (pw@osc.edu)
 	* Clean up a bunch of compile warnings.
