@@ -2239,47 +2239,43 @@ xio_flush (void)
 
 
 
-#define _io_command_loop xio_command_loop
-#define _io_open_display xio_open_display
-#define _io_redisp xio_redisp
-#define _io_repaint xio_repaint
-#define _io_repaint_win xio_repaint_win
-#define _io_close_display xio_close_display
-#define _io_input_avail xio_input_avail
-#define _io_scan_for_input xio_scan_for_input
-#define _io_wait_for_input xio_wait_for_input
-#define _io_read_kbd xio_read_kbd
-#define _io_nodelay xio_nodelay
-#define _io_getch xio_getch
-#define _io_bell xio_bell
-#define _io_get_chr xio_get_chr
-#define _io_update_status xio_update_status
-#define _io_info_msg xio_info_msg
-#define _io_error_msg xio_error_msg
-#define _io_fix_input xio_fix_input
-#define _io_move_cursor xio_move_cursor
-#define _io_erase xio_erase
-#define _io_insert xio_insert
-#define _io_over xio_over
-#define _io_flush xio_flush
-#define _io_clear_input_before xio_clear_input_before
-#define _io_clear_input_after xio_clear_input_after
-#define _io_pr_cell_win xio_pr_cell_win
-#define _io_hide_cell_cursor xio_hide_cell_cursor
-#define _io_display_cell_cursor xio_display_cell_cursor
-#define _io_cellize_cursor xio_cellize_cursor
-#define _io_inputize_cursor xio_inputize_cursor
-
 void
 xio_command_loop (int i)
 {
-	command_loop(i);
+  command_loop (i);
 }
 
 void
 x11_graphics (void)
 {
-  IO_SETUP;
+  io_command_loop = xio_command_loop;
+  io_open_display = xio_open_display;
+  io_redisp = xio_redisp;
+  io_repaint = xio_repaint;
+  io_repaint_win = xio_repaint_win;
+  io_close_display = xio_close_display;
+  io_input_avail = xio_input_avail;
+  io_scan_for_input = xio_scan_for_input;
+  io_wait_for_input = xio_wait_for_input;
+  io_read_kbd = xio_read_kbd;
+  io_nodelay = xio_nodelay;
+  io_getch = xio_getch;
+  io_bell = xio_bell;
+  io_get_chr = xio_get_chr;
+  io_update_status = xio_update_status;
+  io_fix_input = xio_fix_input;
+  io_move_cursor = xio_move_cursor;
+  io_erase = xio_erase;
+  io_insert = xio_insert;
+  io_over = xio_over;
+  io_flush = xio_flush;
+  io_clear_input_before = xio_clear_input_before;
+  io_clear_input_after = xio_clear_input_after;
+  io_pr_cell_win = xio_pr_cell_win;
+  io_hide_cell_cursor = xio_hide_cell_cursor;
+  io_display_cell_cursor = xio_display_cell_cursor;
+  io_cellize_cursor = xio_cellize_cursor;
+  io_inputize_cursor = xio_inputize_cursor;
 }
 
 void

@@ -1,3 +1,10 @@
+Sun Mar 15 12:27:00 1997  Jeff Bailey   (jbailey@gnu.org)
+
+	* configure.in:  Make -Wall default only on --with-debug
+	* src/io-curses.c: Expand IO_SETUP macro.
+	* src/io-x11.c: Expand IO_SETUP macro.
+	* src/io-abstract.h: Remove IO_SETUP macro.
+
 Sat Mar 14 14:34:00 1997  Jeff Bailey  (jbailey@gnu.org)
 
 	* Makefile.am: Compile i18n stuff BEFORE source.
