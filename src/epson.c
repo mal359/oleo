@@ -1,5 +1,5 @@
 /*
- *  $Id: epson.c,v 1.7 1999/08/30 01:39:33 danny Exp $
+ *  $Id: epson.c,v 1.8 1999/11/04 12:51:20 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: epson.c,v 1.7 1999/08/30 01:39:33 danny Exp $";
+static char rcsid[] = "$Id: epson.c,v 1.8 1999/11/04 12:51:20 danny Exp $";
 
 #include <stdio.h>
 
@@ -79,7 +79,8 @@ void EpsonPageFooter(char *str, FILE *fp)
 	fputc('\f', fp);
 }
 
-void EpsonField(char *str, int wid, int justify, int rightborder, FILE *fp)
+void EpsonField(char *str, int wid, int rightborder,
+			int xpoints, int xchars, FILE *fp)
 {
 	char	format[16];
 #if 1
@@ -130,11 +131,6 @@ void EpsonNewLine(int ht, FILE *fp)
 	fputc('\012', fp);
 }
 
-int EpsonPrinterJustifies(void)
-{
-	return 1;
-}
-
 void EpsonPaperSize(int wid, int ht, FILE *fp)
 {
 	int	hi, lo;
@@ -181,7 +177,6 @@ struct PrintDriver EpsonStylusColorPrintDriver = {
 	&EpsonBorders,
 	&EpsonFont,
 	&EpsonNewLine,
-	&EpsonPrinterJustifies,
 	&EpsonPaperSize
 };
 

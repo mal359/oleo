@@ -1,5 +1,5 @@
 /*
- *  $Id: pcl.c,v 1.8 1999/10/05 21:32:15 danny Exp $
+ *  $Id: pcl.c,v 1.9 1999/11/04 12:51:27 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: pcl.c,v 1.8 1999/10/05 21:32:15 danny Exp $";
+static char rcsid[] = "$Id: pcl.c,v 1.9 1999/11/04 12:51:27 danny Exp $";
 
 #include <stdio.h>
 
@@ -37,6 +37,10 @@ static char rcsid[] = "$Id: pcl.c,v 1.8 1999/10/05 21:32:15 danny Exp $";
 #endif
 
 #include "print.h"
+
+#define	INITIAL_Y	10
+
+static int	y;	/* absolute position on page */
 
 void PCLJobHeader(char *str, int npages, FILE *fp)
 {
@@ -71,6 +75,8 @@ void PCLPageHeader(char *str, FILE *fp)
 
 		Global->need_formfeed = 0;
 	}
+
+	y = INITIAL_Y;
 }
 
 void PCLPageFooter(char *str, FILE *fp)
@@ -82,42 +88,24 @@ void PCLPageFooter(char *str, FILE *fp)
 	Global->need_formfeed = 1;
 }
 
-void PCLField(char *str, int wid, int justify, int rightborder, FILE *fp)
+void PCLField(char *str, int wid, int rightborder,
+			int xpoints, int xchars, FILE *fp)
 {
 	char	format[16];
 	int	l;
 
 #if 0
-	fprintf(stderr, "PCLField(%s,%d,%d,%d)\n",
-		str, wid, justify, rightborder);
+	fprintf(stderr, "PCLField(%s,%d,%d)\n",
+		str, wid, rightborder);
 #endif
 
-	switch (justify) {
-	case JST_RGT:
-		sprintf(format, "%%%ds", wid);
-		fprintf(fp, format, str);
-		break;
-	case JST_LFT:
-	case JST_DEF:
-		sprintf(format, "%%-%ds", wid);
-		fprintf(fp, format, str);
-		break;
-	case JST_CNT:
-		l = strlen(str);
-		if (l <= wid) {
-			sprintf(format, "%%%ds%%-%ds", l/2, wid);
-			fprintf(fp, format, "", str);
-		} else {
-			sprintf(format, "%%-%ds", wid);
-			fprintf(fp, format, str);
-		}
-		break;
-	}
+	/* Absolute cursor positioning */
+	fprintf(fp, "\033*p%dx%dY", xpoints, y);
+
 #if 0
-	if (rightborder) {
-		fprintf(fp, "\033*c1a30b0P");
-	}
+	sprintf(format, "%%-%ds", wid);
 #endif
+	fprintf(fp, "%s", str);
 }
 
 void PCLBorders(FILE *fp)
@@ -242,11 +230,8 @@ void PCLNewLine(int ht, FILE *fp)
 {
 	fputc('\n', fp);
 	fputc('\r', fp);
-}
 
-int PCLPrinterJustifies(void)
-{
-	return 1;
+	y += ht;
 }
 
 void PCLPaperSize(int wid, int ht, FILE *fp)
@@ -270,7 +255,6 @@ struct PrintDriver PCLPrintDriver = {
 	&PCLBorders,
 	&PCLFont,
 	&PCLNewLine,
-	&PCLPrinterJustifies,
 	&PCLPaperSize
 };
 
@@ -335,11 +319,10 @@ struct PrintDriver {
 	void	(*page_header)(char *str, FILE *);
 	void	(*page_footer)(char *str, FILE *);
 
-	void	(*field)(char *str, int wid, int justify, int rightborder, FILE *);
+	void	(*field)(char *str, int wid, int rightborder, FILE *);
 	void	(*borders)(/* ... , */ FILE *);
 	void	(*font)(char *family, char *slant, int size, FILE *);
 	void	(*newline)(int ht, FILE *);
-	int	(*printer_justifies)(void);
 	void	(*paper_size)(int wid, int ht, FILE *);
 };
 #endif

@@ -1,4 +1,17 @@
-$Id: ChangeLog,v 1.115 1999/10/24 12:19:40 danny Exp $
+$Id: ChangeLog,v 1.116 1999/11/04 12:51:11 danny Exp $
+
+Thu  4 Nov 13:49:26 1999, Danny
+	* src/afm.c - implement based on the AFM spec by Adobe.
+	  Look for document "5004.AFM_Spec.pdf" on their server.
+	* src/print.c - Clean up printing based on AFM.
+	  Drawback is that the interface of the Field() function has
+	  become more dirty.
+	* Optimize font reencoding and font setting in PostScript.
+	* Font Height now also obtained from AFM.
+	* src/io-motif.c - the first printer returned by CUPS now shows
+	  up in the option menu by default (in the print dialog's upper
+	  right corner).
+	* Created global variables for border widths, inter-line space.
 
 Sun 24 Oct 14:18:48 CEST 1999
 	* afm/Makefile, afm/Makefile.in were in here by accident, deleted now.

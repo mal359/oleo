@@ -1,6 +1,6 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.52 1999/10/24 12:19:45 danny Exp $
+ *  $Id: io-motif.c,v 1.53 1999/11/04 12:51:23 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -22,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.52 1999/10/24 12:19:45 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.53 1999/11/04 12:51:23 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -1816,7 +1816,8 @@ void CupsSelectPrinter(Widget w, XtPointer client, XtPointer call)
  */
 Widget MotifCreatePrintDialog(Widget s)
 {
-	Widget		form, menu, cb, w, frame, radio, form2, cb1, cupsmenu;
+	Widget		form, menu, cb, w, frame, radio, form2, cb1, cupsmenu,
+			cupsOption;
 	int		npages, i, ac, nprinters;
 	Arg		al[5];
 	XmString	xms;
@@ -1898,10 +1899,10 @@ Widget MotifCreatePrintDialog(Widget s)
 	XtSetArg(al[ac], XmNsubMenuId, cupsmenu); ac++;
 	xms = XmStringCreateSimple(_("Select Printer"));
 	XtSetArg(al[ac], XmNlabelString, xms); ac++;
-	w = XmCreateOptionMenu(radio, "printerOption", al, ac);
-	XtManageChild(w);
+	cupsOption = XmCreateOptionMenu(radio, "printerOption", al, ac);
+	XtManageChild(cupsOption);
 #ifndef	HAVE_LIBCUPS
-	XtSetSensitive(w, False);
+	XtSetSensitive(cupsOption, False);
 #endif
 	XmStringFree(xms);
 
@@ -1915,6 +1916,8 @@ Widget MotifCreatePrintDialog(Widget s)
 			xmPushButtonGadgetClass, cupsmenu, NULL);
 		XtAddCallback(b, XmNactivateCallback, CupsSelectPrinter,
 			(XtPointer)PrintWidgets.printerTF);
+		if (i == 0)
+			XtVaSetValues(cupsOption, XmNmenuHistory, b, NULL);
 	}
 	if (nprinters == 0) {
 		w = XtVaCreateManagedWidget("No printers available from CUPS",

@@ -265,6 +265,8 @@ struct OleoGlobal {
 /* print.c */
 	float				zoom;
 	struct PrintDriver		*CurrentPrintDriver;
+	int				interline, TopBorderHeight, BottomBorderHeight,
+					LeftBorderWidth, RightBorderWidth;
 
 /* window.c */
 	struct mouse_event		*current_mouse, *free_mouse;

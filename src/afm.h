@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Free Software Foundation, Inc.
  * 
- * $Id: afm.h,v 1.1 1999/10/23 13:39:30 danny Exp $
+ * $Id: afm.h,v 1.2 1999/11/04 12:51:35 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,10 @@
 #define _OLEO_AFM_H_
 
 void AfmSetFont(char *name, char *slant, int size);
+void AfmSetEncoding(const char *);
+
 int AfmStringWidth(char *s);
+int AfmFontWidth(void);
+int AfmFontHeight(void);
 
 #endif /* _OLEO_AFM_H_ */

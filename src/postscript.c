@@ -1,5 +1,5 @@
 /*
- *  $Id: postscript.c,v 1.10 1999/10/15 23:52:35 danny Exp $
+ *  $Id: postscript.c,v 1.11 1999/11/04 12:51:29 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -28,7 +28,7 @@
  * There shouldn't be much spreadsheet functionality here...
  */
 
-static char rcsid[] = "$Id: postscript.c,v 1.10 1999/10/15 23:52:35 danny Exp $";
+static char rcsid[] = "$Id: postscript.c,v 1.11 1999/11/04 12:51:29 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -66,6 +66,24 @@ put_ps_string (char *str, FILE *fp)
       ++str;
     }
   fputc (')', fp);
+}
+
+void ReencodeFont(char *fn, FILE *fp)
+{
+	static char	**KnownFonts = NULL;
+	static int	nfonts = 0;
+	int		i;
+
+	for (i=0; i<nfonts; i++)
+		if (strcmp(fn, KnownFonts[i]) == 0)
+			return;
+
+	nfonts++;
+	KnownFonts = realloc(KnownFonts, sizeof(char *) * nfonts);
+
+	KnownFonts[nfonts-1] = strdup(fn);
+
+	fprintf(fp, "/%sISO /%s reencodeISO\n", fn, fn);
 }
 
 void PostScriptJobHeader(char *title, int npages, FILE *fp)
@@ -114,8 +132,11 @@ void PostScriptJobHeader(char *title, int npages, FILE *fp)
 			continue;
 		if (fn->ps_name == 0 || strlen(fn->ps_name) == 0)
 			continue;
-		fprintf(fp, "/%sISO /%s reencodeISO\n", fn->ps_name, fn->ps_name);
+		ReencodeFont(fn->ps_name, fp);
 	}
+
+	/* Don't forget Courier */
+	ReencodeFont("Courier", fp);
 
 	/*
 	 *
@@ -163,37 +184,26 @@ void PostScriptPageFooter(char *str, FILE *fp)
 	fprintf(fp, "showpage\n");
 }
 
-/*
- * Justify can have values JST_DEF, JST_LFT, JST_RGT, JST_CNT
- */
-void PostScriptField(char *str, int wid, int justify, int rightborder, FILE *fp)
+void PostScriptField(char *str, int wid, int rightborder,
+			int xpoints, int xchars, FILE *fp)
 {
-	float	w = wid * MULTIPLY_WIDTH;	/* FIX ME no way */
+	float	w;
 
 	if (strlen(str)) {
 		float	tw = strlen(str) * CurrentFontSize;
 
 #if 0
-		fprintf(stderr, "PostScriptField(%s,%d,%s)\n",
-			str, wid,
-			(justify == JST_CNT) ? "JST_CNT" :
-			(justify == JST_RGT) ? "JST_RGT" :
-			(justify == JST_DEF) ? "JST_DEF" : "JST_LFT");
+		fprintf(stderr, "PostScriptField(%s,%d)\n",
+			str, wid);
 #endif
 
-		if (justify == JST_CNT) {
-			fprintf(fp, "%3.1f %3.1f moveto ", x + (w - tw) / 2, y);
-		} else if (justify == JST_RGT) {
-			fprintf(fp, "%3.1f %3.1f moveto ", x + w - tw, y);
-		} else {
-			fprintf(fp, "%3.1f %3.1f moveto ", x, y);
-		}
+		fprintf(fp, "%3.1f %3.1f moveto ", INITIAL_X + xpoints, y);
 
 		put_ps_string(str, fp);
 		fprintf(fp, " show\n");
 	}
 
-	x += w;
+	x += wid;
 
 	if (rightborder) {
 	}
@@ -203,30 +213,41 @@ void PostScriptBorders(FILE *fp)
 {
 }
 
+static int changed(char *a, char *b)
+{
+	if (a == 0 && b == 0)
+		return 0;
+	if (a == 0 || b == 0)
+		return 1;
+	return strcmp(a, b);
+}
+
 void PostScriptFont(char *family, char *slant, int size, FILE *fp)
 {
-#if 0
-	fprintf(fp, "/FontName where { pop } { /FontName (Palatino-Italic) def } ifelse\n");
-	fprintf(fp, "/FirstSize where { pop } { /FirstSize 8 def } ifelse\n");
-	fprintf(fp, "/FontName where { pop } { /FontName (Courier) def } ifelse\n");
-	fprintf(fp, "/FirstSize where { pop } { /FirstSize 10 def } ifelse\n");
-#endif
+	static char	*of = NULL, *osl = NULL;
+	static int	osz = 0;
+
+	if ((! changed(family, of)) && (! changed(slant, osl)) && size == osz)
+		return;
+
 	fprintf(fp, "/%sISO findfont %d scalefont setfont\n", family, size);
-#if 0
-	fprintf(fp, "FontName findfont FirstSize scalefont setfont\n");
-#endif
+
 	CurrentFontSize = size;
+
+	if (of) free(of);
+	if (osl) free(osl);
+
+	osl = of = NULL;
+
+	if (family) of = strdup(family);
+	if (slant) osl = strdup(slant);
+	osz = size;
 }
 
 void PostScriptNewLine(int ht, FILE *fp)
 {
 	x = INITIAL_X;
 	y -= ht;
-}
-
-int PostScriptPrinterJustifies(void)
-{
-	return 1;
 }
 
 void PostScriptPaperSize(int wid, int ht, FILE *fp)
@@ -243,6 +264,5 @@ struct PrintDriver PostScriptPrintDriver = {
 	&PostScriptBorders,
 	&PostScriptFont,
 	&PostScriptNewLine,
-	&PostScriptPrinterJustifies,
 	&PostScriptPaperSize
 };

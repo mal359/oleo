@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1993, 1999 Free Software Foundation, Inc.
  * 
- * $Id: print.h,v 1.9 1999/06/04 08:02:03 danny Exp $
+ * $Id: print.h,v 1.10 1999/11/04 12:51:31 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,8 @@ extern char * PrintGetPageName(int index);
 extern void PrintSetPageSize(float wid, float ht);
 extern void PrintSetPage(char *page);
 
+extern void PrintInit(void);
+
 struct page_size 
 {
     char *name;
@@ -49,11 +51,13 @@ struct PrintDriver {
 	/*
 	 * Print a field to the printer.
 	 *	The field width is separately passed (in points).
-	 *	Justify indicates where in the field the string should appear.
 	 *	Rightborder is a boolean which indicates whether to display
 	 *		a border at the right of this field.
+	 *	Xpoints, Xchars are the position on the line in points or characters
+	 *		that the real string should start at.
 	 */
-	void	(*field)(char *str, int wid, int justify, int rightborder, FILE *);
+	void	(*field)(char *str, int wid, int rightborder,
+			int xpoints, int xchars, FILE *);
 	void	(*borders)(/* ... , */ FILE *);
 	/*
 	 * Select a font by three parameters.
@@ -65,11 +69,6 @@ struct PrintDriver {
 	 */
 	void	(*newline)(int ht, FILE *);
 	/*
-	 * This query returns a boolean to indicate whether the printer or
-	 *	the printer driver is able to justify by itself.
-	 */
-	int	(*printer_justifies)(void);
-	/*
 	 * PaperSize(wid, ht, fp)
 	 *
 	 * Paper width and height should be passed in as integers reflecting the
@@ -80,4 +79,6 @@ struct PrintDriver {
 
 char *PrintGetType(int);
 void PrintSetType(char *);
+
+void PrintSetInterline(int);
 #endif /* PRINTH */

@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.44 1999/10/24 12:19:43 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.45 1999/11/04 12:51:19 danny Exp $
 #
 # CPPFLAGS = -Wall
 
@@ -103,4 +103,5 @@ io-term.o:	../config.h
 cmd.o:		../config.h
 io-x11.o:	../config.h
 lists.o:	../config.h
-afm.o:		../config.h
+afm.o:		../config.h $(srcdir)/afm.h
+print.o:	$(srcdir)/afm.h

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.21 1999/10/24 12:19:51 danny Exp $
+ * $Id: print.c,v 1.22 1999/11/04 12:51:30 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -195,74 +195,66 @@ PrintSetPage(char *page)
 void
 set_page_size_cmd (char * whole_str)
 {
-  char * str = whole_str;
-  float neww;
-  float newh;
-  while (*str && isspace(*str))
-    ++str;
-  if (!isdigit (*str) && *str != '.')
-    {
-      char * end = str;
-      struct page_size * ps;
-      while (*end && !isspace(*end))
-	++end;
-      ps = find_size (str, end - str);
-      if (ps)
-	{
-	  default_pswid = ps->wid;
-	  default_pshgt = ps->hgt;
-	  return;
+	char * str = whole_str;
+	float neww;
+	float newh;
+
+	while (*str && isspace(*str))
+		++str;
+	if (!isdigit (*str) && *str != '.') {
+		char * end = str;
+		struct page_size * ps;
+
+		while (*end && !isspace(*end))
+			++end;
+		ps = find_size (str, end - str);
+		if (ps) {
+			default_pswid = ps->wid;
+			default_pshgt = ps->hgt;
+			return;
+		}
+		io_error_msg("Bad page size (should look like `8.5 x 11' or `21.6 x 28c'): %s.",
+			whole_str);
+		return;
 	}
-      io_error_msg
-	("Bad page size (should look like `8.5 x 11' or `21.6 x 28c'): %s.",
-	 whole_str);
-      return;
-    }
-  neww = atof (str);
-  while (*str && isdigit(*str))
-    ++str;
-  if (*str == '.')
-    {
-      ++str;
-      while (isdigit (*str))
-	++str;
-    }
-  while (*str && isspace(*str))
-    ++str;
-  if (*str == 'x')
-    {
-      ++str;
-      while (*str && isspace(*str))
-	++str;
-    }
-  if (!isdigit (*str) && *str != '.')
-    {
-      io_error_msg
-	("Bad page size (should look like `8.5 x 11' or `21.6 x 28c'): %s.",
-	 whole_str);
-      return;
-    }
-  newh = atof (str);
-  while (*str && isdigit(*str))
-    ++str;
-  if (*str == '.')
-    {
-      ++str;
-      while (*str && isdigit (*str))
-	++str;
-    }
-  while (*str && isspace(*str))
-    ++str;
-  if (*str == 'c')
-    {
-      neww *= .3937;
-      newh *= .3937;
-    }
-  if (*str != 'p')
-    {
-      default_pswid = neww * 72;
-      default_pshgt = newh * 72;
-    }
+	neww = atof (str);
+	while (*str && isdigit(*str))
+		++str;
+	if (*str == '.') {
+		++str;
+		while (isdigit (*str))
+			++str;
+	}
+	while (*str && isspace(*str))
+		++str;
+	if (*str == 'x') {
+		++str;
+		while (*str && isspace(*str))
+			++str;
+	}
+	if (!isdigit (*str) && *str != '.') {
+		io_error_msg("Bad page size (should look like `8.5 x 11' or `21.6 x 28c'): %s.",
+			whole_str);
+		return;
+	}
+	newh = atof (str);
+	while (*str && isdigit(*str))
+		++str;
+	if (*str == '.') {
+		++str;
+		while (*str && isdigit (*str))
+			++str;
+	}
+	while (*str && isspace(*str))
+		++str;
+	if (*str == 'c') {
+		neww *= .3937;
+		newh *= .3937;
+	}
+	if (*str != 'p') {
+		default_pswid = neww * 72;
+		default_pshgt = newh * 72;
+	}
 }
 
 void 
@@ -275,13 +267,18 @@ print_region_cmd (struct rng *print, FILE *fp)
 	int spaces;
 	CELLREF c_lo, c_hi;
 	int	print_width, print_height, totht, totwid,
-		ht, npages, next, current_size;
+		ht, npages, next, current_size,
+		xpoints, xspaces;
 	char	pg[32];
 	char	*title = NULL;
 
 	/* Figure out page width and height */
 	print_width = default_pswid;
 	print_height = default_pshgt;
+
+	/* Set default font */
+	AfmSetFont(default_font_family, default_font_slant, default_font_size);
+	AfmSetEncoding("ISOLatin1");
 
 	/* Figure out #pages */
 		/* Depends on all fonts used, but also on zoom options chosen */
@@ -290,15 +287,19 @@ print_region_cmd (struct rng *print, FILE *fp)
 		/* FIX ME */
 	totht = totwid = 0;
 	for (rr = print->lr; rr <= print->hr; rr++) {
-		totht += get_height(rr) * default_font_size;	/* FIX ME */
+		totht += get_height(rr) * AfmFontHeight();
+		totht += Global->interline;
 	}
 	for (cc = print->lc; cc <= print->hc; cc++) {
-		totwid += get_width(cc) * default_font_size;
+		totwid += get_width(cc) * AfmFontWidth();;
 	}
-	totwid = totwid * 2 / 3;				/* FIX ME */
 
 	npages = ((print_height - 1 + totht) / print_height)
 		* ((print_width - 1 + totwid) / print_width);
+#if 0
+	fprintf(stderr, PACKAGE " : printing %d pages (totht %d prht %d, totwid %d prwid %d\n",
+		npages, totht, print_height, totwid, print_width);
+#endif
 
 	/* Build title */
 	if (FileGetCurrentFileName()) {
@@ -313,217 +314,170 @@ print_region_cmd (struct rng *print, FILE *fp)
 	/* Start Printing */
 	Global->CurrentPrintDriver->job_header(title, npages, fp);
 	Global->CurrentPrintDriver->paper_size(print_width, print_height, fp);
-
-	/* Set default font */
 	Global->CurrentPrintDriver->font(default_font_family, default_font_slant,
 		default_font_size, fp);
-	AfmSetFont(default_font_family, default_font_slant, default_font_size);
 
 	/* Adapted from txt_print_region */
 	npages = 1;
 	for (c_lo = print->lc, c_hi = 0; c_hi != print->hc; c_lo = c_hi + 1) {
-	    w = 0;
+		w = 0;
 
-	    /* Figure out which columns we can print */
-	    cc = c_lo;
-			/* FIX ME
-			 * The 2/3 below is a hunch at best
-			 */
-	    for (w = get_width (cc); w <= print_width && cc <= print->hc;
-			w += get_width(++cc) * default_font_size * 2 / 3)
-		;
-	    if (cc != c_lo)
-		--cc;
-	    c_hi = cc;		/* The last column to print on the current page */
+		/* Figure out which columns we can print */
+		cc = c_lo;
 
-	    totht = 0;		/* Start counting height taken up on a page */
-	    for (rr = print->lr; rr <= print->hr; rr++) {
-		/*
-		 * Print a line
-		 */
-		if (totht == 0) {
-			sprintf(pg, "page %d", npages);
-			Global->CurrentPrintDriver->page_header(pg, fp);
-			npages++;
-		}
+		for (w = get_width(cc) * AfmFontWidth();
+			w <= print_width && cc <= print->hc;
+			w += get_width(++cc) * AfmFontWidth())
+		    ;
+		if (cc != c_lo)
+			--cc;
+		c_hi = cc;		/* The last column to print on the current page */
 
-		ht = get_height(rr) * default_font_size;
-		spaces = 0;
-		for (cc = c_lo; cc <= c_hi; cc++) {
-		    next = 0;
-		    w = get_width (cc);
-		    if (!w)
-			continue;
-		    cp = find_cell (rr, cc);
-
-		    /* Font */
-		    if (cp && cp->cell_font && cp->cell_font->names) {
-			current_size = cp->cell_font->scale * default_font_size;
-
-			if (current_size == 0)
-				current_size = default_font_size;
-
-			Global->CurrentPrintDriver->font(
-				cp->cell_font->names->ps_name,
-				default_font_slant,			/* FIX ME */
-				current_size,
-				fp);
-			AfmSetFont(cp->cell_font->names->ps_name,
-				default_font_slant,
-				current_size);
-		    } else {
-			Global->CurrentPrintDriver->font(default_font_family,
-				default_font_slant,
-				default_font_size,
-				fp);
-			AfmSetFont(default_font_family, default_font_slant, default_font_size);
-			current_size = default_font_size;
-		    }
-
-		/*
-		 * Overlapping cells
-		 * - figure out whether the text fits the current cell
-		 * if not :
-		 * - run over the cells to our immediate right until a non-empty
-		 *	cell is encountered
-		 * - determine the width of the empty area in the process
-		 * - pass this width to the Field()'s second parameter instead
-		 *	of simply the cell width
-		 */
-		ptr = print_cell (cp);
-#if 1
-	/* Is this right ?? what about font size ?? FIX ME */
-		if (AfmStringWidth(ptr) > w)
-#else
-		if (strlen(ptr) > w)	/* Is this right ?? what about font size ?? FIX ME */
-#endif
-		{
-			int	i, wtot;
-
-			wtot = w;
-			for (i=cc+1; i<c_hi; i++) {
-				struct cell *cp = find_cell (rr, i);
-				if (!cp || GET_FORMAT(cp) == FMT_HID || GET_TYP(cp) == 0) {
-					wtot += get_width(i) * current_size;
-					next = i+1;
-				} else
-					break;
-			}
-			w = wtot;
-		}
-
-		/*
-		 * Now just print the damn field
-		 */
-		cp = find_cell (rr, cc);	/* precaution */
-		if (Global->CurrentPrintDriver->printer_justifies()) {
-		    if (!cp || !GET_TYP (cp)) {
-			Global->CurrentPrintDriver->field("", w, 0, 1, fp);
-		    } else {
-			char	*s;
-
+		totht = 0;		/* Start counting height taken up on a page */
+		for (rr = print->lr; rr <= print->hr; rr++) {
 			/*
-			 * Madness because we can't always write in the result of
-			 * print_cell. If it's e.g. #NON_NUMBER this is a string in
-			 * a constant array which GCC allocates in read-only memory.
-			 */
-			ptr = print_cell (cp);
-			s = strdup(ptr);
-			if (AfmStringWidth(s) > w)
-				if (w > 1) s[w-1] = 0;
-			Global->CurrentPrintDriver->field(ptr, w, GET_JST(cp), 1, fp);
-			free(s);
-		    }
-		} else {
-		    if (!cp || !GET_TYP (cp)) {
-			spaces += w;
-			if (next)
-				cc = next-1;
-			continue;
-		    }
-		    ptr = print_cell (cp);
-		    lenstr = strlen (ptr);
-		    if (lenstr == 0) {
-			spaces += w;
-			if (next)
-				cc = next-1;
-			continue;
-		    }
-		    if (spaces) {
-			fprintf (fp, "%*s", spaces, "");
+			* Print a line
+			*/
+			if (totht == 0) {
+				sprintf(pg, "page %d", npages);
+				Global->CurrentPrintDriver->page_header(pg, fp);
+				npages++;
+			}
+
+			xpoints = xspaces = 0;	/* FIX ME */
+
+			ht = get_height(rr) * AfmFontHeight();
 			spaces = 0;
-		    }
-		    j = GET_JST (cp);
-		    if (j == JST_DEF)
-			j = default_jst;
-		    if (lenstr <= w - 1) {
-			if (j == JST_LFT) {
-			    fprintf (fp, "%s", ptr);
-			    spaces = w - lenstr;
-			} else if (j == JST_RGT) {
-			    fprintf (fp, "%*s", w - 1, ptr);
-			    spaces = 1;
-			} else if (j == JST_CNT) {
-			    w = (w - 1) - lenstr;
-			    fprintf (fp, "%*s", w / 2 + lenstr, ptr);
-			    spaces = (w + 3) / 2;
-			}
-		    } else {
-			CELLREF ccc = cc;
-			CELL *ccp;
-			int tmp_wid;
-			unsigned int ww;
+			for (cc = c_lo; cc <= c_hi; cc++) {
+				next = 0;
+				w = get_width(cc);	/* in spaces */
+				if (!w)
+				continue;
+				cp = find_cell(rr, cc);
 
-			for (ww = w;; tmp_wid = get_width (ccc), w += tmp_wid, spaces -= tmp_wid) {
-			    if (lenstr < w - 1)
-				break;
-			    if (++ccc > c_hi)
-				break;
-			    ccp = find_cell (rr, ccc);
-			    if (!ccp || !GET_TYP (ccp) || GET_FORMAT (ccp) == FMT_HID)
-				continue;
-			    if (GET_FORMAT (ccp) == FMT_DEF && default_fmt == FMT_HID)
-				continue;
-				break;
-			}
-			if (lenstr > w - 1) {
-				if (GET_TYP (cp) == TYP_FLT) {
-				    ptr = adjust_prc (ptr, cp, w - 1, ww - 1, j);
-				    lenstr = strlen (ptr);
-				} else if (GET_TYP (cp) == TYP_INT) {
-				    ptr = numb_oflo;
-				    lenstr = 80;
+				/* Font */
+				if (cp && cp->cell_font && cp->cell_font->names) {
+					current_size = cp->cell_font->scale * default_font_size;
+
+					if (current_size == 0)
+						current_size = default_font_size;
+
+					Global->CurrentPrintDriver->font(
+						cp->cell_font->names->ps_name,
+						default_font_slant,			/* FIX ME */
+						current_size,
+						fp);
+					AfmSetFont(cp->cell_font->names->ps_name,
+						default_font_slant,
+						current_size);
+				} else {
+					Global->CurrentPrintDriver->font(default_font_family,
+						default_font_slant,
+						default_font_size,
+						fp);
+					AfmSetFont(default_font_family, default_font_slant,
+						default_font_size);
+					current_size = default_font_size;
 				}
-				fprintf (fp, "%.*s", w - 1, ptr);
-				if (lenstr < w)
-				    spaces += w - lenstr;
-				else
-				    spaces++;
-			} else {
-			    fprintf (fp, "%s", ptr);
-			    spaces += w - lenstr;
+
+				w = w * current_size;
+
+				/*
+				 * Overlapping cells
+				 * - figure out whether the text fits the current cell
+				 * if not :
+				 * - run over the cells to our immediate right until a non-empty
+				 *	cell is encountered
+				 * - determine the width of the empty area in the process
+				 * - pass this width to the Field()'s second parameter instead
+				 *	of simply the cell width
+				 */
+				ptr = print_cell (cp);
+				if (AfmStringWidth(ptr) > w)
+				{
+					int	i, wtot;
+
+					wtot = w;
+					for (i=cc+1; i<c_hi; i++) {
+						struct cell *cp = find_cell (rr, i);
+						if (!cp || GET_FORMAT(cp) == FMT_HID ||
+								GET_TYP(cp) == 0) {
+							wtot += get_width(i) * current_size;
+							next = i+1;
+						} else
+							break;
+					}
+					w = wtot;
+				}
+
+				/*
+				* Now just print the damn field
+				*/
+				cp = find_cell (rr, cc);	/* precaution */
+
+				/* Printer doesn't justify */
+				{
+					char	*s;
+					int	sw;
+
+					/*
+					* Madness because we can't always write in the result of
+					* print_cell. If it's e.g. #NON_NUMBER this is a string in
+					* a constant array which GCC allocates in read-only memory.
+					*/
+					ptr = print_cell (cp);
+					s = strdup(ptr);
+					sw = AfmStringWidth(s);
+					if (sw > w)
+						if (w > 1) s[w-1] = 0;
+					/* FIX ME */
+
+					if (! cp)
+						continue;
+
+					switch (GET_JST(cp)) {
+					case JST_RGT:
+						Global->CurrentPrintDriver->field(ptr, w, 1,
+							xpoints + w - sw, xspaces, fp);
+						break;
+					case JST_LFT:	/* ??? */
+						Global->CurrentPrintDriver->field(ptr, w, 1,
+							xpoints, xspaces, fp);
+						break;
+					case JST_CNT:	/* ??? */
+						Global->CurrentPrintDriver->field(ptr, w, 1,
+							xpoints + (w - sw) / 2, xspaces, fp);
+						break;
+					case JST_DEF:	/* ??? */
+					default:	/* ??? */
+						Global->CurrentPrintDriver->field(ptr, w, 1,
+							xpoints, 0, fp);
+						break;
+					}
+					free(s);
+
+					xpoints += w + 10;
+				}
+
+				if (next)
+				cc = next-1;
 			}
-		    }
-		}
+			Global->CurrentPrintDriver->newline(ht + Global->interline, fp);
+			totht += ht + Global->interline;
 
-		if (next)
-			cc = next-1;
-		}
-		Global->CurrentPrintDriver->newline(ht, fp);
-		totht += ht;
-		if (totht >= print_height) {
-			totht = 0;
+			if (totht + Global->BottomBorderHeight >= print_height) {
+				totht = 0;
 
+				sprintf(pg, "page %d", npages);
+				Global->CurrentPrintDriver->page_footer(pg, fp);
+			}
+		}	/* Rows on a page */
+
+		if (totht != 0) {
+			totht = 0; 
 			sprintf(pg, "page %d", npages);
 			Global->CurrentPrintDriver->page_footer(pg, fp);
 		}
-	    }	/* Rows on a page */
-
-	    if (totht != 0) {
-		totht = 0; 
-		sprintf(pg, "page %d", npages);
-		Global->CurrentPrintDriver->page_footer(pg, fp);
-	    }
 	}
 
 	if (totht != 0) {
@@ -531,4 +485,20 @@ print_region_cmd (struct rng *print, FILE *fp)
 	    Global->CurrentPrintDriver->page_footer(pg, fp);
 	}
 	Global->CurrentPrintDriver->job_trailer(npages-1, fp);
+}
+
+void
+PrintInit(void)
+{
+	Global->interline = 2;
+	Global->TopBorderHeight = 0;
+	Global->BottomBorderHeight = 0;
+	Global->LeftBorderWidth = 0;
+	Global->RightBorderWidth = 0;
+}
+
+void
+PrintSetInterline(int i)
+{
+	Global->interline = i;
 }

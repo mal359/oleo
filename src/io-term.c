@@ -1058,6 +1058,7 @@ main (int argc, char **argv)
   io_open_display ();
 
   init_graphing ();
+  PrintInit();
 
   if (setjmp (Global->error_exception))
   {
