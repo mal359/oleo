@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.41 1999/04/27 18:28:22 danny Exp $
+ *  $Id: io-motif.c,v 1.42 1999/06/04 08:02:00 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.41 1999/04/27 18:28:22 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.42 1999/06/04 08:02:00 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -3130,6 +3130,18 @@ void MoveCB(Widget w, XtPointer client, XtPointer call)
 	XtManageChild(copyDialog);
 }
 
+void MarkCellCB(Widget w, XtPointer client, XtPointer call)
+{
+}
+
+void MarkRegionCB(Widget w, XtPointer client, XtPointer call)
+{
+}
+
+void MarkFromDialogCB(Widget w, XtPointer client, XtPointer call)
+{
+}
+
 /****************************************************************
  *								*
  *		Formats Dialog					*
@@ -3146,7 +3158,7 @@ int formats_list[] = {
 	/* 6 */		FMT_PCT,
 	/* 7 */		FMT_DEF,
 	/* 8 */		FMT_DEF,
-	/* 9 */		FMT_DEF,
+	/* 9 */		FMT_FXT,
 	/* 10 */	FMT_DEF,
 	/* 11 */	FMT_DATE,
 	/* 12 */	FMT_DEF,
@@ -3168,6 +3180,9 @@ int formats_list[] = {
 void Yeah(Widget w, XtPointer client, XtPointer call)
 {
 	fmt = formats_list[(int) client];
+#if 0
+	fprintf(stderr, "Yeah %d->%d\n", (int)client, fmt);
+#endif
 }
 
 int	date_format;
@@ -3337,16 +3352,20 @@ void CreateFormatsDialog(Widget p)
 	}
 }
 
+/*
+ * Set formats both on cells/ranges and as default.
+ *	client_data = 1 means set the default.
+ */
 void FormatsDialogOk(Widget w, XtPointer client, XtPointer call)
 {
 	struct rng	rng;
-	Widget		ww = (Widget)client, om, b = NULL, tf, pr;
+	Widget		om, b = NULL, tf, pr;
 	char		*p, *s = NULL, *prec = NULL;
 	int		r, precision;
 
-	om = XtNameToWidget(ww, "*formatsFrame*formatsOption*formatsOption");
-	tf = XtNameToWidget(ww, "*formatsFrame*formatsTf");
-	pr = XtNameToWidget(ww, "*formatsFrame*precisionTf");
+	om = XtNameToWidget(FormatD, "*formatsFrame*formatsOption*formatsOption");
+	tf = XtNameToWidget(FormatD, "*formatsFrame*formatsTf");
+	pr = XtNameToWidget(FormatD, "*formatsFrame*precisionTf");
 
 	if (om)
 		XtVaGetValues(om, XmNmenuHistory, &b, NULL);
@@ -3361,55 +3380,41 @@ void FormatsDialogOk(Widget w, XtPointer client, XtPointer call)
 	if (fmt == FMT_DATE)
 		precision = date_format;
 
-	if (p) {
+	if (client) {	/* Set default */
+			default_fmt = fmt;
+			default_prc = precision;
+
+			MessageAppend(False, "Set Default Format %d, precision %d\n",
+				default_fmt, default_prc);
+
+			recalculate(1);
+			MotifUpdateDisplay();
+	} else {
+	    if (p) {
 		if ((r = parse_cell_or_range(&p, &rng)) == 0)
 			ConversionError(s, _("range"));
 		else if (r & RANGE) {
 			MessageAppend(False, "FormatRegion %s\n",
 				range_name(&rng));
 
-#if 0
-		/* FIX ME
-			this is an attempt to set the precision on
-			a cell, it seems to have nasty side effects
-		*/
-			if (prec) {
-				int f;
-				f = 0xF0 & fmt;
-				f |= precision;
-				format_region(&rng, f, -1);
-			} else
-				format_region(&rng, fmt, -1);
-#else
 			format_region(&rng, fmt, -1);
-#endif
 			precision_region(&rng, precision);
+
 			recalculate(1);
 			MotifUpdateDisplay();
 		} else {
 			rng.hr = rng.lr;
 			rng.hc = rng.lc;
 
-#if 0
-		/* FIX ME
-			this is an attempt to set the precision on
-			a cell, it seems to have nasty side effects
-		*/
-			if (prec) {
-				int f;
-				f = 0xF0 & fmt;
-				f |= precision;
-				format_region(&rng, f, -1);
-			} else
-				format_region(&rng, fmt, -1);
-#else
 			format_region(&rng, fmt, -1);
-#endif
 			precision_region(&rng, precision);
+
 			recalculate(1);
 			MotifUpdateDisplay();
 		}
+	    }
 	}
+
 
 #ifdef	FREE_TF_STRING
 	XtFree(s);
@@ -3421,9 +3426,10 @@ void FormatsDialogReset(Widget d)
 {
 }
 
-void FormatsDialog(Widget w, XtPointer Client, XtPointer call)
+void FormatsDialog(Widget w, XtPointer client, XtPointer call)
 {
-	Widget	ok, cancel, help;
+	Widget	ok, cancel, help, tf;
+	int	c = (int)client;
 
 	if (! FormatD) {
 		FormatD = XmCreateTemplateDialog(mw, "formatsDialog",
@@ -3441,10 +3447,13 @@ void FormatsDialog(Widget w, XtPointer Client, XtPointer call)
 			NULL);
 
 		XtAddCallback(ok, XmNactivateCallback, FormatsDialogOk,
-			(XtPointer)FormatD);
+			(XtPointer)client);	/* Whether or not it's a default setting */
 		XtAddCallback(help, XmNactivateCallback, helpUsingCB,
 			(XtPointer)"#HelpFormats");
 	}
+
+	tf = XtNameToWidget(FormatD, "*formatsFrame*formatsTf");
+	if (tf) XtSetSensitive(tf, 1 - c);
 
 	FormatsDialogReset(FormatD);
 	XtManageChild(FormatD);
@@ -3779,10 +3788,20 @@ GscBuildMainWindow(Widget parent)
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, none, NULL);
 
+	w = XtVaCreateManagedWidget("markcell", xmPushButtonGadgetClass,
+		editmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, MarkCellCB, NULL);
+
+	w = XtVaCreateManagedWidget("markregion", xmPushButtonGadgetClass,
+		editmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, MarkRegionCB, NULL);
+
 	w = XtVaCreateManagedWidget("setmark", xmPushButtonGadgetClass,
 		editmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, MarkFromDialogCB, NULL);
 
 	w = XtVaCreateManagedWidget("gotocell", xmPushButtonGadgetClass,
 		editmenu,
@@ -3931,6 +3950,11 @@ GscBuildMainWindow(Widget parent)
 		optionsmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, FormatsDialog, NULL);
+
+	w = XtVaCreateManagedWidget("defaultformat", xmPushButtonGadgetClass,
+		optionsmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, FormatsDialog, (XtPointer) 1);
 
 	w = XtVaCreateManagedWidget("printoptions", xmPushButtonGadgetClass,
 		optionsmenu,

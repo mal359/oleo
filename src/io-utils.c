@@ -274,24 +274,22 @@ print_cell (CELL * cp)
 
   if (GET_TYP (cp) == TYP_STR)
     return cp->cell_str;
-  if (GET_TYP (cp) == TYP_BOL)
-    {
+
+  if (GET_TYP (cp) == TYP_BOL) {
 #ifdef TEST
       if (cp->cell_bol < 0 || cp->cell_bol > 1)
 	panic ("Bool %d out of range", cp->cell_bol);
 #endif
       return bname[cp->cell_bol];
     }
-  if (GET_TYP (cp) == TYP_ERR)
-    {
+  if (GET_TYP (cp) == TYP_ERR) {
 #ifdef TEST
       if (cp->cell_err > ERR_MAX || cp->cell_err < 0)
 	panic ("Error %d out of range", cp->cell_err);
 #endif
       return ename[cp->cell_err];
     }
-  if (GET_TYP (cp) == TYP_FLT)
-    {
+  if (GET_TYP (cp) == TYP_FLT) {
       switch (j)
 	{
 	case FMT_GPH:
@@ -366,8 +364,7 @@ print_cell (CELL * cp)
 	}
     }
 
-  if (GET_TYP (cp) == TYP_INT)
-    {
+  if (GET_TYP (cp) == TYP_INT) {
       p = GET_PRECISION (cp);
       switch (j)
 	{
@@ -1337,8 +1334,10 @@ write_file_generic_2(FILE *fp, struct rng *rng, char *format)
 		sylk_write_file(fp, rng);
 	} else if (!stricmp ("sc", format)) {
 		sc_write_file(fp, rng);
+#ifdef	HAVE_PANIC_SAVE
 	} else if (!stricmp ("panic", format)) {
 		panic_write_file(fp, rng);
+#endif
 	} else if (!stricmp ("list", format)) {
 		list_write_file(fp, rng);
 	} else {
@@ -1381,8 +1380,10 @@ read_file_generic_2(FILE *fp, int ismerge, char *format, char *name)
 		sylk_read_file(fp, ismerge);
 	} else if (stricmp ("sc", format) == 0) {
 		sc_read_file(fp, ismerge);
+#ifdef	HAVE_PANIC_SAVE
 	} else if (stricmp ("panic", format) == 0) {
 		panic_read_file(fp, ismerge);
+#endif
 	} else if (stricmp ("list", format) == 0) {
 		list_read_file(fp, ismerge);
 	} else if (stricmp("csv", format) == 0) {
@@ -1411,7 +1412,9 @@ static struct file_formats_s {
 	{ "list",	"list" },
 	{ "csv",	"[cC][sS][vV]" },
 	{ "dbf",	"[dD][bB][fF]" },
+#ifdef	HAVE_PANIC_SAVE
 	{ "panic",	"panic" },
+#endif
 	{ "sylk-noa0",	"sylk" },
 	{ NULL,	NULL }
 };

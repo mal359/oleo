@@ -204,7 +204,7 @@ next_byte:
       tmp_str = backslash_a_string ((char *) expr + jumpto, 1);
       new = n_alloc (strlen (tmp_str) + 1,
 		     1000,
-		     tmp_str);
+		     "%s", tmp_str);
       break;
 
     case C_CELL:
@@ -504,7 +504,7 @@ next_byte:
     case C_ERR:
       tmp_str = (char *) expr + jumpto;
       expr++;
-      new = n_alloc (strlen (tmp_str) + 1, 1000, tmp_str);
+      new = n_alloc (strlen (tmp_str) + 1, 1000, "%s", tmp_str);
       /* bcopy((VOIDSTAR)expr,(VOIDSTAR)&tmp_str,sizeof(char *));
 		expr+=sizeof(char *);
 		new=n_alloc(strlen(tmp_str)+1,1000,f->fn_str,tmp_str); */

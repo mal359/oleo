@@ -180,7 +180,6 @@
 #undef	HAVE_LIBPLOT_2_2
 
 #if ENABLE_NLS
-# include <libintl.h>
 # define _(Text) gettext (Text)
 #else
 # undef bindtextdomain

@@ -1538,6 +1538,8 @@ set_region_alignment (struct rng * rng, int align)
  *
  * Sigh.
  * FIX ME
+ *
+ * Another place turned up that needs this : set_def_format().
  */
 void
 set_region_format (struct rng * rng, int fmt)
@@ -1647,7 +1649,12 @@ set_def_alignment (int align)
 void
 set_def_format (int fmt)
 {
-  default_fmt = fmt;
+  int format = (fmt & FMT_MASK) >> FMT_SHIFT;
+  int precision = fmt & PREC_MASK;
+
+  default_fmt = format;
+  default_prc = precision;
+
   io_repaint ();
 }
 

@@ -1,4 +1,16 @@
-$Id: ChangeLog,v 1.91 1999/05/12 19:48:19 danny Exp $
+$Id: ChangeLog,v 1.92 1999/06/04 08:01:36 danny Exp $
+
+	* Release 1.99.4
+	* Document the printer driver API in src/print.h.
+	* Fix bug in formats handling. Setting a default
+	  format now works properly.
+	* Remove support for panic file format.
+	* Update TODO - some stuff actually got done.
+	  Also add a couple of remarks by Richard Curnow.
+	* Bugfixes by Hayashida Kuniaki for i18n : use -lxpg4
+	  when available, remove #include <libintl.h> from
+	  acconfig.h, add "%s" argument to calls of n_alloc().
+	* Implement Motif support for setting default format.
 
 Wed 12 May 21:31:01 CEST 1999, Danny Backx
 	* Release 1.99.3

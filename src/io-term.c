@@ -69,7 +69,10 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "list.h"
 #include "sc.h"
 #include "sylk.h"
+
+#ifdef	HAVE_PANIC_SAVE
 #include "panic.h"
+#endif
 
 /* This variable is non-zero if the spreadsheet has been changed in any way */ 
 int modified = 0;
@@ -252,6 +255,7 @@ do_set_option (char *ptr)
 	  set_file_opts = sc_set_options;
 	  show_file_opts = sc_show_options;
 	}
+#ifdef	HAVE_PANIC_SAVE
       else if (!stricmp ("panic", ptr))
 	{
 	  read_file = panic_read_file;
@@ -259,6 +263,7 @@ do_set_option (char *ptr)
 	  set_file_opts = panic_set_options;
 	  show_file_opts = panic_show_options;
 	}
+#endif
       else if (!stricmp ("list", ptr))
 	{
 	  read_file = list_read_file;

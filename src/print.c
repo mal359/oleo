@@ -1,9 +1,7 @@
-#undef	OLD_PRINT
-
 /*
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.9 1999/05/12 19:48:24 danny Exp $
+ * $Id: print.c,v 1.10 1999/06/04 08:02:03 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,9 +166,6 @@ PrintSetPage(char *page)
 void
 set_page_size_cmd (char * whole_str)
 {
-#ifdef	OLD_PRINT
-	psprint_set_page_size_cmd(whole_str);
-#else
   char * str = whole_str;
   float neww;
   float newh;
@@ -239,7 +234,6 @@ set_page_size_cmd (char * whole_str)
       default_pswid = neww * 72;
       default_pshgt = newh * 72;
     }
-#endif
 }
 
 void 
@@ -254,10 +248,6 @@ print_region_cmd (struct rng *print, FILE *fp)
 	int	print_width, print_height, totht, totwid,
 		ht, npages;
 	char	pg[32];
-
-#ifdef OLD_PRINT
-	psprint_region (fp, rng, default_pswid, default_pshgt, 0);
-#else
 
 	/* Figure out page width and height */
 	print_width = default_pswid;
@@ -413,5 +403,4 @@ print_region_cmd (struct rng *print, FILE *fp)
 	    CurrentPrintDriver->page_footer(pg, fp);
 	}
 	CurrentPrintDriver->job_trailer(npages-1, fp);
-#endif
 }

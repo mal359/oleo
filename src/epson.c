@@ -1,5 +1,5 @@
 /*
- *  $Id: epson.c,v 1.5 1999/05/12 19:48:26 danny Exp $
+ *  $Id: epson.c,v 1.6 1999/06/04 08:02:05 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: epson.c,v 1.5 1999/05/12 19:48:26 danny Exp $";
+static char rcsid[] = "$Id: epson.c,v 1.6 1999/06/04 08:02:05 danny Exp $";
 
 #include <stdio.h>
 
@@ -184,3 +184,46 @@ struct PrintDriver EpsonStylusColorPrintDriver = {
 	&EpsonPrinterJustifies,
 	&EpsonPaperSize
 };
+
+#ifdef	TEST
+#include "oleo_icon.xpm"
+
+main(int argc, char *argv[])
+{
+	struct PrintDriver	*pd = &EpsonStylusColorPrintDriver;
+	FILE			*fp = fopen("test.out", "w");
+
+	int			i;
+
+	fprintf(stderr, "Testing print driver for '%s'\n", pd->name);
+	pd->job_header("This is a title", 1, fp);
+	pd->font("times", "italic", 8, fp);
+	pd->page_header("Page 1", fp);
+	pd->field("Field 1", 10, 0, 1, fp);
+	pd->font("times", "bold", 8, fp);
+	pd->field("Field 2", 10, 0, 1, fp);
+	pd->font("times", "bold-italic", 8, fp);
+	pd->field("Field 3", 10, 0, 1, fp);
+
+	pd->newline(8, fp);
+	pd->font("cg times", NULL, 8, fp);
+	pd->field("Field 4 - this is in CG Times", 40, 0, 1, fp);
+
+	/* Start graphics */
+
+	/* Send XPM */
+	for (i=7; oleo_icon[i]; i++) {
+		
+	}
+
+	/* End graphics */
+
+	/* Get it over with */
+	pd->page_footer("End page 1", fp);
+	pd->job_trailer(1, fp);
+
+	fclose(fp);
+
+	exit(0);
+}
+#endif

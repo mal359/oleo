@@ -14,18 +14,18 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: ENCODING\n"
 
-#: src/io-term.c:691
+#: src/io-term.c:696
 msgid ""
 "This is %s %s\n"
 "\n"
 msgstr ""
 
 # , c-format
-#: src/io-term.c:693
+#: src/io-term.c:698
 msgid "Usage: %s [OPTION]... [FILE]...\n"
 msgstr "Gebruik: %s [OPTION]... [FILE]...\n"
 
-#: src/io-term.c:696
+#: src/io-term.c:701
 msgid ""
 "\n"
 "  -h, --help               display this help and exit\n"
@@ -43,49 +43,49 @@ msgid ""
 msgstr ""
 
 # , c-format
-#: src/io-term.c:767
+#: src/io-term.c:772
 msgid "%s %s\n"
 msgstr ""
 
-#: src/io-term.c:768
+#: src/io-term.c:773
 msgid "Copyright (C) 1997-1998 Free Software Foundation, Inc.\n"
 msgstr ""
 
 # , c-format
-#: src/io-term.c:769
+#: src/io-term.c:774
 msgid "%s comes with ABSOLUTELY NO WARRANTY.\n"
 msgstr ""
 
 # , c-format
-#: src/io-term.c:770
+#: src/io-term.c:775
 msgid "You may redistribute copies of %s\n"
 msgstr ""
 
-#: src/io-term.c:771
+#: src/io-term.c:776
 msgid "under the terms of the GNU General Public License.\n"
 msgstr ""
 
-#: src/io-term.c:772
+#: src/io-term.c:777
 msgid "For more information about these matters, "
 msgstr ""
 
-#: src/io-term.c:773
+#: src/io-term.c:778
 msgid "see the files named COPYING.\n"
 msgstr ""
 
-#: src/io-term.c:914
+#: src/io-term.c:919
 msgid "Error in the builtin init scripts (a bug!).\n"
 msgstr "Fout in de ingebouwde initialisaties (programmafout in Oleo !).\n"
 
-#: src/io-term.c:1001 src/io-term.c:1003
+#: src/io-term.c:1006 src/io-term.c:1008
 msgid "   error occured in init file %s near line %d."
 msgstr "   fout trad op in initialisatiebestand %s nabij lijn %d."
 
-#: src/io-term.c:1022 src/io-term.c:1023
+#: src/io-term.c:1027 src/io-term.c:1028
 msgid ", error occured reading '%s'\n"
 msgstr ", fout trad op bij het inlezen van '%s'\n"
 
-#: src/io-term.c:1030 src/io-term.c:1031
+#: src/io-term.c:1035 src/io-term.c:1036
 msgid "Can't open %s: %s\n"
 msgstr "Ik kan '%s' niet openen\n"
 
@@ -104,7 +104,7 @@ msgstr ""
 "Interne fout\n"
 "Ik kan XmNuserData niet vinden.\n"
 
-#: src/io-motif.c:890 src/io-motif.c:913 src/io-motif.c:930 src/io-motif.c:946 src/io-motif.c:963 src/io-motif.c:1614 src/io-motif.c:3001 src/io-motif.c:3010 src/io-motif.c:3046 src/io-motif.c:3055 src/io-motif.c:3088 src/io-motif.c:3097 src/io-motif.c:3366
+#: src/io-motif.c:890 src/io-motif.c:913 src/io-motif.c:930 src/io-motif.c:946 src/io-motif.c:963 src/io-motif.c:1614 src/io-motif.c:3001 src/io-motif.c:3010 src/io-motif.c:3046 src/io-motif.c:3055 src/io-motif.c:3088 src/io-motif.c:3097 src/io-motif.c:3395
 msgid "range"
 msgstr "bereik"
 
@@ -227,88 +227,89 @@ msgstr ""
 msgid "Move"
 msgstr ""
 
-#: src/io-motif.c:3218
+#: src/io-motif.c:3233
 msgid "Formats :"
 msgstr ""
 
-#: src/io-motif.c:3220
+#: src/io-motif.c:3235
 msgid "Default"
 msgstr ""
 
 #. FMT_DEF
-#: src/io-motif.c:3221
+#: src/io-motif.c:3236
 msgid "Hidden"
 msgstr ""
 
-#. FMT_HID
-#: src/io-motif.c:3222
+#: src/io-motif.c:3237
 msgid "Graph"
 msgstr ""
 
-#: src/io-motif.c:3223
+#. FMT_GPH
+#: src/io-motif.c:3238
 msgid "General"
 msgstr ""
 
 #. FMT_GEN
-#: src/io-motif.c:3224
+#: src/io-motif.c:3239
 msgid "Dollar"
 msgstr ""
 
-#. FMT_DOL
-#: src/io-motif.c:3225
+#: src/io-motif.c:3240
 msgid "Comma"
 msgstr ""
 
-#: src/io-motif.c:3226
+#. FMT_CMA
+#: src/io-motif.c:3241
 msgid "Percent"
 msgstr ""
 
 #. FMT_PCT
-#: src/io-motif.c:3227
+#: src/io-motif.c:3242
 msgid "Integer"
 msgstr ""
 
-#: src/io-motif.c:3228
+#: src/io-motif.c:3243
 msgid "Decimal"
 msgstr ""
 
-#: src/io-motif.c:3229
+#: src/io-motif.c:3244
 msgid "Fixed"
 msgstr ""
 
-#: src/io-motif.c:3230
+#: src/io-motif.c:3245
 msgid "Exponent"
 msgstr ""
 
-#: src/io-motif.c:3231
+#: src/io-motif.c:3246
 msgid "Date"
 msgstr "Datum"
 
-#: src/io-motif.c:3232
+#. FMT_DATE
+#: src/io-motif.c:3247
 msgid "User-1"
 msgstr ""
 
-#: src/io-motif.c:3233
+#: src/io-motif.c:3248
 msgid "User-2"
 msgstr ""
 
-#: src/io-motif.c:3234
+#: src/io-motif.c:3249
 msgid "User-3"
 msgstr ""
 
-#: src/io-motif.c:3235
+#: src/io-motif.c:3250
 msgid "User-4"
 msgstr ""
 
-#: src/io-motif.c:3309
+#: src/io-motif.c:3324
 msgid "Date Format"
 msgstr "Datumformaat"
 
-#: src/io-motif.c:4520
+#: src/io-motif.c:4544
 msgid "XmProcessTraversal failed\n"
 msgstr "Interne fout: XmProcessTraversal faalde\n"
 
-#: src/io-motif.c:4538
+#: src/io-motif.c:4562
 msgid ""
 "There are unsaved changes.\n"
 "Do you want to quit anyway ?"

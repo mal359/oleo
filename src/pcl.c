@@ -1,5 +1,5 @@
 /*
- *  $Id: pcl.c,v 1.5 1999/05/12 19:48:26 danny Exp $
+ *  $Id: pcl.c,v 1.6 1999/06/04 08:02:05 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,20 +21,44 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: pcl.c,v 1.5 1999/05/12 19:48:26 danny Exp $";
+static char rcsid[] = "$Id: pcl.c,v 1.6 1999/06/04 08:02:05 danny Exp $";
 
 #include <stdio.h>
 
+#ifndef	TEST
 #include "config.h"
 #include "global.h"
+#include "cell.h"
+#else
+#define JST_DEF		0
+#define JST_LFT		1
+#define JST_RGT		2
+#define JST_CNT		3
+#endif
 
 #include "print.h"
+
+static int	need_formfeed = 0;
 
 void PCLJobHeader(char *str, int npages, FILE *fp)
 {
 	/* Printer reset */
 	fputc('\033', fp);
 	fputc('E', fp);
+#if 0
+	/* Landscape */
+	fputc('\033', fp);
+	fputc('&', fp);
+	fputc('l', fp);
+	fputc('1', fp);
+	fputc('O', fp);
+#endif
+
+	/* Iso Latin 1 */
+	fputc('\033', fp);
+	fputc('(', fp);
+	fputc('0', fp);
+	fputc('N', fp);
 }
 
 void PCLJobTrailer(int npages, FILE *fp)
@@ -43,39 +67,113 @@ void PCLJobTrailer(int npages, FILE *fp)
 
 void PCLPageHeader(char *str, FILE *fp)
 {
+	if (need_formfeed) {
+		/* Form feed */
+		fputc('\f', fp);
+
+		need_formfeed = 0;
+	}
 }
 
 void PCLPageFooter(char *str, FILE *fp)
 {
-	/* Form feed */
-	fputc('\f', fp);
+	/*
+	 * Only set a flag here, to avoid FormFeed at the
+	 * end of the document. This would just print a blank page.
+	 */
+	need_formfeed = 1;
 }
 
 void PCLField(char *str, int wid, int justify, int rightborder, FILE *fp)
 {
 	char	format[16];
-	sprintf(format, "%%%ds", wid);
-	fprintf(fp, format, str);
+	int	l;
+
+#if 0
+	fprintf(stderr, "PCLField(%s,%d,%d,%d)\n",
+		str, wid, justify, rightborder);
+#endif
+
+	switch (justify) {
+	case JST_RGT:
+		sprintf(format, "%%%ds", wid);
+		fprintf(fp, format, str);
+		break;
+	case JST_LFT:
+	case JST_DEF:
+		sprintf(format, "%%-%ds", wid);
+		fprintf(fp, format, str);
+		break;
+	case JST_CNT:
+		l = strlen(str);
+		if (l <= wid) {
+			sprintf(format, "%%%ds%%-%ds", l/2, wid);
+			fprintf(fp, format, "", str);
+		} else {
+			sprintf(format, "%%-%ds", wid);
+			fprintf(fp, format, str);
+		}
+		break;
+	}
+#if 0
+	if (rightborder) {
+		fprintf(fp, "\033*c1a30b0P");
+	}
+#endif
 }
 
 void PCLBorders(FILE *fp)
 {
 }
 
+struct typefaces { char *typeface, *code; } TypeFaces[] = {
+	{ "lineprinter",	"\033(s0T" },
+	{ "courier",		"\033(s4099T" },
+	{ "albertus",		"\033(s4362T" },
+	{ "antique olive",	"\033(s4168T" },
+	{ "clarendon",		"\033(s4140T" },
+	{ "coronet",		"\033(s4116T" },
+	{ "garamond antiqua",	"\033(s4197T" },
+	{ "letter gothic",	"\033(s4102T" },
+	{ "marigold",		"\033(s4297T" },
+	{ "cg omega",		"\033(s4113T" },
+	{ "cg times",		"\033(s4101T" },
+	{ "univers",		"\033(s4148T" },
+	{ "arial",		"\033(s16602T" },
+	{ "times new roman",	"\033(s16901T" },
+	{ "symbol",		"\033(s16686T" },
+	{ "wingdings",		"\033(s31402T" },
+	{ NULL, NULL }
+};
+
 void PCLFont(char *family, char *slant, int size, FILE *fp)
 {
-	/* Iso Latin 1 */
-	fputc('\033', fp);
-	fputc('(', fp);
-	fputc('0', fp);
-	fputc('N', fp);
+	int	i, found;
 
 	/* Typeface */
+	found = 0;
+	for (i=0; TypeFaces[i].typeface; i++) {
+		if (strstr(family, TypeFaces[i].typeface)) {
+			fprintf(fp, "%s", TypeFaces[i].code);
+			found = 1;
+			break;
+		}
+	}
+
+	if (found == 0)
+		fprintf(fp, "%s", TypeFaces[0].code);
+
+	/* Pitch - FIX ME from prls */
 	fputc('\033', fp);
 	fputc('(', fp);
 	fputc('s', fp);
-	fputc('3', fp);	/* Courier */
-	fputc('T', fp);
+#if 0
+	fputc('2', fp);
+	fputc('0', fp);
+#else
+	fprintf(fp, "%d", size * 2);
+#endif
+	fputc('H', fp);
 
 	/* Primary size */
 	fputc('\033', fp);
@@ -83,10 +181,66 @@ void PCLFont(char *family, char *slant, int size, FILE *fp)
 	fputc('s', fp);
 	fprintf(fp, "%d", size);
 	fputc('V', fp);
+
+	/* Slant */
+	if (slant == NULL || stricmp(slant, "normal") == 0
+			|| stricmp(slant, "medium") == 0
+			|| strlen(slant) ==0) {
+		fputc('\033', fp);
+		fputc('(', fp);
+		fputc('s', fp);
+		fputc('0', fp);
+		fputc('S', fp);
+		fputc('\033', fp);
+		fputc('(', fp);
+		fputc('s', fp);
+		fputc('0', fp);
+		fputc('B', fp);
+	} else if (strstr(slant, "bold") != NULL) {	/* Bold */
+		if (strstr(slant, "italic") != NULL) {	/* Bold-Italic */
+			fputc('\033', fp);
+			fputc('(', fp);
+			fputc('s', fp);
+			fputc('1', fp);
+			fputc('S', fp);
+		} else {
+			fputc('\033', fp);
+			fputc('(', fp);
+			fputc('s', fp);
+			fputc('0', fp);
+			fputc('S', fp);
+		}
+			fputc('\033', fp);
+			fputc('(', fp);
+			fputc('s', fp);
+			fputc('3', fp);
+			fputc('B', fp);
+	} else {	/* Not bold */
+		if (strstr(slant, "italic") != NULL) {	/* Italic */
+			fputc('\033', fp);
+			fputc('(', fp);
+			fputc('s', fp);
+			fputc('1', fp);
+			fputc('S', fp);
+		} else {
+			fputc('\033', fp);
+			fputc('(', fp);
+			fputc('s', fp);
+			fputc('0', fp);
+			fputc('S', fp);
+		}
+			fputc('\033', fp);
+			fputc('(', fp);
+			fputc('s', fp);
+			fputc('0', fp);
+			fputc('B', fp);
+	}
 }
 
 void PCLNewLine(int ht, FILE *fp)
 {
+	fputc('\n', fp);
+	fputc('\r', fp);
 }
 
 int PCLPrinterJustifies(void)
@@ -118,3 +272,73 @@ struct PrintDriver PCLPrintDriver = {
 	&PCLPrinterJustifies,
 	&PCLPaperSize
 };
+
+#ifdef	TEST
+int main(int argc, char *argv[])
+{
+	struct PrintDriver *pd = &PCLPrintDriver;
+	FILE			*fp = fopen("test.out", "w");
+
+	fprintf(stderr, "Testing print driver for '%s'\n", pd->name);
+	pd->job_header("This is a title", 1, fp);
+	pd->font("times", "italic", 8, fp);
+	pd->page_header("Page 1", fp);
+	pd->field("Field 1", 10, 0, 1, fp);
+	pd->font("times", "bold", 8, fp);
+	pd->field("Field 2", 10, 0, 1, fp);
+	pd->font("times", "bold-italic", 8, fp);
+	pd->field("Field 3", 10, 0, 1, fp);
+
+	pd->newline(8, fp);
+	pd->font("cg times", NULL, 8, fp);
+	pd->field("Field 4 - this is in CG Times", 40, 0, 1, fp);
+
+	pd->newline(8, fp);
+	pd->font("marigold", NULL, 8, fp);
+	pd->field("Field 5 - this is in Marigold", 40, 0, 1, fp);
+
+	pd->newline(8, fp);
+	pd->font("clarendon", NULL, 8, fp);
+	pd->field("Field 6 - this is in Clarendon", 40, 0, 1, fp);
+
+	pd->newline(8, fp);
+	pd->font("letter gothic", NULL, 8, fp);
+	pd->field("Field 7 - this is in Letter Gothic", 60, 0, 1, fp);
+
+	pd->newline(8, fp);
+	pd->font("letter gothic", NULL, 8, fp);
+	pd->field("Field 8 - centered in Letter Gothic", 60, JST_CNT, 1, fp);
+
+	pd->newline(8, fp);
+	pd->font("letter gothic", NULL, 8, fp);
+	pd->field("Field 9 - right in Letter Gothic", 60, JST_RGT, 1, fp);
+
+	pd->newline(8, fp);
+	pd->font("letter gothic", NULL, 8, fp);
+	pd->field("Field 10 - left in Letter Gothic", 60, JST_LFT, 1, fp);
+
+	pd->page_footer("End page 1", fp);
+	pd->job_trailer(1, fp);
+
+	fclose(fp);
+
+	exit(0);
+}
+#endif	/* TEST */
+#if 0
+struct PrintDriver {
+	char	*name;
+	void	(*job_header) (char *title, int npages, FILE *fp);
+	void	(*job_trailer) (int npages, FILE *fp);
+
+	void	(*page_header)(char *str, FILE *);
+	void	(*page_footer)(char *str, FILE *);
+
+	void	(*field)(char *str, int wid, int justify, int rightborder, FILE *);
+	void	(*borders)(/* ... , */ FILE *);
+	void	(*font)(char *family, char *slant, int size, FILE *);
+	void	(*newline)(int ht, FILE *);
+	int	(*printer_justifies)(void);
+	void	(*paper_size)(int wid, int ht, FILE *);
+};
+#endif

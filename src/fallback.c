@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.14 1999/04/27 18:28:21 danny Exp $
+ *  $Id: fallback.c,v 1.15 1999/06/04 08:01:59 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -83,8 +83,9 @@ char *fallback[] = {
 	"*recalculate.labelString:	Recalculate",
 	"*setregion.labelString:	Set Region",
 	"*setregion.sensitive:		no",
+	"*markcell.labelString:		Mark Cell",
+	"*markregion.labelString:	Mark Region",
 	"*setmark.labelString:		Set Mark",
-	"*setmark.sensitive:		no",
 	"*gotocell.labelString:		Goto Cell",
 	"*gotocell.sensitive:		no",
 /* Style */
@@ -112,6 +113,7 @@ char *fallback[] = {
 	"*backup.labelString:			Backup old file when saving",
 	"*backupcopy.labelString:		Backup by copy, not rename",
 	"*formats.labelString:			Formats",
+	"*defaultformat.labelString:		Set Default Format/Precision",
 	"*printoptions.labelString:		Print Options",
 	"*defaultfileformat.labelString:	Default File Format",
 	"*setvariable.labelString:		Set Variable",

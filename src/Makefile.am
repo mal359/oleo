@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.33 1999/04/27 18:28:18 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.34 1999/06/04 08:01:57 danny Exp $
 #
 localedir = $(prefix)/share/locale
 
@@ -33,7 +33,7 @@ endif
 oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
  decompile.c sort.c regions.c utils.c lists.c\
  io-term.c io-utils.c io-x11.c window.c io-edit.c\
- panic.c line.c key.c format.c funcs.c \
+ line.c key.c format.c funcs.c \
  hash.c ir.c io-curses.c font.c display.c init.c \
  sylk.c oleofile.c sc.c list.c busi.c string.c cells.c \
  cmd.c basic.c args.c \
@@ -69,7 +69,7 @@ noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  io-abstract.h io-curses.h io-edit.h io-generic.h io-term.h \
  io-utils.h io-x11.h \
  ir.h key.h line.h lists.h node.h oleofile.h \
- panic.h parse.h \
+ parse.h \
  graph.h oleo_plot.h \
  proto.h ref.h regions.h \
  sc.h stub.h stubs.h sylk.h \
