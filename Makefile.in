@@ -51,74 +51,28 @@ PRE_UNINSTALL = true
 POST_UNINSTALL = true
 CC = @CC@
 LN_S = @LN_S@
+MAKEINFO = @MAKEINFO@
+PACKAGE = @PACKAGE@
+VERSION = @VERSION@
 YACC = @YACC@
 
-bin_PROGRAMS = oleo
-oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
- decompile.c sort.c regions.c utils.c obstack.c lists.c\
- io-term.c getopt.c getopt1.c io-utils.c io-x11.c window.c io-edit.c\
- hash.c panic.c line.c key.c format.c funcs.c \
- io-curses.c font.c display.c print.c init.c \
- sylk.c oleofile.c sc.c list.c busi.c string.c cells.c \
- random.c cmd.c basic.c args.c \
- stub.c input.c info.c help.c graph.c forminfo.c getdate.y \
- mktime.c posixtm.y date.c xmalloc.c
+SUBDIRS = src doc
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = 
-PROGRAMS =  $(bin_PROGRAMS)
-
-
-DEFS = @DEFS@ -I. -I$(srcdir) -I.
-CPPFLAGS = @CPPFLAGS@
-LDFLAGS = @LDFLAGS@
-LIBS = @LIBS@
-oleo_OBJECTS =  parse.o byte-compile.o eval.o ref.o decompile.o sort.o \
-regions.o utils.o obstack.o lists.o io-term.o getopt.o getopt1.o \
-io-utils.o io-x11.o window.o io-edit.o hash.o panic.o line.o key.o \
-format.o funcs.o io-curses.o font.o display.o print.o init.o sylk.o \
-oleofile.o sc.o list.o busi.o string.o cells.o random.o cmd.o basic.o \
-args.o stub.o input.o info.o help.o graph.o forminfo.o getdate.o \
-mktime.o posixtm.o date.o xmalloc.o
-oleo_LDADD = $(LDADD)
-oleo_LDFLAGS = 
-YLWRAP = $(srcdir)/ylwrap
-CFLAGS = @CFLAGS@
-COMPILE = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
-LINK = $(CC) $(CFLAGS) $(LDFLAGS) -o $@
 DIST_COMMON =  README AUTHORS COPYING ChangeLog INSTALL Makefile.am \
-Makefile.in NEWS TODO aclocal.m4 config.h.in configure configure.in \
-getdate.c install-sh missing mkinstalldirs parse.c posixtm.c stamp-h.in \
-ylwrap
+Makefile.in NEWS TODO acconfig.h aclocal.m4 config.h.in configure \
+configure.in install-sh missing mkinstalldirs stamp-h.in
 
-
-PACKAGE = @PACKAGE@
-VERSION = @VERSION@
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP = --best
-DEP_FILES =  .deps/args.P .deps/basic.P .deps/busi.P \
-.deps/byte-compile.P .deps/cells.P .deps/cmd.P .deps/date.P \
-.deps/decompile.P .deps/display.P .deps/eval.P .deps/font.P \
-.deps/format.P .deps/forminfo.P .deps/funcs.P .deps/getdate.P \
-.deps/getopt.P .deps/getopt1.P .deps/graph.P .deps/hash.P .deps/help.P \
-.deps/info.P .deps/init.P .deps/input.P .deps/io-curses.P \
-.deps/io-edit.P .deps/io-term.P .deps/io-utils.P .deps/io-x11.P \
-.deps/key.P .deps/line.P .deps/list.P .deps/lists.P .deps/mktime.P \
-.deps/obstack.P .deps/oleofile.P .deps/panic.P .deps/parse.P \
-.deps/posixtm.P .deps/print.P .deps/random.P .deps/ref.P \
-.deps/regions.P .deps/sc.P .deps/sort.P .deps/string.P .deps/stub.P \
-.deps/sylk.P .deps/utils.P .deps/window.P .deps/xmalloc.P
-SOURCES = $(oleo_SOURCES)
-OBJECTS = $(oleo_OBJECTS)
-
 default: all
 
 .SUFFIXES:
-.SUFFIXES: .c .h .o .y
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
 	cd $(top_srcdir) && $(AUTOMAKE) --gnu Makefile
 
@@ -141,7 +95,7 @@ stamp-h: $(srcdir)/config.h.in $(top_builddir)/config.status
 	     $(SHELL) ./config.status
 	@echo timestamp > stamp-h
 $(srcdir)/config.h.in: $(srcdir)/stamp-h.in
-$(srcdir)/stamp-h.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+$(srcdir)/stamp-h.in: $(top_srcdir)/configure.in $(ACLOCAL_M4) acconfig.h
 	cd $(top_srcdir) && $(AUTOHEADER)
 	@echo timestamp > $(srcdir)/stamp-h.in
 
@@ -154,60 +108,52 @@ distclean-hdr:
 
 maintainer-clean-hdr:
 
-mostlyclean-binPROGRAMS:
+# This directory's subdirectories are mostly independent; you can cd
+# into them and run `make' without going through this Makefile.
+# To change the values of `make' variables: instead of editing Makefiles,
+# (1) if the variable is set in `config.status', edit `config.status'
+#     (which will cause the Makefiles to be regenerated when you run `make');
+# (2) otherwise, pass the desired values on the `make' command line.
 
-clean-binPROGRAMS:
-	test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+@SET_MAKE@
 
-distclean-binPROGRAMS:
+all-recursive install-data-recursive install-exec-recursive \
+installdirs-recursive install-recursive uninstall-recursive  \
+check-recursive installcheck-recursive info-recursive dvi-recursive:
+	@set fnord $(MAKEFLAGS); amf=$$2; \
+	for subdir in $(SUBDIRS); do \
+	  target=`echo $@ | sed s/-recursive//`; \
+	  echo "Making $$target in $$subdir"; \
+	  (cd $$subdir && $(MAKE) $$target) \
+	   || case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
+	done && test -z "$$fail"
 
-maintainer-clean-binPROGRAMS:
-
-install-binPROGRAMS: $(bin_PROGRAMS)
-	@$(NORMAL_INSTALL)
-	$(mkinstalldirs) $(bindir)
-	@list='$(bin_PROGRAMS)'; for p in $$list; do \
-	  if test -f $$p; then \
-	    echo "  $(INSTALL_PROGRAM) $$p $(bindir)/`echo $$p|sed '$(transform)'`"; \
-	     $(INSTALL_PROGRAM) $$p $(bindir)/`echo $$p|sed '$(transform)'`; \
-	  else :; fi; \
+mostlyclean-recursive clean-recursive distclean-recursive \
+maintainer-clean-recursive:
+	@set fnord $(MAKEFLAGS); amf=$$2; \
+	rev=''; for subdir in $(SUBDIRS); do rev="$$rev $$subdir"; done; \
+	for subdir in $$rev; do \
+	  target=`echo $@ | sed s/-recursive//`; \
+	  echo "Making $$target in $$subdir"; \
+	  (cd $$subdir && $(MAKE) $$target) \
+	   || case "$$amf" in *=*) exit 1;; *k*) fail=yes;; *) exit 1;; esac; \
+	done && test -z "$$fail"
+tags-recursive:
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  (cd $$subdir && $(MAKE) tags); \
 	done
-
-uninstall-binPROGRAMS:
-	$(NORMAL_UNINSTALL)
-	list='$(bin_PROGRAMS)'; for p in $$list; do \
-	  rm -f $(bindir)/`echo $$p|sed '$(transform)'`; \
-	done
-
-.c.o:
-	$(COMPILE) -c $<
-
-mostlyclean-compile:
-	rm -f *.o core
-
-clean-compile:
-
-distclean-compile:
-	rm -f *.tab.c
-
-maintainer-clean-compile:
-
-oleo: $(oleo_OBJECTS) $(oleo_DEPENDENCIES)
-	@rm -f oleo
-	$(LINK) $(oleo_LDFLAGS) $(oleo_OBJECTS) $(oleo_LDADD) $(LIBS)
-.y.c:
-	$(SHELL) $(YLWRAP) "$(YACC)" $< y.tab.c $*.c y.tab.h $*.h -- $(YFLAGS)
-.y.h:
-	$(SHELL) $(YLWRAP) "$(YACC)" $< y.tab.c $*.c y.tab.h $*.h -- $(YFLAGS)
 
 tags: TAGS
 
 ID: $(HEADERS) $(SOURCES)
 	here=`pwd` && cd $(srcdir) && mkid -f$$here/ID $(SOURCES) $(HEADERS)
 
-TAGS:  $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES)
+TAGS: tags-recursive $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES)
 	tags=; \
 	here=`pwd`; \
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  test -f $$subdir/TAGS && tags="$$tags -i $$here/$$subdir/TAGS"; \
+	done; \
 	test -z "$(ETAGS_ARGS)config.h.in$(SOURCES)$(HEADERS)$$tags" \
 	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags config.h.in $(SOURCES) $(HEADERS) -o $$here/TAGS)
 
@@ -266,54 +212,40 @@ distdir: $(DISTFILES)
 	  || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
 	  || cp -p $$d/$$file $(distdir)/$$file; \
 	done
+	for subdir in $(SUBDIRS); do		\
+	  test -d $(distdir)/$$subdir		\
+	  || mkdir $(distdir)/$$subdir		\
+	  || exit 1;				\
+	  chmod 777 $(distdir)/$$subdir;	\
+	  (cd $$subdir && $(MAKE) top_distdir=../$(top_distdir) distdir=../$(distdir)/$$subdir distdir) \
+	    || exit 1; \
+	done
+info: info-recursive
+dvi: dvi-recursive
+check: all-am
+	$(MAKE) check-recursive
+installcheck: installcheck-recursive
+all-recursive-am: config.h
+	$(MAKE) all-recursive
 
-MKDEP = gcc -M $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS)
+all-am: Makefile config.h
 
-DEPS_MAGIC := $(shell mkdir .deps > /dev/null 2>&1 || :)
--include .deps/.P
-.deps/.P: $(BUILT_SOURCES)
-	echo > $@
-
--include $(DEP_FILES)
-
-mostlyclean-depend:
-
-clean-depend:
-
-distclean-depend:
-
-maintainer-clean-depend:
-	rm -rf .deps
-
-.deps/%.P: %.c
-	@echo "Computing dependencies for $<..."
-	@o='o'; \
-	test -n "$o" && o='$$o'; \
-	$(MKDEP) $< >$@.tmp \
-	  && sed "s,^\(.*\)\.o:,\1.$$o \1.l$$o $@:," < $@.tmp > $@ \
-	  && rm -f $@.tmp
-info:
-dvi:
-check: all
-	$(MAKE)
-installcheck:
-install-exec: install-binPROGRAMS
+install-exec: install-exec-recursive
 	@$(NORMAL_INSTALL)
 
-install-data: 
+install-data: install-data-recursive
 	@$(NORMAL_INSTALL)
 
-install: install-exec install-data all
+install: install-recursive
 	@:
 
-uninstall: uninstall-binPROGRAMS
+uninstall: uninstall-recursive
 
-all: Makefile $(PROGRAMS) config.h
+all: all-recursive-am all-am
 
 install-strip:
 	$(MAKE) INSTALL_PROGRAM='$(INSTALL_PROGRAM) -s' INSTALL_SCRIPT='$(INSTALL_PROGRAM)' install
-installdirs:
-	$(mkinstalldirs)  $(bindir)
+installdirs: installdirs-recursive
 
 
 mostlyclean-generic:
@@ -330,35 +262,39 @@ distclean-generic:
 maintainer-clean-generic:
 	test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
 	test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
-mostlyclean:  mostlyclean-hdr mostlyclean-binPROGRAMS \
-		mostlyclean-compile mostlyclean-tags mostlyclean-depend \
-		mostlyclean-generic
+mostlyclean-am:  mostlyclean-hdr mostlyclean-tags mostlyclean-generic
 
-clean:  clean-hdr clean-binPROGRAMS clean-compile clean-tags \
-		clean-depend clean-generic mostlyclean
+clean-am:  clean-hdr clean-tags clean-generic mostlyclean-am
 
-distclean:  distclean-hdr distclean-binPROGRAMS distclean-compile \
-		distclean-tags distclean-depend distclean-generic clean
+distclean-am:  distclean-hdr distclean-tags distclean-generic clean-am
+
+maintainer-clean-am:  maintainer-clean-hdr maintainer-clean-tags \
+		maintainer-clean-generic distclean-am
+
+mostlyclean:  mostlyclean-recursive mostlyclean-am
+
+clean:  clean-recursive clean-am
+
+distclean:  distclean-recursive distclean-am
 	rm -f config.status
 
-maintainer-clean:  maintainer-clean-hdr maintainer-clean-binPROGRAMS \
-		maintainer-clean-compile maintainer-clean-tags \
-		maintainer-clean-depend maintainer-clean-generic \
-		distclean
+maintainer-clean:  maintainer-clean-recursive maintainer-clean-am
 	@echo "This command is intended for maintainers to use;"
 	@echo "it deletes files that may require special tools to rebuild."
 	rm -f config.status
 
 .PHONY: default mostlyclean-hdr distclean-hdr clean-hdr \
-maintainer-clean-hdr mostlyclean-binPROGRAMS distclean-binPROGRAMS \
-clean-binPROGRAMS maintainer-clean-binPROGRAMS uninstall-binPROGRAMS \
-install-binPROGRAMS mostlyclean-compile distclean-compile clean-compile \
-maintainer-clean-compile tags mostlyclean-tags distclean-tags \
-clean-tags maintainer-clean-tags distdir mostlyclean-depend \
-distclean-depend clean-depend maintainer-clean-depend info dvi \
-installcheck install-exec install-data install uninstall all \
-installdirs mostlyclean-generic distclean-generic clean-generic \
-maintainer-clean-generic clean mostlyclean distclean maintainer-clean
+maintainer-clean-hdr install-data-recursive uninstall-data-recursive \
+install-exec-recursive uninstall-exec-recursive installdirs-recursive \
+uninstalldirs-recursive all-recursive check-recursive \
+installcheck-recursive info-recursive dvi-recursive \
+mostlyclean-recursive distclean-recursive clean-recursive \
+maintainer-clean-recursive tags tags-recursive mostlyclean-tags \
+distclean-tags clean-tags maintainer-clean-tags distdir info dvi \
+installcheck all-recursive-am all-am install-exec install-data install \
+uninstall all installdirs mostlyclean-generic distclean-generic \
+clean-generic maintainer-clean-generic clean mostlyclean distclean \
+maintainer-clean
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

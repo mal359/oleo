@@ -1,0 +1,107 @@
+@node Keymaps, Functions, Programs, Top
+@chapter Keymaps and defining keys
+
+What a key does when it is pressed depends on the context.  The listing
+of actions associated with a key in a given context is called a
+'keymap'.  Keymaps may have a 'default map'.  If a key is pressed which
+does not have an assigned meaning in that map, the map's default map is
+checked, and that map's default map, until a command is found or there
+are no more default maps to scan.
+
+The different keymaps, and their usage are as follows:
+
+@example
+  universal                     The root of all keymaps.
+  help                          Help commands.
+  mouse                         Bindings for mouse buttons.
+  navigate                      Commands that move the cursor.
+  trolx-navigate                Navigate commands prefixed by @key{C-x}
+  meta-navigate                 Navigate commands prefixed by @key{ESC}.
+  main                          The default keymap.
+  trolx                         Default @key{C-x} commands.
+  meta                          Default @key{ESC} commands.
+  digit                         The numeric prefix keymap.
+  edit                          The keymap for editting in the input area.
+  meta-edit                     Edit commands prefixed by @key{ESC}.
+  trolx-edit                    Edit commands prefixed by @key{C-x}.
+  ansi                          ANSI arrows keys.
+@end example
+
+
+
+
+The diagram below shows the relationship between the various keymaps.
+The keymap to the left of a given keymap is its default.
+
+@example
+
+                  | help 
+                  | mouse
+                  | navigate ---------- main ------- digit 
+                  | trolx-navigate ---- trolx  
+  universal ------| meta-navigate ----- meta 
+                  | edit 
+                  | meta-edit
+                  | trolx-edit
+                  | ansi 
+
+@end example
+
+
+
+
+  
+
+
+
+
+
+
+@table @code
+@item M-x bind-key  
+This asks for the name of a keymap followed by a
+command name and a key to bind it to.  If the 'command' you
+give is a cell or region in the spreadsheet, it is taken as a
+macro, and bound to the key you specify.  For example, to make @key{C-1}
+move up one cell in the main keymap, type
+@cmindex bind-key
+
+@example
+        @key{M-x} bind-key @key{RET} main @key{RET} up-cell @key{C-1} @key{RET}
+@end example
+
+
+
+@item  M-x describe-key 
+@cmindex describe-key
+Have the user press a key, and then describe
+what function that key is bound to. (bound to @kbd{C-h c})
+@kindex C-h c
+
+@item M-x write-keys    
+@cmindex write-keys
+Write a list o@code{f commands} to a file that, when
+executed with read-commands, will return the keymaps to their
+current state.  To write a list of commands to the file
+@file{/tmp/name}, type
+
+@example
+        @kbd{M-x} write-keys @key{RET} /tmp/name @key{RET}
+@end example
+
+@item M-x read-commands	
+This command opens the file you specify reads in each
+line, and executes them as if you'd typed them in to
+execute-command.  If any command needs more arguments than are
+included on the line, it will prompt you (interactively) for
+the missing information.
+
+
+@end table
+
+
+
+
+
+
+

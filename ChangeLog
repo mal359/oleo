@@ -1,8 +1,14 @@
 Fri Sep 12 18:55:00 1997  Jeff Bailey  (jbailey@nisa.net)
 
-	* *.c, *.h, *.y: move to src/
+	* *.c, *.h, *.y, ylwrap: move to src/
 	* get rid of irs-1992.oleo for good this time
-
+	* ANNOUCE: remove
+	* doc/: add old version of documentation
+	* src/Makefile.am: Update
+	* Makefile.am: Update
+	* configure.in: Update
+	* acconfig.h: Add
+	
 Mon Sep  1 23:12:00 1997  Jeff Bailey  (jbailey@nisa.net)
 
         * INSTALL.OLEO: remove
