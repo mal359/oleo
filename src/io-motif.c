@@ -1,6 +1,6 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.68 2001/09/25 21:39:32 danny Exp $
+ *  $Id: io-motif.c,v 1.69 2004/08/18 14:40:58 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -22,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.68 2001/09/25 21:39:32 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.69 2004/08/18 14:40:58 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -5991,6 +5991,7 @@ void versionCB(Widget w, XtPointer client, XtPointer call)
 	Arg		al[2];
 	int		ac;
 	char		xbae[64];
+	extern char	_XmVersionString[];
 
 	MotifSelectGlobal(w);
 
@@ -6009,7 +6010,8 @@ void versionCB(Widget w, XtPointer client, XtPointer call)
 	XmStringFree(xms2);
 
 	xms1 = xms;
-	xms2 = XmStringCreateLtoR("\n  " XmVERSION_STRING, XmFONTLIST_DEFAULT_TAG);
+	sprintf(xbae, "\n  %s", _XmVersionString);
+	xms2 = XmStringCreateLtoR(xbae, XmFONTLIST_DEFAULT_TAG);
 	xms = XmStringConcat(xms1, xms2);
 	XmStringFree(xms1);
 	XmStringFree(xms2);

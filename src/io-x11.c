@@ -1,7 +1,7 @@
 #undef	I18N_VERBOSE
 #define	X_I18N
 /*
- * $Id: io-x11.c,v 1.31 2001/03/09 11:33:29 danny Exp $
+ * $Id: io-x11.c,v 1.32 2004/08/18 14:40:58 danny Exp $
  *
  *	Copyright © 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 	
@@ -71,6 +71,10 @@ extern char * x_get_string_resource (XrmDatabase, char *, char *);
 extern XrmDatabase x_load_resources (Display *, char *, char *);
 extern char * getenv (const char *);
 
+/* lds Moved these definitions to io-term, since even curses can use color */
+extern char *default_bg_color_name;
+extern char *default_fg_color_name;
+
 static char *emergency_font_name = "8x13";
 static char *cell_font_name = "times_roman12";
 static char *default_font_name = "8x13";
@@ -78,15 +82,17 @@ static char *input_font_name = "8x13";
 static char *status_font_name = "6x10";
 static char *text_line_font_name = "8x13";
 static char *label_font_name = "5x8";
-static char *default_bg_color_name = "black";
-static char *default_fg_color_name = "white";
+// static char *default_bg_color_name = "black";
+//static char *default_fg_color_name = "white";
 
 /* The geometry of the first window. */
 static int geom_x = 0;
 static int geom_y = 0;
-static int geom_w = 675;
-static int geom_h = 350;
-static char geom_string[] = "675x350+0+0";
+// static int geom_w = 675;
+// static int geom_h = 350;
+// static char geom_string[] = "675x350+0+0";
+extern int geom_w, geom_h;
+extern char geom_string[];
 
 /* This global is used only during command line and .Xdefaults handling. */
 static Display * theDisplay;

@@ -1,5 +1,5 @@
 /*
- * $Id: io-term.c,v 1.58 2003/01/18 17:25:59 pw Exp $
+ * $Id: io-term.c,v 1.59 2004/08/18 14:40:58 danny Exp $
  *
  * Copyright © 1990, 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
  * 
@@ -20,7 +20,7 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char *rcsid = "$Id: io-term.c,v 1.58 2003/01/18 17:25:59 pw Exp $";
+static char *rcsid = "$Id: io-term.c,v 1.59 2004/08/18 14:40:58 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -97,6 +97,20 @@ struct OleoGlobal	__tempGlobal,
 			*Global = &__tempGlobal;
 #endif
 
+/* lds moved these here from io-x11 because even curses can set colors */
+char *default_bg_color_name = "black";
+char *default_fg_color_name = "white";
+
+/* lds added to set colors & xterm size*/
+#if 0
+extern char geom_string[80];
+extern int geom_w;
+extern int geom_h;
+#endif
+int geom_w = 675;
+int geom_h = 350;
+char geom_string[80] = "675x350+0+0";
+
 /* These are the hooks used to do file-io. */
 void (*read_file) (FILE *, int) = oleo_read_file;
 void (*write_file) (FILE *, struct rng *) = oleo_write_file;
@@ -107,7 +121,7 @@ static char	option_separator = '\t';
 static char	*option_format = NULL;
 int		option_filter = 0;
 
-static char short_options[] = "VqfxthsFSv";
+static char short_options[] = "VqfxthsFSvbcw";
 static struct option long_options[] =
 {
 	{"version",		0,	NULL,			'V'},
@@ -121,6 +135,9 @@ static struct option long_options[] =
 	{"format",		1,	NULL,			'F'},
 	{"filter",		0,	NULL,			'-'},
 	{"version",		0,	NULL,			'v'},
+	{"bgcolor",       	1,	NULL,			'b'},
+	{"bgfgcolor",       	2,	NULL,			'c'},
+	{"window",		2,	NULL,			'w'},
 	{NULL,			0,	NULL,			0}
 };
 
@@ -193,6 +210,11 @@ struct UserPreferences UserPreferences;
  *	or if the string is non-empty.
  * Set cont to 1 if processing in do_set_option is to continue.
  */
+
+#define ncolors 9
+
+static char colorstr[ncolors][8] = {"black","red","green","orange","blue","magenta","cyan","white","yellow"};
+
 static struct pref {
 	char	*name;
 	void	*var;  /* if copynext then actual type is char** else int* */
@@ -285,9 +307,10 @@ do_set_option (char *ptr)
       print_width = astol (&ptr);
       return 0;
     }
-  if (set_opt && !strincmp ("file ", ptr, 5))
+//  if (set_opt && !strincmp ("file ", ptr, 5))
+  if (set_opt && !strincmp ("filetype ", ptr, 9))
     {
-      ptr += 5;
+      ptr += 9;
       if (!stricmp ("oleo", ptr))
 	{
 	  read_file = oleo_read_file;
@@ -324,6 +347,20 @@ do_set_option (char *ptr)
 	}
       else if (!stricmp ("list", ptr))
 	{
+	  Global->sl_sep = '\t';
+	  read_file = list_read_file;
+	  write_file = list_write_file;
+	  set_file_opts = list_set_options;
+	  show_file_opts = list_show_options;
+	  /*if (ptr[4])
+	    {
+	    ptr+=4;
+	    sl_sep=string_to_char(&ptr);
+	    } */
+	}
+      else if (!stricmp ("csv", ptr))
+	{
+	  Global->sl_sep = ',';
 	  read_file = list_read_file;
 	  write_file = list_write_file;
 	  set_file_opts = list_set_options;
@@ -967,6 +1004,19 @@ oleo_catch_signals(void (*h)(int))
   }
 }
 
+int ck_color(char *usercolor)
+{
+  int i;
+  int ret;
+
+  ret = 0;
+  for(i=0 ; i<ncolors ; ++i)
+    if (strcmp(usercolor,colorstr[i]) == 0)
+      ret = i;
+
+  return ret;
+}
+  
 int 
 main (int argc, char **argv)
 {
@@ -1024,6 +1074,39 @@ main (int argc, char **argv)
             printf(_("For more information about these matters, "));
             printf(_("see the files named COPYING.\n"));
 	    exit (0);
+	    break;
+	  case 'b':
+	    default_bg_color_name = colorstr[ck_color(argv[optind])];
+//	    default_bg_color_name = colorstr[labs(atoi(argv[optind]))%ncolors];
+	    if (strcmp(default_bg_color_name,"black") != 0)
+	      default_fg_color_name = colorstr[0];
+	    ++optind;
+	    break;
+	  case 'c':
+	    default_bg_color_name = colorstr[ck_color(argv[optind])];
+	    ++optind;
+	    default_fg_color_name = colorstr[ck_color(argv[optind])];
+	    if (strcmp(default_bg_color_name, default_fg_color_name) == 0)
+	      if (strcmp(default_bg_color_name, "black") == 0)
+	        default_fg_color_name = colorstr[1];
+              else
+	        default_fg_color_name = colorstr[0];
+	    ++optind;
+	    break;
+	  case 'w':
+          #ifndef X_DISPLAY_MISSING
+	    Global->scr_cols = atoi(argv[optind]);
+          #endif		  
+	    ++optind;
+          #ifndef X_DISPLAY_MISSING
+	    Global->scr_lines = atoi(argv[optind]);
+          #endif		  
+	    ++optind;
+          #ifndef X_DISPLAY_MISSING
+	    geom_w = Global->scr_cols * 9;
+	    geom_h = Global->scr_lines * 15;
+	    sprintf(geom_string,"%dx%d+0+0",geom_w, geom_h);
+          #endif		  
 	    break;
 	  case 'q':
 	    spread_quietly = 1;
