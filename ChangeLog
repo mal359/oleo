@@ -1,3 +1,9 @@
+Fri Oct 24 22:17:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
+
+	* src/io-gtk.c: Add drawing_area for spreadsheet display.
+	Fix scroll bars.  Add items to File menu.  Perform unsuccessful
+	ceremony to attempt to conjure up useful gtk docs.
+
 Fri Oct 24 18:58:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
 
 	* src/io-term.c: Move GTK window creation to
