@@ -1,4 +1,8 @@
 
+Sat 13 Mar 15:41:27 1999, Danny Backx
+	* Fix README and FAQ that mentioned a wrong address for
+	  getting subscribed to the bug-oleo mailing list.
+
 Fri 12 Mar 00:02:11 1999, Danny Backx
 	* Protect against NULL defaultformat (= a file format).
 	* Get oleo to understand reading files with .csv suffix.
