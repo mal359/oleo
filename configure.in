@@ -1,6 +1,6 @@
 dnl
 dnl This is the configuration file for GNU oleo.
-dnl $Id: configure.in,v 1.21 1998/08/19 07:44:52 danny Exp $
+dnl $Id: configure.in,v 1.22 1998/08/26 13:45:59 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -30,33 +30,54 @@ dnl Checks the Compiler.
 AM_C_PROTOTYPES
 
 dnl Checks for libraries.
-dnl Replace `main' with a function in -lncurses:
-AC_CHECK_LIB(ncurses, main, ,
-	AC_CHECK_LIB(curses, main, ,
+AC_CHECK_LIB(ncurses, waddch, ,
+	AC_CHECK_LIB(curses, addch, ,
 		AC_CHECK_LIB(termlib, tgetent, ,
 			AC_CHECK_LIB(termcap, tgetend))))
 
 dnl This library is required on FreeBSD.
 AC_CHECK_LIB(mytinfo, tputs)
 
-dnl Replace `main' with a function in -lm:
-AC_CHECK_LIB(m, main)
+dnl Check existence of a working math library
+AC_CHECK_LIB(m, sqrtf)
 
 dnl Checks for X11
 AC_PATH_XTRA
-AC_FIND_MOTIF
-ICE_FIND_Xbae
-ICE_FIND_XmHTML
-ICE_FIND_SciPlot
 
-CFLAGS="$CFLAGS $X_CFLAGS"
-LIBS="$LIBS $X_LIBS"
+dnl
+dnl Motif (LessTif)
+dnl
+dnl If user selects Motif, deselect GTK even if the user requested it.
+dnl
+AC_ARG_WITH(motif,
+[  --without-motif		  Do not use Motif, even if detected],
+[		case "${withval}" in
+		  y | ye | yes )	usemotif=yes ;;
+		  n | no )		usemotif=no ;;
+		  * )			usemotif=yes ;;
+		esac],
+[		with_motif=yes])
 
-dnl Checks for X11 Libraries
-AC_CHECK_LIB(X11, main)
+dnl
+dnl Checks for Motif
+dnl These should not happen if --without-motif has been used.
+dnl
+if test $with_motif = yes; then
+  AC_FIND_MOTIF
+  ICE_FIND_Xbae
+  ICE_FIND_XmHTML
+  ICE_FIND_SciPlot
+fi
+
+dnl
+dnl This is an automake variable which allows you to use conditionals
+dnl in makefiles. We'll use it in the src/ directory to figure out
+dnl which files to compile.
+dnl
+AM_CONDITIONAL(UseMotif, test x$with_motif = xyes)
 
 dnl Checks for Guile
-AC_CHECK_LIB(guile, scm_boot_guile)
+dnl AC_CHECK_LIB(guile, scm_boot_guile)
 
 dnl Checks if -DDEBUG is requested
 AC_ARG_WITH(debug,
@@ -77,6 +98,7 @@ if test $with_debug = yes; then
   fi
 fi
            
+if test $with_motif = no; then
 dnl Checks for GTK
 AC_ARG_WITH(gtk,
 [  --without-gtk		  Do not use GTK, even if detected],
@@ -86,31 +108,10 @@ AC_ARG_WITH(gtk,
 		  * )			usegtk=yes ;;
 		esac],
 [		with_gtk=yes])
-dnl
-dnl remaining GTK check moved after Motif stuff
-dnl
-
-dnl dnl
-dnl dnl Motif (LessTif)
-dnl dnl
-dnl dnl If user selects Motif, deselect GTK even if the user requested it.
-dnl dnl
-dnl AC_ARG_WITH(motif,
-dnl [  --without-motif		  Do not use Motif, even if detected],
-dnl [		case "${withval}" in
-dnl 		  y | ye | yes )	usemotif=yes ;;
-dnl 		  n | no )		usemotif=no ;;
-dnl 		  * )			usemotif=yes ;;
-dnl 		esac],
-dnl [		with_motif=yes])
-dnl 
-dnl if test $with_motif = yes; then
-dnl 	usegtk=no
-dnl fi
-dnl dnl AC_FIND_MOTIF
 
 if test $with_gtk = yes; then
 AM_PATH_GTK(1.0.0, AC_DEFINE(HAVE_LIBGTK))
+fi
 fi
 
 dnl Checks for header files.
@@ -153,4 +154,8 @@ AC_SUBST(link_sciplot)
 
 AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile m4/Makefile])
 
+dnl FIX ME
+dnl I don't know what the po/ directory is supposed to do/contain, but the
+dnl line below doesn't work for me.
+dnl
 dnl AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile m4/Makefile po/Makefile.in], [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])

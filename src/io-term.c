@@ -54,6 +54,10 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "funcs.h"
 #include "graph.h"
 
+#ifdef	HAVE_MOTIF
+#include <Xm/Xm.h>
+#endif
+
 #ifdef HAVE_LIBGTK
 #include "gtk/gtk.h"
 #endif 
@@ -137,11 +141,13 @@ int spread_quietly = 0;
 int no_gtk = 0;
 int no_x = 0;
 int no_curses = 0;
+int no_motif = 0;
 
 /* What kind of display? */
 int using_x = 0;
 int using_curses = 0;
 int using_gtk = 0;
+int using_motif = 0;
 
 
 /* Cell size paramaters. */
@@ -917,7 +923,7 @@ main (int argc, char **argv)
 	  {
 	  case 'V':
 	    printf ("%s %s\n", GNU_PACKAGE, VERSION);
-            printf ("Copyright (C) 1997 Free Software Foundation, Inc.\n");
+            printf ("Copyright (C) 1997-1998 Free Software Foundation, Inc.\n");
             printf ("%s comes with ABSOLUTELY NO WARRANTY.\n", GNU_PACKAGE);
             printf ("You may redistribute copies of %s\n", PACKAGE);
             printf ("under the terms of the GNU General Public License.\n");
@@ -936,6 +942,7 @@ main (int argc, char **argv)
 	    break;
           case 't':
             no_gtk = 1;
+            no_motif = 1;
             break;
 	  case 'h':
 	    show_usage ();
@@ -1002,13 +1009,25 @@ main (int argc, char **argv)
   FD_ZERO (&exception_fd_set);
   FD_ZERO (&exception_pending_fd_set);
 
-#ifdef HAVE_LIBGTK
+#if defined(HAVE_LIBGTK) && !defined(HAVE_MOTIF)
    if ((!no_gtk)&&(!no_x)) {
 
 	gtk_init(&argc, &argv);
 
 	gtk_graphics ();
 	using_gtk = TRUE;
+	no_x = TRUE;
+	no_curses = TRUE;
+   }  
+#endif
+
+#ifdef HAVE_MOTIF
+   if ((!no_motif)&&(!no_x)) {
+
+	motif_init(&argc, &argv);
+
+	using_gtk = FALSE;
+	using_motif = TRUE;
 	no_x = TRUE;
 	no_curses = TRUE;
    }  
@@ -1130,19 +1149,25 @@ main (int argc, char **argv)
 
   display_opened = 1;
 
-  #if 0
+#if 0
   /* FIXME - Find better way of doing this */
   /* Display openning Copyright screen */
   if (!command_line_file)
     run_string_as_macro
       ("{pushback-keystroke}{builtin-help _NON_WARRANTY_}");
-  #endif /* 0 */
+#endif /* 0 */
 
+#ifdef	HAVE_MOTIF
+  if (using_motif) {
+    motif_build_gui();
+    setjmp (error_exception);
+    motif_main_loop();
+  }
+#else
   while (1)
     {
       setjmp (error_exception);
       command_loop (0, 0);
     }
+#endif
 }
-
-
