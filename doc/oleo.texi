@@ -1,7 +1,7 @@
 \input texinfo    @c -*- texinfo -*-
 @c %**start of header
 
-@set version 1.99.13
+@set version 1.99.16
 @set update-date July 29 2000
 @set update-month July 2000
 

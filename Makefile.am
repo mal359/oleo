@@ -3,7 +3,7 @@
 #
 # Process this file with automake to produce Makefile.in
 #
-# $Header: /home/matt/cvs/oleo/oleo/Makefile.am,v 1.37 2001/02/08 00:21:23 pw Exp $
+# $Header: /home/matt/cvs/oleo/oleo/Makefile.am,v 1.38 2001/09/26 19:52:31 danny Exp $
 #
 AUTOMAKE_OPTIONS = gnu 1.4 readme-alpha
 ACLOCAL_AMFLAGS = -I m4
@@ -15,7 +15,7 @@ SUBDIRS = doc lib intl src m4 po Xresources examples afm
 # Remove this file here (it is created via configure), not from within intl.
 DISTCLEANFILES = intl/libintl.h
 
-EXTRA_DIST = oleobug.in FAQ oleo.spec.in oleo.spec
+EXTRA_DIST = oleobug.in FAQ oleo.spec.in oleo.spec bootstrap
 
 #
 # Use this only for real end-user-ready releases of Oleo
