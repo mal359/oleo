@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.90 2001/03/10 14:38:01 danny Exp $
+dnl $Id: configure.in,v 1.91 2001/07/10 11:22:06 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -162,6 +162,15 @@ if test "$no_x" = ""; then
     fi
  
     dnl
+    dnl If libXp is around, use it.
+    dnl
+    LT_HAVE_LIBXP
+    if test "$lt_cv_libxp" = "yes";
+    then
+	LIBS="$LIBS -lXp -lXext"
+    fi
+
+    dnl
     dnl Checks for Motif
     dnl These should not happen if --without-motif has been used.
     dnl
@@ -260,9 +269,9 @@ dnl
 dnl GNU GSL (GNU Scientific Library)
 dnl
 AC_CHECK_LIB(gsl, gsl_error,
-	LIBS="$LIBS -lgsl -lgslblas"
+	LIBS="$LIBS -lgsl -lgslcblas"
 	AC_DEFINE(HAVE_GSL),,
-	-lgslblas)
+	-lgslcblas)
 
 dnl
 dnl MySQL client library ?
