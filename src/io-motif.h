@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.h,v 1.3 1999/01/02 08:51:01 danny Exp $
+ *  $Id: io-motif.h,v 1.4 1999/01/21 23:28:18 danny Exp $
  *
  *  This file is part of GnuSheet, a free spreadsheet.
  *

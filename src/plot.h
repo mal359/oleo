@@ -2,7 +2,7 @@
 #define _PLOT_H_
 
 /*
-	$Id: plot.h,v 1.1 1999/01/02 08:51:02 danny Exp $
+	$Id: plot.h,v 1.2 1999/01/21 23:28:20 danny Exp $
 
 	Copyright (C) 1998-1999 Free Software Foundation, Inc.
 

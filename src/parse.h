@@ -1,28 +1,28 @@
-#ifndef PARSEH
-#define PARSEH
-
-/*	Copyright (C) 1992, 1993 Free Software Foundation, Inc.
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2, or (at your option)
-any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this software; see the file COPYING.  If not, write to
-the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-
-/*  t. lord	Wed Oct 28 00:18:38 1992	*/
-
-#ifdef __STDC__
-extern unsigned char parse_cell_or_range (char **, struct rng *);
-#else
-extern unsigned char parse_cell_or_range ();
+#ifndef YYSTYPE
+#define YYSTYPE int
 #endif
+#define	NE	258
+#define	LE	259
+#define	GE	260
+#define	NEG	261
+#define	L_CELL	262
+#define	L_RANGE	263
+#define	L_VAR	264
+#define	L_CONST	265
+#define	L_FN0	266
+#define	L_FN1	267
+#define	L_FN2	268
+#define	L_FN3	269
+#define	L_FN4	270
+#define	L_FNN	271
+#define	L_FN1R	272
+#define	L_FN2R	273
+#define	L_FN3R	274
+#define	L_FN4R	275
+#define	L_FNNR	276
+#define	L_LE	277
+#define	L_NE	278
+#define	L_GE	279
 
-#endif
+
+extern YYSTYPE yylval;

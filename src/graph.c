@@ -106,9 +106,6 @@ static enum graph_ordering graph_axis_ordering [graph_num_axis];
 static struct rng graph_axis_labels [graph_num_axis];
 static enum graph_pair_ordering graph_axis_label_order [graph_num_axis];
 
-/* Parameters for each dataset. */
-#define NUM_DATASETS 10
-
 /* plot .... with %s */
 static struct line graph_style [NUM_DATASETS];
 static struct line graph_title [NUM_DATASETS];

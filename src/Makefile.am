@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.22 1999/01/02 08:50:58 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.23 1999/01/21 23:28:15 danny Exp $
 #
 localedir = $(prefix)/share/locale
 
@@ -8,7 +8,7 @@ AUTOMAKE_OPTIONS = ../lib/ansi2knr dejagnu
 bin_PROGRAMS = oleo
 
 if UseMotif
-GUI = io-motif.c appres.c
+GUI = io-motif.c appres.c fallback.c
 else
 GUI =
 endif
@@ -32,7 +32,7 @@ MYCFL = ${X_CFLAGS}
 gpl.h:	$(top_srcdir)/COPYING gpl.sed
 	sed -f gpl.sed <$(top_srcdir)/COPYING >gpl.h
 
-io-motif.o:	gpl.h fallback.h $(top_srcdir)/configure
+io-motif.o:	gpl.h $(top_srcdir)/configure
 
 else
 # MYLD = @GTK_LIBS@
@@ -40,7 +40,7 @@ else
 # MYCFL = @GTK_CFLAGS@
 endif
 
-oleo_LDADD = ${MYLD} @INTLLIBS@ @GTK_LIBS@ ../lib/liboleo.a ${X_LIBS} -lXt -lX11
+oleo_LDADD = ${MYLD} @INTLLIBS@ ../lib/liboleo.a ${X_LIBS} -lXt -lX11
 INCLUDES = -I.. -I$(srcdir) -I$(top_srcdir)/lib -I../intl ${MYINC}
 CFLAGS = @CFLAGS@ -DLOCALEDIR=\"$(localedir)\" ${MYCFL}
 
@@ -56,7 +56,7 @@ noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  proto.h ref.h regions.h \
  sc.h stub.h stubs.h sylk.h \
  sysdef.h utils.h window.h list.h ir.h sort.h \
- io-motif.h appres.h fallback.h
+ io-motif.h appres.h
 
 EXTRA_DIST =	gpl.sed
 

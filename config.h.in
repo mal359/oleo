@@ -1,5 +1,12 @@
 /* config.h.in.  Generated automatically from configure.in by autoheader.  */
 
+/* Define if on AIX 3.
+   System headers sometimes define this.
+   We just want to avoid a redefinition error message.  */
+#ifndef _ALL_SOURCE
+#undef _ALL_SOURCE
+#endif
+
 /* Define if using alloca.c.  */
 #undef C_ALLOCA
 
@@ -83,26 +90,17 @@
 /* Define if your locale.h file contains LC_MESSAGES.  */
 #undef HAVE_LC_MESSAGES
 
-/* Define to 1 if you have the obstack functions from GNU libc.  */
-#undef HAVE_OBSTACK
-
 /* Define to 1 if you have the stpcpy function.  */
 #undef HAVE_STPCPY
-
-/* Define to the name of the distribution.  */
-#undef PACKAGE
 
 /* The concatenation of the strings "GNU ", and PACKAGE.  */
 #undef GNU_PACKAGE
 
-/* Define to 1 if ANSI function prototypes are usable.  */
-#undef PROTOTYPES
-
-/* Define to the version of the distribution.  */
-#undef VERSION
-
-/* Define to 1 if GTK is present. */
-#undef HAVE_LIBGTK
+/* LessTif or Motif */
+#undef HAVE_MOTIF
+#undef HAVE_SciPlot_H
+#undef HAVE_XmHTML_H
+#undef HAVE_Xbae
 
 #if ENABLE_NLS
 # include <libintl.h>
@@ -175,6 +173,9 @@
 /* Define if you have the strdup function.  */
 #undef HAVE_STRDUP
 
+/* Define if you have the strerror function.  */
+#undef HAVE_STRERROR
+
 /* Define if you have the strstr function.  */
 #undef HAVE_STRSTR
 
@@ -226,11 +227,8 @@
 /* Define if you have the <values.h> header file.  */
 #undef HAVE_VALUES_H
 
-/* Define if you have the X11 library (-lX11).  */
-#undef HAVE_LIBX11
-
-/* Define if you have the guile library (-lguile).  */
-#undef HAVE_LIBGUILE
+/* Define if you have the <xbase.h> header file.  */
+#undef HAVE_XBASE_H
 
 /* Define if you have the i library (-li).  */
 #undef HAVE_LIBI
@@ -238,5 +236,24 @@
 /* Define if you have the m library (-lm).  */
 #undef HAVE_LIBM
 
+/* Define if you have the mytinfo library (-lmytinfo).  */
+#undef HAVE_LIBMYTINFO
+
 /* Define if you have the ncurses library (-lncurses).  */
 #undef HAVE_LIBNCURSES
+
+/* Define if you have the plot library (-lplot).  */
+#undef HAVE_LIBPLOT
+
+/* Name of package */
+#undef PACKAGE
+
+/* Version number of package */
+#undef VERSION
+
+/* Define if compiler has function prototypes */
+#undef PROTOTYPES
+
+/* Define if libc includes obstacks */
+#undef HAVE_OBSTACK
+

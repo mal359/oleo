@@ -2,7 +2,7 @@
 #define GRAPHH
 
 /*
-	$Id: graph.h,v 1.2 1998/09/16 20:56:06 danny Exp $
+	$Id: graph.h,v 1.3 1999/01/21 23:28:17 danny Exp $
 
 	Copyright (C) 1993-1998 Free Software Foundation, Inc.
 
@@ -21,6 +21,9 @@
 	the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 #include "cell.h"
+
+/* Parameters for each dataset. */
+#define NUM_DATASETS 10
 
 enum graph_axis
 {

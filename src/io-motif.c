@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.20 1999/01/02 08:51:00 danny Exp $
+ *  $Id: io-motif.c,v 1.21 1999/01/21 23:28:17 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.20 1999/01/02 08:51:00 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.21 1999/01/21 23:28:17 danny Exp $";
 
 #include "config.h"
 
@@ -94,7 +94,7 @@ Widget	DefaultFileDialog, DefaultFileShell = NULL;
 static Widget	w;
 
 /* Fallback resources, application resources */
-#include "fallback.h"
+extern char *fallback[];
 #include "appres.h"
 
 GnuSheetAppres	AppRes;
@@ -755,6 +755,9 @@ void ConfigureGraphReset(Widget f)
 	r = graph_get_data(1);
 	s = range_name(&r);
 	XmTextFieldSetString(cw->a, s);
+
+	s = graph_get_title();
+	XmTextFieldSetString(cw->title, s);
 }
 
 void ConfigureGraph(Widget w, XtPointer client, XtPointer call)
@@ -788,6 +791,43 @@ void ConfigureGraph(Widget w, XtPointer client, XtPointer call)
 	XtManageChild(configureGraph);
 }
 
+/*
+ * Plotutils
+ */
+void PuShowGraph(Widget w, XtPointer client, XtPointer call)
+{
+#ifdef	HAVE_LIBPLOT
+	PuPieChart("X", stdout);
+#endif
+}
+
+void PuPrintGraph(Widget w, XtPointer client, XtPointer call)
+{
+#ifdef	HAVE_LIBPLOT
+	FILE	*x = fopen("x.ps", "w");
+	PuPieChart("ps", x);
+	fclose(x);
+#endif
+}
+
+void PuShowBarChart(Widget w, XtPointer client, XtPointer call)
+{
+#ifdef	HAVE_LIBPLOT
+	PuBarChart("X", stdout, 0);
+#endif
+}
+
+void PuShowXYChart(Widget w, XtPointer client, XtPointer call)
+{
+#ifdef	HAVE_LIBPLOT
+	PuXYChart("X", stdout, 0);
+#endif
+}
+
+
+/*
+ * Print
+ */
 struct PrintWidgets {
 	Widget	rangeTF, fileTF, printerTF, programTF;
 } PrintWidgets;
@@ -1772,16 +1812,12 @@ void helpUsingCB(Widget w, XtPointer client, XtPointer call)
 
 void helpAboutCB(Widget w, XtPointer client, XtPointer call)
 {
-#if	HAVE_XmHTML_H
 	/* FIX ME */	versionCB(w, client, call);
-#endif
 }
 
 void helpVersionCB(Widget w, XtPointer client, XtPointer call)
 {
-#if	HAVE_XmHTML_H
 	/* FIX ME */	versionCB(w, client, call);
-#endif
 }
 
 /*
@@ -2787,6 +2823,28 @@ GscBuildMainWindow(Widget parent)
 	w = XtVaCreateManagedWidget("print", xmPushButtonGadgetClass, graphmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, PrintGraph, NULL);
+
+	/* GNU Plotutils */
+	w = XtVaCreateManagedWidget("pulabel", xmLabelGadgetClass, graphmenu,
+		NULL);
+	w = XtVaCreateManagedWidget("pushow", xmPushButtonGadgetClass,
+		graphmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, PuShowGraph, NULL);
+
+	w = XtVaCreateManagedWidget("puprint", xmPushButtonGadgetClass,
+		graphmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, PuPrintGraph, NULL);
+	w = XtVaCreateManagedWidget("pushowbar", xmPushButtonGadgetClass,
+		graphmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, PuShowBarChart, NULL);
+	w = XtVaCreateManagedWidget("pushowxy", xmPushButtonGadgetClass,
+		graphmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, PuShowXYChart, NULL);
+
 
 	/*
 	 *	Options Menu.

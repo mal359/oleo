@@ -39,6 +39,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "info.h"
 #include "cmd.h"
 
+#include "graph.h"
 
 /* These functions read and write OLEO style files. */
 
@@ -522,7 +523,7 @@ oleo_read_file (fp, ismerge)
 	    push_cell (crow, ccol);
 	  /* ... */
 	  break;
-	case 'E':
+	case 'E':	/* End of input ?? */
 	  break;
 	case 'W':
 	  io_read_window_config (ptr + 2);
@@ -537,6 +538,36 @@ oleo_read_file (fp, ismerge)
 	  read_mp_options (ptr + 2);
 	  next_a0 = a0;
 	  a0 = 0;
+	  break;
+	case 'G':	/* Graph data */
+/*	  fprintf(stderr, "Graph input line '%s'\n", cbuf);	/* */
+	  switch (*(ptr+1)) {
+	  case 'T':	/* Graph Title */
+	    graph_set_title(cbuf+2);
+	    break;
+	  case 'D':	/* Axis title : GDxtitle */
+	    graph_set_axis_title(cbuf[2], cbuf+3);
+	    break;
+	  case 'L':	/* Axis logness GLx0 or GLx1 */
+	    graph_set_logness(cbuf[2], 1, cbuf[3] == '1');
+	    break;
+	  case '0': case '1': case '2': case '3':
+	  case '4': case '5': case '6': case '7':
+	  case '8': case '9':
+            {
+	      int	i, a, b, c, d;
+	      struct rng r;
+	      sscanf(cbuf, "G%d,%d,%d,%d,%d", &i, &a, &b, &c, &d);
+	      r.lc = a;
+	      r.lr = b;
+	      r.hc = c;
+	      r.hr = d;
+	      graph_set_data(i, &r, 'h', 'r');
+	    }
+	    break;
+	  default:
+	    fprintf(stderr, "Graph: invalid line '%s'\n", cbuf);
+	  }
 	  break;
 	default:
 	bad_field:
@@ -696,15 +727,15 @@ oleo_write_file (fp, rng)
   CELLREF crow = 0, ccol = 0;
   unsigned short w;
   /* struct var *var; */
-  int old_a0;
-  int fnt_map_size = 0;
+  int old_a0, i, fnt_map_size = 0;
+  char	*s;
 
   (void) fprintf (fp, "# This file was created by GNU Oleo\n");
 
   /* All versions of the oleo file format should have a 
    * version cookie on the second line.
    */
-  (void) fprintf (fp, "# format 1.0\n");
+  (void) fprintf (fp, "# format 2.0 (requires Oleo 1.6.14 or higher)\n");
 
   /* If no range given, write the entire file */
   if (!rng)
@@ -893,6 +924,40 @@ oleo_write_file (fp, rng)
   if (rng == &all_rng)
     write_mp_windows (fp);
 
+  /* Graphs */
+  for (i=0; i<NUM_DATASETS; i++) {
+	struct rng	r;
+	int		a, b, c, d;
+
+	r = graph_get_data(i);
+	if (r.lc == 0 && r.lr == 0 && r.hc == 0 && r.hr == 0)
+		continue;
+
+	/* Write this thing */
+	a = r.lc;
+	b = r.lr;
+	c = r.hc;
+	d = r.hr;
+	fprintf(fp, "G%d,%d,%d,%d,%d\n", i, a, b, c, d);
+  }
+  /* Graph title */
+  s = graph_get_title();
+  if (s && strlen(s)) {
+    fprintf(fp, "GT%s\n", s);
+  }
+
+  s = graph_get_axis_title('x');
+  if (s && strlen(s)) {
+    fprintf(fp, "GDx%s\n", s);
+  }
+
+  s = graph_get_axis_title('y');
+  if (s && strlen(s)) {
+    fprintf(fp, "GDy%s\n", s);
+  }
+
+
+  /* End of writing */
   (void) fprintf (fp, "E\n");
   a0 = old_a0;
 }

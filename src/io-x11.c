@@ -2178,16 +2178,16 @@ xio_open_display (void)
    * of the translation.
    */
   {
-    static KeySym meta_shift_ctrl[]
-      = {Mod1MapIndex, ShiftMapIndex, ControlMapIndex };
+    static int meta_shift_ctrl[]
+      = {Mod1MapIndex, ShiftMapIndex, ControlMapIndex, -1};
 #define shift_ctrl &meta_shift_ctrl[1]
 #define ctrl  &meta_shift_ctrl[2]
-    static KeySym meta_shift[] = {Mod1MapIndex, ShiftMapIndex};
+    static int meta_shift[] = {Mod1MapIndex, ShiftMapIndex, -1};
 #define shift &meta_shift[1]
-    static KeySym ctrl_meta[] = {ControlMapIndex, Mod1MapIndex};
+    static int ctrl_meta[] = {ControlMapIndex, Mod1MapIndex, -1};
 #define meta &ctrl_meta[1]
 
-    static KeySym * mod_combos [] =
+    static int * mod_combos [] =
       {
 	0,
 	ctrl, shift, meta,
@@ -2204,20 +2204,54 @@ xio_open_display (void)
     static KeySym arrows[] = {XK_Up, XK_Down, XK_Right, XK_Left};
     int arrow;
 
+	/* Figure out the KeySyms for our modifiers */
+	XModifierKeymap *OurModKeymap;
+	KeySym *ModifierKeys;
+
+	/* First get the modifiers */
+	OurModKeymap = XGetModifierMapping(thePort->dpy);
+	ModifierKeys = malloc(OurModKeymap->max_keypermod * sizeof(KeySym) * 8);
+
     for (arrow = 0; arrow < 4; ++arrow)
       {
 	int mod;
 	for (mod = 0; mod < 8; ++mod)
 	  {
 	    char string[10];
+	    KeyCode *tmpptr;
+	    int *modptr;
+	    int idx, i, n ;
+
+	    /* Build list of appropriate KeyCodes */
+	    n = 0;
+	    /* Point to index of first wanted modifier */
+	    modptr = mod_combos[mod];
+	    if (modptr != 0) {
+	    while (*modptr != -1) {
+			/* Point to wanted modifier */
+			tmpptr = &(OurModKeymap->modifiermap[OurModKeymap->max_keypermod * (*modptr)]);
+			/* Loop through all keycodes in map */
+			for (i=0; i < OurModKeymap->max_keypermod; i++) {
+				if (tmpptr[i] != 0) {
+					ModifierKeys[n] = 
+					XKeycodeToKeysym(thePort->dpy,tmpptr[i], 0);
+					n++; 
+				} 
+			}
+			modptr++;	/* Next modifier */
+		}
+	    }
+		
 	    sprintf (string, "\033[%s%c",
 		     meta_modp[mod] ? "\033" : "",
 		     base_char[mod] + arrow);
 	    XRebindKeysym (thePort->dpy, arrows[arrow],
-			   mod_combos[mod], (mod + 2) / 3,
+			   ModifierKeys, n,
 			   string, strlen(string));
 	  }
       }
+	XFreeModifiermap(OurModKeymap);
+	free(ModifierKeys);
   }
   
   XMapWindow (thePort->dpy, thePort->window);

@@ -1,6 +1,6 @@
-dnl aclocal.m4 generated automatically by aclocal 1.3b
+dnl aclocal.m4 generated automatically by aclocal 1.4
 
-dnl Copyright (C) 1994, 1995, 1996, 1997, 1998 Free Software Foundation, Inc.
+dnl Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -20,7 +20,7 @@ dnl Usage:
 dnl AM_INIT_AUTOMAKE(package,version, [no-define])
 
 AC_DEFUN(AM_INIT_AUTOMAKE,
-[AC_REQUIRE([AM_PROG_INSTALL])
+[AC_REQUIRE([AC_PROG_INSTALL])
 PACKAGE=[$1]
 AC_SUBST(PACKAGE)
 VERSION=[$2]
@@ -30,8 +30,8 @@ if test "`cd $srcdir && pwd`" != "`pwd`" && test -f $srcdir/config.status; then
   AC_MSG_ERROR([source directory already configured; run "make distclean" there first])
 fi
 ifelse([$3],,
-AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE")
-AC_DEFINE_UNQUOTED(VERSION, "$VERSION"))
+AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE", [Name of package])
+AC_DEFINE_UNQUOTED(VERSION, "$VERSION", [Version number of package]))
 AC_REQUIRE([AM_SANITY_CHECK])
 AC_REQUIRE([AC_ARG_PROGRAM])
 dnl FIXME This is truly gross.
@@ -42,15 +42,6 @@ AM_MISSING_PROG(AUTOMAKE, automake, $missing_dir)
 AM_MISSING_PROG(AUTOHEADER, autoheader, $missing_dir)
 AM_MISSING_PROG(MAKEINFO, makeinfo, $missing_dir)
 AC_REQUIRE([AC_PROG_MAKE_SET])])
-
-
-# serial 1
-
-AC_DEFUN(AM_PROG_INSTALL,
-[AC_REQUIRE([AC_PROG_INSTALL])
-test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL_PROGRAM}'
-AC_SUBST(INSTALL_SCRIPT)dnl
-])
 
 #
 # Check to make sure that the build environment is sane.
@@ -111,29 +102,6 @@ else
 fi
 AC_SUBST($1)])
 
-# Add --enable-maintainer-mode option to configure.
-# From Jim Meyering
-
-# serial 1
-
-AC_DEFUN(AM_MAINTAINER_MODE,
-[AC_MSG_CHECKING([whether to enable maintainer-specific portions of Makefiles])
-  dnl maintainer-mode is disabled by default
-  AC_ARG_ENABLE(maintainer-mode,
-[  --enable-maintainer-mode enable make rules and dependencies not useful
-                          (and sometimes confusing) to the casual installer],
-      USE_MAINTAINER_MODE=$enableval,
-      USE_MAINTAINER_MODE=no)
-  AC_MSG_RESULT($USE_MAINTAINER_MODE)
-  if test $USE_MAINTAINER_MODE = yes; then
-    MAINT=
-  else
-    MAINT='#M#'
-  fi
-  AC_SUBST(MAINT)dnl
-]
-)
-
 # Like AC_CONFIG_HEADER, but automatically create stamp file.
 
 AC_DEFUN(AM_CONFIG_HEADER,
@@ -157,18 +125,31 @@ for am_file in <<$1>>; do
 done<<>>dnl>>)
 changequote([,]))])
 
-# Check to see if we're running under Cygwin32, without using
-# AC_CANONICAL_*.  If so, set output variable CYGWIN32 to "yes".
-# Otherwise set it to "no".
+# Check to see if we're running under EMX, without using
+# AC_CANONICAL_*.  If so, set output variable EXEEXT to ".exe".
+# Otherwise set it to "".
 
-dnl AM_CYGWIN32()
-AC_DEFUN(AM_CYGWIN32,
-[AC_CACHE_CHECK(for Cygwin32 environment, am_cv_cygwin32,
-[AC_TRY_COMPILE(,[return __CYGWIN32__;],
-am_cv_cygwin32=yes, am_cv_cygwin32=no)
+dnl AM_EMX()
+dnl This lines were done with a quick look to the cygwin neighbour
+dnl
+AC_DEFUN(AM_EMX,  
+[AC_CACHE_CHECK(for EMX environment, am_cv_emx,
+[cat > conftest.$ac_ext << 'EOF' 
+int main () { 
+/* Nothing.  */
+return 0; }
+EOF
+if AC_TRY_EVAL(ac_link -Zexe) && test -s conftest.exe; then
+   am_cv_emx=yes
+   x_includes=$X11ROOT/XFree86/include
+   x_libraries=$X11ROOT/XFree86/lib
+else
+   am_cv_emx=no
+fi
 rm -f conftest*])
-CYGWIN32=
-test "$am_cv_cygwin32" = yes && CYGWIN32=yes])
+EXEEXT=
+test "$am_cv_emx" = yes && EXEEXT=.exe
+AC_SUBST(EXEEXT)])
 
 # Define a conditional.
 
@@ -192,7 +173,7 @@ AC_REQUIRE([AC_PROG_CPP])
 AC_MSG_CHECKING([for function prototypes])
 if test "$am_cv_prog_cc_stdc" != no; then
   AC_MSG_RESULT(yes)
-  AC_DEFINE(PROTOTYPES)
+  AC_DEFINE(PROTOTYPES,1,[Define if compiler has function prototypes])
   U= ANSI2KNR=
 else
   AC_MSG_RESULT(no)
@@ -962,72 +943,6 @@ AC_MSG_RESULT(
   [libraries $sciplot_libraries_result, headers $sciplot_includes_result])
 ])dnl
 
-# Configure paths for GTK+
-# Owen Taylor     97-11-3
-
-dnl AM_PATH_GTK([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]]])
-dnl Test for GTK, and define GTK_CFLAGS and GTK_LIBS
-dnl
-AC_DEFUN(AM_PATH_GTK,
-[dnl 
-dnl Get the cflags and libraries from the gtk-config script
-dnl
-  AC_PATH_PROG(GTK_CONFIG, gtk-config, no)
-  min_gtk_version=ifelse([$1], ,0.99.7,$1)
-  AC_MSG_CHECKING(for GTK - version >= $min_gtk_version)
-  no_gtk=""
-  if test "$GTK_CONFIG" != "no" ; then
-    GTK_CFLAGS=`$GTK_CONFIG --cflags`
-    GTK_LIBS=`$GTK_CONFIG --libs`
-    ac_save_CFLAGS="$CFLAGS"
-    ac_save_LIBS="$LIBS"
-    CFLAGS="$CFLAGS $GTK_CFLAGS"
-    LIBS="$LIBS $GTK_LIBS"
-dnl
-dnl Now check if the installed GTK is sufficiently new. (Also sanity
-dnl checks the results of gtk-config to some extent)
-dnl
-    AC_TRY_RUN([
-#include <gtk/gtk.h>
-#include <stdio.h>
-
-int 
-main ()
-{
-  int major, minor, micro;
-
-  if (sscanf("$min_gtk_version", "%d.%d.%d", &major, &minor, &micro) != 3) {
-     printf("%s, bad version string\n", "$min_gtk_version");
-     exit(1);
-   }
-
-   return !((gtk_major_version > major) ||
-   	    ((gtk_major_version == major) && (gtk_minor_version > minor)) ||
- 	    ((gtk_major_version == major) && (gtk_minor_version == minor) && (gtk_micro_version >= micro)));
-}
-],, no_gtk=yes,[echo $ac_n "cross compiling; assumed OK... $ac_c"])
-     CFLAGS="$ac_save_CFLAGS"
-     LIBS="$ac_save_LIBS"
-  else
-     no_gtk=yes
-  fi
-  if test "x$no_gtk" = x ; then
-     AC_MSG_RESULT(yes)
-     HAVE_LIBGTK=1
-     ifelse([$2], , :, [$2])     
-  else
-     AC_MSG_RESULT(no)
-     HAVE_LIBGTK=0
-     GTK_CFLAGS=""
-     GTK_LIBS=""
-     ifelse([$3], , :, [$3])
-  fi
-  AC_SUBST(GTK_CFLAGS)
-  AC_SUBST(GTK_LIBS)
-
-  AC_SUBST(HAVE_LIBGTK)
-])
-
 #serial 4
 
 dnl From Jim Meyering.
@@ -1068,10 +983,35 @@ static time_t time_t_max;
 
 /* Values we'll use to set the TZ environment variable.  */
 static const char *const tz_strings[] = {
-  (const char *) 0, "GMT0", "JST-9",
-  "EST+3EDT+2,M10.1.0/00:00:00,M2.3.0/00:00:00"
+  (const char *) 0, "TZ=GMT0", "TZ=JST-9",
+  "TZ=EST+3EDT+2,M10.1.0/00:00:00,M2.3.0/00:00:00"
 };
 #define N_STRINGS (sizeof (tz_strings) / sizeof (tz_strings[0]))
+
+/* Fail if mktime fails to convert a date in the spring-forward gap.
+   Based on a problem report from Andreas Jaeger.  */
+static void
+spring_forward_gap ()
+{
+  /* glibc (up to about 1998-10-07) failed this test) */
+  struct tm tm;
+
+  /* Use the portable POSIX.1 specification "TZ=PST8PDT,M4.1.0,M10.5.0"
+     instead of "TZ=America/Vancouver" in order to detect the bug even
+     on systems that don't support the Olson extension, or don't have the
+     full zoneinfo tables installed.  */
+  putenv ("TZ=PST8PDT,M4.1.0,M10.5.0");
+
+  tm.tm_year = 98;
+  tm.tm_mon = 3;
+  tm.tm_mday = 5;
+  tm.tm_hour = 2;
+  tm.tm_min = 0;
+  tm.tm_sec = 0;
+  tm.tm_isdst = -1;
+  if (mktime (&tm) == (time_t)-1)
+    exit (1);
+}
 
 static void
 mktime_test (now)
@@ -1157,6 +1097,7 @@ main ()
       bigtime_test (j - 1);
     }
   irix_6_4_bug ();
+  spring_forward_gap ();
   exit (0);
 }
 	      >>,
@@ -1180,7 +1121,7 @@ AC_DEFUN(AM_FUNC_OBSTACK,
 	      am_cv_func_obstack=yes,
 	      am_cv_func_obstack=no)])
  if test $am_cv_func_obstack = yes; then
-   AC_DEFINE(HAVE_OBSTACK)
+   AC_DEFINE(HAVE_OBSTACK,1,[Define if libc includes obstacks])
  else
    LIBOBJS="$LIBOBJS obstack.o"
  fi
@@ -1189,12 +1130,12 @@ AC_DEFUN(AM_FUNC_OBSTACK,
 # Macro to add for using GNU gettext.
 # Ulrich Drepper <drepper@cygnus.com>, 1995.
 #
-# This file can be copied and used freely without restrictions.  It can
+# This file file be copied and used freely without restrictions.  It can
 # be used in projects which are not available under the GNU Public License
 # but which still want to provide support for the GNU gettext functionality.
 # Please note that the actual code is *not* freely available.
 
-# serial 5
+# serial 3
 
 AC_DEFUN(AM_WITH_NLS,
   [AC_MSG_CHECKING([whether NLS is requested])
@@ -1236,10 +1177,9 @@ AC_DEFUN(AM_WITH_NLS,
 	     AC_CHECK_LIB(intl, bindtextdomain,
 	       [AC_CACHE_CHECK([for gettext in libintl],
 		 gt_cv_func_gettext_libintl,
-		 [AC_CHECK_LIB(intl, gettext,
-		  gt_cv_func_gettext_libintl=yes,
-		  gt_cv_func_gettext_libintl=no)],
-		 gt_cv_func_gettext_libintl=no)])
+		 [AC_TRY_LINK([], [return (int) gettext ("")],
+		 gt_cv_func_gettext_libintl=yes,
+		 gt_cv_func_gettext_libintl=no)])])
 	   fi
 
 	   if test "$gt_cv_func_gettext_libc" = "yes" \
@@ -1333,7 +1273,7 @@ AC_DEFUN(AM_WITH_NLS,
 	  : ;
 	else
 	  AC_MSG_RESULT(
-	    [found xgettext program is not GNU xgettext; ignore it])
+	    [found xgettext programs is not GNU xgettext; ignore it])
 	  XGETTEXT=":"
 	fi
       fi
@@ -1345,12 +1285,6 @@ AC_DEFUN(AM_WITH_NLS,
       nls_cv_header_intl=intl/libintl.h
       nls_cv_header_libgt=intl/libgettext.h
     fi
-    AC_LINK_FILES($nls_cv_header_libgt, $nls_cv_header_intl)
-    AC_OUTPUT_COMMANDS(
-     [case "$CONFIG_FILES" in *po/Makefile.in*)
-        sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile
-      esac])
-
 
     # If this is used in GNU gettext we have to set USE_NLS to `yes'
     # because some of the sources are only built for this goal.
@@ -1395,9 +1329,9 @@ AC_DEFUN(AM_GNU_GETTEXT,
    AC_REQUIRE([AC_FUNC_MMAP])dnl
 
    AC_CHECK_HEADERS([argz.h limits.h locale.h nl_types.h malloc.h string.h \
-unistd.h sys/param.h])
+unistd.h values.h sys/param.h])
    AC_CHECK_FUNCS([getcwd munmap putenv setenv setlocale strchr strcasecmp \
-strdup __argz_count __argz_stringify __argz_next])
+__argz_count __argz_stringify __argz_next])
 
    if test "${ac_cv_func_stpcpy+set}" != "set"; then
      AC_CHECK_FUNCS(stpcpy)
@@ -1505,7 +1439,7 @@ strdup __argz_count __argz_stringify __argz_next])
 # Search path for a program which passes the given test.
 # Ulrich Drepper <drepper@cygnus.com>, 1996.
 #
-# This file can be copied and used freely without restrictions.  It can
+# This file file be copied and used freely without restrictions.  It can
 # be used in projects which are not available under the GNU Public License
 # but which still want to provide support for the GNU gettext functionality.
 # Please note that the actual code is *not* freely available.
@@ -1553,7 +1487,7 @@ AC_SUBST($1)dnl
 # Check whether LC_MESSAGES is available in <locale.h>.
 # Ulrich Drepper <drepper@cygnus.com>, 1995.
 #
-# This file can be copied and used freely without restrictions.  It can
+# This file file be copied and used freely without restrictions.  It can
 # be used in projects which are not available under the GNU Public License
 # but which still want to provide support for the GNU gettext functionality.
 # Please note that the actual code is *not* freely available.

@@ -1,3 +1,17 @@
+
+Fri Jan 22 00:25:32 1999, Danny Backx (danny@gnu.org)
+	* Arrow keys bugfix for traditional X11 interface by 
+          Dag Nygren <dag@newtech.fi>.
+	* Piechart based on plotutils added in plot.c. You can only control
+	  this from the Motif interface, currently. Can show itself in an
+	  X window or plot to a file.
+	* Oleo file format can now read and write some graph data.
+	  This means we're now at the oleo 2.0 file format.
+	* Simplistic bar chart added. Same limitations as the pie chart.
+	* Move NUM_DATASETS from graph.c to graph.h, needed this in oleofile.c .
+	* Start using autoconf 2.13 and automake 1.4; requires a couple of
+	  simple changes to configure.in.
+
 Wed Dec 30 21:31:49 1998, Danny Backx (danny@gnu.org)
 	* As the build problem appears to be fixed, I'm preparing for
 	  release 1.6.13.
