@@ -22,6 +22,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 #ifdef HAVE_LIBGTK
 #include "gtk/gtk.h"
+#include "io-abstract.h"
+#include "io-gtk.h"
 
 static GdkPixmap *pixmap = NULL;
 
@@ -29,6 +31,17 @@ void
 gio_destroy (void)
 {
 	gtk_exit(0);
+}
+
+void
+gio_redraw_input (GtkWidget *widget)
+{
+	gdk_draw_string(widget->window,
+			widget->style->font,
+			widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
+			0,
+			10,
+			"Hi\0");
 }
 
 gint
@@ -40,6 +53,8 @@ gio_expose_backing (GtkWidget *widget, GdkEventExpose *event)
 			event->area.x, event->area.y,
 			event->area.x, event->area.y,
 			event->area.width, event->area.height);
+
+	gio_redraw_input((GtkWidget*)widget);
 
 	return FALSE;
 }
@@ -67,7 +82,7 @@ gio_configure_backing (GtkWidget *widget, GdkEventConfigure *event)
 }
 
 void
-gio_main(void)
+gio_open_display(void)
 {
 	GtkWidget *window;
 	GtkWidget *menu;
@@ -189,6 +204,141 @@ gio_main(void)
 	exit (0);
 }
 
+void
+gio_inputize_cursor(void)
+{
+}
+
+void
+gio_cellize_cursor(void)
+{
+}
+
+void
+gio_io_hide_cell_cursor(void)
+{
+}
+
+void
+gio_pr_cell_win(void)
+{
+}
+
+void
+gio_clear_input_after(void)
+{
+}
+
+void
+gio_clear_input_before(void)
+{
+}
+
+void
+gio_flush(void)
+{
+}
+
+void
+gio_over(void)
+{
+}
+
+void
+gio_insert(void)
+{
+}
+
+void
+gio_erase(void)
+{
+}
+
+void
+gio_move_cursor(void)
+{
+}
+
+void
+gio_fix_input(void)
+{
+}
+
+void
+gio_update_status(void)
+{
+}
+
+void
+gio_get_chr(void)
+{
+}
+
+void
+gio_bell(void)
+{
+}
+
+void
+gio_getch(void)
+{
+}
+
+void
+gio_nodelay(void)
+{
+}
+
+void
+gio_read_kbd(void)
+{
+}
+
+void
+gio_wait_for_input(void)
+{
+}
+
+void
+gio_scan_for_input(void)
+{
+}
+
+void
+gio_input_avail(void)
+{
+}
+
+void
+gio_close_display(void)
+{
+}
+
+void
+gio_repaint_win(void)
+{
+}
+
+void
+gio_repaint(void)
+{
+}
+
+void
+gio_redisp(void)
+{
+}
+
+void
+gio_display_cell_cursor(void)
+{
+}
+
+void
+gtk_graphics(void)
+{
+	IO_SETUP;
+}
 
 #endif /* Have HAVE_LIBGTK */
 

@@ -1,3 +1,11 @@
+Sun Oct 26 14:38:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
+
+	* src/io-term.c: Integrate GTK parsing in with X and curses
+	* src/io-gtk.h: Create, add defines for generic functions.
+	* src/io-gtk.c: Rename functions to match rest of Oleo.
+	Add stub functions for places where code hasn't been flushed
+	out yet.  Begin to add code to place characters in drawing_area.
+ 
 Fri Oct 24 22:17:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
 
 	* src/io-gtk.c: Add drawing_area for spreadsheet display.

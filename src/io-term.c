@@ -150,12 +150,15 @@ static char * usage[] =
 /* Avoid needless messages to stdout. */
 int spread_quietly = 0;
 
-/* Avoid using X no matter what else. (-x --no-x) */
+/* Avoid using Displays no matter what else. (-x --no-x) */
+int no_gtk = 0;
 int no_x = 0;
+int no_curses = 0;
 
 /* What kind of display? */
 int using_x = 0;
 int using_curses = 0;
+int using_gtk = 0;
 
 
 /* Cell size paramaters. */
@@ -1011,14 +1014,6 @@ main (argc, argv)
 
   __make_backups = 1;
 
-#ifdef HAVE_LIBGTK
-  /* Define basic GTK Window */
-
-  gtk_init(&argc, &argv);
-
-#endif
-
-
   /* Set up the minimal io handler. */
 #if 0
   cmd_graphics ();
@@ -1117,23 +1112,31 @@ main (argc, argv)
   FD_ZERO (&exception_pending_fd_set);
 
 #ifdef HAVE_LIBGTK
-	gio_main();
+   if (!no_gtk) {
+
+	gtk_init(&argc, &argv);
+
+	gtk_graphics ();
+	using_gtk = TRUE;
+	no_x = TRUE;
+	no_curses = TRUE;
+   }  
 #endif
 
 #ifndef X_DISPLAY_MISSING
-  if (!no_x)
+  if (!no_x) {
     get_x11_args (&argc, argv);
-  if (!no_x && io_x11_display_name)
-    {
+    if (io_x11_display_name) {
       x11_graphics ();
-      using_x = 1;
+      using_x = TRUE;
+      no_curses = TRUE;
     }
-  else
+  } 
 #endif /* X_DISPLAY_MISSING */
 	  
-  {
+  if (!no_curses) {
 	  tty_graphics ();
-	  using_curses = 1;
+	  using_curses = TRUE;
 	  /* Allow the disclaimer to be read. */
 	  if (!init_fpc && !spread_quietly)
 		  sleep (5);
