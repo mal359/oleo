@@ -1,5 +1,5 @@
 /*
- * $Id: init.c,v 1.5 2000/07/22 06:13:15 danny Exp $
+ * $Id: init.c,v 1.6 2000/07/25 12:56:32 danny Exp $
  *
  * Copyright © 1993, 2000 Free Software Foundation, Inc.
  *
@@ -508,12 +508,9 @@ char *init_cmds[] =
   "bind-key plotutils-commands plotutils-select-output o",
   "set-map-prompt plotutils-terminal-types \\",
   "Graph output type (x X P t): ",
-#ifndef X_DISPLAY_MISSING
-  "bind-key plotutils-terminal-types plotutils-x11-mono x",
-  "bind-key plotutils-terminal-types plotutils-x11-color X",
-#endif
   "bind-key plotutils-terminal-types plotutils-postscript p",
   "bind-key plotutils-terminal-types plotutils-tek t",
+  "bind-key plotutils-terminal-types plotutils-regis r",
   "bind-key plotutils-terminal-types plotutils-metaplot m",
   "bind-key plotutils-terminal-types plotutils-illustrator i",
   "bind-key plotutils-terminal-types plotutils-fig f",
@@ -599,10 +596,6 @@ char *init_cmds[] =
   "bind-key graph-commands graph-select-output o",
   "set-map-prompt graph-terminal-types \\",
   "Graph output type (x X P): ",
-#ifndef X_DISPLAY_MISSING
-  "bind-key graph-terminal-types graph-x11-mono x",
-  "bind-key graph-terminal-types graph-x11-color X",
-#endif
   "bind-key graph-terminal-types graph-postscript p",
   "",
   "create-keymap graph-x-axis-commands generic-menu",

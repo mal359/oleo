@@ -1,5 +1,5 @@
 /*
- * $Id: plotter.c,v 1.5 2000/07/08 15:22:35 danny Exp $
+ * $Id: plotter.c,v 1.6 2000/07/25 12:56:32 danny Exp $
  *
  * This file contains the heart of libsciplot - the scientific plotting
  * library layered on top of GNU plotutils.
@@ -2693,6 +2693,8 @@ sp_create_plot(plPlotter *plotter, const SpPlotType plot_type)
 	multigrapher->x_axis.tick_type = SP_TICK_DEFAULT;
 	multigrapher->y_axis.tick_type = SP_TICK_DEFAULT;
 
+	pl_erase_r(plotter);
+
 	/*
 	 * FIX ME
 	 * We should use the same coordinates for all plot types.
@@ -3098,7 +3100,9 @@ sp_bar_end_graph(Multigrapher *mg)
 		}
 	}
 
+#if 0
 	fprintf(stderr, "sp_bar_end_graph: Y range %f .. %f\n", ymin, ymax);
+#endif
 
 	pl_fspace_r(mg->plotter,
 			PLOT_SIZE * -0.1, PLOT_SIZE * -0.1,

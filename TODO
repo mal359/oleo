@@ -1,18 +1,5 @@
-$Id: TODO,v 1.36 2000/07/08 15:22:35 danny Exp $
+$Id: TODO,v 1.37 2000/07/25 12:56:32 danny Exp $
 
-TODO's:
-
-  !!!!!!!
-   !!!!!
-    !!!   Finish unfinished stuff.
-     !
-
-    !!!
-
-	- open file ok ? (MDI)
-	- Motif GUI
-	- @button in Motif
---------
 
 * Internationalisation
 	(busy) get i18n for X11 input (src/io-x11.c) to work.
@@ -27,8 +14,9 @@ TODO's:
 	(todo) hook this to curses based interface
 
 * Graphs
-	(busy) connect the plot.c functionality (GNU Plotutils) to graph.c
-	(busy) make sure all the variables can get saved
+	(TODO) documentation !!
+	(done) connect the plot.c functionality (GNU Plotutils) to graph.c
+	(todo) make sure all the variables can get saved
 	(todo) make sure all flags can be controlled through GUI
 	(done) put Plotutils graph in Motif XmScrolledWindow
 

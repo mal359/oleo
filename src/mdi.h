@@ -1,5 +1,5 @@
 /*
- *  $Id: mdi.h,v 1.2 1999/12/19 16:42:38 danny Exp $
+ *  $Id: mdi.h,v 1.3 2000/07/25 12:56:32 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -30,6 +30,6 @@ void	MdiClose();
 void	MdiInitialize(void);
 void	MdiSelectGlobal(int offset1, int offset2, void *ptr);
 int	MdiHasFile(void);
-
+void	MdiQuit(void);
 
 #endif	_MDI_H_

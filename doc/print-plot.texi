@@ -9,10 +9,10 @@
 
 @menu
 * Writing Files::               Writing  ASCII and Postscript Files
-* Gnuplot::                     Graphing Using Gnuplot
+* Graphing::                    Graphing Using GNU Plotutils
 @end menu
 
-@node Writing Files, Gnuplot, Printing and Plotting, Printing and Plotting
+@node Writing Files, Graphing, Printing and Plotting, Printing and Plotting
 @section Writing  ASCII and Postscript Files
 
 Spreadsheets, and regions of spreadsheets,  can be printed in 
@@ -144,29 +144,42 @@ widths and heights are given in "points", of which there are
 @end table
 
 
-@node Gnuplot,  , Writing Files, Printing and Plotting
-@section Graphing Using Gnuplot
+@node Graphing,  , Writing Files, Printing and Plotting
+@section Graphing Using GNU Plotutils
 
-Plotting in Oleo is done using Gnuplot.  Only line plots and
-scatterplots are available.  The simplest plotting sequence
-consists of
+Note: this chapter is only partially updated, however functionality
+has changed drastically !!
 
+Plotting in Oleo is done using GNU Plotutils. (Versions prior to
+Oleo 1.99.12 used gnuplot.) Currently these types of graphs are
+supported :
 @itemize @bullet
-@item @bullet{}
-Select a range to plot 
-@item @bullet{}
-Plot it
+@item XY
+@item bar
+@item pie
 @end itemize
 
-For instance, if the points to be plotted are given by horizontal pairs,
-and are located in the range @code{A1.B50}, then these commands will
-plot the data:
+There are two modes in which Oleo can produce plots on the fly :
+@itemize @bullet
+@item in a Motif window
+@item in Xterm using its Tektronix emulation
+@end itemize
 
+The former is the default behaviour of you use the Motif interface
+of Oleo, the latter can be initialised by this sequence :
 @example
-        @kbd{M-g}  d  0  @key{RET}  A1.B50  @key{RET}  h  r  p
+        @kbd{M-g}  o  t  f - @key{RET}
 @end example
 
-In general, Oleo can print up to 10 different data sets at once.  The
+This sequence sets output device to Tektronix, and output file to
+- which means to standard output. Sending Tektronix formatted output
+to an xterm will pop up xterm's Tektronix emulation window which
+shows the plot.
+
+The file examples/xy.oleo can be used to show a simple XY plot in
+this way.
+
+Oleo can print up to 10 different data sets at once.  The
 data sets are numbered 0,1,@dots{},9.  
 
 When the plot command (@kbd{p}) is chosen, all the currently defined
@@ -182,7 +195,7 @@ data sets will be plotted.
 * Name Options::                Naming a data set
 @end menu
 
-@node Clearing Plots, Data sets, Gnuplot, Gnuplot
+@node Clearing Plots, Data sets, Graphing, Graphing
 @subsection Clearing the Plots
 
 The plot ranges and styles are remembered; if you decide to plot using
@@ -196,7 +209,7 @@ Clear all the datasets (0-9) of their ranges.
 Remove all the style information from all datasets
 @end table
 
-@node Data sets, The axes, Clearing Plots, Gnuplot
+@node Data sets, The axes, Clearing Plots, Graphing
 @subsection Choosing a data set
 
 The key @kbd{d} is used to choose a range for a data set.
@@ -269,7 +282,7 @@ plotted, then all the ones in the second row, and so on.
 Finally, you are asked about labels.  @footnote{I don't understand them}
 
 
-@node The axes, Viewing Choices, Data sets, Gnuplot
+@node The axes, Viewing Choices, Data sets, Graphing
 @subsection Changing the axes style
 
 The commands @kbd{x} and @kbd{y} allow you to control the axes style.
@@ -299,7 +312,7 @@ the @kbd{l} command.
 
 
 
-@node Viewing Choices, Output Type, The axes, Gnuplot
+@node Viewing Choices, Output Type, The axes, Graphing
 @comment  node-name,  next,  previous,  up
 @subsection Viewing your choices
 
@@ -327,7 +340,7 @@ your choices.  A typical  help screen is
 @end example
 
 
-@node Output Type, Style Options, Viewing Choices, Gnuplot
+@node Output Type, Style Options, Viewing Choices, Graphing
 @comment  node-name,  next,  previous,  up
 @subsection The Output Type
 
@@ -350,7 +363,7 @@ Write a file of PostScript commands that draw that graph.
 
 
 
-@node Style Options, Name Options, Output Type, Gnuplot
+@node Style Options, Name Options, Output Type, Graphing
 @comment  node-name,  next,  previous,  up
 @subsection Picking a plot style
 The @kbd{s} option on the main graph menu selects the graph style.  There
@@ -371,7 +384,7 @@ The @emph{dots} style  plots a tiny dot at each point; this is useful for
  The @emph{linespoints} style does both @emph{lines} and @emph{points}.
 @end table
 
-@node Name Options,  , Style Options, Gnuplot
+@node Name Options,  , Style Options, Graphing
 @comment  node-name,  next,  previous,  up
 @subsection Naming a data set
 The @kbd{d} option on the main graph menu allows a name to be attached

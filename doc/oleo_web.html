@@ -16,43 +16,37 @@ WIDTH="129" HEIGHT="122">&#32;(jpeg 7k)</A>
 Oleo has for a long time been GNU's spreadsheet.
 Now there's not only Oleo but also Gnumeric, the
 <A HREF="http://www.gnome.org">GNOME</A> spreadsheet.
-<P>
-Gnumeric is a GTK based application that integrates well with the rest of GNOME,
+Gnumeric is a full featured spreadsheet,
+aiming to compete with commercial applications,
+and well integrated with GNOME.
 Oleo is a light-weight spreadsheet that'll work in almost any environment.
-It features a curses based interface (character mode),
-but also a LessTif (Motif) based GUI.
-A screenshot of the Motif-based GUI is available
-<A HREF="oleo1.png">here (11K png file)</A>.
+<P>
+Oleo features a curses based interface (character mode),
+but also a LessTif (Motif) based graphical user interface.
+A screenshot of the Motif GUI is <A HREF="oleo1.png">here (11K png file)</A>.
 <P>
 The current development release of oleo is 
-<A HREF="ftp://alpha.gnu.org/pub/gnu/oleo-1.99.11.tar.gz">1.99.11</A> .
-<P>
-On the regular GNU FTP server,
-<A HREF="ftp://ftp.gnu.org/pub/gnu/oleo-1.99.5.tar.gz">release 1.99.5</A> 
-has been made available.
+<A HREF="ftp://alpha.gnu.org/pub/gnu/oleo-1.99.12.tar.gz">1.99.12</A> .
+Version 1.99.12 is also available from the regular GNU FTP server at
+<A HREF="ftp://ftp.gnu.org/pub/gnu/oleo/oleo-1.99.12.tar.gz">
+ftp://ftp.gnu.org/pub/gnu/oleo/oleo-1.99.12.tar.gz</A> .
 All the GNU mirrors should pick it up.
-It should be stable enough for many purposes,
-it's certainly more useful than release 1.6.
 <P>
-Intermediate versions are available through anonymous CVS,
-and their source can be browsed online through
-<a href="http://subversions.gnu.org">the cvs-web interface</a>.
-The complete sources to Oleo are in the GNU CVS server at subversions.gnu.org.
-You can read more about this on
-<A HREF="http://www.gnu.org/software/devel.html">
-http://www.gnu.org/software/devel.html</A> .
-
-<P>
-Changes w.r.t. oleo 1.6 :
+We're working on an upcoming Oleo 2.0 release.
+The current snapshots already implement the following 2.0 features :
 <UL>
 <LI> Motif/<A HREF="http://www.lesstif.org">LessTif</A> interface,
      based on the <A HREF="http://www.lesstif.org/Xbae.html">Xbae</A>Matrix widget
-<LI> preparations for opening multiple spreadsheets, each in a Motif window,
-     at the same time
-<LI> GNU plotutils graphics (only reachable from Motif/LessTif interface)
+<LI> Access to the statistics functions of the GSL
+     (<A HREF="http://sources.redhat.com/gsl/">GNU Scientific Library</A>).
+<LI> Support for opening multiple spreadsheets, each in a Motif window,
+     at the same time.
+<LI> device independent graphics through
+     <A HREF="http://www.gnu.org/software/plotutils/plotutils.html">GNU plotutils</A>,
+     replacing the older gnuplot interface
 <LI> more portable build through autoconf and automake
 <LI> internationalised (i18n)
-<LI> (somewhat) updated documentation
+<LI> updated documentation
 <LI> ANSI C code (removed K&amp;R stuff)
 <LI> filter mode (read file from stdin, save to stdout)
 <LI> better SYLK support
@@ -62,8 +56,6 @@ Changes w.r.t. oleo 1.6 :
 <LI> cleaned up internals
 <LI> runs in character mode as well as in a GUI
 <LI> interface to <A HREF="http://www.cups.org">CUPS</A> to browse available printers
-<LI> access to the <A HREF="http://sources.redhat.com/gsl/">GNU Scientific Library</A>
-     <i>(currently only the statistics functions)</i>
 </UL>
 <P>
 Details about recent changes are available in the ChangeLog file.
@@ -76,6 +68,14 @@ but then you need to know the latest version number (1.125 at the time I write t
 <P>
 The Oleo documentation is now also available
 <A HREF="http://www.gnu.org/software/oleo/doc/oleo.html">online</A>.
+<P>
+Intermediate versions are available through anonymous CVS,
+and their source can be browsed online through
+<a href="http://subversions.gnu.org">the cvs-web interface</a>.
+The complete sources to Oleo are in the GNU CVS server at subversions.gnu.org.
+You can read more about this on
+<A HREF="http://www.gnu.org/software/devel.html">
+http://www.gnu.org/software/devel.html</A> .
 <P>
 This mailing list concern oleo :
 <UL>
@@ -132,12 +132,8 @@ Verbatim copying and distribution is permitted
 in any medium, provided this notice is preserved.
 
 <P>
-Updated:
-<!-- hhmts start -->
-3 March 2000 danny
-<!-- hhmts end -->
-<I>(CVS identifier : $Id: oleo_web.html,v 1.24 2000/07/08 15:22:35 danny Exp $)</I>
+Last update :
+<I> $Id: oleo_web.html,v 1.25 2000/07/25 12:56:32 danny Exp $</I>
 </P>
-<HR>
 </BODY>
 </HTML>

@@ -2,7 +2,7 @@
 #define GRAPHH
 
 /*
- * $Id: graph.h,v 1.8 2000/07/22 06:13:15 danny Exp $
+ * $Id: graph.h,v 1.9 2000/07/25 12:56:32 danny Exp $
  *
  * Copyright (C) 1993-2000 Free Software Foundation, Inc.
  *
@@ -39,8 +39,6 @@ extern enum graph_axis chr_to_axis (int c);
 extern enum graph_ordering chr_to_graph_ordering (int c);
 extern enum graph_pair_ordering chrs_to_graph_pair_ordering (int pair, int dir);
 extern char * graph_quoted_str (char *str);
-extern void graph_x11_mono (void);
-extern void graph_x11_color (void);
 extern void graph_postscript (char * file, int kind, int spectrum, char * font, int pt_size);
 extern void graph_set_axis_title (int axis_c, char * title);
 extern void graph_set_logness (int axis_c, int explicit, int newval);
@@ -61,8 +59,10 @@ extern void graph_make_info (void);
 extern void for_pairs_in (struct rng * rng, enum graph_pair_ordering order, fpi_thunk thunk, void * frame);
 extern void graph_plot (void);
 
+extern void plotutils_set_device(enum graph_device d);
 extern void plotutils_set_filename(char *file);
 extern void plotutils_tek(void);
+extern void plotutils_regis(void);
 extern void plotutils_fig(void);
 extern void plotutils_illustrator(void);
 extern void plotutils_metaplot(void);
@@ -71,6 +71,7 @@ extern void plotutils_hpgl(void);
 extern void plotutils_set_data(int data_set, struct rng * rng);
 extern void plotutils_make_info(void);
 extern void plotutils_set_axis_labels(int axis_c, struct rng * rng);
+extern void plotutils_set_graph_type(enum graph_type gt);
 
 extern void plotutils_xy(void);
 extern void plotutils_pie(void);

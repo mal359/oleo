@@ -1,5 +1,5 @@
 /*
- * $Id: io-term.c,v 1.42 2000/07/22 06:13:16 danny Exp $
+ * $Id: io-term.c,v 1.43 2000/07/25 12:56:32 danny Exp $
  *
  * Copyright (C) 1990, 1992, 1993, 1999, 2000 Free Software Foundation, Inc.
  * 
@@ -20,7 +20,7 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char *rcsid = "$Id: io-term.c,v 1.42 2000/07/22 06:13:16 danny Exp $";
+static char *rcsid = "$Id: io-term.c,v 1.43 2000/07/25 12:56:32 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -107,7 +107,7 @@ static char	option_separator = '\t';
 static char	*option_format = NULL;
 int		option_filter = 0;
 
-static char short_options[] = "VqfxthsFS";
+static char short_options[] = "VqfxthsFSv";
 static struct option long_options[] =
 {
 	{"version",		0,	NULL,			'V'},
@@ -120,6 +120,7 @@ static struct option long_options[] =
 	{"space",		0,	NULL,			'S'},
 	{"format",		1,	NULL,			'F'},
 	{"filter",		0,	NULL,			'-'},
+	{"version",		0,	NULL,			'v'},
 	{NULL,			0,	NULL,			0}
 };
 
@@ -934,6 +935,7 @@ main (int argc, char **argv)
 
 	switch (opt)
 	  {
+	  case 'v':
 	  case 'V':
 	    printf(_("%s %s\n"), GNU_PACKAGE, VERSION);
             printf(_("Copyright (C) 1992-2000 Free Software Foundation, Inc.\n"));

@@ -1,6 +1,6 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.62 2000/07/22 06:13:16 danny Exp $
+ *  $Id: io-motif.c,v 1.63 2000/07/25 12:56:32 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -22,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.62 2000/07/22 06:13:16 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.63 2000/07/25 12:56:32 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -1330,28 +1330,31 @@ void PuShowChart(Widget w, XtPointer client, XtPointer call)
  *	need to pop up a dialog to select a file and a GNU PlotUtils plotter
  *	then actually doit
  */
-#define	PLOTLEN	32
-
-static struct {
-	char *plotter, *pusymb, *ext;
-} PuPlotters[32];
-
 void PuSelectPlotter(Widget w, XtPointer client, XtPointer call)
 {
 	XmString	xms;
-	char		p[PLOTLEN+20];
+	char		*p;
+	int		i;
 
 	MotifSelectGlobal(w);
 
 	PuPlotter = (int)client;
 
+	plotutils_set_device(PuPlotter);
+
+	for (i=0; PlotutilsDeviceArray[i].pus; i++)
+		if (PlotutilsDeviceArray[i].t == PuPlotter)
+			break;
+
 #if 0
-	fprintf(stderr, "PuSelectPlotter(%s)\n", PuPlotters[PuPlotter].plotter);
+	fprintf(stderr, "PuSelectPlotter(%s)\n", PlotutilsDeviceArray[i].desc);
 #endif
 
+	p = malloc(strlen(PlotutilsDeviceArray[i].ext) + 8);
 	strcpy(p, "*.");
-	strcat(p, PuPlotters[PuPlotter].ext);
+	strcat(p, PlotutilsDeviceArray[i].ext);
 	xms = XmStringCreateSimple(p);
+	free(p);
 
 	XtVaSetValues(pufsd, XmNpattern, xms, NULL);
 	XmStringFree(xms);
@@ -1363,7 +1366,6 @@ Widget CreatePlotterOption(Widget parent, XtCallbackProc f)
 	int		ac = 0, r, i;
 	XmString	xms;
 	Widget		cb, menu, b;
-	char		*pl, pl1[PLOTLEN], pl2[PLOTLEN], pl3[PLOTLEN], *sc, *p;
 
 	menu = XmCreatePulldownMenu(parent, "optionMenu", NULL, 0);
 	ac = 0;
@@ -1374,34 +1376,11 @@ Widget CreatePlotterOption(Widget parent, XtCallbackProc f)
 	XtManageChild(cb);
 	XmStringFree(xms);
 
-	/*
-	 * The resource is a sequence of name,symbol,extension
-	 * triplets, separated by semicolons.
-	 */
-	pl = AppRes.puPlotters;
-
-	i = 0;
-	while (1) {
-		r = sscanf(pl, "%[^;,],%[^;,],%[^;,]", &pl1, &pl2, &pl3);
-		if (r < 3)
-			break;
-		b = XtVaCreateManagedWidget(pl1, xmPushButtonGadgetClass,
+	for (i=0; PlotutilsDeviceArray[i].pus; i++) {
+		b = XtVaCreateManagedWidget(PlotutilsDeviceArray[i].pus, xmPushButtonGadgetClass,
 			menu,
 			NULL);
-
-		PuPlotters[i].plotter = strdup(pl1);
-		PuPlotters[i].pusymb = strdup(pl2);
-		PuPlotters[i].ext = strdup(pl3);
-
-		XtAddCallback(b, XmNactivateCallback, f, (XtPointer)i);
-
-		i++;
-		PuPlotters[i].plotter = PuPlotters[i].pusymb = PuPlotters[i].ext = NULL;
-
-		sc = strchr(pl, ';');
-		if (sc == NULL)
-			break;
-		pl = sc + 1;
+		XtAddCallback(b, XmNactivateCallback, f, (XtPointer)PlotutilsDeviceArray[i].t);
 	}
 
 	return menu;
@@ -1410,7 +1389,6 @@ Widget CreatePlotterOption(Widget parent, XtCallbackProc f)
 void PuPrintOk(Widget w, XtPointer client, XtPointer call)
 {
 #ifdef	HAVE_LIBPLOT
-	FILE					*x;
 	XmFileSelectionBoxCallbackStruct	*cbp = (XmFileSelectionBoxCallbackStruct *)call;
 	char					*fn;
 
@@ -1421,13 +1399,8 @@ void PuPrintOk(Widget w, XtPointer client, XtPointer call)
 		return;
 	}
 
-	x = fopen(fn, "w");
-	if (x) {
-		(*ThisPuFunction)(PuPlotters[PuPlotter].pusymb, x);
-		fclose(x);
-	} else {
-		/* FIX ME */
-	}
+	plotutils_set_filename(fn);
+	graph_plot();
 #endif
 }
 
@@ -1456,37 +1429,14 @@ void PuPrintDialog(Widget w, XtPointer client, XtPointer call)
 	menu = CreatePlotterOption(pufsd, PuSelectPlotter);
 }
 
-void PuPrintPie(Widget w, XtPointer client, XtPointer call)
+void PuPrint(Widget w, XtPointer client, XtPointer call)
 {
 #ifdef	HAVE_LIBPLOT
-	ThisPuFunction = PuPieChart;
+	enum graph_type	gt = (enum graph_type)client;
 
 	MotifSelectGlobal(w);
 
-	if (! pufsd) PuPrintDialog(w, client, call);
-	XtManageChild(pufsd);
-#endif
-}
-
-
-void PuPrintBar(Widget w, XtPointer client, XtPointer call)
-{
-#ifdef	HAVE_LIBPLOT
-	ThisPuFunction = PuBarChart;
-
-	MotifSelectGlobal(w);
-
-	if (! pufsd) PuPrintDialog(w, client, call);
-	XtManageChild(pufsd);
-#endif
-}
-
-void PuPrintXY(Widget w, XtPointer client, XtPointer call)
-{
-#ifdef	HAVE_LIBPLOT
-	ThisPuFunction = PuXYChart;
-
-	MotifSelectGlobal(w);
+	plotutils_set_graph_type(gt);
 
 	if (! pufsd) PuPrintDialog(w, client, call);
 	XtManageChild(pufsd);
@@ -5060,15 +5010,15 @@ GscBuildMainWindow(Widget parent)
 	w = XtVaCreateManagedWidget("puprintpie", xmPushButtonGadgetClass,
 		graphmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, PuPrintPie, NULL);
+	XtAddCallback(w, XmNactivateCallback, PuPrint, (XtPointer)GRAPH_PIE);
 	w = XtVaCreateManagedWidget("puprintbar", xmPushButtonGadgetClass,
 		graphmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, PuPrintBar, NULL);
+	XtAddCallback(w, XmNactivateCallback, PuPrint, (XtPointer)GRAPH_BAR);
 	w = XtVaCreateManagedWidget("puprintxy", xmPushButtonGadgetClass,
 		graphmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, PuPrintXY, NULL);
+	XtAddCallback(w, XmNactivateCallback, PuPrint, (XtPointer)GRAPH_XY);
 #endif
 
 

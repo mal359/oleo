@@ -1,5 +1,5 @@
 /*
- * $Id: oleo_plot.h,v 1.8 2000/07/22 06:13:16 danny Exp $
+ * $Id: oleo_plot.h,v 1.9 2000/07/25 12:56:32 danny Exp $
  * 
  * Copyright (C) 1998-1999 Free Software Foundation, Inc.
  * 
@@ -32,11 +32,15 @@ enum graph_device {
 	GRAPH_X_MONO,	/* ??? */
 	GRAPH_PNG,
 	GRAPH_GIF,
-	GRAPH_METAPLOT,
+	GRAPH_METAFILE,
 	GRAPH_ILLUSTRATOR,
 	GRAPH_FIG,
 	GRAPH_PCL,
 	GRAPH_HPGL,
+	GRAPH_REGIS,
+	GRAPH_PNM,
+	GRAPH_SVG,
+	GRAPH_CGM,
 };
 
 enum graph_type {
@@ -44,6 +48,14 @@ enum graph_type {
 	GRAPH_PIE,
 	GRAPH_BAR,
 };
+
+struct PlotutilsDevices {
+	enum graph_type	t;
+	char		*pus;	/* plotutils string */
+	char		*ext;	/* filename suffix */
+	char		*desc;	/* description */
+};
+extern struct PlotutilsDevices PlotutilsDeviceArray[];
 
 /*
  * The public functions in plot.c should all have the same signature,
@@ -63,6 +75,7 @@ void PuBarChart(char *plotter, FILE *outfile);
 void PuXYChart(char *plotter, FILE *outfile);
 
 void PlotInit(void);
+void PuPlot(enum graph_type gt, enum graph_device gd, FILE *fp);
 
 struct PlotGlobalType {
 	double		XYMin[graph_num_axis], XYMax[graph_num_axis];

@@ -1,5 +1,16 @@
-$Id: ChangeLog,v 1.131 2000/07/22 06:16:27 danny Exp $
+$Id: ChangeLog,v 1.132 2000/07/25 12:56:32 danny Exp $
 
+Tue 25 Jul 14:54:21 2000, Danny
+	* This is Oleo 1.99.12.
+	* Removed code to deal with gnuplot from graph.c, defun.h.
+	  We only support GNU plotutils from now on.
+	* Clean up some code that duplicated functionality in plot.c,
+	  graph.c, io-motif.c.
+	* List of known devices for GNU plotutils is no longer an X
+	  resource, it is compiled in (src/plot.c).
+	* Make sure it compiles in odd circumstances.
+	* src/plotter.c : call pl_erase_r() at the beginning of a plot,
+	  to erase the plotting area.
 
 Sat 22 Jul 08:16:32 2000, Danny
 	* Conditionally compile only GNU Plotutils support, not gnuplot,

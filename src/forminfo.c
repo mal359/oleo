@@ -1,5 +1,5 @@
 /*
- * $Id: forminfo.c,v 1.7 2000/07/22 06:13:15 danny Exp $
+ * $Id: forminfo.c,v 1.8 2000/07/25 12:56:32 danny Exp $
  *
  * Copyright (C) 1993, 2000 Free Software Foundation, Inc.
  *
@@ -1099,12 +1099,9 @@ char * formula_info[] =
 #ifdef	HAVE_LIBPLOT
 "plotutils-output-types",
 "",
-#ifndef X_DISPLAY_MISSING
-"[plotutils-x11-mono]	--  Draw the graph in an X window, in black and white.",
-"[plotutils-x11-color]	--  Draw the graph in an X window, in color.",
-#endif
 "[plotutils-postscript]	--  Write a file of postscript commands that draw that graph.",
 "[plotutils-tek]	--  Write a file of Tektronix terminal commands that draw that graph.",
+"[plotutils-regis]	--  Write a file of ReGIS terminal commands that draw that graph.",
 "[plotutils-pcl]	--  Write a file of PCL printer commands that draw that graph.",
 "[plotutils-hpgl]	--  Write a file of HP GL printer/plotter commands that draw that graph.",
 "[plotutils-illustrator]	--  Write a file in Adobe Illustrator format.",
@@ -1112,16 +1109,6 @@ char * formula_info[] =
 "[plotutils-fig]	--  Write a file in the format of the FIG program.",
 0,
 #else
-#ifdef WITH_GNUPLOT
-"graph-output-types",
-"",
-#ifndef X_DISPLAY_MISSING
-"[graph-x11-mono]	--  Draw the graph in an X window, in black and white.",
-"[graph-x11-color]	--  Draw the graph in an X window, in color.",
-#endif
-"[graph-postscript]	--  Write a file of postscript commands that draw that graph.",
-0,
-#endif
 #endif
 "keybindings-wallchart",
 "",

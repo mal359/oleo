@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.27 2000/07/22 06:13:15 danny Exp $
+ *  $Id: fallback.c,v 1.28 2000/07/25 12:56:32 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -337,14 +337,6 @@ char *fallback[] = {
 	"*PieTab.labelString:				Pie Chart",
 	"*configurePieChartFrameTitle.labelString:	Configure Pie Charts",
 	"*pie3d.labelString:				3D Pie Chart",
-/* GNU Plotutils : list of known plotters */
-	"*puPlotters:			PostScript,ps,ps;"
-				"GNU MetaPlot,gmp,meta;"
-				"Adobe Illustrator,ai,ai;"
-				"Fig,fig,fig;"
-				"PCL,pcl,pcl;"
-				"HP-GL,hpgl,hpgl;"
-				"Tektronix,tek,tek",
 /* Graph Print Dialog */
 	"*printDialog_popup.title:		Print Dialog",
 	"*puselectfile_popup.title:		Select a file to print to",

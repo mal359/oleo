@@ -1,5 +1,5 @@
 /*
- * $Id: appres.h,v 1.7 2000/07/22 06:13:15 danny Exp $
+ * $Id: appres.h,v 1.8 2000/07/25 12:56:32 danny Exp $
  *
  * Copyright (C) 1998 Free Software Foundation, Inc.
  * Written by Danny Backx <danny@gnu.org>.
@@ -32,7 +32,6 @@ typedef struct GnuSheetAppres {
 	String		save_as_title, load_title;
 	int		columnWidth;
 	String		paper, printer, program, defaultPrintTo;
-	String		puPlotters;
 } GnuSheetAppres;
 
 extern XtResource	resources[];

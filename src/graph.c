@@ -17,7 +17,7 @@
  */
 
 /*
- * $Id: graph.c,v 1.17 2000/07/22 06:13:15 danny Exp $
+ * $Id: graph.c,v 1.18 2000/07/25 12:56:32 danny Exp $
  *
  * This file contains the functions to maintain the internal graphing
  * data structures in Oleo.
@@ -45,31 +45,6 @@
 #include "ref.h"
 #include "io-utils.h"
 
-/* Parameters for the next graph that will be drawn. */
-
-/* This determines the type and destination of the ouput.
- * It should be the argument to a  `set term %s'.  For posctscript graphs,
- * we slip in a `set output %s' as well.
- */
-static struct line graph_term_cmd;
-static struct line graph_output_file;
-
-struct get_symbols_frame;
-struct write_data_frame;
-static void get_symbols_thunk (struct get_symbols_frame * fr,
-			       CELL * cell, CELLREF r, CELLREF c);
-static void write_data_thunk (struct write_data_frame * fr,
-			      CELL * y_cell, CELLREF r, CELLREF c) ;
-static void spew_gnuplot (FILE  * fp, struct line * data_files, char * dir,
-			  char * dbase); 
-static void spew_for_x (void);
-static void spew_for_ps (void);
-
-
-char * gnuplot_program = "gnuplot";
-char * gnuplot_shell = "/bin/sh";
-char * rm_program = "/bin/rm";
-
 char * graph_axis_name [graph_num_axis] =
 {
   "x", "y"
@@ -91,8 +66,6 @@ char *graph_pair_order_name[graph_num_pair_orders] =
   "cols of vt pairs",
   "enumerated cols"
 };
-
-static plotter plot_fn = 0;
 
 int graph_ornt_row_magic [graph_num_pair_orientations] = { 0, 1, 0 };
 int graph_ornt_col_magic [graph_num_pair_orientations] = { 1, 0, 0 };
@@ -203,60 +176,6 @@ char_to_q_char (char *str)
   set_line (&tmp_line, str);
   tmp = line_to_q_char (tmp_line);
   return (tmp);
-}
-
-void
-graph_x11_mono (void)
-{
-  set_line (&graph_term_cmd, "x11 # b/w");
-  set_line (&graph_output_file, "");
-
-  if (Global->PlotGlobal->output_file)
-	free(Global->PlotGlobal->output_file);
-  Global->PlotGlobal->output_file = "";
-
-  plot_fn = spew_for_x;
-}
-
-
-void
-graph_x11_color (void)
-{
-  set_line (&graph_term_cmd, "X11 # color");
-  set_line (&graph_output_file, "");
-
-  if (Global->PlotGlobal->output_file)
-	free(Global->PlotGlobal->output_file);
-  Global->PlotGlobal->output_file = "";
-
-  plot_fn = spew_for_x;
-}
-
-
-void
-graph_postscript (char * file, int kind, int spectrum, char * font, int pt_size)
-{
-  if (isupper (kind))
-    kind = tolower (kind);
-  if (isupper (spectrum))
-    spectrum = tolower (spectrum);
-  if (!index ("led", kind))
-    io_error_msg
-      ("Incorrect postscript graph type %c (should be one of l, e, or c)",
-       kind);
-  if (!index ("mc", spectrum))
-    io_error_msg
-      ("Incorrect postscript color type %c (should be either m or c)",
-       spectrum);
-  sprint_line (&graph_term_cmd,
-	       "postscript %c %c %s %d  # Postscript",
-	       kind, spectrum, char_to_q_char (font), pt_size);
-  set_line (&graph_output_file, file);
-  if (Global->PlotGlobal->output_file)
-	free(Global->PlotGlobal->output_file);
-  Global->PlotGlobal->output_file = strdup(file);
-
-  plot_fn = spew_for_ps;
 }
 
 void
@@ -480,12 +399,25 @@ graph_get_data(int data_set)
 void
 graph_presets (void)
 {
-  if (using_curses)
-    graph_postscript ("#plot.ps", 'd', 'm', "TimesRoman", 12);
-  else
+  enum graph_axis axis;
+
+  if (using_curses) {
+	if (getenv("DISPLAY")) {
+		/*
+		 * We're using curses in an X environment, let's
+		 * default to Tektronix on stdout.
+		 */
+		plotutils_tek();
+		plotutils_set_filename("-");
+	} else {
+		graph_postscript ("#plot.ps", 'd', 'm', "TimesRoman", 12);
+	}
+  } else {
+#if 0
     graph_x11_mono ();
-  {
-    enum graph_axis axis;
+#endif
+  }
+
     for (axis = graph_x; axis < graph_num_axis; ++axis)
       {
 	int axis_c = graph_axis_name [axis][0];
@@ -496,12 +428,7 @@ graph_presets (void)
 	graph_set_axis_title (axis_c, "");
 	graph_default_axis_labels (axis_c);
       }
-  }
 }
-
-
-
-
 
 void
 graph_clear_datasets (void)
@@ -521,125 +448,11 @@ init_graphing (void)
 {
   PlotInit();
 
-  gnuplot_program = getenv ("GNUPLOT_PROG");
-  if (!gnuplot_program)
-    gnuplot_program = "gnuplot";
-  gnuplot_shell = getenv ("GNUPLOT_SHELL");
-  if (!gnuplot_shell)
-    gnuplot_shell = "/bin/sh";
-  rm_program = getenv ("RM_PROG");
-  if (!rm_program)
-    rm_program = "/bin/rm";
   graph_presets ();
   graph_clear_datasets ();
 
   XYxAuto = XYyAuto = 1;
 }
-
-
-void
-graph_make_info (void)
-{
-  struct info_buffer * ib = find_or_make_info ("graphing-parameters");
-  enum graph_axis axis;
-
-  clear_info (ib);
-
-  {
-    print_info
-      (ib,
-       "");
-    print_info
-      (ib,
-       "Parameter		Value");
-    print_info
-      (ib,
-       "");
-
-    print_info
-      (ib,
-       "output type		%s",
-       graph_term_cmd.buf);
-  }
-
-  if (graph_output_file.buf[0])
-    print_info
-      (ib,
-       "output file		%s",
-       graph_output_file.buf);
-  
-  for (axis = graph_x; axis <= graph_y; ++axis)
-    print_info
-      (ib,
-       "%s-axis title		%s",
-       graph_axis_name [axis], Global->PlotGlobal->graph_axis_title[axis].buf);
-
-  {
-    print_info
-      (ib,
-       "logarithmic axes	%s",
-       (Global->PlotGlobal->graph_logness [graph_x]
-	? (Global->PlotGlobal->graph_logness [graph_y] ? "x,y" : "x")
-	: (Global->PlotGlobal->graph_logness [graph_y] ? "y" : "-neither-")));
-
-  }
-  for (axis = graph_x; axis <= graph_y; ++axis)
-    {
-      if (Global->PlotGlobal->graph_axis_symbols[axis].lr != NON_ROW)
-	print_info
-	  (ib,
-	   	"%s-axis symbols	%s in %s",
-	   graph_axis_name [axis],
-	   graph_order_name [Global->PlotGlobal->graph_axis_ordering [axis]],
-	   range_name (&Global->PlotGlobal->graph_axis_symbols [axis]));
-      else
-	print_info
-	  (ib,
-		"%s-axis range		[%s..%s]",
-	   graph_axis_name [axis],
-	   Global->PlotGlobal->graph_rng_lo [axis].buf, Global->PlotGlobal->graph_rng_hi [axis].buf,
-	   Global->PlotGlobal->graph_rng_hi [axis].buf, Global->PlotGlobal->graph_rng_hi [axis].buf);
-    }
-
-  for (axis = graph_x; axis <= graph_y; ++axis)
-    {
-      if (Global->PlotGlobal->graph_axis_labels[axis].lr != NON_ROW)
-	print_info
-	  (ib,
-	   	"%s-axis labels		%s in %s",
-	   graph_axis_name [axis],
-	   graph_pair_order_name [Global->PlotGlobal->graph_axis_label_order [axis]],
-	   range_name (&Global->PlotGlobal->graph_axis_labels [axis]));
-    }
-
-  {
-    int x;
-    for (x = 0; x < NUM_DATASETS; ++x)
-      if (Global->PlotGlobal->graph_data [x].lr != NON_ROW)
-      {
-	print_info (ib, "");
-	print_info (ib,"Data Set %d%s%s",
-		    x,
-		    Global->PlotGlobal->graph_title[x].buf[0] ? " entitled " : "",
-		    Global->PlotGlobal->graph_title[x].buf);
-	print_info (ib,"  data for this set: %s in %s",
-		    graph_pair_order_name [Global->PlotGlobal->graph_data_order [x]],
-		    range_name (&Global->PlotGlobal->graph_data[x]));
-	print_info (ib,"  style for this set: %s",
-		    Global->PlotGlobal->graph_style[x].buf);
-	print_info (ib,"");
-      }
-  }
-}
-
-
-static FILE *
-mk_tmp_file (struct line * line, char * dir, char * base)
-{
-  set_line (line, tmpnam (0));
-  return fopen (line->buf, "w");
-}
-
 
 void
 for_pairs_in (struct rng * rng, enum graph_pair_ordering order, fpi_thunk thunk, void * frame)
@@ -692,15 +505,6 @@ for_pairs_in (struct rng * rng, enum graph_pair_ordering order, fpi_thunk thunk,
 	  c += c_inc;
 	}
     }
-}
-
-/*
- * graph_plot() gets called from the curses UI for actually creating a plot.
- */
-void
-graph_plot (void)
-{
-  plot_fn ();
 }
 
 static char *graph_plot_title = NULL;
@@ -816,362 +620,30 @@ graph_get_axis_tickformat(int axis)
 
 	return Global->PlotGlobal->tickformat[axis];
 }
- 
+
+void
+graph_postscript (char * file, int kind, int spectrum, char * font, int pt_size)
+{
+  if (isupper (kind))
+    kind = tolower (kind);
+  if (isupper (spectrum))
+    spectrum = tolower (spectrum);
+  if (!index ("led", kind))
+    io_error_msg
+      ("Incorrect postscript graph type %c (should be one of l, e, or c)",
+       kind);
+  if (!index ("mc", spectrum))
+    io_error_msg
+      ("Incorrect postscript color type %c (should be either m or c)",
+       spectrum);
 #if 0
-/*
- * Data structures for writing the output.
- */
-struct write_tics_frame
-{
-  FILE * fp;
-  enum graph_axis axis;
-  enum graph_pair_orientation ornt;
-  int tic_cnt;
-};
-
-struct get_symbols_frame
-{
-  int symbols;
-  char ** names;
-};
-
-struct write_data_frame
-{
-  FILE * fp;
-  enum graph_pair_ordering ornt;
-  int data_cnt;
-  struct get_symbols_frame gsf;
-};
-
-/*
- * The functions below implement writing to GNUPLOT.
- */
-static void
-write_tics_thunk (struct write_tics_frame * fr, CELL * cp, CELLREF r, CELLREF c)
-{
-  char * str = char_to_q_char (print_cell (cp));
-  if (fr->tic_cnt)
-    fputs (", ", fr->fp);
-  fprintf (fr->fp, "%s ", str);
-  if (fr->ornt == graph_implicit)
-    fprintf (fr->fp, "%d", fr->tic_cnt);
-  else
-    {
-      CELLREF x_r = r - graph_ornt_row_magic [fr->ornt];
-      CELLREF x_c = c - graph_ornt_col_magic [fr->ornt];
-      
-      fprintf (fr->fp, "%s", print_cell (find_cell (x_r, x_c)));
-    }
-  ++fr->tic_cnt;
+  sprint_line (&graph_term_cmd,
+               "postscript %c %c %s %d  # Postscript",
+               kind, spectrum, char_to_q_char (font), pt_size);
+  set_line (&graph_output_file, file);
+#endif
 }
 
-static void
-write_tics_command (FILE * fp, enum graph_axis axis, struct rng * rng, enum graph_pair_ordering order)
-{
-  struct write_tics_frame fr;
-  fr.fp = fp;
-  fr.axis = axis;
-  fr.tic_cnt = 0;
-  fr.ornt = order % graph_num_pair_orientations;
-  fprintf (fp, "set %stics (", graph_axis_name[axis]);
-  for_pairs_in (rng, order, (fpi_thunk)write_tics_thunk, &fr);
-  fputs (")\n", fp);
-}
-
-static void
-get_symbols_thunk (struct get_symbols_frame * fr,
-		   CELL * cell, CELLREF r, CELLREF c)
-{
-  fr->names = (char **)ck_realloc (fr->names,
-				   (fr->symbols + 1) * sizeof (char *));
-  fr->names [fr->symbols] = ck_savestr (print_cell (cell));
-  ++fr->symbols;
-}
-
-static void
-write_data_thunk (struct write_data_frame * fr,
-		  CELL * y_cell, CELLREF r, CELLREF c) 
-{
-  if (!y_cell || !GET_TYP(y_cell))
-    return;
-  if (fr->ornt == graph_implicit)
-    fprintf (fr->fp, "%d ", fr->data_cnt);
-  else
-    {
-      CELLREF x_r = r - graph_ornt_row_magic [fr->ornt];
-      CELLREF x_c = c - graph_ornt_col_magic [fr->ornt];
-      CELL * x_cell = find_cell (x_r, x_c);
-      if (x_cell && GET_TYP(x_cell))
-	{
-	  if (Global->PlotGlobal->graph_axis_symbols [graph_x].lr == NON_ROW)
-	    fprintf (fr->fp, "%s ", print_cell (x_cell));
-	  else
-	    {
-	      char * key = print_cell (x_cell);
-	      int x;
-	      for (x = 0; x < fr->gsf.symbols; ++x)
-		if (stricmp (key, fr->gsf.names[x]))
-		  {
-		    fprintf (fr->fp, "%d ", x);
-		    break;
-		  }
-	    }
-	}
-    }
-  fprintf (fr->fp, " %s\n", print_cell (y_cell));
-  ++fr->data_cnt;
-}
-
-static void
-spew_gnuplot (FILE  * fp, struct line * data_files, char * dir, char * dbase)
-{
-  fprintf (fp, "set terminal %s\n", graph_term_cmd.buf);
-  fprintf (fp, "set output %s\n",
-	   (graph_output_file.buf[0]
-	    ? line_to_q_char (graph_output_file)
-	    : ""));
-
-  {
-    enum graph_axis axis;
-    for (axis = graph_x; axis <= graph_y; ++axis)
-      {
-	fprintf (fp, "set %slabel %s\n", graph_axis_name[axis],
-		 (Global->PlotGlobal->graph_axis_title[axis].buf[0]
-		  ? Global->PlotGlobal->graph_axis_title[axis].buf
-		  : ""));
-
-	fprintf (fp, "set %srange [%s:%s]\n",
-		 graph_axis_name [axis],
-		 (says_default (Global->PlotGlobal->graph_rng_lo [axis].buf)
-		  ? ""
-		  : Global->PlotGlobal->graph_rng_lo[axis].buf),
-		 (says_default (Global->PlotGlobal->graph_rng_hi [axis].buf)
-		  ? ""
-		  : Global->PlotGlobal->graph_rng_hi[axis].buf));
-	if (   (Global->PlotGlobal->graph_axis_symbols [axis].lr != NON_ROW)
-	    && (Global->PlotGlobal->graph_axis_labels [axis].lr == NON_ROW))
-	  write_tics_command (fp, axis, &Global->PlotGlobal->graph_axis_symbols [axis],
-			      PAIR_ORDER(Global->PlotGlobal->graph_axis_ordering[axis],
-						   graph_implicit));
-	else if (Global->PlotGlobal->graph_axis_labels [axis].lr != NON_ROW)
-	  write_tics_command (fp, axis,
-			      &Global->PlotGlobal->graph_axis_labels [axis],
-			      Global->PlotGlobal->graph_axis_label_order [axis]);
-	else
-	  fprintf (fp, "set %stics\n", graph_axis_name [axis]);
-      }
-    if (!(Global->PlotGlobal->graph_logness[graph_x] && Global->PlotGlobal->graph_logness[graph_y]))
-      fprintf (fp, "set nolog %s%s\n",
-	       Global->PlotGlobal->graph_logness[graph_x] ? "" : "x",
-	       Global->PlotGlobal->graph_logness[graph_y] ? "" : "y");
-
-    if (Global->PlotGlobal->graph_logness[graph_x] || Global->PlotGlobal->graph_logness[graph_y])
-      fprintf (fp, "set log %s%s\n",
-	       Global->PlotGlobal->graph_logness[graph_x] ? "x" : "",
-	       Global->PlotGlobal->graph_logness[graph_y] ? "y" : "");
-  }
-  {
-    int need_comma = 0;
-    int x;
-    fprintf (fp, "plot ");
-    for (x = 0; x < NUM_DATASETS; ++x)
-      {
-	init_line (&data_files [x]);
-	if (Global->PlotGlobal->graph_data [x].lr != NON_ROW)
-	  {
-	    FILE * df = mk_tmp_file (&data_files [x], dir, dbase);
-	    struct write_data_frame wdf;
-	    if (!df)
-	      {
-		/* a small core leak here... */
-		io_error_msg ("Error opening temp file `%s' for graph data.",
-			      data_files [x].buf);
-	      }
-	    wdf.fp = df;
-	    wdf.ornt = Global->PlotGlobal->graph_data_order [x] % graph_num_pair_orientations;
-	    wdf.data_cnt = 0;
-	    wdf.gsf.symbols = 0;
-	    wdf.gsf.names = 0;
-	    if (Global->PlotGlobal->graph_axis_symbols [graph_x].lr != NON_ROW)
-	      for_pairs_in (&Global->PlotGlobal->graph_axis_symbols [graph_x],
-			    PAIR_ORDER (Global->PlotGlobal->graph_axis_ordering [graph_x],
-					graph_implicit),
-			    (fpi_thunk)get_symbols_thunk,
-			    &wdf.gsf);
-	    for_pairs_in (&Global->PlotGlobal->graph_data [x], Global->PlotGlobal->graph_data_order [x],
-			  (fpi_thunk)write_data_thunk, &wdf);
-	    if (Global->PlotGlobal->graph_axis_symbols [graph_x].lr != NON_ROW)
-	      {
-		int x;
-		for (x = 0; x < wdf.gsf.symbols; ++x)
-		  free (wdf.gsf.names[x]);
-		ck_free (wdf.gsf.names);
-	      }
-	    fprintf (fp, "%s %s %s %s with %s",
-		     need_comma ? "," : "",
-		     line_to_q_char (data_files [x]),
-		     Global->PlotGlobal->graph_title[x].buf[0] ? " title " : "",
-                     Global->PlotGlobal->graph_title[x].buf[0] ? line_to_q_char (Global->PlotGlobal->graph_title [x]) : "",
-		     Global->PlotGlobal->graph_style [x].buf);
-	    need_comma = 1;
-	    fclose (df);
-	  }
-      }
-    fprintf (fp, "\n");
-  }
-}
-
-static void
-graph_spew_with_parameters (struct line * shell_script, struct line *
-			    gp_script, char * last_cmd, char * dir, char *
-			    dbase, char * gbase, char * sbase, int run_gnuplot)
-{
-  struct line data_files [NUM_DATASETS];
-  FILE * fp;
-  fp = mk_tmp_file (gp_script, dir, gbase);
-  if (!fp)
-    {
-      /* coreleak filename */
-      io_error_msg ("Error opening tmp file `%s' for plot script.",
-		    gp_script->buf);
-    }
-  spew_gnuplot (fp, data_files, dir, dbase);
-  if (last_cmd)
-    fputs (last_cmd, fp);
-  if (sbase)
-    {
-      FILE * shfp;
-      init_line (shell_script);
-      shfp = mk_tmp_file (shell_script, dir, sbase);
-      fprintf (shfp, "#!%s\n", gnuplot_shell);
-      fputs ("\n", shfp);
-      if (run_gnuplot)
-	fprintf (shfp, "%s %s\n", gnuplot_program, gp_script->buf);
-      fprintf (shfp, "%s %s %s  ",
-	       rm_program, gp_script->buf, shell_script->buf);
-      {
-	int x;
-	for (x = 0; x < NUM_DATASETS; ++x)
-	  if (data_files[x].buf)
-	    fprintf (shfp, "%s ", data_files [x].buf);
-      }
-      fputs ("\n", shfp);
-      fclose (shfp);
-    }
-  fclose (fp);
-}
-
-/*
- * The functions and variables below constitute the low level
- * interface to the GNUPLOT program.
- */
-static FILE * pipe_to_gnuplot = 0;
-static char * cleanup_script = 0;
-static char * gnuplot_script = 0;
-
-static void death_to_gnuplot (void);
-
-static void
-gnuplot_exception (int fd)
-{
-  death_to_gnuplot ();
-}
-
-static void
-gnuplot_writable (int fd)
-{
-  FD_CLR (fd, &write_fd_set);
-  file_write_hooks [fd].hook_fn = 0;
-  fprintf (pipe_to_gnuplot, "\n\nload %s\n", char_to_q_char (gnuplot_script));
-  fflush (pipe_to_gnuplot);
-}
-
-static void
-ensure_gnuplot_pipe (void)
-{
-  if (!pipe_to_gnuplot)
-    {
-      pipe_to_gnuplot = popen (gnuplot_program, "w");
-      if (!pipe_to_gnuplot)
-	io_error_msg ("Can't popen gnuplot.");
-    }
-  if (gnuplot_script)
-    {
-      file_write_hooks [fileno (pipe_to_gnuplot)].hook_fn = gnuplot_writable;
-      file_exception_hooks [fileno (pipe_to_gnuplot)].hook_fn = gnuplot_exception;
-      FD_SET (fileno (pipe_to_gnuplot), &write_fd_set);
-      FD_SET (fileno (pipe_to_gnuplot), &exception_fd_set);
-    }
-}
-
-static void
-death_to_gnuplot (void)
-{
-  if (pipe_to_gnuplot)
-    {
-      int fd = fileno (pipe_to_gnuplot);
-      file_write_hooks [fd].hook_fn = 0;
-      file_exception_hooks [fd].hook_fn = 0;
-      FD_CLR (fd, &write_fd_set);
-      FD_CLR (fd, &exception_fd_set);
-      pclose (pipe_to_gnuplot);
-    }
-  pipe_to_gnuplot = 0;
-  if (cleanup_script)
-    system (cleanup_script);
-  if (cleanup_script)
-    ck_free (cleanup_script);
-  if (gnuplot_script)
-    ck_free (gnuplot_script);
-}
-
-/*
- * This function is called by graph_plot() from the curses UI to
- * create a plot.
- */
-static void
-spew_for_x (void)
-{
-  struct line shell_script;
-  struct line gp_script;
-  init_line (&shell_script);
-  init_line (&gp_script);
-  graph_spew_with_parameters (&shell_script, &gp_script, "pause -1\n", 0,
-			      "#data", "#plot", "#sh", 0);
-  splicen_line (&shell_script, " ", 1, 0);
-  splicen_line (&shell_script, gnuplot_shell, strlen (gnuplot_shell), 0);
-  if (cleanup_script)
-    {
-      system (cleanup_script);
-      free (cleanup_script);
-    }
-  cleanup_script = shell_script.buf;
-  if (gnuplot_script)
-    free (gnuplot_script);
-  gnuplot_script = gp_script.buf;
-  ensure_gnuplot_pipe ();
-}
-
-/*
- * This function is called by graph_plot() from the curses UI to
- * create a plot.
- */
-static void
-spew_for_ps (void)
-{
-  struct line shell_script;
-  struct line gp_script;
-  init_line (&shell_script);
-  init_line (&gp_script);
-  graph_spew_with_parameters (&shell_script, &gp_script, 0, "", "#data",
-			      "#plot", "#sh", 1); 
-  splicen_line (&shell_script, " ", 1, 0);
-  splicen_line (&shell_script, gnuplot_shell, strlen (gnuplot_shell), 0);
-  system (shell_script.buf);
-  free_line (&shell_script);
-  free_line (&gp_script);
-}
-#else
 /*
  * Show a GNU Plotutils chart.
  *
@@ -1179,25 +651,12 @@ spew_for_ps (void)
  * The client parameter is the function (from plot.c) which will
  * handle the plotting. We pass it to RedrawPlotutilsWindow() too.
  */
-static void
-spew_for_ps(void)
+void
+graph_plot(void)
 {
 #ifdef	HAVE_LIBPLOT
-	void (*f)(char *, FILE *) = PuXYChart;	/* FIX ME */
 	FILE	*fp = NULL;
 	int	havepipe = 0;
-
-	switch (Global->PlotGlobal->graph_type) {
-	case GRAPH_XY:
-		f = PuXYChart;
-		break;
-	case GRAPH_BAR:
-		f = PuBarChart;
-		break;
-	case GRAPH_PIE:
-		f = PuPieChart;
-		break;
-	};
 
 	if (Global->PlotGlobal->output_file) {
 	    /* Treat stdout ("-") case */
@@ -1216,38 +675,28 @@ spew_for_ps(void)
 		return;
 	}
 
-	switch (Global->PlotGlobal->device) {
-	case GRAPH_TEK:
-		PlotInit();
-#if 0
-		/* A failed attempt to clear the screen prior to drawing */
-		printf("\027\014");
-#endif
-		(*f)("tek", fp);
-		break;
-	default:
-		PlotInit();
-		(*f)("ps", fp);		/* FIX ME */
-		break;
-	};
+	PuPlot(Global->PlotGlobal->graph_type, Global->PlotGlobal->device, fp);
 
 	if (havepipe) {
 		/* FIX ME */
-	} else if (fp != stdout)
+	} else if (fp == stdout && using_curses) {
+		;	/* Don't do a thing, curses would die. */
+	} else {
 		fclose(fp);
+	}
 #endif
 }
-static void
-spew_for_x(void)
-{
-}
-#endif
 
-#ifdef	HAVE_LIBPLOT
+void
+plotutils_set_device(enum graph_device d)
+{
+	Global->PlotGlobal->device = d;
+}
+
 void
 plotutils_metaplot(void)
 {
-	Global->PlotGlobal->device = GRAPH_METAPLOT;
+	Global->PlotGlobal->device = GRAPH_METAFILE;
 }
 
 void
@@ -1280,10 +729,16 @@ plotutils_tek(void)
 	Global->PlotGlobal->device = GRAPH_TEK;
 }
 
-/* FIX ME !!! */
+void
+plotutils_regis(void)
+{
+	Global->PlotGlobal->device = GRAPH_REGIS;
+}
+
 void
 plotutils_make_info(void)
 {
+#ifdef	HAVE_LIBPLOT
   struct info_buffer	*ib = find_or_make_info ("graphing-parameters");
   enum graph_axis	axis;
   int			x;
@@ -1320,8 +775,8 @@ plotutils_make_info(void)
   case GRAPH_GIF:
     print_info(ib, "output type		%s", "GIF");
     break;
-  case GRAPH_METAPLOT:
-    print_info(ib, "output type		%s", "GNU MetaPlot");
+  case GRAPH_METAFILE:
+    print_info(ib, "output type		%s", "GNU metafile");
     break;
   case GRAPH_ILLUSTRATOR:
     print_info(ib, "output type		%s", "Adobe Illustrator");
@@ -1336,9 +791,14 @@ plotutils_make_info(void)
     print_info(ib, "output type		%s", "HP GL");
     break;
   case GRAPH_POSTSCRIPT:
+    print_info(ib, "output type		%s", "PostScript");
+    break;
+  case GRAPH_REGIS:
+    print_info(ib, "output type         %s", "ReGIS");
+    break;
   case GRAPH_NONE:
   default:
-    print_info(ib, "output type		%s", graph_term_cmd.buf);
+    print_info(ib, "output type		???");
     break;
   };
 
@@ -1388,6 +848,7 @@ plotutils_make_info(void)
 		    Global->PlotGlobal->graph_style[x].buf);
 	print_info (ib,"");
       }
+#endif
 }
 
 void
@@ -1400,8 +861,6 @@ plotutils_set_axis_labels(int axis_c, struct rng * rng)
 void
 plotutils_set_filename(char *file)
 {
-  set_line (&graph_output_file, file);
-
   if (Global->PlotGlobal->output_file)
 	free(Global->PlotGlobal->output_file);
   Global->PlotGlobal->output_file = strdup(file);
@@ -1410,15 +869,22 @@ plotutils_set_filename(char *file)
 void plotutils_xy(void)
 {
 	Global->PlotGlobal->graph_type = GRAPH_XY;
+	io_info_msg("Graph type is now XY chart");
 }
 
 void plotutils_pie(void)
 {
 	Global->PlotGlobal->graph_type = GRAPH_PIE;
+	io_info_msg("Graph type is now PIE chart");
 }
 
 void plotutils_bar(void)
 {
 	Global->PlotGlobal->graph_type = GRAPH_BAR;
+	io_info_msg("Graph type is now BAR chart");
 }
-#endif
+
+void plotutils_set_graph_type(enum graph_type gt)
+{
+	Global->PlotGlobal->graph_type = gt;
+}

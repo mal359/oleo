@@ -1,5 +1,5 @@
 /*
- * $Id: cmd.c,v 1.17 2000/07/22 06:13:15 danny Exp $
+ * $Id: cmd.c,v 1.18 2000/07/25 12:56:32 danny Exp $
  *
  * Copyright © 1993, 1999, 2000 Free Software Foundation, Inc.
  *
@@ -593,6 +593,7 @@ fini:
 
 void OleoLog(char *fmt, ...)
 {
+#if 0
 	va_list	ap;
 	FILE	*log = fopen("/tmp/oleolog", "a");
 	if (log) {
@@ -601,6 +602,7 @@ void OleoLog(char *fmt, ...)
 		va_end(ap);
 		fclose(log);
 	}
+#endif
 }
 
 /*****************************************************************

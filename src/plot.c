@@ -1,5 +1,5 @@
 /*
- * $Id: plot.c,v 1.23 2000/07/22 06:13:16 danny Exp $
+ * $Id: plot.c,v 1.24 2000/07/25 12:56:32 danny Exp $
  *
  * Copyright (C) 1998-2000 Free Software Foundation, Inc.
  * 
@@ -19,7 +19,7 @@
  */
 
 /*
- * $Id: plot.c,v 1.23 2000/07/22 06:13:16 danny Exp $
+ * $Id: plot.c,v 1.24 2000/07/25 12:56:32 danny Exp $
  *
  * This file contains the code to draw plots from the Oleo data
  * layered on top of the libsciplot functions.
@@ -45,13 +45,45 @@
 #include "ref.h"
 #include "io-utils.h"
 
+#ifndef X_DISPLAY_MISSING
 #include <X11/Intrinsic.h>
+#endif
+
+/*
+ * These are the devices supported by GNU plotutils.
+ *	The first field is Oleo's representation of this file format.
+ *	The second field is the string we need to pass to plotutils to select this
+ *	type of device.
+ *	The third field is the file name extension, should we save to a file.
+ *	The last field is the string shown to the user to describe this device type.
+ */
+struct PlotutilsDevices PlotutilsDeviceArray[] = {
+/*
+  {	GRAPH_NONE,		"?",		"?",		"???"				},
+*/
+  {	GRAPH_POSTSCRIPT,	"ps",		"ps",		"PostScript"			},
+  {	GRAPH_TEK,		"tek",		"tek",		"Tektronix"			},
+  {	GRAPH_X,		"x",		"x",		"X Window"			},
+  {	GRAPH_PNG,		"png",		"png",		"Portable Network Graphics"	},
+  {	GRAPH_GIF,		"gif",		"gif",		"GIF"				},
+  {	GRAPH_METAFILE,		"metafile",	"metafile",	"GNU metafile"			},
+  {	GRAPH_ILLUSTRATOR,	"ai",		"ai",		"Adobe Illustrator"		},
+  {	GRAPH_FIG,		"fig",		"fig",		"Fig"				},
+  {	GRAPH_PCL,		"pcl",		"pcl",		"PCL"				},
+  {	GRAPH_HPGL,		"hpgl",		"hpgl",		"HP GL"				},
+  {	GRAPH_REGIS,		"regis",	"regis",	"ReGIS"				},
+  {	GRAPH_PNM,		"pnm",		"pnm",		"pnm"				},
+  {	GRAPH_SVG,		"svg",		"svg",		"svg"				},
+  {	GRAPH_CGM,		"cgm",		"cgm",		"cgm"				},
+	/* Don't add anything after this line */
+  {	-1,			NULL,		NULL,		NULL				}
+};
 
 void
 PlotInit(void)
 {
 	if (! Global->PlotGlobal) {
-		Global->PlotGlobal = (struct PlotGlobalType *)XtMalloc(sizeof(struct PlotGlobalType));
+		Global->PlotGlobal = (struct PlotGlobalType *)malloc(sizeof(struct PlotGlobalType));
 		memset(Global->PlotGlobal, 0, sizeof(struct PlotGlobalType));
 
 		graph_set_axis_lo('x', "0.0");
@@ -126,14 +158,14 @@ PuOpen(const char *plotter, FILE *outfile)
 	PlotInit();
 }
 
+#ifdef	HAVE_MOTIF
 void
 PuX(Display *dpy, Window w)
 {
-#ifdef	HAVE_MOTIF
 	Sdpy = dpy;
 	window = w;
-#endif
 }
+#endif
 
 static void
 PuClose()
@@ -466,5 +498,37 @@ PuXYChart(char *plotter, FILE *outfile)
 
 	PuClose();
 	free((void *)xes);
+}
+
+void PuPlot(enum graph_type gt, enum graph_device gd, FILE *fp)
+{
+	void	(*f)(char *, FILE *) = PuXYChart;  /* FIX ME */
+	char	*pu;
+	int	i;
+
+	switch (gt) {
+	case GRAPH_XY:
+		f = PuXYChart;
+		break;
+	case GRAPH_BAR:
+		f = PuBarChart;
+		break;
+	case GRAPH_PIE:
+		f = PuPieChart;
+		break;
+	};
+
+	for (i=0, pu=NULL; PlotutilsDeviceArray[i].pus; i++) {
+		if (Global->PlotGlobal->device == PlotutilsDeviceArray[i].t) {
+			pu = PlotutilsDeviceArray[i].pus;
+			break;
+		}
+	}       
+
+	if (! pu)
+		return;	/* FIX ME */
+
+	PlotInit();
+	(*f)(pu, fp);
 }
 #endif	/* HAVE_LIBPLOT */

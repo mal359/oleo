@@ -1,5 +1,5 @@
 /*
- * $Id: defun.h,v 1.5 2000/07/22 06:13:15 danny Exp $
+ * $Id: defun.h,v 1.6 2000/07/25 12:56:32 danny Exp $
  *
  * Copyright © 1993, 2000 Free Software Foundation, Inc.
  *
@@ -2208,20 +2208,6 @@ DEFUN ("page-info-backwards",
  * Plotutils commands
  */
 
-#ifndef X_DISPLAY_MISSING
-DEFUN_3 ("plotutils-x11-mono", FDplotutils_x11_mono, graph_x11_mono)
-#ifdef DOC_STRINGS
-"Specify that graphing should be done to an X11 window in black and white.",
-#endif
-#endif
-
-#ifndef X_DISPLAY_MISSING
-DEFUN_3 ("plotutils-x11-color", FDplotutils_x11_color, graph_x11_color)
-#ifdef DOC_STRINGS
-"Specify that graphing should be done to an X11 window in color.",
-#endif
-#endif
-
 DEFUN_3 ("plotutils-metaplot", FDplotutils_metaplot, plotutils_metaplot)
 #ifdef DOC_STRINGS
 "Specify that graphing output should be in GNU MetaPlot format.",
@@ -2250,6 +2236,11 @@ DEFUN_3 ("plotutils-hpgl", FDplotutils_hpgl, plotutils_hpgl)
 DEFUN_3 ("plotutils-tek", FDplotutils_tek, plotutils_tek)
 #ifdef DOC_STRINGS
 "Specify that graphing should be done to a Tektronix terminal (or xterm emulator).",
+#endif
+
+DEFUN_3 ("plotutils-regis", FDplotutils_regis, plotutils_regis)
+#ifdef DOC_STRINGS
+"Specify that graphing should be done to a ReGIS terminal.",
 #endif
 
 DEFUN_3 ("plotutils-bar", FDplotutils_bar, plotutils_bar)
@@ -2407,227 +2398,4 @@ DEFUN_3 ("plotutils-clear-datasets", FDplotutils_clear_datasets, graph_clear_dat
 "This undoes the effects of all previous invocations of [graph-set-data].",
 #endif
 
-#else	/* HAVE_LIBPLOT */
-#ifdef	WITH_GNUPLOT
-
-/*
- * Graph Commands
- */
-
-#ifndef X_DISPLAY_MISSING
-DEFUN_3 ("graph-x11-mono", FDgraph_x11_mono, graph_x11_mono)
-#ifdef DOC_STRINGS
-"Specify that graphing should be done to an X11 window in black and white.",
-#endif
-#endif
-
-#ifndef X_DISPLAY_MISSING
-DEFUN_3 ("graph-x11-color", FDgraph_x11_color, graph_x11_color)
-#ifdef DOC_STRINGS
-"Specify that graphing should be done to an X11 window in color.",
-#endif
-#endif
-
-DEFUN ("graph-toggle-axis-logness",
-       FDgraph_toggle_x_logness, FAgraph_toggle_x_logness, graph_set_logness)
-#ifdef FUNC_ARG_STRINGS
-"[xXyY]Which axis? (`x' or `y') ",
-"p?",
-"p",
-#endif
-#ifdef DOC_STRINGS
-"Toggle whether AXIS (`x' or `y') is drawn to a logarithmic scale.",
-"With a 0 or negative prefix, make the axis not be logarithmic.",
-"With a positive prefix, make the axis logarithmic.",
-#endif
-
-DEFUN ("graph-postscript",
-       FDgraph_postscript, FAgraph_postscript, graph_postscript)  
-#ifdef FUNC_ARG_STRINGS
-"fnWrite postscript graph to? ",
-"[ledLED][L]andscape  [E]mbedded postscript  or [D]efault",
-"[cCmM][C]olor  or [M]onochrome",
-"sPostscript font? ", 
-"nPoint size? ",
-#endif
-#ifdef DOC_STRINGS
-"Specify that graphing should be done in postscript.",
-"Arguments are:",
-"  FILE - the output file for the postscript (may be a pipe, e.g.: `| lpr').",
-"  KIND - [l]andscape, [e]mbedded postscript or [d]efault",
-"  COLOR - [b]lack and white,  or [c]olor",
-"  FONT - a font name (e.g.: Times-Roman)",
-"  PTSIZ - point size for labels.",
-#endif
-
-DEFUN ("graph-set-axis-low",
-       FDgraph_set_axis_low, FAgraph_set_axis_low, graph_set_axis_lo)
-#ifdef FUNC_ARG_STRINGS
-"[xXyY]Set range start for which axis? (`x' or `y') ",
-"sBeginning of the %0 axis range [a number or `def']? ",
-#endif
-#ifdef DOC_STRINGS
-"Set the beginning of the range graph on AXIS to LOW.",
-"LOW may be either a real number, or `def' to invoke auto-scaling.",
-#endif
-
-DEFUN ("graph-set-axis-high",
-       FDgraph_set_axis_high, FAgraph_set_axis_high, graph_set_axis_hi)
-#ifdef FUNC_ARG_STRINGS
-"[xXyY]Set range start for which axis? (`x' or `y') ",
-"sEnd of the %0 axis range [a number or `def']? ",
-#endif
-#ifdef DOC_STRINGS
-"Set the beginning of the range graph on AXIS to HIGH.",
-"HIGH may be either a real number, or `def' to invoke auto-scaling.",
-#endif
-
-DEFUN ("graph-set-x-axis-symbolic", FDgraph_set_axis_symbolic,
-       FAgraph_set_axis_symbolic, graph_set_axis_symbolic)
-#ifdef FUNC_ARG_STRINGS
-"c#x",
-"rSymbols for the %0-axis in range? ",
-"cRead rows or cols in %1? (`r' or `c') ",
-#endif
-#ifdef DOC_STRINGS
-"Declare that the x-axis should range over the names in RANGE read in ORDER.",
-"RANGE should be a set of cells containing the symbols for the x-axis.",
-"The values in those cells correspond to positions in the range being",
-"graphed (e.g.: the cells might contain the names of the months).",
-"ORDER (either `r' or `c') says whether cells should be read row-wise",
-"or column-wise.",
-"",
-"After this command, two kinds of data-sets can be plotted.",
-"Datasets which are explicitly made up of pairs of cells should contain",
-"X values that can be found in RANGE.  Datasets with an implicit X coordinate",
-"will be provided with X coordinates from RANGE in the specified order.",
-"",
-"For non-symbolic ranges, use [graph-set-axis-low]",
-"",
-"For symbolic labels on a numeric range, use [graph-set-axis-labels]",
-#endif
-
-DEFUN ("graph-set-axis-labels", FDgraph_set_axis_labels,
-       FAgraph_set_axis_labels, graph_set_axis_labels)
-#ifdef FUNC_ARG_STRINGS
-"[xXyY]Labels for which axis? (`x' or `y') ",
-"rRead labels for the %0-axis from range? ",
-"[hHvViI]Are position/label pairs [H]oriz, [V]ert, or [I]mplicit-position? ",
-"[rRcC]Read labels from %0 row-wise or column-wise? (`r',or `c') ",
-#endif
-#ifdef DOC_STRINGS
-"Read labels for AXIS from RNG as ORIENTATION pos/label pairs read in ORDER.",
-"",
-"AXIS may be either `x' or `y'.",
-"",
-"ORIENTATION may be:",
-"	`h' - horizontal	if rc contains the position, then rc[1]",
-"				contains the label.",
-"	`v' - vertical		if rc contains the position, then r[1]c",
-"				contains the label.",
-"	`i' - implicit		every cell is a label; positions are assigned",
-"				non-negative integer positions (0, 1, 2...)",
-"",
-"ORDER may be:",
-"	`r' - rows		pairs are read row-wise",
-"	`c' - columns		pairs are read column-wise",
-"",
-"This command does not effect what range will be graphed.  If labels are",
-"assigned positions outside the visible range, they will not be drawn.",
-"See also graph-set-x-symbolic.",
-"This is undone by [graph-default-axis-labels]",
-#endif
-
-DEFUN ("graph-default-axis-labels", FAgraph_default_axis_labels,
-       FDgraph_default_axis_labels, graph_default_axis_labels)
-#ifdef FUNC_ARG_STRINGS
-"[xXyY]Use default labels for which axis? (`x' or `y') ",
-#endif
-#ifdef DOC_STRINGS
-"Reset the labels for AXIS to their defaults.",
-"This undoes [graph-set-axis-labels]",
-#endif
-
-DEFUN ("graph-set-style",
-       FDgraph_set_style, FAgraph_set_style, graph_set_style)
-#ifdef FUNC_ARG_STRINGS
-"N[0,9]Set style for which dataset? (0..9) ",
-"sStyle for dataset %0? ",
-#endif
-#ifdef DOC_STRINGS
-"Specify that dataset N should be graphed in STYLE.",
-"STYLE may be any of the gnuplot graph types: ",
-"	lines, points, linespoints, impulses, dots",
-#endif
-
-DEFUN ("graph-set-axis-title",
-       FDgraph_set_axis_title, FAgraph_set_axis_title, graph_set_axis_title)
-#ifdef FUNC_ARG_STRINGS
-"[xyXY]Set title of which axis? (x or y) ",
-"sTitle for the %0-axis? ",
-#endif
-#ifdef DOC_STRINGS
-"When drawing graphs, label AXIS (`x' or `y') with TITLE.",
-#endif
-
-DEFUN ("graph-set-data", FDgraph_set_data, FAgraph_set_data, graph_set_data)
-#ifdef FUNC_ARG_STRINGS
-"N[0,9]Set which dataset? (0..9) ",
-"rRead dataset %0 from what range? ",
-"[hHvViI]Are X,Y pairs [H]oriz, [V]ert, or [I]mplicit-X? ",
-"[rRcC]Read labels from %0 row-wise or column-wise? (`r',or `c') ",
-#endif
-#ifdef DOC_STRINGS
-"Specify that dataset N is read from RNG as ORNT x,y pairs read in ORDER",
-"",
-"Datasets are numbered 0..9.",
-"",
-"ORIENTATION may be:",
-"	`h' - horizontal	if rc contains x, then rc[1] contains y",
-"	`v' - vertical		if rc    \"     x,   \"  r[1]c    \"     y",
-"	`i' - implicit		every cell is a y value; x coordinates are",
-"				non-negative integer positions (0, 1, 2...)",
-"",
-"ORDER may be:",
-"	`r' - rows		pairs are read row-wise",
-"	`c' - columns		pairs are read column-wise",
-"",
-#endif
-
-DEFUN ("graph-set-data-title",
-       FDgraph_set_data_title, FAgraph_set_data_title, graph_set_data_title)
-#ifdef FUNC_ARG_STRINGS
-"N[0,9]Set the title for which dataset? (0..9) ",
-"sTitle for dataset %0? ",
-#endif
-#ifdef DOC_STRINGS
-"Specify that dataset N should be called TITLE. ",
-"The title will be printed in the key for the graph.",
-#endif
-
-DEFUN_3 ("graph-presets", FDgraph_presets, graph_presets)
-#ifdef DOC_STRINGS
-"Return graphing parameters to their default values.",
-"This does not effect the datasets selected for graphing.",
-#endif
-
-DEFUN_3 ("graph-clear-datasets", FDgraph_clear_datasets, graph_clear_datasets)
-#ifdef DOC_STRINGS
-"Erase the settings of which datasets will be graphed.",
-"This undoes the effects of all previous invocations of [graph-set-data].",
-#endif
-
-DEFUN_3 ("graph-make-info", FDgraph_make_info, graph_make_info)  
-#ifdef DOC_STRINGS
-"Update the info-buffer called `graphing-parameters'.",
-"The new contents of the buffer will describe the current settings",
-"of all graphing parameters",
-#endif
-
-DEFUN_3 ("graph-plot", FDgraph_plot, graph_plot)
-#ifdef DOC_STRINGS
-"Execute a graph.  The parameter of the graph are set using [graph-setup]",
-#endif
-
-#endif	/* WITH_GNUPLOT */
 #endif	/* ~ HAVE_LIBPLOT */
