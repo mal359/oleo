@@ -1,5 +1,5 @@
 /*
- *  $Id: pcl.c,v 1.7 1999/08/31 08:45:21 danny Exp $
+ *  $Id: pcl.c,v 1.8 1999/10/05 21:32:15 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: pcl.c,v 1.7 1999/08/31 08:45:21 danny Exp $";
+static char rcsid[] = "$Id: pcl.c,v 1.8 1999/10/05 21:32:15 danny Exp $";
 
 #include <stdio.h>
 
@@ -174,11 +174,14 @@ void PCLFont(char *family, char *slant, int size, FILE *fp)
 	fputc('H', fp);
 
 	/* Primary size */
+	/* Original version sent \033(s%dV,
+	 * the www.wotsit.org docs say v instead of V.
+	 */
 	fputc('\033', fp);
 	fputc('(', fp);
 	fputc('s', fp);
 	fprintf(fp, "%d", size);
-	fputc('V', fp);
+	fputc('v', fp);
 
 	/* Slant */
 	if (slant == NULL || stricmp(slant, "normal") == 0

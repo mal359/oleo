@@ -1,4 +1,11 @@
-$Id: ChangeLog,v 1.106 1999/09/21 23:33:27 danny Exp $
+$Id: ChangeLog,v 1.107 1999/10/05 21:32:10 danny Exp $
+
+Tue Oct  5 23:31:50 1999, Danny
+	* Release 1.99.6 .
+	* Use isprint() to determine whether something is
+	  printable, so Oleo shows iso-latin-1 characters.
+	  Set LANG to something like it_IT.ISO_8859-1 for
+	  this to work.
 
 Wed Sep 22 01:37:46 1999, Danny
 	* Changes to get things to compile without mysql

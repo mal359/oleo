@@ -648,82 +648,71 @@ decomp_free (void)
 #endif
 }
 
-/* This takes a string and returns a backslashed form suitable for printing.
-   Iff add_quote is true, it'll add "s at the beginning and end.
-   Note that this returns a pointer to a static area that is overwritten with
-   each call. . .
+/*
+ * This takes a string and returns a backslashed form suitable for printing.
+ * Iff add_quote is true, it'll add "s at the beginning and end.
+ * Note that this returns a pointer to a static area that is overwritten with
+ * each call. . .
  */
 char *
 backslash_a_string (char *string, int add_quote)
 {
-  char *pf;
-  char *pt;
-  int ch;
-  int size;
-  int len;
-
-  static char *cbuf;
-  static int s_cbuf;
+	char		*pf, *pt;
+	unsigned char	ch;
+//	int		ch;
+	int		size, len;
+	static char	*cbuf;
+	static int	s_cbuf;
 
 #define ALLOC_PT()				\
 	len=strlen(pf);				\
 	size=pf-string;				\
 	if(s_cbuf<3+size+4*len) {		\
-		s_cbuf=3+size+4*len;		\
-		cbuf= (cbuf) ? ck_realloc(cbuf,s_cbuf) : ck_malloc(s_cbuf); \
+	s_cbuf=3+size+4*len;		\
+	cbuf= (cbuf) ? ck_realloc(cbuf,s_cbuf) : ck_malloc(s_cbuf); \
 	}					\
 	if(size)				\
-		bcopy(string,cbuf,size);	\
+	bcopy(string,cbuf,size);	\
 	pt=cbuf+size;				\
 
 
-  pt = 0;
-  pf = string;
-  if (add_quote)
-    {
-      ALLOC_PT ()
-	* pt++ = '"';
-    }
-  for (; *pf; pf++)
-    {
-      ch = *pf;
-      if (ch >= ' ' && ch <= '~' && ch != '\\' && (ch != '"' || !add_quote))
-	{
-	  if (pt)
-	    *pt++ = ch;
-	  continue;
+	pt = 0;
+	pf = string;
+	if (add_quote) {
+		ALLOC_PT ()
+		*pt++ = '"';
 	}
+	for (; *pf; pf++) {
+		ch = *pf;
+		if (isprint(ch) && ch != '\\' && (ch != '"' || !add_quote)) {
+			if (pt)
+				*pt++ = ch;
+			continue;
+		}
 
-      if (!pt)
-	{
-	  ALLOC_PT ()
+		if (!pt) {
+			ALLOC_PT ()
+		}
+		if (ch == '\\') {
+			*pt++ = '\\';
+			*pt++ = '\\';
+		} else if (ch == '"') {
+			*pt++ = '\\';
+			*pt++ = ch;
+		} else {
+			*pt++ = '\\';
+			*pt++ = ((ch >> 6) & 0x3) + '0';
+			*pt++ = ((ch >> 3) & 0x7) + '0';
+			*pt++ = (ch & 0x7) + '0';
+		}
 	}
-      if (ch == '\\')
-	{
-	  *pt++ = '\\';
-	  *pt++ = '\\';
+	if (add_quote)
+		*pt++ = '"';
+	if (pt) {
+		*pt++ = '\0';
+		return cbuf;
 	}
-      else if (ch == '"')
-	{
-	  *pt++ = '\\';
-	  *pt++ = ch;
-	}
-      else
-	{
-	  *pt++ = '\\';
-	  *pt++ = ((ch >> 6) & 0x3) + '0';
-	  *pt++ = ((ch >> 3) & 0x7) + '0';
-	  *pt++ = (ch & 0x7) + '0';
-	}
-    }
-  if (add_quote)
-    *pt++ = '"';
-  if (pt)
-    {
-      *pt++ = '\0';
-      return cbuf;
-    }
-  return string;
+	return string;
 }
 
 void
