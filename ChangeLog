@@ -1,3 +1,29 @@
+Wed Nov 5 21:05:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
+
+	* src/io-gtk.c: Abstract Oleo close routine.
+
+Tue Nov 4 19:19:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
+
+	* src/io-gtk.c: add gset_status, gdraw_status, gset_text, flush out
+	gio_update_status.  Add stub indicators for other functions.
+	* src/io-x11.c: rename set_status and draw_status to
+	xset_status, xdraw_status.  set_text to xset_text.
+	* src/io-abstract.c: ANSIfy, add io_command_loop.
+	* src/io-gtk.h, io-gtk.c: Remove IO_SETUP macro, expand out
+	by hand to simplify troubleshooting.
+	* src/io-term.c: remove sleep(5) from curses startup.
+
+Mon Nov 3 19:59:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
+
+	* lib/error.c: move program_name to PACKAGE
+	* src/io-gtk.c: Make gdraw_text_item work.  Other
+	changes re: text pasting.
+	* src/io-gtk.c: Add signal function to file, exit.
+
+Wed Oct 29 19:56:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
+
+	* Rename draw_text_item function to xdraw_text_item.
+
 Sun Oct 26 14:38:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
 
 	* src/io-term.c: Integrate GTK parsing in with X and curses

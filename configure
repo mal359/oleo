@@ -2496,11 +2496,11 @@ if test "${with_gtk+set}" = set; then
 		  * )			usegtk=yes ;;
 		esac
 else
-  		usegtk=yes
+  		with_gtk=yes
 fi
 
 
-if test $usegtk = yes; then
+if test $with_gtk = yes; then
 	echo $ac_n "checking for main in -lglib""... $ac_c" 1>&6
 echo "configure:2506: checking for main in -lglib" >&5
 ac_lib_var=`echo glib'_'main | sed 'y%./+-%__p_%'`

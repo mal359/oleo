@@ -48,9 +48,9 @@ AC_ARG_WITH(gtk,
 		  n | no )		usegtk=no ;;
 		  * )			usegtk=yes ;;
 		esac],
-[		usegtk=yes])
+[		with_gtk=yes])
 
-if test $usegtk = yes; then
+if test $with_gtk = yes; then
 	AC_CHECK_LIB(glib, main, ,-lgtk -lgdk)
 	AC_CHECK_LIB(gtk, main, , ,-lglib -lgdk) 
 	AC_CHECK_LIB(gdk, main, , ,-lglib -lgdk)

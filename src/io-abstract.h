@@ -35,7 +35,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #endif
 #endif
 
-#ifdef __STDC__
 EXTERN void (*io_open_display) (void);
 EXTERN void (*io_redisp) (void);	/* Refresh the existing image. */
 EXTERN void (*io_repaint) (void);	/* $$$ Recompute the image. */
@@ -96,58 +95,12 @@ EXTERN void (*io_pr_cell_win) (struct window *,
 /* The terminal's cursor may be in the current cell or the input area. */
 EXTERN void (*io_cellize_cursor) (void);
 EXTERN void (*io_inputize_cursor) (void);
-#else
-EXTERN void (*io_open_display) ();
-EXTERN void (*io_redisp) ();	/* Refresh the existing image. */
-EXTERN void (*io_repaint) ();	/* $$$ Recompute the image. */
-EXTERN void (*io_repaint_win) ();
-EXTERN void (*io_close_display) ();
 
-/*
- * Low level input.
- */
-EXTERN int (*io_input_avail) ();/* How many chars can be read? */
-EXTERN void (*io_scan_for_input) ();
-EXTERN void (*io_wait_for_input) ();
-EXTERN int (*io_read_kbd) ();
-
-/* A curses compatible interface.  These have no effect on low level
-   calls except to consume characters which io_read_kbd might
-   otherwise return. */
-EXTERN void (*io_nodelay) ();
-EXTERN int (*io_getch) ();
-
-/* Annoy the user: */
-EXTERN void (*io_bell) ();
-
-/* High level i/o. */
-
-EXTERN void (*io_flush) (); 
-
-/* Input and status areas: */
-EXTERN void (*io_clear_input_before) ();
-EXTERN void (*io_clear_input_after) ();
-EXTERN void (*io_update_status) ();
-EXTERN int (*io_get_chr) ();
-
-EXTERN void (*io_fix_input) ();
-EXTERN void (*io_move_cursor) ();
-EXTERN void (*io_erase) ();
-EXTERN void (*io_insert) ();
-EXTERN void (*io_over) ();
-
-/* Cell values */
-EXTERN void (*io_hide_cell_cursor) ();
-EXTERN void (*io_display_cell_cursor) ();
-EXTERN void (*io_pr_cell_win) ();
-
-/* The terminal's cursor may be in the current cell or the input area. */
-EXTERN void (*io_cellize_cursor) ();
-EXTERN void (*io_inputize_cursor) ();
-#endif
-
+/* The main loop */
+EXTERN void (*io_command_loop) (int);
 
 #define IO_SETUP						\
+  io_command_loop = _io_command_loop;				\
   io_open_display = _io_open_display;				\
   io_redisp = _io_redisp;					\
   io_repaint = _io_repaint;					\

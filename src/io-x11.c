@@ -263,7 +263,7 @@ xio_bell (void)
 
 
 static void
-draw_text_item (Xport xport, int c, int r, int wid, int hgt,
+xdraw_text_item (Xport xport, int c, int r, int wid, int hgt,
 		XFontStruct *font, GC gc, XTextItem *text, int do_clip)
 {
   XRectangle clip;
@@ -360,7 +360,7 @@ xio_redraw_input_cursor (int on)
       cwid = XTextWidth (thePort->input_font, " ", 1);
       cursor_text.chars = " ";
     }
-  draw_text_item (thePort, start, ypos, cwid, input_rows,
+  xdraw_text_item (thePort, start, ypos, cwid, input_rows,
 		  thePort->input_font,
 		  (on ? thePort->standout_input_gc : thePort->input_gc),
 		  &cursor_text, 1);
@@ -404,7 +404,7 @@ xio_redraw_input (void)
 	    text.font = thePort->input_font->fid;
 	    text.chars = iv->expanded_keymap_prompt;
 	    text.nchars = strlen (iv->expanded_keymap_prompt);
-	    draw_text_item (thePort,
+	    xdraw_text_item (thePort,
 			    0, ypos, scr_cols, input_rows,
 			    thePort->input_font, thePort->input_gc,
 			    &text, 0);
@@ -418,7 +418,7 @@ xio_redraw_input (void)
 	    text.font = thePort->input_font->fid;
 	    text.chars = iv->prompt;
 	    text.nchars = prompt_len (text.chars);
-	    draw_text_item (thePort, 0, ypos, iv->prompt_wid, input_rows,
+	    xdraw_text_item (thePort, 0, ypos, iv->prompt_wid, input_rows,
 			    thePort->input_font, thePort->input_gc,
 			    &text, 0);
 	  }
@@ -454,7 +454,7 @@ xio_redraw_input (void)
 	text.chars = iv->input_area->buf + pos;
 	text.nchars = iv->visibility_end - pos + 1;
 
-	draw_text_item (thePort, xpos, ypos, wid, hgt, 
+	xdraw_text_item (thePort, xpos, ypos, wid, hgt, 
 			thePort->input_font, thePort->input_gc,
 			&text, 0);
 
@@ -790,7 +790,7 @@ cram (int cols, XFontStruct *font, char *text, int len, char *continuation)
 
 
 static void
-set_text (XTextItem *xtext, char *text, int len)
+xset_text (XTextItem *xtext, char *text, int len)
 {
   if (xtext->nchars < len)
     {
@@ -832,7 +832,7 @@ draw_input (void)
       return;
     }
   input_text.font = thePort->input_font->fid;
-  draw_text_item (thePort, 0, input, scr_cols, input_rows, thePort->input_font,
+  xdraw_text_item (thePort, 0, input, scr_cols, input_rows, thePort->input_font,
 		  thePort->input_gc, &input_text, 1);
   if (input_more_mode)
     {
@@ -842,7 +842,7 @@ draw_input (void)
       more_text.nchars = 6;
       more_text.delta = 0;
       more_text.font = thePort->input_font->fid;
-      draw_text_item (thePort, scr_cols - mwid, input, mwid, input_rows,
+      xdraw_text_item (thePort, scr_cols - mwid, input, mwid, input_rows,
 		      thePort->input_font, thePort->standout_input_gc,
 		      &more_text, 1);
     }
@@ -855,7 +855,7 @@ draw_input (void)
       cursor_text.chars = input_text.chars + input_cursor;
       cursor_text.nchars = 1;
       cursor_text.font = thePort->input_font->fid;
-      draw_text_item (thePort, start, input, cwid, input_rows,
+      xdraw_text_item (thePort, start, input, cwid, input_rows,
 		      thePort->input_font, thePort->standout_input_gc,
 		      &cursor_text, 1);
     }
@@ -894,7 +894,7 @@ xio_clear_input_after (void)
 static void
 set_input (char *text, int len, int cursor)
 {
-  set_text (&input_text, text, len);
+  xset_text (&input_text, text, len);
   if (cursor + 1 > input_text.nchars)
     {
       input_text.chars = (char *) ck_remalloc (input_text.chars, cursor + 1);
@@ -912,22 +912,22 @@ set_input (char *text, int len, int cursor)
 static XTextItem status_text;
 
 static void
-draw_status (void)
+xdraw_status (void)
 {
   if (!x11_opened || thePort->input_view.current_info)
     return;
   if (user_status)
-    draw_text_item (thePort, 0, status, scr_cols,
+    xdraw_text_item (thePort, 0, status, scr_cols,
 		    status_rows, thePort->status_font,
 		    thePort->status_gc, &status_text, 1);
 }
 
 static void
-set_status (char *text)
+xset_status (char *text)
 {
-  set_text (&status_text, text, strlen (text));
+  xset_text (&status_text, text, strlen (text));
   status_text.font = thePort->status_font->fid;
-  draw_status ();
+  xdraw_status ();
 }
 
 
@@ -1041,8 +1041,8 @@ xio_update_status (void)
       }
     
     *pos++ = '\0';
-    set_status (assembled);
-    draw_status ();
+    xset_status (assembled);
+    xdraw_status ();
     free (assembled);
   }
 }
@@ -1850,7 +1850,7 @@ xio_redisp (void)
 	    {
 	      text.chars = thePort->input_view.current_info->text[ipos];
 	      text.nchars = strlen (text.chars);
-	      draw_text_item (thePort, 0, ypos, scr_cols, input_rows,
+	      xdraw_text_item (thePort, 0, ypos, scr_cols, input_rows,
 			      thePort->text_line_font, thePort->text_line_gc,
 			      &text, 0);
 	      ypos += info_rows;
@@ -1886,7 +1886,7 @@ xio_redisp (void)
       thePort->redisp_needed = 0;
       if (thePort->redisp_needed != NO_REDRAW)
 	xio_redraw_input ();
-      draw_status ();
+      xdraw_status ();
       draw_labels ();
       for (xwin = thePort->xwins; xwin; xwin = xwin->next)
 	{
@@ -2241,6 +2241,7 @@ xio_flush (void)
 
 
 
+#define _io_command_loop xio_command_loop
 #define _io_open_display xio_open_display
 #define _io_redisp xio_redisp
 #define _io_repaint xio_repaint
@@ -2271,6 +2272,11 @@ xio_flush (void)
 #define _io_cellize_cursor xio_cellize_cursor
 #define _io_inputize_cursor xio_inputize_cursor
 
+void
+xio_command_loop (int i)
+{
+	command_loop(i);
+}
 
 void
 x11_graphics (void)

@@ -129,7 +129,7 @@ error (status, errnum, message, va_alist)
   else
     {
       fflush (stdout);
-      fprintf (stderr, "%s: ", program_name);
+      fprintf (stderr, "%s: ", PACKAGE);
     }
 
 #ifdef VA_START
@@ -201,7 +201,7 @@ error_at_line (status, errnum, file_name, line_number, message, va_alist)
   else
     {
       fflush (stdout);
-      fprintf (stderr, "%s:", program_name);
+      fprintf (stderr, "%s:", PACKAGE);
     }
 
   if (file_name != NULL)

@@ -93,4 +93,12 @@ extern int main ();
 
 #endif
 
+#ifndef FALSE
+#define FALSE 0
+#endif /* FALSE */
+
+#ifndef TRUE
+#define TRUE 1
+#endif /* TRUE */
+
 #endif /* IO_TERMH */

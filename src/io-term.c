@@ -1138,13 +1138,15 @@ main (argc, argv)
 	  tty_graphics ();
 	  using_curses = TRUE;
 	  /* Allow the disclaimer to be read. */
-	  if (!init_fpc && !spread_quietly)
-		  sleep (5);
+	  /* if (!init_fpc && !spread_quietly)
+		  sleep (5); */
   }
 
   io_open_display ();
-  
+
   init_graphing ();
+
+  printf("after init_graphing\n");
   
   if (setjmp (error_exception))
   {
@@ -1153,10 +1155,15 @@ main (argc, argv)
   }
   else
   {
+	  printf("Before init_maps\n");
 	  init_maps ();
+	  printf("Before init_named_macro_strings\n");
 	  init_named_macro_strings ();
+	  printf("Before run_init_cmds\n");
 	  run_init_cmds ();
   }
+
+ printf("after run_init_cmds\n");
 
   /* These probably don't all need to be ifdef, but
    * it is harmless.
@@ -1228,6 +1235,7 @@ main (argc, argv)
       free_cmd_frame (the_cmd_frame);
     free_cmd_frame (last_of_the_old);
   }
+
   io_recenter_cur_win ();
 
   display_opened = 1;
@@ -1235,10 +1243,11 @@ main (argc, argv)
   if (!command_line_file)
     run_string_as_macro
       ("{pushback-keystroke}{builtin-help _NON_WARRANTY_}");
+
   while (1)
     {
       setjmp (error_exception);
-      command_loop (0);
+      io_command_loop (0);
     }
 }
 

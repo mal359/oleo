@@ -994,6 +994,11 @@ _io_flush (void)
 
 
 
+void
+_io_command_loop (int a)
+{
+	command_loop (a);
+}
 
 void
 tty_graphics (void)

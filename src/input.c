@@ -192,6 +192,8 @@ static iv_reset_input (this_iv)
   char * km = desired_keymap_prompt (this_iv);
   if (km && (km == Keymap_prompt))
     return;
+  printf("input.c: iv_reset_input\n");
+
   Redraw_needed = FULL_REDRAW;
   Keymap_prompt = km;
   if (km)
@@ -278,6 +280,8 @@ iv_fix_input (this_iv)
 {
   char * km_prompt = desired_keymap_prompt (this_iv);
 
+  printf ("input.c: iv_fix_input\n");
+
   if (Keymap_prompt && (Keymap_prompt == km_prompt))
 
     Must_fix_input = 1;		/* Do nothing, keymap prompt has precedence */
@@ -291,6 +295,8 @@ iv_fix_input (this_iv)
 		  || (Input_cursor != the_cmd_arg.cursor))
 	       : (Input_area || Prompt_wid)))
     iv_reset_input (this_iv);
+
+  printf("input.c: Just before the_cmd_frame if statement\n");
 
   if (the_cmd_frame->cmd
       && ((the_cmd_arg.prompt_info != Current_info)
