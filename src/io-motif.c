@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.29 1999/03/06 13:44:29 danny Exp $
+ *  $Id: io-motif.c,v 1.30 1999/03/06 15:58:20 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.29 1999/03/06 13:44:29 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.30 1999/03/06 15:58:20 danny Exp $";
 
 #include "config.h"
 
@@ -104,6 +104,9 @@ Widget	hd, html = NULL, gs = NULL;
 Widget	FormatD = NULL;
 Widget	PrintDialog = NULL;
 Widget	DefaultFileDialog, DefaultFileShell = NULL;
+Widget	ConfigureGraphNotebook;
+
+static Widget	XYxAutoToggle, XYxMinText, XYxMaxText, XYyAutoToggle, XYyMinText, XYyMaxText;
 
 Pixmap	oleo_icon_pm = (Pixmap)0;
 
@@ -130,7 +133,16 @@ static int	chars_buffered = 0;
 void CancelTemplate(Widget w, XtPointer client, XtPointer call);
 static void FixA0();
 static void PopDownSplash();
+
+Widget ConfigureBarChart(Widget parent);
+Widget ConfigurePieChart(Widget parent);
 Widget ConfigureXYChart(Widget parent);
+void ConfigureXYOk(void);
+void ConfigureBarOk(void);
+void ConfigurePieOk(void);
+void ConfigureXYReset(void);
+void ConfigureBarReset(void);
+void ConfigurePieReset(void);
 
 /*
  * This is used in two places.
@@ -793,6 +805,10 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 #ifdef	FREE_TF_STRING
 	XtFree(s);
 #endif
+
+	ConfigureXYOk();
+	ConfigurePieOk();
+	ConfigureBarOk();
 }
 
 /*
@@ -815,6 +831,8 @@ void ConfigureGraphReset(Widget f)
 		return;
 	}
 	MessageAppend(False, "ConfigureGraphReset\n");
+
+	XtVaSetValues(ConfigureGraphNotebook, XmNcurrentPageNumber, 1, NULL);
 
 	r = graph_get_data(0);
 	s = range_name(&r);
@@ -844,6 +862,10 @@ void ConfigureGraphReset(Widget f)
 
 	s = graph_get_axis_title('y');
 	XmTextFieldSetString(cw->ytitle, s);
+
+	ConfigureXYReset();
+	ConfigurePieReset();
+	ConfigureBarReset();
 }
 
 /*
@@ -852,35 +874,53 @@ void ConfigureGraphReset(Widget f)
  */
 void ConfigureGraph(Widget w, XtPointer client, XtPointer call)
 {
-	Widget		ok, cancel, help, xy, nb, p;
+	Widget		ok, cancel, help, p, fr;
 	static Widget	configureGraph = NULL, inside = NULL;
 
 	if (! configureGraph) {
 		configureGraph = XmCreateTemplateDialog(mw, "configureGraph",
 			NULL, 0);
 
-		nb = XmCreateNotebook(configureGraph, "configureGraphNotebook",
+		ConfigureGraphNotebook = XmCreateNotebook(configureGraph,
+			"configureGraphNotebook",
 			NULL, 0);
-		XtManageChild(nb);
+		XtManageChild(ConfigureGraphNotebook);
 
 		/* The data */
-		inside = CreateConfigureGraph(nb);
+		inside = CreateConfigureGraph(ConfigureGraphNotebook);
 		XtManageChild(inside);
 
-		p = XtVaCreateManagedWidget("datatab", xmPushButtonGadgetClass,
-			nb,
+		p = XtVaCreateManagedWidget("datatab", xmPushButtonWidgetClass,
+			ConfigureGraphNotebook,
+				XmNnotebookChildType, XmMAJOR_TAB,
+			NULL);
+
+		/* Pie Chart specific stuff */
+		fr = ConfigurePieChart(ConfigureGraphNotebook);
+		XtManageChild(fr);
+
+		p = XtVaCreateManagedWidget("PieTab", xmPushButtonWidgetClass,
+			ConfigureGraphNotebook,
 				XmNnotebookChildType, XmMAJOR_TAB,
 			NULL);
 
 		/* XY Chart specific stuff */
-		xy = ConfigureXYChart(nb);
-		XtManageChild(xy);
+		fr = ConfigureXYChart(ConfigureGraphNotebook);
+		XtManageChild(fr);
 
-		p = XtVaCreateManagedWidget("XYtab", xmPushButtonGadgetClass,
-			nb,
+		p = XtVaCreateManagedWidget("XYTab", xmPushButtonWidgetClass,
+			ConfigureGraphNotebook,
 				XmNnotebookChildType, XmMAJOR_TAB,
 			NULL);
 
+		/* Bar Chart specific stuff */
+		fr = ConfigureBarChart(ConfigureGraphNotebook);
+		XtManageChild(fr);
+
+		p = XtVaCreateManagedWidget("BarTab", xmPushButtonWidgetClass,
+			ConfigureGraphNotebook,
+				XmNnotebookChildType, XmMAJOR_TAB,
+			NULL);
 
 		/* Buttons */
 		ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass,
@@ -1110,6 +1150,7 @@ Widget ConfigureXYChart(Widget parent)
 	form = XtVaCreateManagedWidget("configureXYChartForm", xmFormWidgetClass,
 		frame,
 		NULL);
+	XYxAutoToggle =
 	t = XtVaCreateManagedWidget("xAutoToggle", xmToggleButtonGadgetClass,
 		form,
 			XmNtopAttachment,	XmATTACH_FORM,
@@ -1124,6 +1165,7 @@ Widget ConfigureXYChart(Widget parent)
 			XmNleftWidget,		t,
 			XmNleftOffset,		10,
 		NULL);
+	XYxMinText =
 	te = XtVaCreateManagedWidget("xMinText", xmTextFieldWidgetClass, form,
 			XmNtopAttachment,	XmATTACH_FORM,
 			XmNtopOffset,		10,
@@ -1138,6 +1180,7 @@ Widget ConfigureXYChart(Widget parent)
 			XmNleftWidget,		te,
 			XmNleftOffset,		10,
 		NULL);
+	XYxMaxText =
 	te = XtVaCreateManagedWidget("xMaxText", xmTextFieldWidgetClass, form,
 			XmNtopAttachment,	XmATTACH_FORM,
 			XmNtopOffset,		10,
@@ -1145,6 +1188,7 @@ Widget ConfigureXYChart(Widget parent)
 			XmNleftWidget,		l,
 			XmNleftOffset,		10,
 		NULL);
+	XYyAutoToggle =
 	t = XtVaCreateManagedWidget("yAutoToggle", xmToggleButtonGadgetClass,
 		form,
 			XmNtopAttachment,	XmATTACH_WIDGET,
@@ -1161,6 +1205,7 @@ Widget ConfigureXYChart(Widget parent)
 			XmNleftWidget,		t,
 			XmNleftOffset,		10,
 		NULL);
+	XYyMinText =
 	te = XtVaCreateManagedWidget("yMinText", xmTextFieldWidgetClass, form,
 			XmNtopAttachment,	XmATTACH_OPPOSITE_WIDGET,
 			XmNtopOffset,		0,
@@ -1177,6 +1222,7 @@ Widget ConfigureXYChart(Widget parent)
 			XmNleftWidget,		te,
 			XmNleftOffset,		10,
 		NULL);
+	XYyMaxText =
 	te = XtVaCreateManagedWidget("yMaxText", xmTextFieldWidgetClass, form,
 			XmNtopAttachment,	XmATTACH_OPPOSITE_WIDGET,
 			XmNtopOffset,		0,
@@ -1187,6 +1233,118 @@ Widget ConfigureXYChart(Widget parent)
 		NULL);
 
 	return frame;
+}
+
+/*
+ * This needs to be put into the graph system
+ * by using graph_set_*() API's.
+ */
+double	XYxMin = 0.0, XYxMax = 100.0, XYyMin = 0.0, XYyMax = 100.0;
+int	XYxAuto = True, XYyAuto = True;
+
+void ConfigureXYOk(void)
+{
+	char	*s;
+
+	XYxAuto = XmToggleButtonGadgetGetState(XYxAutoToggle);
+
+	s = XmTextFieldGetString(XYxMinText);
+	sscanf(s, "%lf", &XYxMin);
+	s = XmTextFieldGetString(XYxMaxText);
+	sscanf(s, "%lf", &XYxMax);
+
+	XYyAuto = XmToggleButtonGadgetGetState(XYyAutoToggle);
+
+	s = XmTextFieldGetString(XYyMinText);
+	sscanf(s, "%lf", &XYyMin);
+	s = XmTextFieldGetString(XYyMaxText);
+	sscanf(s, "%lf", &XYyMax);
+
+#if 0
+	fprintf(stderr, "ConfigureXY: X %s %f %f, Y %s %f %f\n",
+		XYxAuto ? "auto" : "man",
+		XYxMin, XYxMax,
+		XYyAuto ? "auto" : "man",
+		XYyMin, XYyMax);
+#endif
+}
+
+void ConfigureXYReset(void)
+{
+}
+
+Widget ConfigurePieChart(Widget parent)
+{
+	Widget	frame, form, w, te, l, t;
+	Arg	al[10];
+	int	ac;
+
+	ac = 0;
+	frame = XmCreateFrame(parent, "configurePieChartFrame", al, ac);
+
+	w = XtVaCreateManagedWidget("configurePieChartFrameTitle",
+			xmLabelGadgetClass,		frame,
+			XmNchildType,			XmFRAME_TITLE_CHILD,
+			XmNchildVerticalAlignment,	XmALIGNMENT_CENTER,
+		NULL);
+
+	form = XtVaCreateManagedWidget("configurePieChartForm", xmFormWidgetClass,
+		frame,
+		NULL);
+	t = XtVaCreateManagedWidget("xAutoToggle", xmToggleButtonGadgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_FORM,
+			XmNtopOffset,		10,
+			XmNleftAttachment,	XmATTACH_FORM,
+			XmNleftOffset,		10,
+		NULL);
+
+	return frame;
+}
+
+void ConfigurePieOk(void)
+{
+}
+
+void ConfigurePieReset(void)
+{
+}
+
+Widget ConfigureBarChart(Widget parent)
+{
+	Widget	frame, form, w, te, l, t;
+	Arg	al[10];
+	int	ac;
+
+	ac = 0;
+	frame = XmCreateFrame(parent, "configureBarChartFrame", al, ac);
+
+	w = XtVaCreateManagedWidget("configureBarChartFrameTitle",
+			xmLabelGadgetClass,		frame,
+			XmNchildType,			XmFRAME_TITLE_CHILD,
+			XmNchildVerticalAlignment,	XmALIGNMENT_CENTER,
+		NULL);
+
+	form = XtVaCreateManagedWidget("configureBarChartForm", xmFormWidgetClass,
+		frame,
+		NULL);
+	t = XtVaCreateManagedWidget("stackToggle", xmToggleButtonGadgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_FORM,
+			XmNtopOffset,		10,
+			XmNleftAttachment,	XmATTACH_FORM,
+			XmNleftOffset,		10,
+		NULL);
+
+	return frame;
+}
+
+void ConfigureBarOk(void)
+{
+}
+
+void ConfigureBarReset(void)
+{
 }
 
 /*
@@ -2605,23 +2763,24 @@ int formats_list[] = {
 	/* 0 */		FMT_DEF,
 	/* 1 */		FMT_HID,
 	/* 2 */		FMT_GPH,
-	/* 3 */		FMT_INT,
-	/* 4 */		FMT_DEC,
-	/* 5 */		FMT_FLT,
-	/* 6 */		FMT_USR,
-	/* 7 */		FMT_DOL,
-	/* 8 */		FMT_CMA,
-	/* 9 */		FMT_PCT,
-	/* 10 */	FMT_FXT,
-	/* 11 */	FMT_EXP,
-	/* 12 */	FMT_GEN,
+	/* 3 */		PRC_FLT,
+	/* 4 */		FMT_GEN,
+	/* 5 */		FMT_DOL,
+	/* 6 */		FMT_CMA,
+	/* 7 */		FMT_PCT,
+	/* 8 */		FMT_DEF,
+	/* 9 */		FMT_DEF,
+	/* 10 */	FMT_DEF,
+	/* 11 */	FMT_DEF,
 #ifdef	FMT_DATE
-	/* 13 */	FMT_DATE,
+	/* 12 */	FMT_DATE,
 #else
-	/* 13 */	FMT_DEF,
+	/* 12 */	FMT_DEF,
 #endif
+	/* 13 */	FMT_DEF,
 	/* 14 */	FMT_DEF,
 	/* 15 */	FMT_DEF,
+	/* 16 */	FMT_DEF
 };
 
 /*

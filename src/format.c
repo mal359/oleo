@@ -33,58 +33,44 @@ fmt_to_str (int fmt)
   char *ptr;
   static char buf[30];
   char nbuf[10];
-  int format;
 
-  format = (fmt & FMT_MASK) >> FMT_SHIFT;
-
-  switch (format)
+  if (fmt == FMT_DEF)
+    return "default";
+  if (fmt == FMT_HID)
+    return "hidden";
+  if (fmt == FMT_GPH)
+    return "graph";
+  if ((fmt & PRC_FLT) == PRC_FLT)
+    strcpy (nbuf, "float");
+  else
+    sprintf (nbuf, "%d", (fmt & PRC_FLT));
+  switch (fmt | PRC_FLT)
     {
-    case FMT_DEF:		/* Default */
-      ptr = "default";
-      break;
-    case FMT_HID:		/* Hidden */
-      ptr = "hidden";
-      break;
-    case FMT_GPH:		/* Graph */
-      ptr = "graph";
-      break;
-    case FMT_INT:		/* Integer */
-      ptr = "integer";
-      break;
-    case FMT_DEC:		/* Decimal */
-      ptr = "decimal";
-      break;
-    case FMT_FLT:		/* Floating-point */
-      ptr = "float";
-      sprintf(nbuf, "%d", FLOAT_PREC);
-      break;
-    case FMT_USR:		/* User */
+    case FMT_USR:
       ptr = "user-";
-      sprintf (nbuf, "%d", (fmt & PREC_MASK));
+      sprintf (nbuf, "%d", (fmt & PRC_FLT) + 1);
       break;
-    case FMT_DOL:		/* Dollar */
-      ptr = "dollar.";
-      sprintf (nbuf, "%d", (fmt & PREC_MASK));
-      break;
-    case FMT_CMA:		/* Comma */
-      ptr = "comma.";
-      sprintf (nbuf, "%d", (fmt & PREC_MASK));
-      break;
-    case FMT_PCT:		/* Percent */
-      ptr = "percent.";
-      sprintf (nbuf, "%d", (fmt & PREC_MASK));
-      break;
-    case FMT_FXT:		/* Fixed */
-      ptr = "fixed.";
-      sprintf (nbuf, "%d", (fmt & PREC_MASK));
-      break;
-    case FMT_EXP:		/* Exponential */
-      ptr = "exponent.";
-      sprintf (nbuf, "%d", (fmt & PREC_MASK));
-      break;
-    case FMT_GEN:		/* General */
+    case FMT_GEN:
       ptr = "general.";
-      sprintf (nbuf, "%d", (fmt & PREC_MASK));
+      break;
+    case FMT_DOL:
+      ptr = "dollar.";
+      break;
+    case FMT_CMA:
+      ptr = "comma.";
+      break;
+    case FMT_PCT:
+      ptr = "percent.";
+      break;
+    case FMT_FXT:
+      if ((fmt & PRC_FLT) == 0)
+	return "integer";
+      if (fmt == FMT_FXT)
+	return "decimal";
+      ptr = "fixed.";
+      break;
+    case FMT_EXP:
+      ptr = "exponent.";
       break;
     default:
       io_error_msg ("Unknown format %d (%x)", fmt, fmt);
@@ -112,8 +98,8 @@ static struct fmt simple[] =
   {FMT_DEF, def_names},
   {FMT_HID, hid_names},
   {FMT_GPH, gph_names},
-  {FMT_INT, int_names},
-  {FMT_DEC, dec_names},
+  {FMT_FXT - PRC_FLT, int_names},
+  {FMT_FXT, dec_names},
   {0, 0}
 };
 
@@ -126,12 +112,12 @@ char *exp_names[] =	{"exponent.",	"exp.", "E", 0};
 
 static struct fmt withprec[] =
 {
-  {FMT_DOL , dol_names},
-  {FMT_CMA , cma_names},
-  {FMT_PCT , pct_names},
-  {FMT_FXT , fxt_names},
-  {FMT_EXP , exp_names},
-  {FMT_GEN , gen_names},
+  {FMT_GEN - PRC_FLT, gen_names},
+  {FMT_DOL - PRC_FLT, dol_names},
+  {FMT_CMA - PRC_FLT, cma_names},
+  {FMT_PCT - PRC_FLT, pct_names},
+  {FMT_FXT - PRC_FLT, fxt_names},
+  {FMT_EXP - PRC_FLT, exp_names},
   {0, 0}
 };
 
@@ -153,7 +139,7 @@ str_to_fmt (char *ptr)
 	  for (p1 = ptr, p2 = *strs; *p1 == *p2 && *p1; p1++, p2++)
 	    ;
 	  if (*p1 == '\0' && *p2 == '\0')
-	    return ((f->fmt) << FMT_SHIFT); 
+	    return f->fmt;
 	}
     }
   if (!strncmp (ptr, "user-", 5))
@@ -162,7 +148,7 @@ str_to_fmt (char *ptr)
       n = astol (&ptr);
       if (*ptr || n < 1 || n > 16)
 	return -1;
-      return (FMT_USR << FMT_SHIFT) + n;
+      return n - 1 - PRC_FLT + FMT_USR;
     }
   for (f = withprec, ret = 0; !ret && f->strs; f++)
     {
@@ -185,7 +171,7 @@ str_to_fmt (char *ptr)
     return -1;
   if (!strcmp (ptr, "float") || !strcmp (ptr, "f"))
     {
-      n = FLOAT_PREC;
+      n = PRC_FLT;
     }
   else
     {
@@ -193,7 +179,7 @@ str_to_fmt (char *ptr)
       if (*ptr || n < 0 || n > 14)
 	return -1;
     }
-  return (ret << FMT_SHIFT) + n;
+  return ret + n;
 }
 
 char *

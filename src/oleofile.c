@@ -190,7 +190,7 @@ oleo_read_file (fp, ismerge)
 		    }
 		  if (*ptr == 'F')
 		    {
-/*		      default_fmt += FMT_FLT;	*/
+/*		      default_fmt += PRC_FLT;	*/
 		      ptr++;
 		    }
 		  else
@@ -271,7 +271,7 @@ oleo_read_file (fp, ismerge)
 		      break;
 		    }
 		  if (*ptr == 'F') {
-/*		      fmt += FMT_FLT;	*/
+/*		      fmt += PRC_FLT;	*/
 		      ptr++;
 		  } else {
 /*		    fmt += astol (&ptr);	*/
@@ -620,7 +620,7 @@ oleo_fmt_to_str (int f1, int p1)
       p_buf[0] = '*';
       break;
     default:
-      if (p1 == FMT_FLT)
+      if (p1 == PRC_FLT)
 	{
 	  p_buf[1] = 'F';
 	  p_buf[2] = '\0';

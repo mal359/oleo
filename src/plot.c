@@ -390,9 +390,19 @@ PuXYChart(char *plotter, FILE *outfile)
 		    xes[i++] = float_cell(cp);
 	}
 
-	delta = xmax - xmin;
-	xmin -= delta * 0.1;
-	xmax += delta * 0.1;
+{	extern int XYxAuto;
+	if (XYxAuto) {
+		delta = xmax - xmin;
+		xmin -= delta * 0.1;
+		xmax += delta * 0.1;
+	} else {
+		extern double XYxMin, XYxMax;
+
+		xmin = XYxMin;	/* FIX ME */
+		xmax = XYxMax;
+	}
+}
+
 #if 0
 	fprintf(stderr, "X range should be %f to %f\n", xmin, xmax);
 #endif
@@ -412,6 +422,15 @@ PuXYChart(char *plotter, FILE *outfile)
 		    else if (y > ymax)
 			ymax = y;
 	    }
+
+{	extern int XYyAuto;
+	if (! XYyAuto) {
+		extern double XYyMin, XYyMax;
+
+		ymin = XYyMin;	/* FIX ME */
+		ymax = XYyMax;
+	}
+}
 
 	    pencolorname(colors[r % ncolors]);
 

@@ -141,41 +141,41 @@ struct user_fmt {
 
 
 struct user_fmt dol =
-{ "dollar", "$", "($", 0, ")", "$0", ",", ".", FLOAT_PREC, 1};
+{ "dollar", "$", "($", 0, ")", "$0", ",", ".", PRC_FLT, 1};
 
 struct user_fmt cma =
-{ "comma", 0, "(", 0, ")", "0", ",", ".", FLOAT_PREC, 1};
+{ "comma", 0, "(", 0, ")", "0", ",", ".", PRC_FLT, 1};
 
 struct user_fmt pct =
 #if 0
 { "percent", 0, "-", "%", "%", "0%", 0, ".", 3, 100};
 #else
-{ "percent", 0, "-", "%", "%", "0%", 0, ".", FLOAT_PREC, 100};
+{ "percent", 0, "-", "%", "%", "0%", 0, ".", PRC_FLT, 100};
 #endif
 
 struct user_fmt fxt =
-{ "fixed", 0, "-", 0, 0, "0", 0, ".", FLOAT_PREC, 1};
+{ "fixed", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1};
 
 /* Variables */
 
 struct user_fmt u[16] =
 {
-  {"user1", 0, "-", 0, 0, "0", 0, ".", FLOAT_PREC, 1},
-  {"user2", 0, "-", 0, 0, "0", 0, ".", FLOAT_PREC, 1},
-  {"user3", 0, "-", 0, 0, "0", 0, ".", FLOAT_PREC, 1},
-  {"user4", 0, "-", 0, 0, "0", 0, ".", FLOAT_PREC, 1},
-  {"user5", 0, "-", 0, 0, "0", 0, ".", FLOAT_PREC, 1},
-  {"user6", 0, "-", 0, 0, "0", 0, ".", FLOAT_PREC, 1},
-  {"user7", 0, "-", 0, 0, "0", 0, ".", FLOAT_PREC, 1},
-  {"user8", 0, "-", 0, 0, "0", 0, ".", FLOAT_PREC, 1},
-  {"user9", 0, "-", 0, 0, "0", 0, ".", FLOAT_PREC, 1},
-  {"user10", 0, "-", 0, 0, "0", 0, ".", FLOAT_PREC, 1},
-  {"user11", 0, "-", 0, 0, "0", 0, ".", FLOAT_PREC, 1},
-  {"user12", 0, "-", 0, 0, "0", 0, ".", FLOAT_PREC, 1},
-  {"user13", 0, "-", 0, 0, "0", 0, ".", FLOAT_PREC, 1},
-  {"user14", 0, "-", 0, 0, "0", 0, ".", FLOAT_PREC, 1},
-  {"user15", 0, "-", 0, 0, "0", 0, ".", FLOAT_PREC, 1},
-  {"user16", 0, "-", 0, 0, "0", 0, ".", FLOAT_PREC, 1},
+  {"user1", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user2", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user3", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user4", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user5", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user6", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user7", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user8", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user9", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user10", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user11", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user12", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user13", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user14", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user15", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
+  {"user16", 0, "-", 0, 0, "0", 0, ".", PRC_FLT, 1},
 };
 
 
@@ -197,7 +197,7 @@ flt_to_str (double val)
       sprintf (print_buf, "%e", val);
       return print_buf;
     }
-  return pr_flt (val, &fxt, FLOAT_PREC);
+  return pr_flt (val, &fxt, PRC_FLT);
 }
 
 /* This is used to return a formatted float for editing.
@@ -230,7 +230,7 @@ flt_to_str_fmt (CELL *cp)
       sprintf (print_buf, "%e", cp->cell_flt);
       return print_buf;
     }
-  switch (j)
+  switch (j | PRC_FLT)
     {
       case FMT_FXT:
       case FMT_DOL:
@@ -353,7 +353,7 @@ print_cell (CELL * cp)
 	    return iname;
 	  if (cp->cell_flt == __neinf)
 	    return mname;
-	  if (p == FLOAT_PREC)
+	  if (p == PRC_FLT)
 	    sprintf (print_buf, "%e", cp->cell_flt);
 	  else
 	    sprintf (print_buf, "%.*e", p, cp->cell_flt);
@@ -427,14 +427,14 @@ print_cell (CELL * cp)
 	  return pr_int (cp->cell_int, &pct, p);
 
 	case FMT_FXT:
-	  if (p != FLOAT_PREC && p != 0)
+	  if (p != PRC_FLT && p != 0)
 	    sprintf (print_buf, "%ld.%.*s", cp->cell_int, p, zeroes);
 	  else
 	    sprintf (print_buf, "%ld", cp->cell_int);
 	  return print_buf;
 
 	case FMT_EXP:
-	  if (p != FLOAT_PREC)
+	  if (p != PRC_FLT)
 	    sprintf (print_buf, "%.*e", p, (double) (cp->cell_int));
 	  else
 	    sprintf (print_buf, "%e", (double) (cp->cell_int));
@@ -516,7 +516,7 @@ pr_int (val, fmt, prec)
       while (pf != pff);
     }
 
-  if (prec != FLOAT_PREC && prec != 0)
+  if (prec != PRC_FLT && prec != 0)
     {
       while (prec-- > 0)
 	*--pt = '0';
@@ -630,7 +630,7 @@ pr_flt (val, fmt, prec)
     {
       int p1;
 
-      p1 = (prec == FLOAT_PREC) ? 15 : (prec > 0) ? prec : -prec;
+      p1 = (prec == PRC_FLT) ? 15 : (prec > 0) ? prec : -prec;
       pf = fmt->decpt;
       while (pf && *pf)
 	*fptr++ = *pf++;
@@ -644,7 +644,7 @@ pr_flt (val, fmt, prec)
 	    }
 	  while (--p1 && fract);
 	}
-      if (prec > 0 && prec != FLOAT_PREC)
+      if (prec > 0 && prec != PRC_FLT)
 	while (p1--)
 	  *fptr++ = '0';
       else
@@ -669,7 +669,7 @@ pr_flt (val, fmt, prec)
 		continue;
 	      else if (*pptr == '9')
 		{
-		  if (pptr == fptr - 1 && pptr > &print_buf[BIGFLT] && (prec < 0 || prec == FLOAT_PREC))
+		  if (pptr == fptr - 1 && pptr > &print_buf[BIGFLT] && (prec < 0 || prec == PRC_FLT))
 		    {
 		      --fptr;
 		      while (!isdigit (pptr[-1]))
@@ -737,7 +737,7 @@ adjust_prc (char *oldp, CELL * cp, int width, int smallwid, int just)
   if (fmt == FMT_DEF)
     fmt = default_fmt;
   prc = GET_PRECISION (cp);
-  switch (fmt)
+  switch (fmt | PRC_FLT)
     {
     case FMT_GPH:
     case FMT_HID:
@@ -764,17 +764,17 @@ adjust_prc (char *oldp, CELL * cp, int width, int smallwid, int just)
       goto deal_fmt;
 
     case FMT_GEN:
-      if (prc != FLOAT_PREC)
+      if (prc != PRC_FLT)
 	return numb_oflo;
       if (index (oldp, 'e') || !index (oldp, '.'))
 	goto handle_exp;
 
       ufmt = &fxt;
-      prc = FLOAT_PREC;
+      prc = PRC_FLT;
       goto deal_fmt;
 
     deal_fmt:
-      if (prc != FLOAT_PREC)
+      if (prc != PRC_FLT)
 	return numb_oflo;
       len = strlen (oldp);
       bptr = (char *) strstr (oldp, ufmt->decpt);
@@ -1182,7 +1182,7 @@ clear_spreadsheet (void)
 	{
 	  free (u[n].p_hdr);
 	  u[n].p_hdr = 0;
-	  u[n].prec = FLOAT_PREC;
+	  u[n].prec = PRC_FLT;
 	  u[n].scale = 1;
 	}
     }

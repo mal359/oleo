@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.5 1999/03/06 13:44:28 danny Exp $
+ *  $Id: fallback.c,v 1.6 1999/03/06 15:58:19 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -232,7 +232,8 @@ char *fallback[] = {
 	"*quitMB*Cancel.labelString:	Don't quit",
 /* XY Chart Dialog */
 	"*datatab.labelString:				General Chart Data",
-	"*XYtab.labelString:				XY Chart",
+
+	"*XYTab.labelString:				XY Chart",
 	"*configureXYChartFrameTitle.labelString:	Configure XY Charts",
 	"*xAutoToggle.labelString:			Automatic X Axis",
 	"*xMinLabel.labelString:			Minimum X :",
@@ -240,6 +241,13 @@ char *fallback[] = {
 	"*yAutoToggle.labelString:			Automatic Y Axis",
 	"*yMinLabel.labelString:			Minimum Y :",
 	"*yMaxLabel.labelString:			Maximum Y :",
+
+	"*BarTab.labelString:				Bar Chart",
+	"*configureBarChartFrameTitle.labelString:	Configure Bar Charts",
+	"*stackToggle.labelString:			Stacking Bar Chart",
+
+	"*PieTab.labelString:				Pie Chart",
+	"*configurePieChartFrameTitle.labelString:	Configure Pie Charts",
 /* GNU Plotutils : list of known plotters */
 	"*puPlotters:			PostScript,ps,ps;"
 				"GNU MetaPlot,gmp,meta;"

@@ -1,4 +1,9 @@
 
+Sat  6 Mar 16:57:25 CET 1999
+	* Back out Art Haas's patch - it messes up a couple of my files.
+	* Get notebook to display page 1 initially.
+	* Attempt to get some of the XY graph's special config stuff to work.
+
 Sat  6 Mar 14:45:24 1999, Danny Backx
 	* Add to the graph configuration: XmNotebook with a couple of tabs.
 	* Remove m4/emx.m4 from CVS; it's obsolete because we're using
