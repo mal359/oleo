@@ -1253,6 +1253,9 @@ says_default (char *str)
 void
 write_file_generic(FILE *fp, struct rng *rng, char *format)
 {
+#if 1
+	fprintf(stderr, PACKAGE " write_file_generic : format %s\n", format);
+#endif
 	if (!stricmp ("oleo", format)) {
 		oleo_write_file(fp, rng);
 	} else if (!stricmp ("sylk", format)) {
@@ -1270,6 +1273,35 @@ write_file_generic(FILE *fp, struct rng *rng, char *format)
 	} else {
 		/* Fall back to default */
 		oleo_write_file(fp, rng);
+#if 0
+		io_error_msg ("Unknown file format %s", ptr);
+#endif
+	}
+}
+
+void
+read_file_generic(FILE *fp, int ismerge, char *format)
+{
+#if 1
+	fprintf(stderr, PACKAGE " read_file_generic : format %s\n", format);
+#endif
+	if (!stricmp ("oleo", format)) {
+		oleo_read_file(fp, ismerge);
+	} else if (!stricmp ("sylk", format)) {
+		sylk_a0 = 1;
+		sylk_read_file(fp, ismerge);
+	} else if (!stricmp ("sylk-noa0", format)) {
+		sylk_a0 = 0;
+		sylk_read_file(fp, ismerge);
+	} else if (!stricmp ("sc", format)) {
+		sc_read_file(fp, ismerge);
+	} else if (!stricmp ("panic", format)) {
+		panic_read_file(fp, ismerge);
+	} else if (!stricmp ("list", format)) {
+		list_read_file(fp, ismerge);
+	} else {
+		/* Fall back to default */
+		oleo_read_file(fp, ismerge);
 #if 0
 		io_error_msg ("Unknown file format %s", ptr);
 #endif

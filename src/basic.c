@@ -14,7 +14,6 @@ You should have received a copy of the GNU General Public License
 along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -90,8 +89,6 @@ enum motion_magic opposite_motion[] =
 const int boundrymagic[3] = { MIN_ROW, NON_ROW, MAX_ROW };
 
 
-
-
 /* A very basic command. */
 
 void
@@ -99,7 +96,6 @@ noop (void)
 {}
 
 
-
 /* Commands that inser/delete rows/columns. */
 
 void
@@ -185,8 +181,6 @@ delete_col (int repeat)
   to.hc = cucol;
   move_region (&from, &to);
 }
-
-
 
 /* Front end to the window functions. */
 
@@ -476,8 +470,6 @@ recenter_window (void)
   io_recenter_cur_win ();
 }
 
-
-
 /* Trivial front-end commands. */
 
 
@@ -542,7 +534,6 @@ redraw_screen (void)
 }
 
 
-
 /* Motion commands. */
 
 void
@@ -945,8 +936,6 @@ mouse_mark_and_goto_cmd (void)
   do_mouse_cmd (do_mouse_mark_and_goto);
 }
 
-
-
 /* Commands used to modify cell formulas. */
 
 void 
@@ -968,8 +957,6 @@ kill_cell_cmd (void)
   modified = 1;
 }
 
-
-
 
 /* A front end to sorting. */
 
@@ -1067,9 +1054,6 @@ sort_region_cmd (char *ptr)
 }
 
 
-
-
-
 void
 imove (struct rng * rng, int ch)
 {
@@ -1078,9 +1062,6 @@ imove (struct rng * rng, int ch)
 
   goto_region (rng);
 }
-
-
-
 
 /* Incremental navigation
  *
@@ -1124,9 +1105,6 @@ inc_direction (int count, int page_rule, int hack_magic)
   if (the_cmd_frame->cmd && the_cmd_arg.inc_cmd)
     the_cmd_arg.inc_cmd (hack_magic, count);
 }
-
-
-
 
 /* The commands that move to the extreme of a row[col] may also move
  * forward or backward some number of col[row], according to the prefix
@@ -1320,9 +1298,7 @@ goto_set_cell (int c)
   execute_command ("set-cell");
 }
 
-
 /* File i/o */
-
 int sneaky_linec = 0;	/* for error reporting for now (see io-term.c) */
 
 void 
@@ -1411,8 +1387,6 @@ write_reg_cmd (FILE *fp, struct rng *rng)
   (*write_file) (fp, rng);
 }
 
-
-
 
 /* Cell attributes. */
 void
@@ -1535,8 +1509,6 @@ set_region_format (struct rng * rng, int fmt)
 }
 
 
-
-
 void
 set_def_height (char * height)
 {
@@ -1638,8 +1610,6 @@ set_def_format (int fmt)
   io_repaint ();
 }
 
-
-
 void
 define_usr_fmt (int fmt, char * pos_h, char * neg_h, char * pos_t,
 		char * neg_t, char * zero, char * comma, char * decimal,
@@ -1665,8 +1635,6 @@ define_usr_fmt (int fmt, char * pos_h, char * neg_h, char * pos_t,
   usr_buf[8] = scale;
   set_usr_stats (fmt, usr_buf);
 }
-
-
 
 /* Automatic motion while editting cell's: */
 
@@ -1698,7 +1666,6 @@ auto_next_set (void)
   }
   shift_cell_cursor (complementary_motion[auto_motion_direction], 1);
 }
-
 
 /* This decompiles and then recompiles all of the formulas of cells.
  * This is never normally necessary unless you happen to have some

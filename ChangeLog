@@ -1,3 +1,13 @@
+	* Allow setting of separator in "list" file type.
+	* Fix file loading for different file types.
+	* Release 1.6.10 (sorry about this; it's to avoid misunderstandings
+	  about versions).
+	* Implement range selection. A user should use Shift-Button1
+	  to select one and Ctrl-Button1 to select the other end of a range.
+	  You need to have a range widget selected for this to make sense.
+	  They're currently in the Define Graph dialog and in the Print
+	  dialog.
+
 Wed 28 Oct 21:58:14 1998 Danny Backx (danny@gnu.org)
 	* Fixed src/Makefile.am so automake isn't upset any more.
 	  Apparently automake can't stand multiple oleo_LDADD =

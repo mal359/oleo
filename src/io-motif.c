@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.16 1998/10/28 21:01:42 danny Exp $
+ *  $Id: io-motif.c,v 1.17 1998/11/29 12:49:05 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.16 1998/10/28 21:01:42 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.17 1998/11/29 12:49:05 danny Exp $";
 
 #include "config.h"
 
@@ -89,6 +89,7 @@ Widget	fsd = NULL;
 Widget	hd, html = NULL, gs = NULL;
 Widget	FormatD = NULL;
 Widget	PrintDialog, PrintShell = NULL;
+Widget	DefaultFileDialog, DefaultFileShell = NULL;
 
 static Widget	w;
 
@@ -207,8 +208,50 @@ void PrintDebug(Widget w, XtPointer client, XtPointer call)
  *								*
  ****************************************************************/
 
+Widget		ActiveRangeSelectionWidget = NULL;
+struct rng	selection_range;
+
+void FocusCB(Widget w, XtPointer client, XtPointer call)
+{
+	ActiveRangeSelectionWidget = w;
+}
+
+void LoseFocusCB(Widget w, XtPointer client, XtPointer call)
+{
+#if 0
+	if (ActiveRangeSelectionWidget == w)
+		ActiveRangeSelectionWidget = NULL;
+#endif
+}
+
+void SelectCellCB(Widget w, XtPointer client, XtPointer call)
+{
+	char	*s;
+	XbaeMatrixSelectCellCallbackStruct *cbp =
+		(XbaeMatrixSelectCellCallbackStruct *)call;
+#if 0
+	fprintf(stderr, "SelectCell(%s, %d %d)\n",
+		cbp->params[0], cbp->row, cbp->column);
+#endif
+	if (cbp->num_params >= 1 && strcmp(cbp->params[0], "start") == 0) {
+		selection_range.lr = cbp->row + 1;
+		selection_range.lc = cbp->column + 1;
+	} else if (cbp->num_params >= 1 && strcmp(cbp->params[0], "end") == 0) {
+		selection_range.hr = cbp->row + 1;
+		selection_range.hc = cbp->column + 1;
+
+		if (ActiveRangeSelectionWidget &&
+				XmIsTextField(ActiveRangeSelectionWidget)) {
+			s = range_name(&selection_range);
+			XmTextFieldSetString(ActiveRangeSelectionWidget, s);
+		}
+	}
+}
+
 void RegisterRangeSelector(Widget w)
 {
+	XtAddCallback(w, XmNfocusCallback, FocusCB, NULL);
+	XtAddCallback(w, XmNlosingFocusCallback, LoseFocusCB, NULL);
 }
 
 /****************************************************************
@@ -502,14 +545,19 @@ Widget CreateConfigureGraph(Widget parent)
 		NULL);
 	cw->x = XtVaCreateManagedWidget("r1", xmTextFieldWidgetClass, rc,
 		NULL);
+	RegisterRangeSelector(cw->x);
 	cw->a = XtVaCreateManagedWidget("r2", xmTextFieldWidgetClass, rc,
 		NULL);
+	RegisterRangeSelector(cw->a);
 	cw->b = XtVaCreateManagedWidget("r3", xmTextFieldWidgetClass, rc,
 		NULL);
+	RegisterRangeSelector(cw->b);
 	cw->c = XtVaCreateManagedWidget("r4", xmTextFieldWidgetClass, rc,
 		NULL);
+	RegisterRangeSelector(cw->c);
 	cw->d = XtVaCreateManagedWidget("r5", xmTextFieldWidgetClass, rc,
 		NULL);
+	RegisterRangeSelector(cw->d);
 
 	XtVaCreateManagedWidget("s0", xmLabelGadgetClass, rc,
 		NULL);
@@ -732,6 +780,10 @@ void ConfigureGraph(Widget w, XtPointer client, XtPointer call)
 	XtManageChild(configureGraph);
 }
 
+struct PrintWidgets {
+	Widget	rangeTF, fileTF, printerTF, programTF;
+} PrintWidgets;
+
 /*
  * Print the spreadsheet
  */
@@ -742,26 +794,46 @@ void ReallyPrintCB(Widget w, XtPointer client, XtPointer call)
 	 * selected by the user from a dialog, or to a printer,
 	 * also selected by the user.
 	 */
-	FILE		*fp;
+	FILE		*fp = NULL;
 	struct rng	rng;
-	float		wid, ht;
-	char		*font;
+	char		*fn, *s, *p;
+	int		r;
 
 	XtPopdown(PrintShell);
 
-	fp = fopen("/tmp/oleo.ps", "w");	/* ??? */
-	font = "Helvetica";			/* ??? */
-	wid = 8.5 * 72.;			/* ??? */
-	ht = 11. * 72.;				/* ??? */
+	fn = XmTextFieldGetString(PrintWidgets.fileTF);
 
-	rng.lr = 0;
-	rng.hr = 10;
-	rng.lc = 0;
-	rng.hc = 10;
+	if (fn)
+		fp = fopen(fn, "w");
+	if (! fp) {
+		MessageAppend(True, "Couldn't write to file %s\n", fn);
+#ifdef	FREE_TF_STRING
+		XtFree(fn);
+#endif
+		return;
+	}
 
-	psprint_region(fp, &rng, wid, ht, font);
-	MessageAppend(True, "Printed a1.j10 to /tmp/oleo.ps\n");
+	p = s = XmTextFieldGetString(PrintWidgets.rangeTF);
+	if ((r = parse_cell_or_range(&p, &rng)) == 0)
+		ConversionError(s, _("range"));
+	else if (r & RANGE) {
+		;
+	} else {
+		rng.hr = rng.lr;
+		rng.hc = rng.lc;
+	}
+#ifdef	FREE_TF_STRING
+	XtFree(s);
+#endif
+
+	psprint_region_cmd(&rng, fp);
 	fclose(fp);
+
+	MessageAppend(False, "Printed a1.j10 to %s\n", fn);
+
+#ifdef	FREE_TF_STRING
+	XtFree(fn);
+#endif
 }
 
 static void MotifSetPrintPage(Widget w, XtPointer client, XtPointer call)
@@ -789,6 +861,8 @@ Widget MotifCreatePrintDialog(Widget s)
 			XmNtopAttachment,	XmATTACH_FORM,
 			XmNleftOffset,		10,
 			XmNtopOffset,		10,
+			XmNrightAttachment,	XmATTACH_FORM,
+			XmNrightOffset,		10,
 		NULL);
 
 	w = XtVaCreateManagedWidget("printDestinationFrameTitle",
@@ -802,14 +876,28 @@ Widget MotifCreatePrintDialog(Widget s)
 			XmNradioBehavior,	True,
 			XmNradioAlwaysOne,	True,
 		NULL);
+
 	w = XtVaCreateManagedWidget("printer", xmToggleButtonGadgetClass,
 		radio, NULL);
 	/* FIX ME - this is a hardcoded default */
 	XmToggleButtonGadgetSetState(w, True, False);
+	PrintWidgets.printerTF = 
+	w = XtVaCreateManagedWidget("printerTF", xmTextFieldWidgetClass,
+			radio, NULL);
+	XmTextFieldSetString(w, AppRes.printer);
 	w = XtVaCreateManagedWidget("file", xmToggleButtonGadgetClass,
 		radio, NULL);
+	PrintWidgets.fileTF = 
+	w = XtVaCreateManagedWidget("fileTF", xmTextFieldWidgetClass,
+			radio, NULL);
+	w = XtVaCreateManagedWidget("fileTFBrowse", xmPushButtonGadgetClass,
+			radio, NULL);
 	w = XtVaCreateManagedWidget("program", xmToggleButtonGadgetClass,
 		radio, NULL);
+	PrintWidgets.programTF = 
+	w = XtVaCreateManagedWidget("programTF", xmTextFieldWidgetClass,
+			radio, NULL);
+	XmTextFieldSetString(w, AppRes.program);
 
 	/* Paper */
 	w = frame;
@@ -820,6 +908,8 @@ Widget MotifCreatePrintDialog(Widget s)
 			XmNtopOffset,		10,
 			XmNleftAttachment,	XmATTACH_FORM,
 			XmNleftOffset,		10,
+			XmNrightAttachment,	XmATTACH_FORM,
+			XmNrightOffset,		10,
 		NULL);
 
 	w = XtVaCreateManagedWidget("printPaperFrameTitle",
@@ -845,7 +935,7 @@ Widget MotifCreatePrintDialog(Widget s)
 		XtSetArg(al[ac], XmNlabelString, xms); ac++;
 		w = XmCreatePushButtonGadget(menu, PrintGetPageName(i), al, ac);
 		if (strcmp(AppRes.paper, PrintGetPageName(i)) == 0)
-			XmToggleButtonGadgetSetState(w, True, False);
+			XtVaSetValues(menu, XmNmenuHistory, w, NULL);
 		XtAddCallback(w, XmNactivateCallback,
 			MotifSetPrintPage, (XtPointer)i);
 		XmStringFree(xms);
@@ -869,7 +959,9 @@ Widget MotifCreatePrintDialog(Widget s)
 			XmNchildVerticalAlignment,	XmALIGNMENT_CENTER,
 		NULL);
 
-	w = XtVaCreateManagedWidget(frame, xmTextFieldWidgetClass, frame,
+	PrintWidgets.rangeTF = 
+	w = XtVaCreateManagedWidget("printRangeTF", xmTextFieldWidgetClass,
+		frame,
 		NULL);
 	RegisterRangeSelector(w);
 
@@ -881,7 +973,8 @@ Widget MotifCreatePrintDialog(Widget s)
 			XmNleftAttachment,	XmATTACH_FORM,
 			XmNleftOffset,		10,
 			XmNrightAttachment,	XmATTACH_NONE,
-			XmNbottomAttachment,	XmATTACH_NONE,
+			XmNbottomAttachment,	XmATTACH_FORM,
+			XmNbottomOffset,	10,
 		NULL);
 	XtAddCallback(ok, XmNactivateCallback, ReallyPrintCB, NULL);
 
@@ -900,6 +993,109 @@ void printCB(Widget w, XtPointer client, XtPointer call)
 
 	XtManageChild(PrintDialog);
 	XtPopup(PrintShell, XtGrabNone);
+}
+
+void SetDefaultFileCB(Widget w, XtPointer client, XtPointer call)
+{
+	char	*s, *xx;
+	Widget	tf, f;
+
+	f = XtParent(w);
+	/* Set default file format */
+
+	/* Set separator in List file format */
+	if ((tf = XtNameToWidget(f, "*listSeparatorTF")) != NULL) {
+		xx = XmTextFieldGetString(tf);
+		s = XtMalloc(strlen(xx) + 8);
+		strcpy(s, "list ");
+		strcat(s, xx);
+		list_set_options(1, s);
+		XtFree(s);
+	}
+
+	XtPopdown(DefaultFileShell);
+}
+
+void CancelDialog(Widget w, XtPointer client, XtPointer call)
+{
+	Widget	shell = (Widget)client;
+
+	XtPopdown(shell);
+}
+
+Widget MotifCreateDefaultFileDialog(Widget s)
+{
+	Widget		form, menu, cb, w, ok, cancel, frame, radio;
+	int		npages, i, ac;
+	Arg		al[5];
+	XmString	xms;
+
+	ac = 0;
+	form = XmCreateForm(s, "defaultFileForm", al, ac);
+
+	/* Destination */
+	frame = XtVaCreateManagedWidget("defaultFileFrame",
+			xmFrameWidgetClass, form,
+			XmNleftAttachment,	XmATTACH_FORM,
+			XmNtopAttachment,	XmATTACH_FORM,
+			XmNleftOffset,		10,
+			XmNtopOffset,		10,
+			XmNrightAttachment,	XmATTACH_FORM,
+			XmNrightOffset,		10,
+		NULL);
+
+	w = XtVaCreateManagedWidget("listSeparatorFrameTitle",
+			xmLabelGadgetClass,		frame,
+			XmNchildType,			XmFRAME_TITLE_CHILD,
+			XmNchildVerticalAlignment,	XmALIGNMENT_CENTER,
+		NULL);
+
+	w = XtVaCreateManagedWidget("listSeparatorTF", xmTextFieldWidgetClass,
+			frame,
+		NULL);
+
+	/* FIX ME : buttons */
+	ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass, form,
+			XmNtopAttachment,	XmATTACH_WIDGET,
+			XmNtopOffset,		10,
+			XmNtopWidget,		frame,
+			XmNleftAttachment,	XmATTACH_FORM,
+			XmNleftOffset,		10,
+			XmNrightAttachment,	XmATTACH_NONE,
+			XmNbottomAttachment,	XmATTACH_FORM,
+			XmNbottomOffset,	10,
+		NULL);
+	XtAddCallback(ok, XmNactivateCallback, SetDefaultFileCB, NULL);
+
+	cancel = XtVaCreateManagedWidget("cancel", xmPushButtonGadgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_WIDGET,
+			XmNtopOffset,		10,
+			XmNtopWidget,		frame,
+			XmNleftAttachment,	XmATTACH_WIDGET,
+			XmNleftWidget,		ok,
+			XmNleftOffset,		10,
+			XmNrightAttachment,	XmATTACH_NONE,
+			XmNbottomAttachment,	XmATTACH_FORM,
+			XmNbottomOffset,	10,
+		NULL);
+	XtAddCallback(cancel, XmNactivateCallback, CancelDialog, DefaultFileShell);
+
+	return form;
+}
+
+void DefaultFileCB(Widget w, XtPointer client, XtPointer call)
+{
+	if (DefaultFileShell == NULL) {
+		DefaultFileShell = XtVaCreatePopupShell("defaultFileShell",
+				topLevelShellWidgetClass,
+				toplevel,
+			NULL);
+		DefaultFileDialog = MotifCreateDefaultFileDialog(DefaultFileShell);
+	}
+
+	XtManageChild(DefaultFileDialog);
+	XtPopup(DefaultFileShell, XtGrabNone);
 }
 
 /****************************************************************
@@ -1081,6 +1277,10 @@ void FileFormatCB(Widget w, XtPointer client, XtPointer call)
 	strcpy(pattern, "*.");
 	strcat(pattern, f);
 
+#if 1
+	fprintf(stderr, PACKAGE " : file format set to %s\n", f);
+#endif
+
 	xms = XmStringCreateSimple(pattern);
 	XtVaSetValues(fsd, XmNpattern, xms, NULL);
 	XmStringFree(xms);
@@ -1110,7 +1310,9 @@ void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 		XtFree(s);
 		return;
 	}
-	oleo_read_file(fp, 0);	/* How to handle more than one format ? */
+
+	read_file_generic(fp, 0, fileformat);
+
 	if (fclose(fp) != 0) {
 		/* handle error */
 		XtFree(s);
@@ -1205,6 +1407,41 @@ void LoadCB(Widget w, XtPointer client, XtPointer call)
 	XtManageChild(fsd);
 }
 
+FILE *OleoOpenForWrite(char *s)
+{
+	FILE	*fp;
+	int	len;
+	char	*fn;
+
+	if (access(s, R_OK) == 0) {
+		/* Maybe replace it ? */
+		len = strlen(s) + 2 + strlen(".old");
+		fn = malloc(len);
+		strcpy(fn, s);
+		strcat(fn, ".old");
+		unlink(fn);
+		if (rename(s, fn) < 0) {
+			MessageAppend(True,
+				_("OleoOpenForWrite: can't move %s to %s"),
+				s, fn);
+			free(fn);
+			return NULL;
+		}
+		free(fn);
+	}
+
+	fp = fopen(s, "w");
+	if (fp == NULL) {
+		/* handle error */
+		MessageAppend(True,
+			_("OleoOpenForWrite: couldn't open file '%s' for write"),
+			s);
+		return NULL;
+	}
+
+	return fp;
+}
+
 void ReallySaveCB(Widget w, XtPointer client, XtPointer call)
 {
 	XmFileSelectionBoxCallbackStruct *cbp =
@@ -1219,15 +1456,7 @@ void ReallySaveCB(Widget w, XtPointer client, XtPointer call)
 		return;
 	}
 
-	fp = fopen(s, "w");
-	if (fp == NULL) {
-		/* handle error */
-		MessageAppend(True,
-			_("ReallySaveCB: couldn't open file '%s' for write"),
-			s);
-		return;
-	}
-
+	fp = OleoOpenForWrite(s);
 	write_file_generic(fp, 0, fileformat);
 
 	if (fclose(fp) != 0) {
@@ -2126,6 +2355,7 @@ GscBuildMainWindow(Widget parent)
 	XtAddCallback(mat, XmNmodifyVerifyCallback, ModifyVerify, NULL);
 	XtAddCallback(mat, XmNdrawCellCallback, DrawCell, NULL);
 	XtAddCallback(mat, XmNwriteCellCallback, WriteCell, NULL);
+	XtAddCallback(mat, XmNselectCellCallback, SelectCellCB, NULL);
 
 	/*
 	 * We're building a small combo of two widgets which will represent
@@ -2387,7 +2617,7 @@ GscBuildMainWindow(Widget parent)
 	w = XtVaCreateManagedWidget("defaultfileformat",
 		xmPushButtonGadgetClass, optionsmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, none, NULL);
+	XtAddCallback(w, XmNactivateCallback, DefaultFileCB, NULL);
 
 	XtVaCreateManagedWidget("sep2", xmSeparatorGadgetClass, optionsmenu,
 		NULL);

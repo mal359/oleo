@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.h,v 1.6 1998/10/28 21:01:42 danny Exp $
+ *  $Id: fallback.h,v 1.7 1998/11/29 12:49:03 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -120,6 +120,9 @@ char *fallback[] = {
 	"*bae.allowColumnResize:	True",
 	"*bae.columnLabelColor:		dark slate blue",
 	"*bae.rowLabelColor:		dark slate blue",
+	"*bae.translations:	#override\n"
+		"Shift<Btn1Down>:		SelectCell(start)\n"
+		"Ctrl<Btn1Down>:		SelectCell(end)\n",
 /* Help Dialog */
 	"*versionD*Help*labelString:	GPL",
 /* Configuration Dialogs */
@@ -201,6 +204,9 @@ char *fallback[] = {
 	"*printForm*printer.labelString:	Printer",
 	"*printForm*file.labelString:	File",
 	"*printForm*program.labelString:	Program",
+/* Default File Dialog */
+	"*listSeparatorFrameTitle.labelString:	List File Separator",
+	"*defaultFileShell.title:	Default File Format Dialog",
 /* End */
 	NULL
 };
