@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.22 1999/11/04 12:51:30 danny Exp $
+ * $Id: print.c,v 1.23 1999/11/10 00:22:53 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -268,7 +268,7 @@ print_region_cmd (struct rng *print, FILE *fp)
 	CELLREF c_lo, c_hi;
 	int	print_width, print_height, totht, totwid,
 		ht, npages, next, current_size,
-		xpoints, xspaces;
+		xpoints, xspaces, xpointsafter;
 	char	pg[32];
 	char	*title = NULL;
 
@@ -345,14 +345,17 @@ print_region_cmd (struct rng *print, FILE *fp)
 			}
 
 			xpoints = xspaces = 0;	/* FIX ME */
+			xpointsafter = 0;
 
 			ht = get_height(rr) * AfmFontHeight();
 			spaces = 0;
 			for (cc = c_lo; cc <= c_hi; cc++) {
 				next = 0;
 				w = get_width(cc);	/* in spaces */
-				if (!w)
-				continue;
+				if (!w) {
+					xpoints += 10;
+					continue;
+				}
 				cp = find_cell(rr, cc);
 
 				/* Font */
@@ -393,6 +396,16 @@ print_region_cmd (struct rng *print, FILE *fp)
 				 *	of simply the cell width
 				 */
 				ptr = print_cell (cp);
+#if 0
+			{ j = GET_JST(cp);
+				fprintf(stderr, "PrintCell(%d,%d,%s,%s)\n", rr, cc, ptr,
+					j == JST_DEF ? "JST_DEF" :
+					j == JST_LFT ? "JST_LFT" :
+					j == JST_RGT ? "JST_RGT" :
+					j == JST_CNT ? "JST_CNT" : "??"
+				);
+			}
+#endif
 				if (AfmStringWidth(ptr) > w)
 				{
 					int	i, wtot;
@@ -403,9 +416,12 @@ print_region_cmd (struct rng *print, FILE *fp)
 						if (!cp || GET_FORMAT(cp) == FMT_HID ||
 								GET_TYP(cp) == 0) {
 							wtot += get_width(i) * current_size;
+							xpointsafter += 10;
 							next = i+1;
-						} else
-							break;
+						} else {
+							i = c_hi;
+							// break;
+						}
 					}
 					w = wtot;
 				}
@@ -432,9 +448,6 @@ print_region_cmd (struct rng *print, FILE *fp)
 						if (w > 1) s[w-1] = 0;
 					/* FIX ME */
 
-					if (! cp)
-						continue;
-
 					switch (GET_JST(cp)) {
 					case JST_RGT:
 						Global->CurrentPrintDriver->field(ptr, w, 1,
@@ -456,11 +469,12 @@ print_region_cmd (struct rng *print, FILE *fp)
 					}
 					free(s);
 
-					xpoints += w + 10;
+					xpoints += w + 10 + xpointsafter;
+					xpointsafter = 0;
 				}
 
 				if (next)
-				cc = next-1;
+					cc = next-1;
 			}
 			Global->CurrentPrintDriver->newline(ht + Global->interline, fp);
 			totht += ht + Global->interline;

@@ -112,7 +112,7 @@ typedef struct cell CELL;
 #define TYP_RNG		7	/* This for the expression evaluator:
 				   NO cell should be this type */
 
-#define GET_JST(p)	((p)->cell_flags.cell_justify)
+#define GET_JST(p)	((p == 0) ? JST_DEF : ((p)->cell_flags.cell_justify))
 #define SET_JST(p,x)	((p)->cell_flags.cell_justify = (x))
 #define JST_DEF		0
 #define JST_LFT		1
