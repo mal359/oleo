@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.56 2001/02/08 00:26:36 pw Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.57 2001/04/16 00:16:21 pw Exp $
 #
 # CPPFLAGS = -Wall
 
@@ -45,7 +45,7 @@ XBSRC=
 oleo_LINK=	$(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
 endif
 
-oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
+oleo_SOURCES = parse.y lex.c byte-compile.c eval.c ref.c \
  decompile.c sort.c regions.c utils.c lists.c \
  io-term.c io-utils.c io-x11.c window.c io-edit.c userpref.h \
  line.c key.c format.c funcs.c \
