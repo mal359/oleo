@@ -1,0 +1,68 @@
+@node Motif, , Reporting Bugs, Top
+@chapter A Motif Graphical User Interface for Oleo
+
+@menu
+* Motif Introduction::
+* LessTif::
+* Advantages::
+* What you need::
+* Alternatives::
+* Using the mouse::
+* Using the keyboard shortcuts::
+* Fallback::
+@end menu
+
+@node Motif Introduction, LessTif, , Motif
+@section Motif Introduction
+
+Motif is a toolkit for building graphical user interfaces (GUIs)
+with the X Window System.
+
+Such a GUI has been built for oleo.
+The combination of oleo and its Motif interface
+comes close to professional quality spreadsheets
+that one can buy off the shelf.
+
+@node LessTif, Advantages, Motif Introduction, Motif
+@section LessTif
+
+When this manual talks about Motif,
+it refers to what is commonly referred to as OSF/Motif,
+a user interface toolkit for the X Window System which was
+originally developped by the Open Software Foundation (OSF).
+The OSF has merged with X/Open,
+the new name of the organisation is The Open Group.
+
+A free implementation of Motif, called LessTif,
+which is available from http://www.lesstif.org,
+can be used instead of Motif.
+LessTif is covered by the LGPL (Library General Public License).
+
+@node Advantages, What you need, LessTif, Motif
+@section Advantages
+
+@node What you need, Alternatives, Advantages, Motif
+@section What you need
+
+@node Alternatives, Using the mouse, What you need, Motif
+@section Alternatives
+
+Another toolkit for building GUIs is GTK.
+It is also freely available,
+and another user interface for oleo may be built with it too.
+
+GTK is the FSF's official GUI toolkit.
+
+@node Using the mouse, Using the keyboard shortcuts, Alternatives, Motif
+@section Using the mouse
+
+@node Using the keyboard shortcuts, Fallback, Using the mouse, Motif
+@section Using the keyboard shortcuts
+
+@node Fallback, , Using the keyboard shortcuts, Motif
+@section Fallback
+
+If you have a version of oleo that has been built with Motif support,
+but you don't currently have an X Window System display
+(for instance you're using a dialup connection),
+then it is still possible to use the curses based character user interface.

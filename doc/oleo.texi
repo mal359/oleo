@@ -115,6 +115,7 @@ means complete, nor necessarily accurate for that matter.
 * Functions::                   
 * Extending Oleo::
 * Reporting Bugs::
+* Motif::
 * Key Index::
 * Command Index::
 * Function Index::
@@ -136,6 +137,7 @@ means complete, nor necessarily accurate for that matter.
 @include functions.texi
 @include interface.texi
 @include bugs.texi
+@include motif.texi
 
 @page
 @node   Key Index, Command Index, Top, Top
