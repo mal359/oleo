@@ -1,4 +1,3 @@
-#ifndef X_DISPLAY_MISSING
 /* Deal with the X Resource Manager.
    Copyright (C) 1990, 1992, 1993 Free Software Foundation.
 
@@ -22,6 +21,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+
+#ifndef X_DISPLAY_MISSING
 
 #ifndef alloca
 #ifdef __GNUC__

@@ -1,4 +1,3 @@
-#ifndef X_DISPLAY_MISSING
 /*	Copyright (C) 1992, 1993 Free Software Foundation, Inc.
 	
 	This program is free software; you can redistribute it and/or modify
@@ -19,6 +18,8 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+
+#ifndef X_DISPLAY_MISSING
 
 #include  <stdio.h>
 #include <ctype.h>
