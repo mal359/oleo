@@ -6,7 +6,7 @@ GNU_PACKAGE="GNU $PACKAGE"
 AC_DEFINE_UNQUOTED(GNU_PACKAGE, "$GNU_PACKAGE")
 
 dnl Define available languages
-ALL_LINGUAS = ""
+ALL_LINGUAS=""
 
 AC_ARG_PROGRAM
 AM_CONFIG_HEADER(config.h)
@@ -84,4 +84,4 @@ AM_FUNC_OBSTACK
 dnl See if we're GNU Gettext friendly
 AM_GNU_GETTEXT
 
-AC_OUTPUT([Makefile doc/Makefile lib/Makefile src/Makefile])
+AC_OUTPUT([Makefile doc/Makefile lib/Makefile src/Makefile intl/Makefile po/Makefile.in], [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])
