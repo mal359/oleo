@@ -982,7 +982,7 @@ _io_pr_cell_win (struct window *win, CELLREF r, CELLREF c, CELL *cp)
       else
 	set_slop ((VOIDSTAR *) (&(win->win_slops)), r, c, cc);
     }
-  if ((hgt > 1) && display_formula_mode)
+  if ((hgt > 1) && Global->display_formula_mode)
     {
       move_cursor_to (win, r, c, 1);
       ptr = decomp (r, c, cp);

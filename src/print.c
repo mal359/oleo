@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.12 1999/07/10 07:38:21 danny Exp $
+ * $Id: print.c,v 1.13 1999/08/31 08:45:18 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,6 @@ static struct PrintDriver *Drivers[] = {
 /* That should be all you need to do for adding printer types.  */
 
 static int NumPrintDrivers = (sizeof(Drivers) / sizeof(struct PrintDriver *)) - 1;
-static struct PrintDriver *CurrentPrintDriver = &PostScriptPrintDriver;
 
 /*
  * Default page dimensions
@@ -101,8 +100,6 @@ static struct page_size size_table[] =
   { "folio",        612,  936     }, /* (8.5 x 13  in.)   */
   { "quarto",       610,  780     }
 };
-
-float zoom = 1.0;
 
 struct page_size *
 find_size( char * size, int len )
@@ -140,7 +137,7 @@ PrintSetType(char *format)
 
 	for (i=0; i<NumPrintDrivers; i++)
 		if (strcmp(Drivers[i]->name, format) == 0) {
-			CurrentPrintDriver = Drivers[i];
+			Global->CurrentPrintDriver = Drivers[i];
 			return;
 		}
 }
@@ -296,11 +293,11 @@ print_region_cmd (struct rng *print, FILE *fp)
 	sprintf(title, "%s : '%s'", PACKAGE, FileGetCurrentFileName());
 
 	/* Start Printing */
-	CurrentPrintDriver->job_header(title, npages, fp);
-	CurrentPrintDriver->paper_size(print_width, print_height, fp);
+	Global->CurrentPrintDriver->job_header(title, npages, fp);
+	Global->CurrentPrintDriver->paper_size(print_width, print_height, fp);
 
 	/* Set default font */
-	CurrentPrintDriver->font(default_font_family, default_font_slant,
+	Global->CurrentPrintDriver->font(default_font_family, default_font_slant,
 		default_font_size, fp);
 
 	/* Adapted from txt_print_region */
@@ -321,7 +318,7 @@ print_region_cmd (struct rng *print, FILE *fp)
 	    for (rr = print->lr; rr <= print->hr; rr++) {
 		if (totht == 0) {
 			sprintf(pg, "page %d", npages);
-			CurrentPrintDriver->page_header(pg, fp);
+			Global->CurrentPrintDriver->page_header(pg, fp);
 			npages++;
 		}
 
@@ -332,14 +329,14 @@ print_region_cmd (struct rng *print, FILE *fp)
 		    if (!w)
 			continue;
 		    cp = find_cell (rr, cc);
-		if (CurrentPrintDriver->printer_justifies()) {
+		if (Global->CurrentPrintDriver->printer_justifies()) {
 		    if (!cp || !GET_TYP (cp)) {
-			CurrentPrintDriver->field("", w, 0, 1, fp);
+			Global->CurrentPrintDriver->field("", w, 0, 1, fp);
 		    } else {
 			ptr = print_cell (cp);
 			if (strlen(ptr) > w)
 				if (w > 1) ptr[w-1] = 0;
-			CurrentPrintDriver->field(ptr, w, GET_JST(cp), 1, fp);
+			Global->CurrentPrintDriver->field(ptr, w, GET_JST(cp), 1, fp);
 		    }
 		} else {
 		    if (!cp || !GET_TYP (cp)) {
@@ -409,26 +406,26 @@ print_region_cmd (struct rng *print, FILE *fp)
 		    }
 		}
 		}
-		CurrentPrintDriver->newline(ht, fp);
+		Global->CurrentPrintDriver->newline(ht, fp);
 		totht += ht;
 		if (totht >= print_height) {
 			totht = 0;
 
 			sprintf(pg, "page %d", npages);
-			CurrentPrintDriver->page_footer(pg, fp);
+			Global->CurrentPrintDriver->page_footer(pg, fp);
 		}
 	    }	/* Rows on a page */
 
 	    if (totht != 0) {
 		totht = 0; 
 		sprintf(pg, "page %d", npages);
-		CurrentPrintDriver->page_footer(pg, fp);
+		Global->CurrentPrintDriver->page_footer(pg, fp);
 	    }
 	}
 
 	if (totht != 0) {
 	    sprintf(pg, "end page %d", npages);
-	    CurrentPrintDriver->page_footer(pg, fp);
+	    Global->CurrentPrintDriver->page_footer(pg, fp);
 	}
-	CurrentPrintDriver->job_trailer(npages-1, fp);
+	Global->CurrentPrintDriver->job_trailer(npages-1, fp);
 }

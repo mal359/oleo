@@ -1,11 +1,21 @@
-$Id: ChangeLog,v 1.101 1999/08/30 01:39:09 danny Exp $
+$Id: ChangeLog,v 1.102 1999/08/31 08:44:45 danny Exp $
 
+Tue 31 Aug 10:46:39 1999, Danny Backx
 	* plot.c : support LineToOffScreen in XY plots (don't draw
 	  a line between points outside the visible region).
 	* More MDI work - plot globals into the structure.
 	* Update TODO.
 	* Both TODO and ChangeLog are now visible on the web page.
 	* Move many global variables into Global.
+	* A fix for a crash reported on the bugs list by Dag Nygren.
+	* Destroy splash widgets instead of popping them down. They're
+	  no longer useful.
+	* Implement plots in an X drawable (GNU plotutils terms), meaning
+	  we create a widget and tell plotutils to draw in it. The
+	  advantage to this approach is that you can put the widget
+	  inside a scrolledwindow and have automatic scrolling.
+	* Turned autoUnmanage off for all dialogs. Otherwise dialogs would
+	  disappear when Help gets clicked.
 
 Sat 28 Aug 12:40:17 1999, Danny Backx
 	* User Preferences dialog : small implementation to change

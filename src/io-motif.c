@@ -1,6 +1,6 @@
 #define	HAVE_TEST
 /*
- *  $Id: io-motif.c,v 1.48 1999/08/30 01:39:24 danny Exp $
+ *  $Id: io-motif.c,v 1.49 1999/08/31 08:45:07 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -22,7 +22,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.48 1999/08/30 01:39:24 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.49 1999/08/31 08:45:07 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -99,6 +99,7 @@ static char rcsid[] = "$Id: io-motif.c,v 1.48 1999/08/30 01:39:24 danny Exp $";
 #include "graph.h"
 #include "print.h"
 #include "mdi.h"
+#include "userpref.h"
 
 #include "io-motif.h"		/* To get warnings when inconsistent */
 
@@ -116,9 +117,11 @@ GnuSheetAppres	AppRes;
 
 /* Forward declarations */
 void CancelTemplate(Widget w, XtPointer client, XtPointer call);
+void DestroyTemplate(Widget w, XtPointer client, XtPointer call);
 static void FixA0();
 static void PopDownSplash();
 static void UpdateStatus(void);
+void helpUsingCB(Widget w, XtPointer client, XtPointer call);
 
 Widget ConfigureBarChart(Widget parent);
 Widget ConfigurePieChart(Widget parent);
@@ -168,7 +171,7 @@ void MessageAppend(Boolean beep, char *fmt, ...)
 	XmTextPosition	pos;
 	int		i;
 	va_list		ap;
-	static char	s[256];
+	char		s[256];
 
 	if (fmt == NULL)
 		return;
@@ -178,9 +181,6 @@ void MessageAppend(Boolean beep, char *fmt, ...)
 	va_end(ap);
 
 	if (msgtext == NULL) {
-#if 0
-		fprintf(stderr, "MessageAppend: Motif not initialised yet, msg '%s'\n", s);
-#endif
 		if (Global->MotifGlobal->early_msg_text == NULL) {
 			Global->MotifGlobal->early_msg_text = strdup(s);
 		} else {
@@ -265,8 +265,6 @@ void SelectCellCB(Widget w, XtPointer client, XtPointer call)
 	char	*s;
 	XbaeMatrixSelectCellCallbackStruct *cbp =
 		(XbaeMatrixSelectCellCallbackStruct *)call;
-	static Boolean **selectedcells = NULL;
-	static Boolean	newcall = True;
 	int		i, j;
 
 #if 0
@@ -274,11 +272,11 @@ void SelectCellCB(Widget w, XtPointer client, XtPointer call)
 		cbp->params[0], cbp->row, cbp->column);
 #endif
 
-	if (selectedcells == NULL) {
-		selectedcells = (Boolean **)XtMalloc(AppRes.rows *
+	if (Global->MotifGlobal->selectedcells == NULL) {
+		Global->MotifGlobal->selectedcells = (Boolean **)XtMalloc(AppRes.rows *
 				sizeof(Boolean *));
 		for (i=0; i<AppRes.rows; i++)
-			selectedcells[i] = (Boolean *)
+			Global->MotifGlobal->selectedcells[i] = (Boolean *)
 				XtCalloc(AppRes.columns, sizeof(Boolean));
 	}
 
@@ -288,14 +286,14 @@ void SelectCellCB(Widget w, XtPointer client, XtPointer call)
 
 		for (i=0; i<AppRes.rows; i++)
 		    for (j=0; j<=AppRes.columns; j++)
-			selectedcells[i][j] = False;
+			Global->MotifGlobal->selectedcells[i][j] = False;
 
-		XtVaSetValues(mat, XmNselectedCells, selectedcells, NULL);
+		XtVaSetValues(mat, XmNselectedCells, Global->MotifGlobal->selectedcells, NULL);
 	} else if (cbp->num_params >= 1 && strcmp(cbp->params[0], "end") == 0) {
 		selection_range.hr = cbp->row + 1;
 		selection_range.hc = cbp->column + 1;
 
-		newcall = True;
+		Global->MotifGlobal->newcall = True;
 
 		if (ActiveRangeSelectionWidget &&
 				XmIsTextField(ActiveRangeSelectionWidget)) {
@@ -307,7 +305,7 @@ void SelectCellCB(Widget w, XtPointer client, XtPointer call)
 		 * Need to figure out which call is the first in a selection.
 		 */
 
-		if (newcall) {
+		if (Global->MotifGlobal->newcall) {
 #if 0
 			fprintf(stderr, "SelectCellCB(move): first call\n");
 #endif
@@ -317,9 +315,9 @@ void SelectCellCB(Widget w, XtPointer client, XtPointer call)
 
 			for (i=0; i<AppRes.rows; i++)
 			    for (j=0; j<=AppRes.columns; j++)
-				selectedcells[i][j] = False;
+				Global->MotifGlobal->selectedcells[i][j] = False;
 
-			XtVaSetValues(mat, XmNselectedCells, selectedcells, NULL);
+			XtVaSetValues(mat, XmNselectedCells, Global->MotifGlobal->selectedcells, NULL);
 		} else {
 #if 0
 			fprintf(stderr, "SelectCellCB(move): another call\n");
@@ -330,9 +328,9 @@ void SelectCellCB(Widget w, XtPointer client, XtPointer call)
 
 			for (i=selection_range.lr-1; i<=cbp->row; i++)
 			    for (j=selection_range.lc-1; j<=cbp->column; j++)
-				selectedcells[i][j] = True;
+				Global->MotifGlobal->selectedcells[i][j] = True;
 
-			XtVaSetValues(mat, XmNselectedCells, selectedcells, NULL);
+			XtVaSetValues(mat, XmNselectedCells, Global->MotifGlobal->selectedcells, NULL);
 
 			if (ActiveRangeSelectionWidget &&
 					XmIsTextField(ActiveRangeSelectionWidget)) {
@@ -341,7 +339,7 @@ void SelectCellCB(Widget w, XtPointer client, XtPointer call)
 			}
 		}
 
-		newcall = False;
+		Global->MotifGlobal->newcall = False;
 	} 
 }
 
@@ -603,16 +601,17 @@ void PrintOptionsCB(Widget w, XtPointer client, XtPointer call)
 {
 	Widget		ok, cancel, help, t, rc, nb, b, cb, menu;
 	XmString	xms;
-	static Widget	options = NULL;
 	Arg		al[5];
 	int		ac;
 
-	if (! options) {
-		options = XmCreateTemplateDialog(mw, "configureGraph",
-			NULL, 0);
+	if (! optionsDialog) {
+		ac = 0;
+		XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
+		optionsDialog = XmCreateTemplateDialog(mw, "configureGraph",
+			al, ac);
 
 #if XmVERSION > 1
-		nb = XmCreateNotebook(options,
+		nb = XmCreateNotebook(optionsDialog,
 			"printOptionsNotebook",
 			NULL, 0);
 		XtManageChild(nb);
@@ -670,22 +669,22 @@ void PrintOptionsCB(Widget w, XtPointer client, XtPointer call)
 
 		/* Buttons */
 		ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass,
-			options,
+			optionsDialog,
 			NULL);
 		cancel = XtVaCreateManagedWidget("cancel",
-			xmPushButtonGadgetClass, options,
+			xmPushButtonGadgetClass, optionsDialog,
 			NULL);
 		help = XtVaCreateManagedWidget("help", xmPushButtonGadgetClass,
-			options,
+			optionsDialog,
 			NULL);
 
-		XtAddCallback(ok, XmNactivateCallback, PrintOptionsOk, options);
+		XtAddCallback(ok, XmNactivateCallback, PrintOptionsOk, optionsDialog);
 
 		/* FIX ME need something to call the help system */
 	}
 
-	PrintOptionsReset(options);
-	XtManageChild(options);
+	PrintOptionsReset(optionsDialog);
+	XtManageChild(optionsDialog);
 }
 
 /*
@@ -1024,12 +1023,15 @@ void ConfigureGraphReset(Widget f)
  */
 void ConfigureGraph(Widget w, XtPointer client, XtPointer call)
 {
-	Widget		ok, cancel, help, p, fr;
-	static Widget	configureGraph = NULL, inside = NULL;
+	Widget		ok, cancel, help, p, fr, inside;
+	int		ac;
+	Arg		al[5];
 
 	if (! configureGraph) {
+		ac = 0;
+		XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
 		configureGraph = XmCreateTemplateDialog(mw, "configureGraph",
-			NULL, 0);
+			al, ac);
 
 #if XmVERSION > 1
 		ConfigureGraphNotebook = XmCreateNotebook(configureGraph,
@@ -1097,26 +1099,92 @@ void ConfigureGraph(Widget w, XtPointer client, XtPointer call)
 /*
  * Plotutils
  */
-void PuShowPie(Widget w, XtPointer client, XtPointer call)
+
+#ifndef	HAVE_LIBPLOT
+void NoPlotutils(Widget w, XtPointer client, XtPointer call)
 {
-#ifdef	HAVE_LIBPLOT
-	PuPieChart("X", stdout);
+	XmString	xms;
+	char		*s = NULL;
+
+	XtVaGetValues(w, XmNlabelString, &xms, NULL);
+	if (XmStringGetLtoR(xms, XmFONTLIST_DEFAULT_TAG, &s)) {
+		MessageAppend(False, "%s: GNU Plotutils not linked in\n", s);
+		XtFree(s);
+	}
+	XmStringFree(xms);
+}
 #endif
+
+/*
+ * RedrawPlotutilsWindow is called when the plotutils widget needs
+ * a refresh, which may just be when it's scrolling.
+ */
+static void RedrawPlotutilsWindow(Widget w, XtPointer client, XtPointer call)
+{
+	void (*f)(char *, FILE *) = client;
+
+	(*f)("Xdrawable", stdout);
 }
 
-void PuShowBarChart(Widget w, XtPointer client, XtPointer call)
+/*
+ * Show a GNU Plotutils chart in a Motif widget.
+ *
+ * The client parameter is the function (from plot.c) which will
+ * handle the plotting. We pass it to RedrawPlotutilsWindow() too.
+ */
+void PuShowChart(Widget w, XtPointer client, XtPointer call)
 {
 #ifdef	HAVE_LIBPLOT
-	PuBarChart("X", stdout);
-#endif
-}
+	static Window	window;
+	Widget		dlg, d, cancel, help, sw;
+	Arg		al[5];
+	int		ac;
+	void (*f)(char *, FILE *) = client;
 
-void PuShowXYChart(Widget w, XtPointer client, XtPointer call)
-{
-#ifdef	HAVE_LIBPLOT
-	PuXYChart("X", stdout);
+	PlotInit();
+
+	ac = 0;
+	XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
+	dlg = XmCreateTemplateDialog(w, "printDialog", al, ac);
+	
+	ac = 0;
+	XtSetArg(al[ac], XmNwidth, 500); ac++;
+	XtSetArg(al[ac], XmNheight, 500); ac++;
+	XtSetArg(al[ac], XmNscrollingPolicy, XmAUTOMATIC); ac++;
+	sw = XmCreateScrolledWindow(dlg, "scroll", al, ac);
+	XtManageChild(sw);
+
+	ac = 0;
+	XtSetArg(al[ac], XmNwidth, Global->PlotGlobal->img_width); ac++;
+	XtSetArg(al[ac], XmNheight, Global->PlotGlobal->img_height); ac++;
+	d = XmCreateDrawingArea(sw, "DrawingArea", al, ac);
+	XtManageChild(d);
+
+	XtAddCallback(d, XmNexposeCallback, RedrawPlotutilsWindow, f);
+
+	XtManageChild(dlg);
+
+	window = XtWindow(d);
+	if (window == 0) {
+		MessageAppend(True, "PuShowChart: 0 window\n");
+		return;
+	}
+
+	cancel = XtVaCreateManagedWidget("dismiss", xmPushButtonGadgetClass, dlg, NULL);
+	XtAddCallback(cancel, XmNactivateCallback, DestroyTemplate, dlg);
+
+	help = XtVaCreateManagedWidget("help",
+		xmPushButtonGadgetClass, dlg, NULL);
+	XtAddCallback(help, XmNactivateCallback, helpUsingCB,
+		(XtPointer)"#HelpPlotting");
+
+	pl_parampl("XDRAWABLE_DISPLAY", XtDisplayOfObject(w));
+	pl_parampl("XDRAWABLE_DRAWABLE1", &window);
+	(*f)("Xdrawable", stdout);
+#else
+	NoPlotutils(w, client, call);
 #endif
-}
+}               
 
 /*
  * Printing
@@ -1429,7 +1497,7 @@ void ConfigureXYOk(void)
 
 static void TextFieldSetFloat(Widget w, float f)
 {
-	static char	t[32];
+	char	t[32];
 
 	sprintf(t, "%f", f);
 	XmTextFieldSetString(w, t);
@@ -1927,26 +1995,26 @@ Widget MotifCreatePrintDialog(Widget s)
 void printCB(Widget w, XtPointer client, XtPointer call)
 {
 	Widget	d, ok, cancel, help;
+	Arg	al[5];
+	int	ac;
 
 	if (PrintDialog == NULL) {
-		PrintDialog = XmCreateTemplateDialog(mw, "printDialog",
-			NULL, 0);
+		ac = 0;
+		XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
+		PrintDialog = XmCreateTemplateDialog(mw, "printDialog", al, ac);
 		d = MotifCreatePrintDialog(PrintDialog);
 		XtManageChild(d);
 
-		ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass,
-			PrintDialog,
+		ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass, PrintDialog,
 			NULL);
 		XtAddCallback(ok, XmNactivateCallback, ReallyPrintCB, NULL);
 
-		cancel = XtVaCreateManagedWidget("cancel",
-			xmPushButtonGadgetClass, PrintDialog, NULL);
-		XtAddCallback(cancel, XmNactivateCallback,
-			CancelTemplate, PrintDialog);
+		cancel = XtVaCreateManagedWidget("cancel", xmPushButtonGadgetClass, PrintDialog,
+			NULL);
+		XtAddCallback(cancel, XmNactivateCallback, CancelTemplate, PrintDialog);
 
 		help = XtVaCreateManagedWidget("help",
 			xmPushButtonGadgetClass, PrintDialog, NULL);
-
 	}
 
 	XtManageChild(PrintDialog);
@@ -1979,6 +2047,13 @@ void CancelTemplate(Widget w, XtPointer client, XtPointer call)
 	Widget	bb = (Widget)client;
 
 	XtUnmanageChild(bb);
+}
+
+void DestroyTemplate(Widget w, XtPointer client, XtPointer call)
+{
+	Widget	bb = (Widget)client;
+
+	XtDestroyWidget(bb);
 }
 
 void CancelDialog(Widget w, XtPointer client, XtPointer call)
@@ -2897,12 +2972,10 @@ ChangeRowColumnLabels(void)
  ****************************************************************/
 static void FixA0()
 {
-	static int	havea0 = -1;
-
-	if (havea0 == Global->a0)
+	if (Global->MotifGlobal->havea0 == Global->a0)
 		return;
 
-	havea0 = Global->a0;
+	Global->MotifGlobal->havea0 = Global->a0;
 
 	/* Update matrix */
 	ChangeRowColumnLabels();
@@ -2994,8 +3067,6 @@ void PasteCB(Widget w, XtPointer client, XtPointer call)
  *		Oleo move/copy functionality			*
  *								*
  ****************************************************************/
-static Widget	copyDialog = NULL;
-
 void CreateCopyDialog(char *t, void (*cb)(Widget, XtPointer, XtPointer))
 {
 	Widget		w, rc, cap;
@@ -3009,6 +3080,7 @@ void CreateCopyDialog(char *t, void (*cb)(Widget, XtPointer, XtPointer))
 		cancel = XmStringCreateSimple(_("Cancel"));
 		XtSetArg(al[ac], XmNokLabelString, ok); ac++;
 		XtSetArg(al[ac], XmNcancelLabelString, cancel); ac++;
+		XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
 		copyDialog = XmCreateTemplateDialog(toplevel, "copyDialog",
 			al, ac);
 		XmStringFree(ok);
@@ -3483,21 +3555,20 @@ void FormatsDialogReset(Widget d)
 void FormatsDialog(Widget w, XtPointer client, XtPointer call)
 {
 	Widget	ok, cancel, help, tf;
-	int	c = (int)client;
+	int	c = (int)client, ac;
+	Arg	al[5];
 
 	if (! FormatD) {
-		FormatD = XmCreateTemplateDialog(mw, "formatsDialog",
-			NULL, 0);
+		ac = 0;
+		XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
+		FormatD = XmCreateTemplateDialog(mw, "formatsDialog", al, ac);
 		CreateFormatsDialog(FormatD);
 
-		ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass,
-			FormatD,
+		ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass, FormatD,
 			NULL);
-		cancel = XtVaCreateManagedWidget("cancel",
-			xmPushButtonGadgetClass, FormatD,
+		cancel = XtVaCreateManagedWidget("cancel", xmPushButtonGadgetClass, FormatD,
 			NULL);
-		help = XtVaCreateManagedWidget("help", xmPushButtonGadgetClass,
-			FormatD,
+		help = XtVaCreateManagedWidget("help", xmPushButtonGadgetClass, FormatD,
 			NULL);
 
 		XtAddCallback(ok, XmNactivateCallback, FormatsDialogOk,
@@ -3720,21 +3791,21 @@ void
 DoUserPreferences(Widget w, XtPointer client, XtPointer call)
 {
 	Widget	ok, cancel, help, tf;
-	int	c = (int)client;
+	int	c = (int)client, ac;
+	Arg	al[5];
 
 	if (! UserPref) {
+		ac = 0;
+		XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
 		UserPref = XmCreateTemplateDialog(mw, "UserPreferences",
-			NULL, 0);
+			al, ac);
 		CreateUserPreferences(UserPref);
 
-		ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass,
-			UserPref,
+		ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass, UserPref,
 			NULL);
-		cancel = XtVaCreateManagedWidget("cancel",
-			xmPushButtonGadgetClass, UserPref,
+		cancel = XtVaCreateManagedWidget("cancel", xmPushButtonGadgetClass, UserPref,
 			NULL);
-		help = XtVaCreateManagedWidget("help", xmPushButtonGadgetClass,
-			UserPref,
+		help = XtVaCreateManagedWidget("help", xmPushButtonGadgetClass, UserPref,
 			NULL);
 
 		XtAddCallback(ok, XmNactivateCallback, UserPreferencesOk, NULL);
@@ -3899,21 +3970,20 @@ void
 ConfigureMySQL(Widget w, XtPointer client, XtPointer call)
 {
 	Widget	ok, cancel, help, tf;
-	int	c = (int)client;
+	int	c = (int)client, ac;
+	Arg	al[5];
 
 	if (! MySQLDialog) {
-		MySQLDialog = XmCreateTemplateDialog(mw, "mySQLDialog",
-			NULL, 0);
+		ac = 0;
+		XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
+		MySQLDialog = XmCreateTemplateDialog(mw, "mySQLDialog", al, ac);
 		CreateConfigureMySQLDialog(MySQLDialog);
 
-		ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass,
-			MySQLDialog,
+		ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass, MySQLDialog,
 			NULL);
-		cancel = XtVaCreateManagedWidget("cancel",
-			xmPushButtonGadgetClass, MySQLDialog,
+		cancel = XtVaCreateManagedWidget("cancel", xmPushButtonGadgetClass, MySQLDialog,
 			NULL);
-		help = XtVaCreateManagedWidget("help", xmPushButtonGadgetClass,
-			MySQLDialog,
+		help = XtVaCreateManagedWidget("help", xmPushButtonGadgetClass, MySQLDialog,
 			NULL);
 
 		XtAddCallback(ok, XmNactivateCallback, MySQLDialogOk, NULL);
@@ -4354,16 +4424,16 @@ GscBuildMainWindow(Widget parent)
 	w = XtVaCreateManagedWidget("pushowpie", xmPushButtonGadgetClass,
 		graphmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, PuShowPie, NULL);
+	XtAddCallback(w, XmNactivateCallback, PuShowChart, PuPieChart);
 
 	w = XtVaCreateManagedWidget("pushowbar", xmPushButtonGadgetClass,
 		graphmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, PuShowBarChart, NULL);
+	XtAddCallback(w, XmNactivateCallback, PuShowChart, PuBarChart);
 	w = XtVaCreateManagedWidget("pushowxy", xmPushButtonGadgetClass,
 		graphmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, PuShowXYChart, NULL);
+	XtAddCallback(w, XmNactivateCallback, PuShowChart, PuXYChart);
 	w = XtVaCreateManagedWidget("puprintpie", xmPushButtonGadgetClass,
 		graphmenu,
 		NULL);
@@ -4404,7 +4474,7 @@ GscBuildMainWindow(Widget parent)
 		optionsmenu,
 		NULL);
 	XtAddCallback(w, XmNvalueChangedCallback, none, NULL);
-	XmToggleButtonGadgetSetState(w, run_load_hooks, False);
+	XmToggleButtonGadgetSetState(w, UserPreferences.run_load_hooks, False);
 
 	w = XtVaCreateManagedWidget("statusline", xmToggleButtonGadgetClass,
 		optionsmenu,
@@ -4950,19 +5020,6 @@ xio_open_display (void)
 #endif
 }
 
-void
-motif_error_msg(char *fmt, ...)
-{
-	static char	ErrorBuffer[1024];
-	va_list		ap;
-
-	va_start(ap, fmt);
-	vsprintf(ErrorBuffer, fmt, ap);
-	va_end(ap);
-
-	MessageAppend(True, ErrorBuffer);
-}
-
 int
 io_col_to_input_pos (int c)
 {
@@ -5006,16 +5063,24 @@ xio_command_loop (int i)
 
 void PopDownSplash()
 {
-	XtPopdown(SplashShell);
+	XtDestroyWidget(SplashShell);
+}
+
+void MotifGlobalInitialize(void)
+{
+	memset(Global->MotifGlobal, 0, sizeof(struct MotifGlobalType));
+
+	Global->MotifGlobal->input_buf_allocated = 1024;
+	strcpy(Global->MotifGlobal->fileformat, "oleo");
+	Global->MotifGlobal->havea0 = -1;
+	Global->MotifGlobal->selectedcells = NULL;
+	Global->MotifGlobal->newcall = True;
 }
 
 void motif_init(int *argc, char **argv)
 {
 	Global->MotifGlobal = (struct MotifGlobalType *)XtMalloc(sizeof(struct MotifGlobalType));
-	memset(Global->MotifGlobal, 0, sizeof(struct MotifGlobalType));
-
-	Global->MotifGlobal->input_buf_allocated = 1024;
-	strcpy(Global->MotifGlobal->fileformat, "oleo");
+	MotifGlobalInitialize();
 
 	io_command_loop = xio_command_loop;
 	io_open_display = xio_open_display;
@@ -5167,6 +5232,7 @@ void gplCB(Widget w, XtPointer client, XtPointer call)
 
 	
 	ac = 0;
+	XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
 	x = XmCreateTemplateDialog(w, "versionD", al, ac);
 
 	ac = 0;

@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.19 1999/08/30 01:39:22 danny Exp $
+ *  $Id: fallback.c,v 1.20 1999/08/31 08:45:02 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -277,6 +277,7 @@ char *fallback[] = {
 	"*ok.labelString:		OK",
 	"*cancel.labelString:		Cancel",
 	"*help.labelString:		Help",
+	"*dismiss.labelString:		Dismiss",
 /* Formats Dialog */
 	"*formatsDialog_popup.title:		Formats Dialog",
 	"*formatsFrameTitle.labelString:	Cell Format",

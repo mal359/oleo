@@ -58,6 +58,7 @@
 #include "funcs.h"
 #include "graph.h"
 #include "mdi.h"
+#include "postscript.h"
 
 #include "userpref.h"
 
@@ -814,10 +815,6 @@ continue_oleo (int sig)
     cont_curses ();
 }
 
-int display_opened = 0;
-
-extern int sneaky_linec;
-
 int 
 main (int argc, char **argv)
 {
@@ -835,6 +832,9 @@ main (int argc, char **argv)
 
   MdiInitialize();	/* Create initial Global structure */
   PlotInit();
+  AllocateDatabaseGlobal();
+
+  Global->display_opened = 0;
 
   /* Initialize stuff that's now in Global */
   Global->bkgrnd_recalc = 1;
@@ -868,6 +868,17 @@ main (int argc, char **argv)
 
   Global->cell_font_point_size = 12;
   Global->block_on_getch = 1;
+
+  Global->display_formula_mode = 0;
+  Global->auto_motion_direction = magic_down;
+  Global->sl_sep = '\t';
+
+  Global->CurrentPrintDriver = &PostScriptPrintDriver;
+  Global->zoom = 1.0;
+
+  Global->mouse_id = 0;
+
+  UserPreferences.run_load_hooks = 1;
   /* End initialize */
 
   __make_backups = 1;
@@ -1132,9 +1143,9 @@ main (int argc, char **argv)
 	if (setjmp (Global->error_exception))
 	  {
 	    fprintf (stderr, _("   error occured in init file %s near line %d."),
-		     init_file_names [x], sneaky_linec);
+		     init_file_names [x], Global->sneaky_linec);
 	    io_info_msg(_("   error occured in init file %s near line %d."),
-		     init_file_names [x], sneaky_linec);
+		     init_file_names [x], Global->sneaky_linec);
 	  }
 	else
 	  if (!ignore_init_file)
@@ -1177,7 +1188,7 @@ main (int argc, char **argv)
 
   io_recenter_cur_win ();
 
-  display_opened = 1;
+  Global->display_opened = 1;
 
 #if 0
   /* FIXME - Find better way of doing this */

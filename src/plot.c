@@ -46,6 +46,9 @@ PlotInit(void)
 		XYxMin = 0.0; XYxMax = 100.0; XYyMin = 0.0; XYyMax = 100.0;
 		XYxAuto = 1; XYyAuto = 1;
 		LineToOffscreen = 0;
+
+		Global->PlotGlobal->img_width = PLOT_WINDOW_WIDTH;
+		Global->PlotGlobal->img_height = PLOT_WINDOW_HEIGHT;
 	}
 
 }

@@ -1,5 +1,5 @@
 /*
- *  $Id: pcl.c,v 1.6 1999/06/04 08:02:05 danny Exp $
+ *  $Id: pcl.c,v 1.7 1999/08/31 08:45:21 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: pcl.c,v 1.6 1999/06/04 08:02:05 danny Exp $";
+static char rcsid[] = "$Id: pcl.c,v 1.7 1999/08/31 08:45:21 danny Exp $";
 
 #include <stdio.h>
 
@@ -37,8 +37,6 @@ static char rcsid[] = "$Id: pcl.c,v 1.6 1999/06/04 08:02:05 danny Exp $";
 #endif
 
 #include "print.h"
-
-static int	need_formfeed = 0;
 
 void PCLJobHeader(char *str, int npages, FILE *fp)
 {
@@ -67,11 +65,11 @@ void PCLJobTrailer(int npages, FILE *fp)
 
 void PCLPageHeader(char *str, FILE *fp)
 {
-	if (need_formfeed) {
+	if (Global->need_formfeed) {
 		/* Form feed */
 		fputc('\f', fp);
 
-		need_formfeed = 0;
+		Global->need_formfeed = 0;
 	}
 }
 
@@ -81,7 +79,7 @@ void PCLPageFooter(char *str, FILE *fp)
 	 * Only set a flag here, to avoid FormFeed at the
 	 * end of the document. This would just print a blank page.
 	 */
-	need_formfeed = 1;
+	Global->need_formfeed = 1;
 }
 
 void PCLField(char *str, int wid, int justify, int rightborder, FILE *fp)

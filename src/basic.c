@@ -37,13 +37,14 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "eval.h"
 #include "byte-compile.h"
 #include "decompile.h"
+#include "userpref.h"
 
 
 /* Used by motion commands. */
 const int colmagic[] = {0, 0, 1, -1, 1, -1, 1, -1, 0};
 const int rowmagic[] = {-1, 1, 0, 0, -1, -1, 1, 1, 0};
 
-char * motion_name[] =  
+static char * motion_name[] =  
 {
   "up",
   "down",
@@ -58,7 +59,7 @@ char * motion_name[] =
 
 
 /* This table ought to be a user parameter. */
-enum motion_magic complementary_motion[] = 
+static enum motion_magic complementary_motion[] = 
 {
   magic_right,
   magic_right,
@@ -71,7 +72,7 @@ enum motion_magic complementary_motion[] =
   magic_no_motion,
 };
 
-enum motion_magic opposite_motion[] = 
+static enum motion_magic opposite_motion[] = 
 {
   magic_down,
   magic_up,
@@ -1308,17 +1309,14 @@ goto_set_cell (int c)
   execute_command ("set-cell");
 }
 
-/* File i/o */
-int sneaky_linec = 0;	/* for error reporting for now (see io-term.c) */
-
 void 
 read_cmds_cmd (FILE *fp)
 {
   struct line line;
   char *ptr;
   init_line (&line);
-  sneaky_linec = 0;
-  while (read_line (&line, fp, &sneaky_linec))
+  Global->sneaky_linec = 0;
+  while (read_line (&line, fp, &Global->sneaky_linec))
     {
       for (ptr = line.buf; isspace (*ptr); ptr++);
       if (!*ptr || (*ptr == '#'))
@@ -1328,7 +1326,6 @@ read_cmds_cmd (FILE *fp)
 }
 
 
-int run_load_hooks = 1;
 static char load_hooks_string[] = "load_hooks";
 
 /*
@@ -1351,10 +1348,10 @@ read_file_and_run_hooks (FILE * fp, int ismerge, char * name)
 		read_file_generic(fp, ismerge, ext, name);
 	}
 
-  if (run_load_hooks)
+  if (UserPreferences.run_load_hooks)
     {
       struct var * v;
-      v = find_var (load_hooks_string, sizeof (load_hooks_string) - 1);
+      v = find_var (load_hooks_string, sizeof(load_hooks_string)-1);
       if (v && v->var_flags != VAR_UNDEF)
 	execute_command (load_hooks_string);
     }
@@ -1367,14 +1364,14 @@ read_file_and_run_hooks (FILE * fp, int ismerge, char * name)
 void
 toggle_load_hooks (int turn_on)
 {
-  if (!turn_on && run_load_hooks)
+  if (!turn_on && UserPreferences.run_load_hooks)
     {
-      run_load_hooks = 0;
+      UserPreferences.run_load_hooks = 0;
       io_info_msg ("load hooks turned off");
     }
   else
     {
-      run_load_hooks = 1;
+      UserPreferences.run_load_hooks = 1;
       io_info_msg ("load hooks turned on");
     }
 }
@@ -1684,31 +1681,29 @@ define_usr_fmt (int fmt, char * pos_h, char * neg_h, char * pos_t,
 
 /* Hmm... where should this variable *really* go? */
 
-static int auto_motion_direction = magic_down;
-
 void
 set_auto_direction (enum motion_magic magic)
 {
-  auto_motion_direction = magic;
+  Global->auto_motion_direction = magic;
   io_info_msg ("Auto-motion direction = %s.", motion_name[magic]);
 }
 
 void
 auto_move (void)
 {
-  shift_cell_cursor (auto_motion_direction, 1);
+  shift_cell_cursor (Global->auto_motion_direction, 1);
 }
 
 void
 auto_next_set (void)
 {
-  scan_cell_cursor (opposite_motion[auto_motion_direction], 1);
+  scan_cell_cursor (opposite_motion[Global->auto_motion_direction], 1);
   {
     CELL * cp = find_cell (curow, cucol);
     if (!cp || !GET_TYP(cp))
-      shift_cell_cursor (auto_motion_direction, 1);
+      shift_cell_cursor (Global->auto_motion_direction, 1);
   }
-  shift_cell_cursor (complementary_motion[auto_motion_direction], 1);
+  shift_cell_cursor (complementary_motion[Global->auto_motion_direction], 1);
 }
 
 /* This decompiles and then recompiles all of the formulas of cells.

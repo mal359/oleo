@@ -32,9 +32,6 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "io-utils.h"
 #include "cmd.h"
 
-static char sl_sep = '\t';
-
-
 /* This file reads/writes files containing values in separated lists,
    sl_sep is the separating character.  This isn't really a save-file
    format, but it is useful for reading and writing tables written by other
@@ -91,7 +88,7 @@ list_read_file (fp, ismerge)
       endit = 0;
       for (bptr = &cbuf[1];; bptr = eptr + 1)
 	{
-	  eptr = (char *)index (bptr, sl_sep);
+	  eptr = (char *)index (bptr, Global->sl_sep);
 	  if (!eptr)
 	    {
 	      eptr = (char *)index (bptr, '\n');
@@ -177,7 +174,7 @@ list_write_file (fp, rng)
 	    {
 	      while (repressed > 0)
 		{
-		  putc (sl_sep, fp);
+		  putc (Global->sl_sep, fp);
 		  --repressed;
 		}
 	      repressed = 1;
@@ -224,7 +221,7 @@ list_set_options (set_opt, option)
   if (set_opt && !strincmp (option, "list ", 5))
     {
       option += 5;
-      sl_sep = string_to_char (&option);
+      Global->sl_sep = string_to_char (&option);
       return 0;
     }
   return -1;
@@ -232,17 +229,17 @@ list_set_options (set_opt, option)
 
 void list_set_separator(char sep)
 {
-      sl_sep = sep;
+      Global->sl_sep = sep;
 }
 
 char list_get_separator(void)
 {
-	return sl_sep;
+	return Global->sl_sep;
 }
 
 void
 list_show_options ()
 {
   io_text_line ("File format: list    (character separated list of cell values)");
-  io_text_line ("Save file element separator: %s", char_to_string (sl_sep));
+  io_text_line ("Save file element separator: %s", char_to_string (Global->sl_sep));
 }

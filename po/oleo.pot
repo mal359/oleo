@@ -1,22 +1,22 @@
 msgid ""
 msgstr ""
-"Date: 1999-07-23 18:23:01+0200\n"
+"Date: 1999-08-30 22:05:36+0200\n"
 "From: Danny Backx <danny@dell.roesel.skynet.be>\n"
 "Content-Type: text/plain; charset=\n"
 "Xgettext-Options: --default-domain=oleo --directory=.. --add-comments --keyword=_ --keyword=N_ --files-from=./POTFILES.in\n"
 "Files: src/io-term.c src/io-motif.c\n"
 
-#: src/io-term.c:809
+#: src/io-term.c:788
 msgid ""
 "This is %s %s\n"
 "\n"
 msgstr ""
 
-#: src/io-term.c:811
+#: src/io-term.c:790
 msgid "Usage: %s [OPTION]... [FILE]...\n"
 msgstr ""
 
-#: src/io-term.c:814
+#: src/io-term.c:793
 msgid ""
 "\n"
 "  -h, --help               display this help and exit\n"
@@ -33,260 +33,263 @@ msgid ""
 "Report bugs to <bug-oleo@gnu.org>.\n"
 msgstr ""
 
-#: src/io-term.c:885
+#: src/io-term.c:911
 msgid "%s %s\n"
 msgstr ""
 
-#: src/io-term.c:886
+#: src/io-term.c:912
 msgid "Copyright (C) 1997-1998 Free Software Foundation, Inc.\n"
 msgstr ""
 
-#: src/io-term.c:887
+#: src/io-term.c:913
 msgid "%s comes with ABSOLUTELY NO WARRANTY.\n"
 msgstr ""
 
-#: src/io-term.c:888
+#: src/io-term.c:914
 msgid "You may redistribute copies of %s\n"
 msgstr ""
 
-#: src/io-term.c:889
+#: src/io-term.c:915
 msgid "under the terms of the GNU General Public License.\n"
 msgstr ""
 
-#: src/io-term.c:890
+#: src/io-term.c:916
 msgid "For more information about these matters, "
 msgstr ""
 
-#: src/io-term.c:891
+#: src/io-term.c:917
 msgid "see the files named COPYING.\n"
 msgstr ""
 
-#: src/io-term.c:1032
+#: src/io-term.c:1058
 msgid "Error in the builtin init scripts (a bug!).\n"
 msgstr ""
 
-#: src/io-term.c:1119 src/io-term.c:1121
+#: src/io-term.c:1145 src/io-term.c:1147
 msgid "   error occured in init file %s near line %d."
 msgstr ""
 
-#: src/io-term.c:1140 src/io-term.c:1141
+#: src/io-term.c:1166 src/io-term.c:1167
 msgid ", error occured reading '%s'\n"
 msgstr ""
 
-#: src/io-term.c:1148 src/io-term.c:1149
+#: src/io-term.c:1174 src/io-term.c:1175
 msgid "Can't open %s: %s\n"
 msgstr ""
 
-#: src/io-motif.c:677
+#: src/io-motif.c:641
 msgid "Fit Print Area"
 msgstr ""
 
-#: src/io-motif.c:849
+#: src/io-motif.c:813
 msgid "Conversion error: cannot convert '%s' to a %s\n"
 msgstr ""
 
-#: src/io-motif.c:871 src/io-motif.c:1010
+#: src/io-motif.c:835 src/io-motif.c:974
 msgid "Cannot find XmNuserData\n"
 msgstr ""
 
-#: src/io-motif.c:902 src/io-motif.c:925 src/io-motif.c:942 src/io-motif.c:958 src/io-motif.c:975 src/io-motif.c:1628 src/io-motif.c:3081 src/io-motif.c:3090 src/io-motif.c:3126 src/io-motif.c:3135 src/io-motif.c:3168 src/io-motif.c:3177 src/io-motif.c:3475
+#: src/io-motif.c:866 src/io-motif.c:889 src/io-motif.c:906 src/io-motif.c:922 src/io-motif.c:939 src/io-motif.c:1584 src/io-motif.c:3046 src/io-motif.c:3055 src/io-motif.c:3091 src/io-motif.c:3100 src/io-motif.c:3133 src/io-motif.c:3142 src/io-motif.c:3439
 msgid "range"
 msgstr ""
 
-#: src/io-motif.c:1200
+#: src/io-motif.c:1156
 msgid "Plotter Type"
 msgstr ""
 
-#: src/io-motif.c:1270 src/io-motif.c:2517
+#: src/io-motif.c:1226 src/io-motif.c:2469
 msgid "*.oleo"
 msgstr ""
 
-#: src/io-motif.c:1622
+#: src/io-motif.c:1578
 msgid "Internal error: can't find what to print to\n"
 msgstr ""
 
-#: src/io-motif.c:1698
+#: src/io-motif.c:1652
 msgid "*.out"
 msgstr ""
 
-#: src/io-motif.c:1752
+#: src/io-motif.c:1706
 msgid "Value of defaultPrintTo resource is invalid, should be one of %s, %s, or %s\n"
 msgstr ""
 
-#: src/io-motif.c:1807
+#: src/io-motif.c:1761
 msgid "Select Printer"
 msgstr ""
 
-#: src/io-motif.c:1891
+#: src/io-motif.c:1845
 msgid "Paper Format"
 msgstr ""
 
-#: src/io-motif.c:1916
+#: src/io-motif.c:1870
 msgid "Printer Language"
 msgstr ""
 
-#: src/io-motif.c:2072
+#: src/io-motif.c:2026
 msgid "File Format"
 msgstr ""
 
-#: src/io-motif.c:2402
+#. enough
+#: src/io-motif.c:2354
 msgid "[Oleo: %s]"
 msgstr ""
 
-#: src/io-motif.c:2479
+#: src/io-motif.c:2431
 msgid "Read file '%s'\n"
 msgstr ""
 
-#: src/io-motif.c:2544
+#: src/io-motif.c:2496
 msgid "Choose a file to load"
 msgstr ""
 
-#: src/io-motif.c:2564
+#: src/io-motif.c:2534
 msgid "OleoOpenForWrite: can't move %s to %s"
 msgstr ""
 
-#: src/io-motif.c:2576
+#: src/io-motif.c:2546
 msgid "OleoOpenForWrite: couldn't open file '%s' for write"
 msgstr ""
 
-#: src/io-motif.c:2592
+#. handle error
+#: src/io-motif.c:2562
 msgid "ReallySaveCB(%s): couldn't open file for writing"
 msgstr ""
 
 #. handle error
-#: src/io-motif.c:2601
+#: src/io-motif.c:2571
 msgid "ReallySaveCB: file close failed"
 msgstr ""
 
-#: src/io-motif.c:2606
+#: src/io-motif.c:2576
 msgid "Saved file '%s'\n"
 msgstr ""
 
-#: src/io-motif.c:2619
+#. handle error
+#: src/io-motif.c:2589
 msgid "ReallySaveCB: couldn't figure out file to save into"
 msgstr ""
 
-#: src/io-motif.c:2643
+#: src/io-motif.c:2613
 msgid "Choose a file to save in"
 msgstr ""
 
-#: src/io-motif.c:2771 src/io-motif.c:2802
+#: src/io-motif.c:2741 src/io-motif.c:2772
 msgid ""
 "<html><body>Can't find the requested help file\n"
 "</body></html>"
 msgstr ""
 
-#: src/io-motif.c:2810
+#: src/io-motif.c:2780
 msgid "Help requested on '%s'"
 msgstr ""
 
-#: src/io-motif.c:2812
+#: src/io-motif.c:2782
 msgid "Help requested on using Oleo"
 msgstr ""
 
-#: src/io-motif.c:3033
+#: src/io-motif.c:2998
 msgid "OK"
 msgstr ""
 
-#: src/io-motif.c:3034
+#: src/io-motif.c:2999
 msgid "Cancel"
 msgstr ""
 
-#: src/io-motif.c:3197
+#: src/io-motif.c:3162
 msgid "Copy a region"
 msgstr ""
 
-#: src/io-motif.c:3203
+#: src/io-motif.c:3168
 msgid "Copy Values"
 msgstr ""
 
-#: src/io-motif.c:3209
+#: src/io-motif.c:3174
 msgid "Move"
 msgstr ""
 
-#: src/io-motif.c:3313
+#: src/io-motif.c:3277
 msgid "Formats :"
 msgstr ""
 
-#: src/io-motif.c:3315
+#: src/io-motif.c:3279
 msgid "Default"
 msgstr ""
 
 #. FMT_DEF
-#: src/io-motif.c:3316
+#: src/io-motif.c:3280
 msgid "Hidden"
 msgstr ""
 
-#: src/io-motif.c:3317
+#: src/io-motif.c:3281
 msgid "Graph"
 msgstr ""
 
 #. FMT_GPH
-#: src/io-motif.c:3318
+#: src/io-motif.c:3282
 msgid "General"
 msgstr ""
 
 #. FMT_GEN
-#: src/io-motif.c:3319
+#: src/io-motif.c:3283
 msgid "Dollar"
 msgstr ""
 
-#: src/io-motif.c:3320
+#: src/io-motif.c:3284
 msgid "Comma"
 msgstr ""
 
 #. FMT_CMA
-#: src/io-motif.c:3321
+#: src/io-motif.c:3285
 msgid "Percent"
 msgstr ""
 
 #. FMT_PCT
-#: src/io-motif.c:3322
+#: src/io-motif.c:3286
 msgid "Integer"
 msgstr ""
 
-#: src/io-motif.c:3323
+#: src/io-motif.c:3287
 msgid "Decimal"
 msgstr ""
 
-#: src/io-motif.c:3324
+#: src/io-motif.c:3288
 msgid "Fixed"
 msgstr ""
 
-#: src/io-motif.c:3325
+#: src/io-motif.c:3289
 msgid "Exponent"
 msgstr ""
 
-#: src/io-motif.c:3326
+#: src/io-motif.c:3290
 msgid "Date"
 msgstr ""
 
 #. FMT_DATE
-#: src/io-motif.c:3327
+#: src/io-motif.c:3291
 msgid "User-1"
 msgstr ""
 
-#: src/io-motif.c:3328
+#: src/io-motif.c:3292
 msgid "User-2"
 msgstr ""
 
-#: src/io-motif.c:3329
+#: src/io-motif.c:3293
 msgid "User-3"
 msgstr ""
 
-#: src/io-motif.c:3330
+#: src/io-motif.c:3294
 msgid "User-4"
 msgstr ""
 
-#: src/io-motif.c:3404
+#: src/io-motif.c:3368
 msgid "Date Format"
 msgstr ""
 
-#: src/io-motif.c:5039
+#: src/io-motif.c:4022 src/io-motif.c:5105
 msgid "XmProcessTraversal failed\n"
 msgstr ""
 
-#: src/io-motif.c:5057
+#: src/io-motif.c:5123
 msgid ""
 "There are unsaved changes.\n"
 "Do you want to quit anyway ?"

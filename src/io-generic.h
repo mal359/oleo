@@ -22,24 +22,23 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 
 /*
- * User settable options.
- */
+ * User settable options - moved into Global.
+ *
 extern int bkgrnd_recalc;
 extern int auto_recalc;
 extern int a0;
-/* This is how frequently the alarm should go off. */
+	This is how frequently the alarm should go off.
 extern unsigned int alarm_seconds;
-extern unsigned int alarm_active;	/* Whether or not the alarm matters. */
+	Whether or not the alarm matters.
+extern unsigned int alarm_active;
 
-/*
+ *
  * 1 -- clear the input area before reading the next char.
  * 2 -- clear the input area after reading the next char.
  * 0 -- don't clear the input area.
+ *
+ * extern int topclear;
  */
-extern int topclear;
-
-/* Has io_open_display been called? */
-extern int display_opened;
 
 extern void (*read_file) (FILE *, int);
 extern void (*write_file) (FILE *, struct rng *);

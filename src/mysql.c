@@ -1,5 +1,5 @@
 /*
- *  $Id: mysql.c,v 1.3 1999/07/23 16:23:51 danny Exp $
+ *  $Id: mysql.c,v 1.4 1999/08/31 08:45:16 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: mysql.c,v 1.3 1999/07/23 16:23:51 danny Exp $";
+static char rcsid[] = "$Id: mysql.c,v 1.4 1999/08/31 08:45:16 danny Exp $";
 
 #ifndef	TEST
 
@@ -86,6 +86,14 @@ int init_mysql_function_count(void)
         return sizeof(mysql_functions) / sizeof(struct function) - 1;
 }
 
+void AllocateDatabaseGlobal(void)
+{
+	if (Global->DatabaseGlobal == NULL) {
+		Global->DatabaseGlobal = malloc(sizeof(struct DatabaseGlobalType));
+		memset(Global->DatabaseGlobal, 0, sizeof(struct DatabaseGlobalType));
+	}
+}
+
 /*
  * This function should just retrieve a single value from the dbms.
  */
@@ -100,6 +108,8 @@ do_mysql_query(struct value *p)
 	int		r, i, j, nrows;
 	char		*result;
 	double		d;
+
+	AllocateDatabaseGlobal();
 
 	if (Global->DatabaseGlobal == NULL) {
 		io_error_msg("Need to initialize database");
@@ -410,14 +420,6 @@ enum enum_field_types {
 	mysql_close(&db);
 }
 #endif	/* TEST */
-
-static void AllocateDatabaseGlobal(void)
-{
-	if (Global->DatabaseGlobal == NULL) {
-		Global->DatabaseGlobal = malloc(sizeof(struct DatabaseGlobalType));
-		memset(Global->DatabaseGlobal, 0, sizeof(struct DatabaseGlobalType));
-	}
-}
 
 void DatabaseSetName(const char *name)
 {

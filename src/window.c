@@ -1221,20 +1221,14 @@ io_read_window_config (char * line)
       set_options (opts);
     }
 }
-
-
-
-static struct mouse_event *current_mouse;
-static struct mouse_event *free_mouse;
-static int mouse_id = 0;
 
 static void 
 init_mouse (void)
 {
-  current_mouse = free_mouse =
+  Global->current_mouse = Global->free_mouse =
   (struct mouse_event *) ck_malloc (sizeof (struct mouse_event));
-  free_mouse->next = free_mouse;
-  free_mouse->prev = free_mouse;
+  Global->free_mouse->next = Global->free_mouse;
+  Global->free_mouse->prev = Global->free_mouse;
 }
 
 static int mouse_location ();
@@ -1242,19 +1236,19 @@ static int mouse_location ();
 int 
 enqueue_mouse_event (int r, int c, int button, int downp)
 {
-  struct mouse_event *m = free_mouse;
-  if (m->next == current_mouse)
+  struct mouse_event *m = Global->free_mouse;
+  if (m->next == Global->current_mouse)
     {
       m->next =
 	(struct mouse_event *) ck_malloc (sizeof (struct mouse_event));
       m->next->prev = m;
-      m->next->next = current_mouse;
-      current_mouse->prev = m->next;
-      m->seq = mouse_id++;
+      m->next->next = Global->current_mouse;
+      Global->current_mouse->prev = m->next;
+      m->seq = Global->mouse_id++;
       if (m->seq > 255)
 	panic ("Too many mouse events enqueued.");
     }
-  free_mouse = m->next;
+  Global->free_mouse = m->next;
   m->row = r;
   m->col = c;
   m->button = button;
@@ -1266,18 +1260,18 @@ enqueue_mouse_event (int r, int c, int button, int downp)
 void 
 dequeue_mouse_event (struct mouse_event *out, int seq)
 {
-  free_mouse->seq = seq;
-  while (current_mouse->seq != seq)
-    current_mouse = current_mouse->next;
-  if (current_mouse == free_mouse)
+  Global->free_mouse->seq = seq;
+  while (Global->current_mouse->seq != seq)
+    Global->current_mouse = Global->current_mouse->next;
+  if (Global->current_mouse == Global->free_mouse)
     {
       out->seq = seq;
       out->button = MOUSE_QERROR;
       return;
     }
-  *out = *current_mouse;
+  *out = *Global->current_mouse;
   out->next = out->prev = 0;
-  current_mouse = current_mouse->next;
+  Global->current_mouse = Global->current_mouse->next;
 }
 
 

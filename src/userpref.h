@@ -1,5 +1,5 @@
 /*
- *  $Id: userpref.h,v 1.1 1999/07/23 16:22:43 danny Exp $
+ *  $Id: userpref.h,v 1.2 1999/08/31 08:45:22 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -33,6 +33,8 @@ struct UserPreferences {
 		print;
 	char	*file_type,
 		*bgcolor;
+	int	run_load_hooks;
 };
 
+extern struct UserPreferences UserPreferences;
 #endif

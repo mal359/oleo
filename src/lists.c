@@ -20,6 +20,8 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "config.h"
 #endif
 
+#include "global.h"
+#include "lists.h"
 #include "funcdef.h"
 
 #include "sysdef.h"
@@ -68,27 +70,6 @@ extern void *malloc ();
 #define MAX 65535
 #endif
 
-struct list
-{
-  CELLREF lo, hi;
-  struct list *next;
-  char mem[1];
-};
-
-struct find
-{
-  struct find *next;
-  CELLREF lo, hi, cur;
-  struct list **start;
-  struct list *curptr;
-  CELLREF left;
-  void *ret;
-  char fini;
-  int ele;
-};
-
-struct find *finds = 0;
-
 static inline void
 flush (struct list *ptr)
 {
@@ -113,7 +94,7 @@ resync (struct list *tofree, struct list *new, int ele)
       && (char *) my_cell <= tofree->mem + ele * (1 + tofree->hi - tofree->lo))
     my_cell = (struct cell *) (new->mem + ele * (cur_row - new->lo));
 
-  for (findp = finds; findp; findp = findp->next)
+  for (findp = Global->finds; findp; findp = findp->next)
     {
       if (tofree == findp->curptr)
 	{
@@ -263,8 +244,8 @@ find_rng (struct list **start, CELLREF lo, CELLREF hi, int ele)
     }
   else
     f->fini = 1;
-  f->next = finds;
-  finds = f;
+  f->next = Global->finds;
+  Global->finds = f;
   return f;
 }
 
@@ -370,8 +351,8 @@ make_rng (struct list **start, CELLREF lo, CELLREF hi, int ele, int buf)
 #endif
   f->curptr = ptr;
   f->ret = ptr->mem + (f->cur - ptr->lo) * ele;
-  f->next = finds;
-  finds = f;
+  f->next = Global->finds;
+  Global->finds = f;
   return f;
 }
 
@@ -410,33 +391,18 @@ next_rng (struct find *f, CELLREF *posp)
     }
   next = f->next;
   obstack_free (&find_stack, f);
-  finds = next;
+  Global->finds = next;
   return 0;
 }
-
-
-struct cf
-  {
-    struct cf *next;
-    struct find *rows, *cols;
-    int make;
-  };
-
-static struct cf *fp;
-static struct list *the_cols;
-
-static struct find *w_find;
-static struct find *h_find;
-static struct list *wids, *hgts;
 
 
 void 
 init_cells ()
 {
   obstack_begin (&find_stack, sizeof (struct find) * 15);
-  the_cols = 0;
-  wids = 0;
-  hgts = 0;
+  Global->the_cols = 0;
+  Global->wids = 0;
+  Global->hgts = 0;
 }
 
 void 
@@ -446,18 +412,18 @@ flush_everything (void)
   int n;
 
   flush_variables ();
-  for (ptr = the_cols; ptr; ptr = nxt)
+  for (ptr = Global->the_cols; ptr; ptr = nxt)
     {
       nxt = ptr->next;
       for (n = 0; n <= ptr->hi - ptr->lo; n++)
 	flush (*(struct list **) (ptr->mem + (n * sizeof (struct list *))));
       free (ptr);
     }
-  the_cols = 0;
-  flush (wids);
-  wids = 0;
-  flush (hgts);
-  hgts = 0;
+  Global->the_cols = 0;
+  flush (Global->wids);
+  Global->wids = 0;
+  flush (Global->hgts);
+  Global->hgts = 0;
   flush_fonts ();
 }
 
@@ -466,7 +432,7 @@ find_cell (CELLREF row, CELLREF col)
 {
   void **v;
 
-  v = find (col, the_cols, sizeof (void *));
+  v = find (col, Global->the_cols, sizeof (void *));
   return v ? find (row, *v, sizeof (struct cell)) : 0;
 }
 
@@ -475,7 +441,7 @@ find_or_make_cell (CELLREF row, CELLREF col)
 {
   struct list **v;
 
-  v = make (col, &the_cols, sizeof (struct list *), COL_BUF);
+  v = make (col, &Global->the_cols, sizeof (struct list *), COL_BUF);
   return make (row, v, sizeof (struct cell), ROW_BUF);
 }
 
@@ -487,9 +453,9 @@ find_cells_in_range (struct rng *r)
 
   new = (struct cf *)obstack_alloc (&find_stack, sizeof (struct cf));
   new->make = 0;
-  new->next = fp;
-  fp = new;
-  new->rows = find_rng (&the_cols, r->lc, r->hc, sizeof (void *));
+  new->next = Global->fp;
+  Global->fp = new;
+  new->rows = find_rng (&Global->the_cols, r->lc, r->hc, sizeof (void *));
   firstcol = next_rng (new->rows, 0);
   if (firstcol)
     new->cols = find_rng (firstcol, r->lr, r->hr, sizeof (struct cell));
@@ -505,9 +471,9 @@ make_cells_in_range (struct rng *r)
 
   new = (struct cf *)obstack_alloc (&find_stack, sizeof (struct cf));
   new->make = 1;
-  new->next = fp;
-  fp = new;
-  new->rows = make_rng (&the_cols, r->lc, r->hc, sizeof (void *), ROW_BUF);
+  new->next = Global->fp;
+  Global->fp = new;
+  new->rows = make_rng (&Global->the_cols, r->lc, r->hc, sizeof (void *), ROW_BUF);
   firstcol = next_rng (new->rows, 0);
   new->cols = make_rng (firstcol, r->lr, r->hr, sizeof (struct cell), COL_BUF);
 }
@@ -520,20 +486,20 @@ next_cell_in_range (void)
 
   for (;;)
     {
-      if ((ret = next_rng (fp->cols, 0)))
+      if ((ret = next_rng (Global->fp->cols, 0)))
 	return ret;
-      new_row = next_rng (fp->rows, 0);
+      new_row = next_rng (Global->fp->rows, 0);
       if (!new_row)
 	{
 	  struct cf *old;
 
-	  old = fp->next;
-	  obstack_free (&find_stack, fp);
-	  fp = old;
+	  old = Global->fp->next;
+	  obstack_free (&find_stack, Global->fp);
+	  Global->fp = old;
 	  return 0;
 	}
-      fp->cols = fp->make ? make_rng (new_row, fp->cols->lo, fp->cols->hi, sizeof (struct cell), ROW_BUF)
-      : find_rng (new_row, fp->cols->lo, fp->cols->hi, sizeof (struct cell));
+      Global->fp->cols = Global->fp->make ? make_rng (new_row, Global->fp->cols->lo, Global->fp->cols->hi, sizeof (struct cell), ROW_BUF)
+      : find_rng (new_row, Global->fp->cols->lo, Global->fp->cols->hi, sizeof (struct cell));
     }
 }
 
@@ -545,23 +511,23 @@ next_row_col_in_range (CELLREF *rowp, CELLREF *colp)
 
   for (;;)
     {
-      if ((ret = next_rng (fp->cols, rowp)))
+      if ((ret = next_rng (Global->fp->cols, rowp)))
 	{
-	  *colp = fp->rows->cur - 1;
+	  *colp = Global->fp->rows->cur - 1;
 	  return ret;
 	}
-      new_row = next_rng (fp->rows, colp);
+      new_row = next_rng (Global->fp->rows, colp);
       if (!new_row)
 	{
 	  struct cf *old;
 
-	  old = fp->next;
-	  obstack_free (&find_stack, fp);
-	  fp = old;
+	  old = Global->fp->next;
+	  obstack_free (&find_stack, Global->fp);
+	  Global->fp = old;
 	  return 0;
 	}
-      fp->cols = fp->make ? make_rng (new_row, fp->cols->lo, fp->cols->hi, sizeof (struct cell), ROW_BUF)
-      : find_rng (new_row, fp->cols->lo, fp->cols->hi, sizeof (struct cell));
+      Global->fp->cols = Global->fp->make ? make_rng (new_row, Global->fp->cols->lo, Global->fp->cols->hi, sizeof (struct cell), ROW_BUF)
+      : find_rng (new_row, Global->fp->cols->lo, Global->fp->cols->hi, sizeof (struct cell));
     }
 }
 
@@ -576,10 +542,10 @@ no_more_cells (void)
  * Here, we pop all those frames, and then free them at once.
  */
 
-  old = fp->next;
-  finds = finds->next->next;
-  obstack_free (&find_stack, fp);
-  fp = old;
+  old = Global->fp->next;
+  Global->finds = Global->finds->next->next;
+  obstack_free (&find_stack, Global->fp);
+  Global->fp = old;
 }
 
 CELLREF
@@ -587,7 +553,7 @@ max_row (CELLREF col)
 {
   struct list **ptr;
 
-  ptr = find (col, the_cols, sizeof (void *));
+  ptr = find (col, Global->the_cols, sizeof (void *));
   if (!ptr || !*ptr)
     return MIN;
   while ((*ptr)->next)
@@ -600,9 +566,9 @@ max_col (CELLREF row)
 {
   struct list *ptr;
 
-  if (!the_cols)
+  if (!Global->the_cols)
     return MIN;
-  for (ptr = the_cols; ptr->next; ptr = ptr->next)
+  for (ptr = Global->the_cols; ptr->next; ptr = ptr->next)
     ;
   return ptr->hi;
 }
@@ -614,7 +580,7 @@ highest_row (void)
   struct list **ptr;
   CELLREF hi = MIN;
 
-  f = find_rng (&the_cols, MIN, MAX, sizeof (void *));
+  f = find_rng (&Global->the_cols, MIN, MAX, sizeof (void *));
   while ((ptr = next_rng (f, 0)))
     {
       if (*ptr)
@@ -634,9 +600,9 @@ highest_col (void)
 {
   struct list *ptr;
 
-  if (!the_cols)
+  if (!Global->the_cols)
     return MIN;
-  for (ptr = the_cols; ptr->next; ptr = ptr->next)
+  for (ptr = Global->the_cols; ptr->next; ptr = ptr->next)
     ;
   return ptr->hi;
 }
@@ -649,7 +615,7 @@ get_width (CELLREF col)
 {
   int *ptr;
 
-  ptr = find (col, wids, sizeof (int));
+  ptr = find (col, Global->wids, sizeof (int));
   if (!ptr || !*ptr)
     return default_width;
   return (*ptr) - 1;
@@ -661,7 +627,7 @@ get_nodef_width (CELLREF col)
 {
   int *ptr;
 
-  ptr = find (col, wids, sizeof (int));
+  ptr = find (col, Global->wids, sizeof (int));
   return ptr ? *ptr : 0;
 }
 
@@ -670,7 +636,7 @@ set_width (CELLREF col, int wid)
 {
   int *ptr;
 
-  ptr = make (col, &wids, sizeof (int), COL_BUF);
+  ptr = make (col, &Global->wids, sizeof (int), COL_BUF);
   *ptr = wid;
 
 #ifdef	HAVE_MOTIF
@@ -681,7 +647,7 @@ set_width (CELLREF col, int wid)
 void 
 find_widths (CELLREF lo, CELLREF hi)
 {
-  w_find = find_rng (&wids, lo, hi, sizeof (int));
+  Global->w_find = find_rng (&Global->wids, lo, hi, sizeof (int));
 }
 
 int 
@@ -690,7 +656,7 @@ next_width (CELLREF *posp)
   int *ptr;
 
   do
-    ptr = next_rng (w_find, posp);
+    ptr = next_rng (Global->w_find, posp);
   while (ptr && !*ptr);
   return ptr ? *ptr : 0;
 }
@@ -755,14 +721,9 @@ do_shift (int over, CELLREF lo, CELLREF hi, struct list **start, int buf)
 void 
 shift_widths (int over, CELLREF lo, CELLREF hi)
 {
-  do_shift (over, lo, hi, &wids, COL_BUF);
+  do_shift (over, lo, hi, &Global->wids, COL_BUF);
 }
 
-
-/* This inserts lines in which formulas can be displayed. 
- * It probably ought to be 1 or 0.
- */
-int display_formula_mode = 0;
 
 /* Routines for dealing with the height of rows 
  */
@@ -771,10 +732,10 @@ get_height (CELLREF row)
 {
   int *ptr;
 
-  ptr = find (row, hgts, sizeof (int));
+  ptr = find (row, Global->hgts, sizeof (int));
   if (!ptr || !*ptr)
     return default_height;
-  return *ptr - 1 + (display_formula_mode && using_curses);
+  return *ptr - 1 + (Global->display_formula_mode && using_curses);
 }
 
 int 
@@ -782,7 +743,7 @@ get_nodef_height (CELLREF row)
 {
   int *ptr;
 
-  ptr = find (row, hgts, sizeof (int));
+  ptr = find (row, Global->hgts, sizeof (int));
   return ptr ? *ptr : 0;
 }
 
@@ -791,7 +752,7 @@ set_height (CELLREF row, int hgt)
 {
   int *ptr;
 
-  ptr = make (row, &hgts, sizeof (int), ROW_BUF);
+  ptr = make (row, &Global->hgts, sizeof (int), ROW_BUF);
   *ptr = hgt;
 }
 
@@ -823,7 +784,7 @@ get_scaled_width (CELLREF c)
 void 
 find_heights (CELLREF lo, CELLREF hi)
 {
-  h_find = find_rng (&hgts, lo, hi, sizeof (int));
+  Global->h_find = find_rng (&Global->hgts, lo, hi, sizeof (int));
 }
 
 int 
@@ -832,7 +793,7 @@ next_height (CELLREF *posp)
   int *ptr;
 
   do
-    ptr = next_rng (h_find, posp);
+    ptr = next_rng (Global->h_find, posp);
   while (ptr && !*ptr);
   return ptr ? *ptr : 0;
 }
@@ -840,7 +801,7 @@ next_height (CELLREF *posp)
 void 
 shift_heights (int dn, CELLREF lo, CELLREF hi)
 {
-  do_shift (dn, lo, hi, &hgts, ROW_BUF);
+  do_shift (dn, lo, hi, &Global->hgts, ROW_BUF);
 }
 
 #ifdef TEST
@@ -938,7 +899,7 @@ void
 dbg_print_rows (pos)
      CELLREF pos;
 {
-  dbg_print_list (the_cols, sizeof (struct list *), "row", dbg_pr_row);
+  dbg_print_list (Global->the_cols, sizeof (struct list *), "row", dbg_pr_row);
 }
 
 static void 
@@ -956,7 +917,7 @@ dbg_pr_all (p)
 void 
 dbg_print_array ()
 {
-  dbg_print_list (the_cols, sizeof (struct list *), "row", dbg_pr_all);
+  dbg_print_list (Global->the_cols, sizeof (struct list *), "row", dbg_pr_all);
 }
 
 void 

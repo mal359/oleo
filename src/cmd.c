@@ -2003,7 +2003,7 @@ io_error_msg (char *str,...)
    * This is made robust against errors that occur before
    * the io hooks have been initialized.
    */
-  if (display_opened)
+  if (Global->display_opened)
     io_bell ();
   
   va_start (foo, str);
@@ -2011,7 +2011,7 @@ io_error_msg (char *str,...)
   sprintf (buf2, "display-msg %s", buf);
   recover_from_error ();
 
-  if (display_opened)
+  if (Global->display_opened)
     execute_command (buf2);
   else
     fprintf (stderr, "oleo: %s\n", buf);

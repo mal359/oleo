@@ -241,6 +241,34 @@ struct OleoGlobal {
 
 	int				cell_font_point_size, block_on_getch;
 	char				*io_x11_display_name;
+	int				run_load_hooks, sneaky_linec;
+
+
+	struct cf			*fp;
+	struct list			*the_cols, *wids, *hgts;
+	struct find			*w_find, *h_find;
+
+	int				display_formula_mode;
+	struct find			*finds;
+
+/* Basic.c */
+	int				auto_motion_direction;
+
+/* List.c */
+	char				sl_sep;
+
+	int				display_opened;
+
+/* pcl.c */
+	int				need_formfeed;
+
+/* print.c */
+	float				zoom;
+	struct PrintDriver		*CurrentPrintDriver;
+
+/* window.c */
+	struct mouse_event		*current_mouse, *free_mouse;
+	int				mouse_id;
 };
 
 extern struct OleoGlobal *Global;

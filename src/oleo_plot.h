@@ -1,8 +1,6 @@
-#ifndef _OLEO_PLOT_H_
-#define _OLEO_PLOT_H_
 
 /*
-	$Id: oleo_plot.h,v 1.4 1999/08/30 01:39:19 danny Exp $
+	$Id: oleo_plot.h,v 1.5 1999/08/31 08:44:58 danny Exp $
 
 	Copyright (C) 1998-1999 Free Software Foundation, Inc.
 
@@ -21,6 +19,8 @@
 	the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#ifndef _OLEO_PLOT_H_
+#define _OLEO_PLOT_H_
 /*
  * The public functions in plot.c should all have the same signature,
  * as indicated in the typedef PuFunction.
@@ -43,14 +43,19 @@ void PlotInit(void);
 struct PlotGlobalType {
 	double	XYxMin, XYxMax, XYyMin, XYyMax;
 	int	XYxAuto, XYyAuto, LineToOffscreen;
+	int	img_width, img_height;
 };
 
-#define	XYxMin		Global->PlotGlobal->XYxMin
-#define	XYxMax		Global->PlotGlobal->XYxMax
-#define	XYyMin		Global->PlotGlobal->XYyMin
-#define	XYyMax		Global->PlotGlobal->XYyMax
-#define	XYxAuto		Global->PlotGlobal->XYxAuto
-#define	XYyAuto		Global->PlotGlobal->XYyAuto
+#define	XYxMin			Global->PlotGlobal->XYxMin
+#define	XYxMax			Global->PlotGlobal->XYxMax
+#define	XYyMin			Global->PlotGlobal->XYyMin
+#define	XYyMax			Global->PlotGlobal->XYyMax
+#define	XYxAuto			Global->PlotGlobal->XYxAuto
+#define	XYyAuto			Global->PlotGlobal->XYyAuto
 #define	LineToOffscreen		Global->PlotGlobal->LineToOffscreen
+
+/* Defaults */
+#define	PLOT_WINDOW_WIDTH	600
+#define	PLOT_WINDOW_HEIGHT	600
 
 #endif  /* _OLEO_PLOT_H_ */
