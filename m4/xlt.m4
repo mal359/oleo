@@ -93,6 +93,7 @@ then
     if test -z "$xlt_includes"
     then
 	xlt_includes_result="default path"
+	have_xlt="yes"
 	XLT_CFLAGS=""
     else
 	if test "$xlt_includes" = "no"
