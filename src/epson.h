@@ -1,5 +1,5 @@
 /*
- *  $Id: epson.h,v 1.1 1999/04/27 18:25:50 danny Exp $
+ *  $Id: epson.h,v 1.2 1999/05/12 19:48:26 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -24,6 +24,6 @@
 #ifndef	_EPSON_H_
 #define	_EPSON_H_
 
-extern struct PrintDriver EpsonEscP2PrintDriver;
+extern struct PrintDriver EpsonStylusColorPrintDriver;
 
 #endif

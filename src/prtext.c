@@ -1,5 +1,5 @@
 /*
- *  $Id: prtext.c,v 1.4 1999/05/06 22:18:14 danny Exp $
+ *  $Id: prtext.c,v 1.5 1999/05/12 19:48:24 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: prtext.c,v 1.4 1999/05/06 22:18:14 danny Exp $";
+static char rcsid[] = "$Id: prtext.c,v 1.5 1999/05/12 19:48:24 danny Exp $";
 
 
 #include <stdio.h>
@@ -67,6 +67,10 @@ int TextPrinterJustifies(void)
 	return 0;
 }
 
+void TextPrinterPaperSize(int wid, int ht, FILE *fp)
+{
+}
+
 struct PrintDriver TextPrintDriver = {
 	"Text",
 	&TextJobHeader,
@@ -77,5 +81,6 @@ struct PrintDriver TextPrintDriver = {
 	&TextBorders,
 	&TextFont,
 	&TextNewLine,
-	&TextPrinterJustifies
+	&TextPrinterJustifies,
+	&TextPrinterPaperSize
 };

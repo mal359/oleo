@@ -1,5 +1,5 @@
 /*
- *  $Id: postscript.c,v 1.4 1999/05/06 22:18:15 danny Exp $
+ *  $Id: postscript.c,v 1.5 1999/05/12 19:48:25 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -28,7 +28,7 @@
  * There shouldn't be much spreadsheet functionality here...
  */
 
-static char rcsid[] = "$Id: postscript.c,v 1.4 1999/05/06 22:18:15 danny Exp $";
+static char rcsid[] = "$Id: postscript.c,v 1.5 1999/05/12 19:48:25 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -590,6 +590,10 @@ int PostScriptPrinterJustifies(void)
 	return 1;
 }
 
+void PostScriptPaperSize(int wid, int ht, FILE *fp)
+{
+}
+
 struct PrintDriver PostScriptPrintDriver = {
 	"PostScript",
 	&PostScriptJobHeader,
@@ -600,5 +604,6 @@ struct PrintDriver PostScriptPrintDriver = {
 	&PostScriptBorders,
 	&PostScriptFont,
 	&PostScriptNewLine,
-	&PostScriptPrinterJustifies
+	&PostScriptPrinterJustifies,
+	&PostScriptPaperSize
 };

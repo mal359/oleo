@@ -1,5 +1,5 @@
 /*
- *  $Id: epson.c,v 1.4 1999/05/06 22:18:16 danny Exp $
+ *  $Id: epson.c,v 1.5 1999/05/12 19:48:26 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: epson.c,v 1.4 1999/05/06 22:18:16 danny Exp $";
+static char rcsid[] = "$Id: epson.c,v 1.5 1999/05/12 19:48:26 danny Exp $";
 
 #include <stdio.h>
 
@@ -43,11 +43,31 @@ char	*noitalic = "\0335";
 
 void EpsonJobHeader(char *str, int npages, FILE *fp)
 {
-	fprintf(fp, "%s@", Escape);
+	/* Reset Printer */
+	fputc('\033', fp);
+	fputc('@', fp);
+	fputc('\033', fp);
+	fputc('@', fp);
+
+	/* Set unit to 50/3600 = 1/72 of an inch which is 1 point */
+	fputc('\033', fp);
+	fputc('(', fp);
+	fputc('U', fp);
+	fputc('\001', fp);
+	fputc('\000', fp);
+	fputc('\062', fp);
+
+	/* Set printing area */
+
+	/* Select font */
+
+	/* Set print position */
 }
 
 void EpsonJobTrailer(int npages, FILE *fp)
 {
+	fputc('\033', fp);
+	fputc('@', fp);
 }
 
 void EpsonPageHeader(char *str, FILE *fp)
@@ -56,7 +76,7 @@ void EpsonPageHeader(char *str, FILE *fp)
 
 void EpsonPageFooter(char *str, FILE *fp)
 {
-	fprintf(fp, "%s", formfeed);
+	fputc('\f', fp);
 }
 
 void EpsonField(char *str, int wid, int justify, int rightborder, FILE *fp)
@@ -83,12 +103,31 @@ void EpsonBorders(FILE *fp)
 
 void EpsonFont(char *family, char *slant, int size, FILE *fp)
 {
-	fprintf(fp, "%s", defaultfont);
+#if 0
+	fputc('\033', fp);
+	fputc('k', fp);
+	fputc('\002', fp);
+	fputc('\033', fp);
+	fputc('X', fp);
+	fputc('\000', fp);
+	fputc('\012', fp);
+	fputc('\000', fp);
+#else
+	fputc('\033', fp);
+	fputc('k', fp);
+	fputc('\003', fp);	// fputc('\000', fp);
+	fputc('\033', fp);
+	fputc('X', fp);
+	fputc('\044', fp);
+	fputc('\024', fp);
+	fputc('\000', fp);
+#endif
 }
 
 void EpsonNewLine(int ht, FILE *fp)
 {
-	fprintf(fp, "\n");
+	fputc('\015', fp);
+	fputc('\012', fp);
 }
 
 int EpsonPrinterJustifies(void)
@@ -96,8 +135,44 @@ int EpsonPrinterJustifies(void)
 	return 1;
 }
 
-struct PrintDriver EpsonEscP2PrintDriver = {
-	"Epson ESC/P2",
+void EpsonPaperSize(int wid, int ht, FILE *fp)
+{
+	int	hi, lo;
+
+	hi = ht / 256;
+	lo = ht % 256;
+
+	/* Page Length */
+	fputc('\033', fp);
+	fputc('(', fp);
+	fputc('C', fp);
+	fputc('\002', fp);
+	fputc('\000', fp);
+	fputc(lo, fp);
+	fputc(hi, fp);
+
+	/* Margins */
+	fputc('\033', fp);
+	fputc('(', fp);
+	fputc('c', fp);
+	fputc('\004', fp);
+	fputc('\000', fp);
+
+	/* Top margin - FIX ME currently half an inch */
+	hi = (72 / 2) / 256;
+	lo = (72 / 2) % 256;
+	fputc(lo, fp);
+	fputc(hi, fp);
+
+	/* Bottom margin - FIX ME currently half an inch */
+	hi = (ht - 72/2) / 256;
+	lo = (ht - 72/2) % 256;
+	fputc(lo, fp);
+	fputc(hi, fp);
+}
+
+struct PrintDriver EpsonStylusColorPrintDriver = {
+	"Epson Stylus Color",
 	&EpsonJobHeader,
 	&EpsonJobTrailer,
 	&EpsonPageHeader,
@@ -106,5 +181,6 @@ struct PrintDriver EpsonEscP2PrintDriver = {
 	&EpsonBorders,
 	&EpsonFont,
 	&EpsonNewLine,
-	&EpsonPrinterJustifies
+	&EpsonPrinterJustifies,
+	&EpsonPaperSize
 };

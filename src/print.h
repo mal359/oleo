@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1993, 1999 Free Software Foundation, Inc.
  * 
- * $Id: print.h,v 1.7 1999/05/06 22:18:15 danny Exp $
+ * $Id: print.h,v 1.8 1999/05/12 19:48:25 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ struct PrintDriver {
 	void	(*font)(char *family, char *slant, int size, FILE *);
 	void	(*newline)(int ht, FILE *);
 	int	(*printer_justifies)(void);
+	void	(*paper_size)(int wid, int ht, FILE *);
 };
 
 char *PrintGetType(int);

@@ -1,3 +1,13 @@
+$Id: ChangeLog,v 1.91 1999/05/12 19:48:19 danny Exp $
+
+Wed 12 May 21:31:01 CEST 1999, Danny Backx
+	* Release 1.99.3
+	* Change name of Epson driver to EpsonStylusColor.
+	  I have a Stylus Color 400 and was fooled by the
+	  documentation into believing it did Esc/P2.
+	  It doesn't.
+	* More escape codes in src/epson.c and src/pcl.c.
+
 Fri  7 May 00:18:56 1999, Danny Backx
 	* Try to put the right stuff in epson.c
 	* Printing : add end of page detection to the right pages.

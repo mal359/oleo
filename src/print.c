@@ -3,7 +3,7 @@
 /*
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.8 1999/05/06 22:18:14 danny Exp $
+ * $Id: print.c,v 1.9 1999/05/12 19:48:24 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@
 static struct PrintDriver *Drivers[] = {
 	&PostScriptPrintDriver,
 	&PCLPrintDriver,
-	&EpsonEscP2PrintDriver,
+	&EpsonStylusColorPrintDriver,
 	&TextPrintDriver,
 	NULL
 };
@@ -280,6 +280,7 @@ print_region_cmd (struct rng *print, FILE *fp)
 
 	/* Start Printing */
 	CurrentPrintDriver->job_header("title (print_region_cmd)", npages, fp);
+	CurrentPrintDriver->paper_size(print_width, print_height, fp);
 
 	/* Set default font */
 	CurrentPrintDriver->font("Courier", NULL, 10, fp);
