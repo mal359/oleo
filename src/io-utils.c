@@ -33,6 +33,11 @@
 #include "io-term.h"
 #include "cmd.h"
 #include "sylk.h"
+#include "io-motif.h"
+#include "basic.h"
+#include "oleofile.h"
+#include "sc.h"
+#include "list.h"
 
 #ifdef	HAVE_TIME_H
 #include <time.h>

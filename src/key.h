@@ -63,7 +63,7 @@ extern char **map_names;
 extern char **map_prompts;
 
 #ifndef CTRL
-#define CTRL(X) ((X)&037)
+#define CTRL(x) (x&037)
 #endif
 #ifndef META
 #define META(X) ((X)|0200)

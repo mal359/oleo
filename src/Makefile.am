@@ -1,6 +1,8 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.42 1999/10/23 13:40:06 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.43 1999/10/23 23:27:51 jbailey Exp $
 #
+# CPPFLAGS = -Wall
+
 localedir = $(prefix)/share/locale
 
 AUTOMAKE_OPTIONS = ../lib/ansi2knr dejagnu

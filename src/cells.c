@@ -194,7 +194,6 @@ do_curcell (p)
      struct value *p;
 {
   int tmp;
-  CELL *cp;
 
   tmp = cell (curow, cucol, p->String, p);
   if (tmp)
@@ -588,7 +587,6 @@ do_cell (p)
 static void
 do_varval (struct value *p)
 {
-  struct rng *rng;
   int tmp;
   int vr;
   int vc;

@@ -51,5 +51,9 @@ extern void FileCloseCurrent(void);
 extern char *file_get_default_format(void);
 extern char *file_get_format(int);
 extern char *file_get_pattern(char *fmt);
+extern void file_set_default_format(char *);
+extern void write_file_generic(FILE *, struct rng *, char *);
+extern void read_file_generic(FILE *, int, char *, char *);
+
 
 #endif

@@ -22,6 +22,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 #include "funcdef.h"
 #include <stdio.h>
+#include <ctype.h>
 #include "sysdef.h"
 #include "io-generic.h"
 #include "io-abstract.h"

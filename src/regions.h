@@ -53,5 +53,6 @@ extern void sort_region (void);
 extern int cmp_cells (int n1, int n2);
 extern void swp_cells (int n1, int n2);
 extern void rot_cells (int n1, int n2);
+extern void precision_region (struct rng *, int);
 
 #endif

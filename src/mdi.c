@@ -1,5 +1,5 @@
 /*
- *  $Id: mdi.c,v 1.4 1999/10/15 23:52:35 danny Exp $
+ *  $Id: mdi.c,v 1.5 1999/10/23 23:28:07 jbailey Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: mdi.c,v 1.4 1999/10/15 23:52:35 danny Exp $";
+static char rcsid[] = "$Id: mdi.c,v 1.5 1999/10/23 23:28:07 jbailey Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -31,6 +31,8 @@ static char rcsid[] = "$Id: mdi.c,v 1.4 1999/10/15 23:52:35 danny Exp $";
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "io-term.h"
+#include "mysql.h"
 #include "global.h"
 
 #ifdef	HAVE_MOTIF

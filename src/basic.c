@@ -1541,7 +1541,7 @@ set_region_format (struct rng * rng, int fmt)
   int precision = fmt & PREC_MASK;
 
   format_region (rng, format, -1); 
-  precision_region(rng, precision, -1);
+  precision_region(rng, precision);
 }
 
 

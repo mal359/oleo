@@ -638,19 +638,6 @@ _io_get_chr (char *prompt)
 #define BUFFER 10
 
 static void 
-local_putchar (int ch)
-{
-  (void) putc (ch, stdout);
-  /* (void)putchar(ch); */
-}
-
-static void
-local_puts (char *s)
-{
-   (void) tputs (s, 1, (int (*)()) local_putchar);
-}
-
-static void 
 _io_bell (void)
 {
 #ifndef HAVE_GETCAP

@@ -553,7 +553,7 @@ oleo_read_file (fp, ismerge)
 	  Global->a0 = 0;
 	  break;
 	case 'G':	/* Graph data */
-/*	  fprintf(stderr, "Graph input line '%s'\n", cbuf);	/* */
+/*	  fprintf(stderr, "Graph input line '%s'\n", cbuf);	*/
 	  switch (*(ptr+1)) {
 	  case 'T':	/* Graph Title */
 	    graph_set_title(cbuf+2);

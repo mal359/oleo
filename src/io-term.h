@@ -76,6 +76,7 @@ extern void read_variables (FILE * fp);
 extern void init_maps (void);
 extern int add_usr_cmds (struct cmd_func *new_cmds);
 extern int main (int argc, char **argv);
+extern void InitializeGlobals(void);
 
 #ifndef FALSE
 #define FALSE 0

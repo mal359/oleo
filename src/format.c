@@ -92,8 +92,7 @@ fmt_to_str (int format, int precision)
 char *
 cell_format_string(CELL *cp)
 {
-	int	format;
-
+	/* FIXME: Doesn't anything! */
 	if (cp == NULL)
 		return fmt_to_str(0, 0);
 
@@ -110,7 +109,6 @@ static char *def_names[] =	{"default", "def", "D", 0};
 static char *hid_names[] =	{"hidden", "hid", "H", 0};
 static char *gph_names[] =	{"graph", "gph", "*", 0};
 static char *int_names[] =	{"integer", "int", "I", 0};
-static char *dec_names[] =	{"decimal", "dec", 0};
 
 static struct fmt simple[] =
 {

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.19 1999/10/23 13:40:07 danny Exp $
+ * $Id: print.c,v 1.20 1999/10/23 23:28:11 jbailey Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@
 #include "io-generic.h"
 #include "io-abstract.h"
 #include "io-utils.h"
-
+#include "lists.h"
 #include "print.h"
 #include "afm.h"
 

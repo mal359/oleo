@@ -25,6 +25,7 @@
 #include <stdarg.h>
 #include "sysdef.h"
 #include <termios.h>
+#include "io-motif.h"
 
 #ifndef _DEBUG_MALLOC_INC
 #define local_free free

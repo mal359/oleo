@@ -62,6 +62,8 @@
 
 #include "userpref.h"
 
+#include "mysql.h"
+
 #ifdef	HAVE_MOTIF
 #include "io-motif.h"
 #include <Xm/Xm.h>
@@ -1222,4 +1224,5 @@ main (int argc, char **argv)
       command_loop (0, 0);
     }
 #endif
+  return (0); /* Never Reached! */
 }

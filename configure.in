@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.68 1999/10/23 13:40:04 danny Exp $
+dnl $Id: configure.in,v 1.69 1999/10/23 23:27:46 jbailey Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -276,7 +276,7 @@ AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(ftime gethostname gettimeofday mktime select strdup strstr)
 AC_CHECK_FUNCS(putenv strcasecmp strerror)
-AM_FUNC_MKTIME
+AC_FUNC_MKTIME
 AM_FUNC_OBSTACK
 
 dnl

@@ -1,4 +1,53 @@
-$Id: ChangeLog,v 1.112 1999/10/23 13:40:53 danny Exp $
+1999-10-23  Jeff Bailey  <jbailey@cr499794-a.crdva1.bc.wave.home.com>
+
+	* src/sylk.c: Include ctype.h
+
+	* src/regions.h: Declare precision_region
+
+	* src/print.c: Include lists.h
+
+	* src/plot.c: Include X11/Intrinsic.h
+
+	* src/parse.y: Remove unused variables
+
+	* src/oleofile.c: Nested comments... gone!
+
+	* src/mysql.h: New File
+
+	* src/mysql.c: Include mysql.h
+
+	* src/mdi.c: Include io-term.h, mysql.h
+
+	* src/lists.c: Include io-motif.h
+
+	* src/list.h: Fix declaration for list_set_separator
+
+	* src/key.h: Match CTRL definition to termcap/curses library.
+
+	* src/io-utils.h: Add Function declarations
+
+	* src/io-utils.c: Include io-motif.h, basic.h, oleofile.h,
+	sc.h, list.h
+
+	* src/io-term.h: Add declaration for InitializeGlobals
+
+	* src/io-term.c: Include mysql.h, quench warnings.
+	
+	* src/io-motif.h: Add header includes, function declarations.
+
+	* src/io-curses.c: Remove unused functions, local_putchar && local_puts
+
+	* src/format.c: Remove unused variables, added FIXME
+
+	* src/eval.c: Include stdlib.h, string.h
+
+	* src/decompile.c: Include ctype.h, and cmd.h
+
+	* src/cmd.c: Include io-motif.h
+
+	* src/cells.c: Remove unused variables
+
+	* src/basic.c: Remove extra Parameter from precision_region call.
 
 Sat 23 Oct 15:41:08 1999, Danny
 	* Right align requires knowledge of the font metrics, unless

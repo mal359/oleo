@@ -32,6 +32,8 @@
 #include "ref.h"
 #include "io-utils.h"
 
+#include <X11/Intrinsic.h>
+
 void
 PlotInit(void)
 {

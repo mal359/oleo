@@ -1,5 +1,5 @@
 /*
- *  $Id: mysql.c,v 1.5 1999/09/06 21:33:06 danny Exp $
+ *  $Id: mysql.c,v 1.6 1999/10/23 23:28:08 jbailey Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: mysql.c,v 1.5 1999/09/06 21:33:06 danny Exp $";
+static char rcsid[] = "$Id: mysql.c,v 1.6 1999/10/23 23:28:08 jbailey Exp $";
 
 #ifndef	TEST
 
@@ -30,6 +30,7 @@ static char rcsid[] = "$Id: mysql.c,v 1.5 1999/09/06 21:33:06 danny Exp $";
 #include "oleosql.h"
 #include "cmd.h"
 #include "io-term.h"
+#include "mysql.h"
 
 #ifdef	HAVE_LIBMYSQLCLIENT
 

@@ -325,7 +325,6 @@ yylex ()
 	int nn;
 	struct function *fp;
 	int tmp_ch;
-	int	bracket = 0;
 
 #ifdef TEST
 	if(!instr)
@@ -806,7 +805,6 @@ noa0_parse_cell_or_range(char **ptr, struct rng *retp)
 							/* Are R or C relative ? */
 	int		r1rel = 0, c1rel = 0, r2rel = 0, c2rel = 0;
 	char		*p, *next;
-	struct rng	rng;
 	int		r1, r2, c1, c2, ret, forget;
 
 	p = *ptr;
@@ -1056,7 +1054,7 @@ noa0_parse_cell_or_range(char **ptr, struct rng *retp)
 unsigned char
 parse_cell_or_range (char **ptr, struct rng *retp)
 {
-	unsigned char	r, *p = *ptr;
+	unsigned char	r;
 
 	if (Global->a0)
 		r = a0_parse_cell_or_range(ptr, retp);

@@ -1,7 +1,4 @@
-#ifndef LISTH
-#define LISTH
-
-/*	Copyright (C) 1992, 1993 Free Software Foundation, Inc.
+/*	Copyright (C) 1999 Free Software Foundation, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -16,13 +13,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this software; see the file COPYING.  If not, write to
 the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
-/*  t. lord	Sun Aug  9 20:40:46 1992	*/
 
-extern void list_read_file (FILE *, int);
-extern void list_write_file (FILE *, struct rng *);
-extern int list_set_options (int, char *);
-extern void list_show_options (void);
-extern int list_set_separator(char sep);
-extern char list_get_separator(void);
+#ifndef MYSQL_H 
+#define MYSQL_H 
 
-#endif
+extern void AllocateDatabaseGlobal(void);
+
+#endif /* MYSQL_H */

@@ -23,11 +23,13 @@
 #endif
 
 #include <stdarg.h>
+#include <ctype.h>
 #include "global.h"
 #include "decompile.h"
 #include "eval.h"
 #include "cell.h"
 #include "io-utils.h"
+#include "cmd.h"
 
 struct pr_node
   {
