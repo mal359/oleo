@@ -1,5 +1,5 @@
 /*
- * $Header: /home/matt/cvs/oleo/oleo/src/eval.c,v 1.10 2000/08/10 21:02:50 danny Exp $
+ * $Header: /home/matt/cvs/oleo/oleo/src/eval.c,v 1.11 2001/02/06 02:38:27 pw Exp $
  *
  * Copyright © 1990, 1992, 1993 Free Software Foundation, Inc.
  *
@@ -315,10 +315,10 @@ int overflow;
 void
 init_eval ()
 {
-  stack = (struct value *) ck_malloc (20 * sizeof (struct value));
   stackmax = 20;
+  stack = (struct value *) ck_malloc (stackmax * sizeof (struct value));
   curstack = 0;
-  current_cycle++;
+  current_cycle = 1;
 #ifndef __TURBOC__
   (void) signal (SIGFPE, math_sig);
 #endif
