@@ -1,3 +1,10 @@
+Fri Oct 24 18:58:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
+
+	* src/io-term.c: Move GTK window creation to
+	* src/io-gtk.c: here.
+
+	* src/io-gtk.c: Make Help menu conformant to GNOME.
+
 Thu Oct 23 20:31:00 1997  Jeff Bailey  (jbailey@gnu.ai.mit.edu)
 
 	* src/io-term.c: Add about menu and scroll bars.

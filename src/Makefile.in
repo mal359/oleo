@@ -75,7 +75,7 @@ oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
  hash.c panic.c line.c key.c format.c funcs.c \
  ir.c io-curses.c font.c display.c print.c init.c \
  sylk.c oleofile.c sc.c list.c busi.c string.c cells.c \
- cmd.c basic.c args.c \
+ cmd.c basic.c args.c io-gtk.c \
  stub.c input.c info.c help.c graph.c forminfo.c \
  posixtm.y date.c xrdb.c
 
@@ -112,9 +112,9 @@ decompile$U.o sort$U.o regions$U.o utils$U.o lists$U.o io-term$U.o \
 io-utils$U.o io-x11$U.o window$U.o io-edit$U.o hash$U.o panic$U.o \
 line$U.o key$U.o format$U.o funcs$U.o ir$U.o io-curses$U.o font$U.o \
 display$U.o print$U.o init$U.o sylk$U.o oleofile$U.o sc$U.o list$U.o \
-busi$U.o string$U.o cells$U.o cmd$U.o basic$U.o args$U.o stub$U.o \
-input$U.o info$U.o help$U.o graph$U.o forminfo$U.o posixtm$U.o date$U.o \
-xrdb$U.o
+busi$U.o string$U.o cells$U.o cmd$U.o basic$U.o args$U.o io-gtk$U.o \
+stub$U.o input$U.o info$U.o help$U.o graph$U.o forminfo$U.o posixtm$U.o \
+date$U.o xrdb$U.o
 oleo_DEPENDENCIES =  ../lib/liboleo.a
 oleo_LDFLAGS = 
 YLWRAP = $(srcdir)/ylwrap
@@ -135,9 +135,9 @@ DEP_FILES =  .deps/args.P .deps/basic.P .deps/busi.P \
 .deps/decompile.P .deps/display.P .deps/eval.P .deps/font.P \
 .deps/format.P .deps/forminfo.P .deps/funcs.P .deps/graph.P \
 .deps/hash.P .deps/help.P .deps/info.P .deps/init.P .deps/input.P \
-.deps/io-curses.P .deps/io-edit.P .deps/io-term.P .deps/io-utils.P \
-.deps/io-x11.P .deps/ir.P .deps/key.P .deps/line.P .deps/list.P \
-.deps/lists.P .deps/oleofile.P .deps/panic.P .deps/parse.P \
+.deps/io-curses.P .deps/io-edit.P .deps/io-gtk.P .deps/io-term.P \
+.deps/io-utils.P .deps/io-x11.P .deps/ir.P .deps/key.P .deps/line.P \
+.deps/list.P .deps/lists.P .deps/oleofile.P .deps/panic.P .deps/parse.P \
 .deps/posixtm.P .deps/print.P .deps/ref.P .deps/regions.P .deps/sc.P \
 .deps/sort.P .deps/string.P .deps/stub.P .deps/sylk.P .deps/utils.P \
 .deps/window.P .deps/xrdb.P
@@ -257,6 +257,8 @@ io-curses_.c: io-curses.c $(ANSI2KNR)
 	$(ANSI2KNR) `if test -f $(srcdir)/io-curses.c; then echo $(srcdir)/io-curses.c; else echo io-curses.c; fi` io-curses_.c
 io-edit_.c: io-edit.c $(ANSI2KNR)
 	$(ANSI2KNR) `if test -f $(srcdir)/io-edit.c; then echo $(srcdir)/io-edit.c; else echo io-edit.c; fi` io-edit_.c
+io-gtk_.c: io-gtk.c $(ANSI2KNR)
+	$(ANSI2KNR) `if test -f $(srcdir)/io-gtk.c; then echo $(srcdir)/io-gtk.c; else echo io-gtk.c; fi` io-gtk_.c
 io-term_.c: io-term.c $(ANSI2KNR)
 	$(ANSI2KNR) `if test -f $(srcdir)/io-term.c; then echo $(srcdir)/io-term.c; else echo io-term.c; fi` io-term_.c
 io-utils_.c: io-utils.c $(ANSI2KNR)
@@ -306,10 +308,10 @@ xrdb_.c: xrdb.c $(ANSI2KNR)
 args_.o basic_.o busi_.o byte-compile_.o cells_.o cmd_.o date_.o \
 decompile_.o display_.o eval_.o font_.o format_.o forminfo_.o funcs_.o \
 graph_.o hash_.o help_.o info_.o init_.o input_.o io-curses_.o \
-io-edit_.o io-term_.o io-utils_.o io-x11_.o ir_.o key_.o line_.o \
-list_.o lists_.o oleofile_.o panic_.o parse_.o posixtm_.o print_.o \
-ref_.o regions_.o sc_.o sort_.o string_.o stub_.o sylk_.o utils_.o \
-window_.o xrdb_.o : $(ANSI2KNR)
+io-edit_.o io-gtk_.o io-term_.o io-utils_.o io-x11_.o ir_.o key_.o \
+line_.o list_.o lists_.o oleofile_.o panic_.o parse_.o posixtm_.o \
+print_.o ref_.o regions_.o sc_.o sort_.o string_.o stub_.o sylk_.o \
+utils_.o window_.o xrdb_.o : $(ANSI2KNR)
 
 tags: TAGS
 
