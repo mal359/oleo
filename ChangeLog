@@ -7,6 +7,17 @@
 	  gpl.sed.
 	* Remove lib/error.c lib/error.h lib/xmalloc.c, they're not used.
 	* Remove AM_EMX macro: autoconf 2.13 has AC_EXEEXT.
+(FB)
+	* Replace README with a new version.
+	* Fix to xlt.m4.  Xlt detection no longer breaks when ./configure
+	  is run in the presence of a config.cache file.
+	* Fix to graph.c.  Setting X_DISPLAY_MISSING now completely
+	  eliminates all X11 functions from the compiled code.
+	* Added x11.m4.  Needed to make linking to X11 libraries
+	  optional.
+	* Fixes to m4/Makefile.am, src/Makefile.am, ./configure.in.
+	  Needed to make linking to X11 libraries optional.
+	* Added FAQ.
 
 Wed Jan 27 21:21:31 1999, Danny Backx (danny@gnu.org)
 	* Clean up a number of files that don't belong in CVS: Makefile.in
