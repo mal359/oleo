@@ -6,9 +6,9 @@
 @defcodeindex cm
 @c %**end of header
 
-@set version 1.99.6
-@set update-date July 21 1999
-@set update-month July 1999
+@set version 1.99.8
+@set update-date December 1 1999
+@set update-month December 1999
 
 @clear smallbook
 
@@ -29,9 +29,7 @@
 @finalout
 
 @ifinfo
-This file documents Oleo, the GNU spreadsheet.  This texinfo file was
-hacked together from the USING, KEYS and forminfo.c files of the
-oleo-1.6 distribution by kai@@nimbus.som.cwru.edu
+This file documents Oleo, the GNU spreadsheet.
 
 This file is part of GNU Oleo.
 
@@ -67,17 +65,17 @@ by the Free Software Foundation.
 
 @c is this the Oleo or documentation author(s)? Let's include everyone
 @author 
-Tom Lord, Kai Getrost, Steve Fisk
+Tom Lord, Kai Getrost, Steve Fisk, Danny Backx
 @c The following two commands start the copyright page.
 @c Put it inside the titlepage to turn off headings:
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 1993 Free Software Foundation, Inc.
+Copyright @copyright{} 1993-1999 Free Software Foundation, Inc.
 Published by the Free Software Foundation @*
 675 Massachusetts Avenue, @*
 Cambridge, MA 02139 USA @*
-Printed copies are available for $15 each.@*
-ISBN-1882114-12-4
+@c Printed copies are available for $15 each.@*
+@c ISBN-1882114-12-4
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice

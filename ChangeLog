@@ -1,10 +1,14 @@
-$Id: ChangeLog,v 1.119 1999/11/30 23:35:05 danny Exp $
+$Id: ChangeLog,v 1.120 1999/12/01 21:12:29 danny Exp $
 
+Wed  1 Dec 22:10:51 1999, Danny
+	* Release 1.99.8.
 	* Update the NEWS file for upcoming release.
 	* Figure out which escape code to use exactly to get PCL
 	  printers to behave right.
 	* Turned off i18n support in src/io-x11.c for now, can't get it
 	  to work.
+	* Add set_encoding(char *) as an interface in the printer
+	  drivers. PCL can handle this too.
 
 Sat 27 Nov 19:55:41 1999, Danny
 	* Update the TODO file.

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1993, 1999 Free Software Foundation, Inc.
  * 
- * $Id: print.h,v 1.10 1999/11/04 12:51:31 danny Exp $
+ * $Id: print.h,v 1.11 1999/12/01 21:12:48 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,6 +75,10 @@ struct PrintDriver {
 	 *	paper size in points (1/72 of an inch).
 	 */
 	void	(*paper_size)(int wid, int ht, FILE *);
+	/*
+	 * Set the encoding (the character set), usually ISOLatin1.
+	 */
+	void	(*set_encoding)(char *encoding);
 };
 
 char *PrintGetType(int);

@@ -1518,7 +1518,7 @@ void OleoSetEncoding(char *s)
 		free(Global->encoding);
 	Global->encoding = strdup(s);
 
-	AfmSetEncoding(s);
+	PrintSetEncoding(s);
 }
 
 char *OleoGetEncoding(void)

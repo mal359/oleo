@@ -1,5 +1,5 @@
 /*
- *  $Id: pcl.c,v 1.10 1999/11/30 23:35:21 danny Exp $
+ *  $Id: pcl.c,v 1.11 1999/12/01 21:12:43 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,12 +21,13 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: pcl.c,v 1.10 1999/11/30 23:35:21 danny Exp $";
+static char rcsid[] = "$Id: pcl.c,v 1.11 1999/12/01 21:12:43 danny Exp $";
 
 #include <stdio.h>
 
 #ifndef	TEST
 #include "config.h"
+#include "afm.h"
 #endif
 
 #include "global.h"
@@ -47,8 +48,24 @@ struct OleoGlobal	*Global;
 
 static int	y;	/* absolute position on page */
 
+struct {
+	char	*e;
+	char	*code;
+} encodings[] = {
+	{ "ISOLatin1",	"\033(0N" },
+	{ "ISOLatin2",	"\033(2N" },
+	{ "ISO5",	"\033(5N" },
+	{ "ISOLatin9",	"\033(5N" },
+	{ "Swedish",	"\033(0S" },
+	{ NULL,		NULL}
+};
+
+static char	*pcl_encoding = NULL;
+
 void PCLJobHeader(char *str, int npages, FILE *fp)
 {
+	int	i, found = 0;
+
 	/* Printer reset */
 	fputc('\033', fp);
 	fputc('E', fp);
@@ -61,11 +78,20 @@ void PCLJobHeader(char *str, int npages, FILE *fp)
 	fputc('O', fp);
 #endif
 
-	/* Iso Latin 1 */
-	fputc('\033', fp);
-	fputc('(', fp);
-	fputc('0', fp);
-	fputc('N', fp);
+	for (i=0; pcl_encoding && encodings[i].e; i++)
+		if (stricmp(pcl_encoding, encodings[i].e) == 0) {
+			found++;
+			fprintf(fp, "%s", encodings[i].code);
+			break;
+		}
+
+	if (! found) {
+		/* Iso Latin 1 */
+		fputc('\033', fp);
+		fputc('(', fp);
+		fputc('0', fp);
+		fputc('N', fp);
+	}
 }
 
 void PCLJobTrailer(int npages, FILE *fp)
@@ -104,8 +130,13 @@ void PCLField(char *str, int wid, int rightborder,
 		str, wid, rightborder);
 #endif
 
-	/* Absolute cursor positioning */
+#if 0
+	/* Absolute cursor positioning in dots - not what we want */
 	fprintf(fp, "\033*p%dx%dY", xpoints, y);
+#else
+	/* Absolute cursor positioning in decipoints */
+	fprintf(fp, "\033&a%dh%dV", 10 * xpoints, 10 * y);
+#endif
 
 #if 0
 	sprintf(format, "%%-%ds", wid);
@@ -118,6 +149,8 @@ void PCLBorders(FILE *fp)
 }
 
 struct typefaces { char *typeface, *code; } TypeFaces[] = {
+	{ "cg times",		"\033(s4101T" },	/* The default one */
+	{ "univers",		"\033(s4148T" },
 	{ "lineprinter",	"\033(s0T" },
 	{ "courier",		"\033(s4099T" },
 	{ "albertus",		"\033(s4362T" },
@@ -128,8 +161,6 @@ struct typefaces { char *typeface, *code; } TypeFaces[] = {
 	{ "letter gothic",	"\033(s4102T" },
 	{ "marigold",		"\033(s4297T" },
 	{ "cg omega",		"\033(s4113T" },
-	{ "cg times",		"\033(s4101T" },
-	{ "univers",		"\033(s4148T" },
 	{ "arial",		"\033(s16602T" },
 	{ "times new roman",	"\033(s16901T" },
 	{ "symbol",		"\033(s16686T" },
@@ -154,27 +185,21 @@ void PCLFont(char *family, char *slant, int size, FILE *fp)
 	if (found == 0)
 		fprintf(fp, "%s", TypeFaces[0].code);
 
-	/* Pitch - FIX ME from prls */
-	fputc('\033', fp);
-	fputc('(', fp);
-	fputc('s', fp);
-#if 0
-	fputc('2', fp);
-	fputc('0', fp);
+	/* Pitch (number of characters per inch) */
+#ifndef	TEST
+	fprintf(fp, "\033(s%dH", AfmPitch());
 #else
-	fprintf(fp, "%d", size * 2);
+{
+	/* TEST ! */
+	float	p = 72.0 / 0.628 / size;
+	int	i = p;
+
+	fprintf(fp, "\033(s%dH", i);
+}
 #endif
-	fputc('H', fp);
 
 	/* Primary size */
-	/* Original version sent \033(s%dV,
-	 * the www.wotsit.org docs say v instead of V.
-	 */
-	fputc('\033', fp);
-	fputc('(', fp);
-	fputc('s', fp);
-	fprintf(fp, "%d", size);
-	fputc('v', fp);
+	fprintf(fp, "\033(s%dV", size);
 
 	/* Slant */
 	if (slant == NULL || stricmp(slant, "normal") == 0
@@ -250,6 +275,14 @@ void PCLPaperSize(int wid, int ht, FILE *fp)
 	fputc('A', fp);
 }
 
+void PCLSetEncoding(char *encoding)
+{
+	if (pcl_encoding)
+		free(pcl_encoding);
+
+	pcl_encoding = strdup(encoding);
+}
+
 struct PrintDriver PCLPrintDriver = {
 	"PCL",
 	&PCLJobHeader,
@@ -260,7 +293,8 @@ struct PrintDriver PCLPrintDriver = {
 	&PCLBorders,
 	&PCLFont,
 	&PCLNewLine,
-	&PCLPaperSize
+	&PCLPaperSize,
+	&PCLSetEncoding
 };
 
 #ifdef	TEST
@@ -310,37 +344,59 @@ int main(int argc, char *argv[])
 	pd->page_header("Page 1", fp);
 	pd->field("Field 1", 10, 1, 10, 1, fp);
 	pd->font("times", "bold", 8, fp);
-	pd->field("Field 2", 10, 1, 10, 1, fp);
+	pd->field("Field 2", 10, 1, 110, 1, fp);
 	pd->font("times", "bold-italic", 8, fp);
-	pd->field("Field 3", 10, 1, 10, 1, fp);
+	pd->field("Field 3", 10, 1, 210, 1, fp);
 
-	pd->newline(8, fp);
+	pd->newline(10, fp);
 	pd->font("cg times", NULL, 8, fp);
 	pd->field("Field 4 - this is in CG Times", 40, 1, 10, 1, fp);
 
-	pd->newline(8, fp);
+	pd->newline(10, fp);
 	pd->font("marigold", NULL, 8, fp);
 	pd->field("Field 5 - this is in Marigold", 40, 1, 10, 1, fp);
 
-	pd->newline(8, fp);
+	pd->newline(10, fp);
 	pd->font("clarendon", NULL, 8, fp);
 	pd->field("Field 6 - this is in Clarendon", 40, 1, 10, 1, fp);
 
-	pd->newline(8, fp);
+	pd->newline(10, fp);
 	pd->font("letter gothic", NULL, 8, fp);
 	pd->field("Field 7 - this is in Letter Gothic", 60, 1, 10, 1, fp);
 
-	pd->newline(8, fp);
+	pd->newline(10, fp);
 	pd->font("letter gothic", NULL, 8, fp);
 	pd->field("Field 8 - centered in Letter Gothic", 60, 1, 10, 1, fp);
 
-	pd->newline(8, fp);
+	pd->newline(10, fp);
 	pd->font("letter gothic", NULL, 8, fp);
 	pd->field("Field 9 - right in Letter Gothic", 60, 1, 10, 1, fp);
 
-	pd->newline(8, fp);
+	pd->newline(10, fp);
 	pd->font("letter gothic", NULL, 8, fp);
 	pd->field("Field 10 - left in Letter Gothic", 60, 1, 10, 1, fp);
+
+	pd->newline(10, fp);
+	pd->font("cg times", NULL, 8, fp);
+	pd->field("CG Times, 8 points", 60, 1, 10, 1, fp);
+	pd->newline(10, fp);
+	pd->font("cg times", NULL, 10, fp);
+	pd->field("CG Times, 10 points", 60, 1, 10, 1, fp);
+	pd->newline(10, fp);
+	pd->font("cg times", NULL, 12, fp);
+	pd->field("CG Times, 12 points", 60, 1, 10, 1, fp);
+	pd->newline(10, fp);
+	pd->font("cg times", NULL, 14, fp);
+	pd->field("CG Times, 14 points", 60, 1, 10, 1, fp);
+	pd->newline(10, fp);
+	pd->font("cg times", NULL, 18, fp);
+	pd->field("CG Times, 18 points", 60, 1, 10, 1, fp);
+	pd->newline(10, fp);
+	pd->font("cg times", NULL, 24, fp);
+	pd->field("CG Times, 24 points", 60, 1, 10, 1, fp);
+	pd->newline(10, fp);
+	pd->font("cg times", "bold", 12, fp);
+	pd->field("CG Times, bold, 12 points", 60, 1, 10, 1, fp);
 
 	pd->page_footer("End page 1", fp);
 	pd->job_trailer(1, fp);
@@ -350,19 +406,3 @@ int main(int argc, char *argv[])
 	exit(0);
 }
 #endif	/* TEST */
-#if 0
-struct PrintDriver {
-	char	*name;
-	void	(*job_header) (char *title, int npages, FILE *fp);
-	void	(*job_trailer) (int npages, FILE *fp);
-
-	void	(*page_header)(char *str, FILE *);
-	void	(*page_footer)(char *str, FILE *);
-
-	void	(*field)(char *str, int wid, int rightborder, FILE *);
-	void	(*borders)(/* ... , */ FILE *);
-	void	(*font)(char *family, char *slant, int size, FILE *);
-	void	(*newline)(int ht, FILE *);
-	void	(*paper_size)(int wid, int ht, FILE *);
-};
-#endif

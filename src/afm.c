@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Free Software Foundation, Inc.
  *
- * $Id: afm.c,v 1.3 1999/11/04 12:51:34 danny Exp $
+ * $Id: afm.c,v 1.4 1999/12/01 21:12:49 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -276,6 +276,19 @@ AfmFontWidth(void)
 		return 0;
 	}
 	return afm->FontBBox3 * CurrentFontSize / 1000;
+}
+
+int
+AfmPitch(void)
+{
+	float	p;
+
+	if (! afm) {
+		io_info_msg("AfmPitch: failed\n");
+		return 0;
+	}
+	p = 72.0 * 1000 / (afm->FontBBox3 * CurrentFontSize);
+	return p;
 }
 
 int
