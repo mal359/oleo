@@ -1,3 +1,6 @@
+Tue 27 Apr 21:02:30 1999, Danny Backx
+	* Add src/prtext.c, src/prtext.h, examples/q110399.csv
+
 Tue 27 Apr 20:28:18 1999, Danny Backx
 	* README : remove comments about curses mode not working
 	  from a Motif executable until someone can prove it.
