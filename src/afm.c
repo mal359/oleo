@@ -1,7 +1,7 @@
 /*
  * Copyright © 1999 Free Software Foundation, Inc.
  *
- * $Id: afm.c,v 1.8 2000/11/22 19:33:00 danny Exp $
+ * $Id: afm.c,v 1.9 2001/02/05 00:12:26 pw Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,9 +41,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <sys/param.h>
 
 #include "afm.h"
+#include "cmd.h"
 
 #define	AFM_PATH	"/share/afm"
 #define	USRLOCAL_PATH	"/usr/local"
@@ -137,7 +139,7 @@ static int namelen(void)
 
 static void ReadCharMetrics(int n)
 {
-	int	i, code, l;
+	int	i, l;
 
 	afm->StartCharMetrics = n;
 
@@ -279,8 +281,6 @@ OpenAfmFile(char *name, char *slant)
 void
 AfmSetFont(char *name, char *slant, int size)
 {
-	char	*fn;
-
 /* Have the font name/slant changed ? */
 	CurrentFontSize = size;
 
