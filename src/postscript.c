@@ -1,5 +1,5 @@
 /*
- *  $Id: postscript.c,v 1.18 2000/12/20 20:00:39 danny Exp $
+ *  $Id: postscript.c,v 1.19 2001/02/05 00:15:23 pw Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -28,7 +28,7 @@
  * There shouldn't be much spreadsheet functionality here...
  */
 
-static char rcsid[] = "$Id: postscript.c,v 1.18 2000/12/20 20:00:39 danny Exp $";
+static char rcsid[] = "$Id: postscript.c,v 1.19 2001/02/05 00:15:23 pw Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -219,16 +219,11 @@ void PostScriptPageFooter(char *str, FILE *fp)
 void PostScriptField(char *str, int wid, int rightborder,
 			int xpoints, int xchars, FILE *fp)
 {
-	float	w;
-
 #if 0
 	fprintf(stderr, "PostScriptField(%s, wid %d, xpoints %d)\n",
 			str, wid, xpoints);
 #endif
 	if (strlen(str)) {
-		float	tw = strlen(str) * CurrentFontSize;
-
-
 		fprintf(fp, "%3.1f %3.1f moveto ", border_width + xpoints, y);
 
 		put_ps_string(str, fp);
