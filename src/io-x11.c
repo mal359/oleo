@@ -49,7 +49,8 @@
 #include "regions.h"
 #include "input.h"
 #include "info.h"
-
+
+#include <locale.h>
 
 #if defined(HAVE_RINT)
 extern double rint (double);
@@ -62,7 +63,6 @@ extern char * x_get_string_resource (XrmDatabase, char *, char *);
 extern XrmDatabase x_load_resources (Display *, char *, char *);
 extern char * getenv (const char *);
 
-
 static char *emergency_font_name = "8x13";
 static char *cell_font_name = "times_roman12";
 static char *default_font_name = "8x13";
@@ -82,6 +82,11 @@ static char geom_string[] = "675x350+0+0";
 
 /* This global is used only during command line and .Xdefaults handling. */
 static Display * theDisplay;
+static struct sXport *thePort;
+
+/* i18n */
+static XIC	xic;
+static XIM	xim;
 
 static char * rdb_class_name = "Oleo";
 static char * rdb_name = "oleo";
@@ -202,9 +207,7 @@ get_x11_args (int * argc_p, char ** argv)
   }
 }
 
-
 static int x11_opened = 0;
-static struct sXport *thePort;
 typedef struct sXport *Xport;
 
 struct sXport
@@ -244,6 +247,125 @@ struct sXport
   struct input_view input_view;
 };
 
+#if defined(XlibSpecificationRelease) && (XlibSpecificationRelease >= 6)
+static void
+GetXIC(Display *theDisplay)
+{
+	XIM		xim = 0;                    /* the input method */
+	XIMStyles	*xim_styles;
+	XIMStyle	input_style = 0;
+	char		*p, *buf, *b, *k;
+	int		i, j, found = 0;
+	static char	*styles[] =
+	{
+		"OverTheSpot",
+		"OffTheSpot",
+		"Root",
+		"Root",
+		NULL
+	};
+	static char *preeditTypes = "OffTheSpot,OverTheSpot,Root";
+
+	static XIMStyle style_bits[] =
+	{
+	/* OverTheSpot */	XIMPreeditPosition | XIMStatusArea,
+	/* OffTheSpot */	XIMPreeditArea | XIMStatusArea,
+	/* Root */		XIMPreeditNothing | XIMStatusNothing,
+	/* Not really root */	XIMPreeditNone | XIMStatusNone
+	};
+
+	setlocale(LC_ALL, "");
+	if ((p = XSetLocaleModifiers("@im=none")) != NULL) {
+		xim = XOpenIM(theDisplay, NULL, NULL, NULL);
+		if (xim) fprintf(stderr, "XOpenIM with @im=none succeeded\n");
+	}
+	if (xim == NULL && (p = XSetLocaleModifiers("")) != NULL) {
+		xim = XOpenIM(theDisplay, NULL, NULL, NULL);
+		if (xim) fprintf(stderr, "XOpenIM with '' succeeded\n");
+	}
+	if (!xim) {
+		fprintf(stderr, "Failed to open input method\n");
+		return;
+	}
+
+	if (XGetIMValues(xim, XNQueryInputStyle, &xim_styles, NULL) || xim_styles == NULL) {
+		fprintf(stderr, "Input method doesn't support any style\n");
+		XCloseIM(xim);
+		return;
+	}
+
+	/* FIXME : match input styles */
+	for (i = 0, found = False; styles[i] && !found; i++) {
+//		fprintf(stderr, "Trying %s (0x%X)\n", styles[i], style_bits[i]);
+
+		if (strstr(preeditTypes, styles[i]) == 0) {
+			continue;
+		}
+		for (j = 0; j < xim_styles->count_styles; j++) {
+			if (style_bits[i] == xim_styles->supported_styles[j]) {
+				found = True;
+				input_style = style_bits[i];
+				break;
+			}
+		}
+	}
+
+	xic = XCreateIC(xim,
+			XNInputStyle, input_style,
+			XNClientWindow, thePort->window,
+			XNFocusWindow, thePort->window,
+		NULL);
+
+	if (xic)
+		fprintf(stderr, "We have an IC\n");
+	else
+		fprintf(stderr, "No IC\n");
+}
+
+static void
+xi18nGetFocus()
+{
+	if (xic) {
+//		fprintf(stderr, "Get Focus\n");
+		XSetICFocus(xic);
+	}
+}
+
+static void
+xi18nLoseFocus()
+{
+	if (xic) {
+//		fprintf(stderr, "Lose Focus\n");
+		XUnsetICFocus(xic);
+	}
+}
+
+static int
+xi18nlookup(XEvent *evp, char *buf, int nbytes, KeySym *keysym, Status *status)
+{
+	int	i;
+	static Status	s;
+
+	if (xic) {
+		i = XmbLookupString(xic, evp, buf, nbytes, keysym, &s);
+	} else {
+		i = XLookupString(evp, buf, nbytes, keysym, &s);
+	}
+
+	fprintf(stderr, "xi18nlookup: %d %c\t", buf[0], buf[0]);
+	fprintf(stderr, "status %s",
+		(s == XLookupKeySym) ? "XLookupKeySym" : 
+		(s == XLookupNone) ? "XLookupNone" : 
+		(s == XLookupBoth) ? "XLookupBoth" : 
+		(s == XBufferOverflow) ? "XBufferOverflow" : 
+		(s == XLookupChars) ? "XLookupChars" : "");
+	fprintf(stderr, "\n");
+
+	if (status)	*status = s;
+	return i;
+}
+#endif
+
 static void
 beep (Xport xport)
 {
@@ -258,7 +380,6 @@ xio_bell (void)
 {
   beep (thePort);
 }
-
 
 static void
 xdraw_text_item (Xport xport, int c, int r, int wid, int hgt,
@@ -518,7 +639,6 @@ io_col_to_input_pos (int c)
     return iv->visibility_begin + cpos - 1;
   }
 }
-
 
 /****************************************************************
  * Low level Input
@@ -533,7 +653,7 @@ static int se_buf_allocated = 0;
 static int se_chars_buffered = 0;
 #define MAX_KEY_TRANSLATION	(1024)
 
-static XComposeStatus compose;
+static Status compose;
 
 static void
 xio_scan_for_input (int blockp)
@@ -574,6 +694,14 @@ xio_scan_for_input (int blockp)
 
 	      switch (event_return.type)
                 {
+		case FocusIn:
+			xi18nGetFocus();
+			break;
+
+		case FocusOut:
+			xi18nLoseFocus();
+			break;
+
 	          case KeyPress:
                     /* Put keypress send_events aside until a <Return>. */
 	            if (se_chars_buffered + MAX_KEY_TRANSLATION 
@@ -586,9 +714,14 @@ xio_scan_for_input (int blockp)
 	                se_buf =
 		          (char *) ck_remalloc (se_buf, se_buf_allocated);
 	              }
+#if 0
 	            len = XLookupString (&event_return,
 			           se_buf + se_chars_buffered,
 			           MAX_KEY_TRANSLATION, &se_keysym, &compose);
+#else
+		    len = xi18nlookup(&event_return, se_buf + se_chars_buffered,
+				MAX_KEY_TRANSLATION, &se_keysym, &compose);
+#endif
 
 	            if ((len == 1) && (event_return.xkey.state & Mod1Mask))
 	              se_buf[se_chars_buffered] |= 0x80;
@@ -631,6 +764,14 @@ xio_scan_for_input (int blockp)
       
       switch (event_return.type)
 	{
+		case FocusIn:
+			xi18nGetFocus();
+			break;
+
+		case FocusOut:
+			xi18nLoseFocus();
+			break;
+
 	case ClientMessage:
 	  if (event_return.xclient.data.l[0] == thePort->wm_delete_window)
 	    {
@@ -651,14 +792,18 @@ xio_scan_for_input (int blockp)
 		(char *) ck_remalloc (input_buf, input_buf_allocated);
 	    }
 	}
-      
-      
+ 
       switch (event_return.type)
 	{
 	case KeyPress:
+#if 0
 	  len = XLookupString (&event_return,
 			       input_buf + chars_buffered,
 			       MAX_KEY_TRANSLATION, 0, &compose);
+#else
+	  len = xi18nlookup(&event_return,input_buf + chars_buffered,
+				MAX_KEY_TRANSLATION, 0, &compose);
+#endif
 	  if ((len == 1) && (event_return.xkey.state & Mod1Mask))
 	    input_buf[chars_buffered] |= 0x80;
 	  chars_buffered += len;
@@ -698,6 +843,14 @@ xio_scan_for_input (int blockp)
 	  resize_pending = 1;
 	  break;
 	  
+	case FocusIn:
+		xi18nGetFocus();
+		break;
+
+	case FocusOut:
+		xi18nLoseFocus();
+		break;
+
 	default:
 	  break;
 	}
@@ -705,7 +858,6 @@ xio_scan_for_input (int blockp)
     }
   while (events_pending || !chars_buffered);
 }
-
 
 static int
 xio_input_avail (void)
@@ -753,7 +905,6 @@ xio_getch (void)
   else
     return 0;
 }
-
 
 /****************************************************************
  * Low level support for input and status areas.
@@ -782,8 +933,6 @@ cram (int cols, XFontStruct *font, char *text, int len, char *continuation)
 }
 
 
-
-
 static void
 xset_text (XTextItem *xtext, char *text, int len)
 {
@@ -798,14 +947,7 @@ xset_text (XTextItem *xtext, char *text, int len)
     xtext->chars[len++] = ' ';
 }
 
-
-
 /* The input area. */
-
-
-
-
-
 
 /*
  * Low level interface to the input area specificly.
@@ -855,7 +997,6 @@ draw_input (void)
 		      &cursor_text, 1);
     }
 }
-
 
 static void
 xio_clear_input_before (void)
@@ -899,7 +1040,6 @@ set_input (char *text, int len, int cursor)
   input_cursor = cursor;
   draw_input ();
 }
-
 
 /*
  * Low level interface to the status area specificly.
@@ -924,7 +1064,6 @@ xset_status (char *text)
   status_text.font = thePort->status_font->fid;
   xdraw_status ();
 }
-
 
 /****************************************************************
  * High level interfaces for the input and status areas.
@@ -976,7 +1115,7 @@ xio_update_status (void)
       dec = 0;
       dlen = 0;
     }
-  
+
   ptr = cell_value_string (curow, cucol, 1);
   plen = XTextWidth (thePort->status_font, ptr, strlen (ptr));
   
@@ -1041,7 +1180,6 @@ xio_update_status (void)
     free (assembled);
   }
 }
-
 
 static int
 xio_get_chr (char *prompt)
@@ -1052,7 +1190,6 @@ xio_get_chr (char *prompt)
   draw_input ();
   return io_getch ();
 }
-
 
 /*
  * Multi-line informational messages to the user:
@@ -1070,7 +1207,6 @@ static int text_damaged = 0;
 static struct text_line *text_lines = 0;
 extern int auto_recalc;
 
-
 /****************************************************************
  * Low level support for the cell windows.
  ****************************************************************/
@@ -1109,7 +1245,6 @@ static XRectangle *cliprectv = 0;
 
 #define GC_CACHE_SIZE	10
 static struct cell_gc *cell_gc_cache = 0;
-
 
 /* This takes the full name of an X11 font, and returns its point size (in
  * tenths of a point.  If the string is not a valid font name, 0 is returned.
@@ -1269,8 +1404,6 @@ cell_gc (Xport port, struct font_memo *font_passed, int cursor)
   return c;
 }
 
-
-
 /* This is the data for an oleo window, displayed under X. */
 
 enum kinds_of_layout_needed
@@ -1288,8 +1421,6 @@ struct x_window
   int label_damage;
   Xport port;
 };
-
-
 
 static void
 collect_clipping (xx_IntRectangle rect)
@@ -1328,7 +1459,6 @@ clip_to_intrectangle (struct x_window * xwin, xx_IntRectangle rect)
   collect_clipping (rect);
   ++clipcnt;
 }
-
 
 static void 
 place_text (xx_IntRectangle out, struct display *disp, struct cell_display *cd, XFontStruct *font, char *string)
@@ -1359,8 +1489,6 @@ place_text (xx_IntRectangle out, struct display *disp, struct cell_display *cd, 
     }
   xx_IRinit (out, xout, yout, wout, hout);
 }
-
-
 
 static void
 x_metric (struct cell_display *cd, struct display *disp)
@@ -1375,8 +1503,6 @@ x_metric (struct cell_display *cd, struct display *disp)
       place_text (&cd->goal, disp, cd, cgc->font, cd->unclipped);
     }
 }
-
-
 
 static struct x_window *
 x_win (Xport port, struct window *win, int rebuild)
@@ -1420,9 +1546,6 @@ flush_x_windows (Xport port)
     }
 }
 
-
-
-
 static void
 record_damage (Xport port, int x, int y, int w, int h)
 {
@@ -1463,8 +1586,6 @@ record_damage (Xport port, int x, int y, int w, int h)
   if (((Global->input + input_rows) >= y) && (Global->input <= y + h))
     port->input_view.redraw_needed = FULL_REDRAW;
 }
-
-
 
 static void
 xio_pr_cell_win (struct window *win, CELLREF r, CELLREF c, CELL *cp)
@@ -1479,7 +1600,6 @@ xio_pr_cell_win (struct window *win, CELLREF r, CELLREF c, CELL *cp)
 	xwin->layout_needed = damaged_display;
     }
 }
-
 
 static void
 xio_repaint_win (struct window *win)
@@ -1492,8 +1612,6 @@ xio_repaint_win (struct window *win)
 		  win->win_over, win->win_down, win->numc, win->numr);
   record_damage (thePort, win->win_over, win->win_down, win->numc, win->numr);
 }
-
-
 
 static void
 xio_repaint (void)
@@ -1512,7 +1630,6 @@ xio_repaint (void)
   for (win = wins; win < &wins[nwin]; win++)
     xio_repaint_win (win);
 }
-
 
 static void
 draw_cell (struct x_window *xwin, struct cell_display *cd_passed, int cursor)
@@ -1595,7 +1712,6 @@ draw_cell (struct x_window *xwin, struct cell_display *cd_passed, int cursor)
     }
   }
 }
-
 
 /* Cell values */
 
@@ -1661,7 +1777,6 @@ xio_display_cell_cursor (void)
       set_cursor (1);
     }
 }
-
 
 static int xx[10] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
@@ -1818,7 +1933,6 @@ draw_labels (void)
 	xwin->label_damage = 0;
       }
 }
-
 
 /* Refresh the existing image. */
 
@@ -1956,7 +2070,6 @@ xio_redisp (void)
 	}
     }
 }
-
 
 static XFontStruct *
 reasonable_font (Xport port, char *name)
@@ -2050,6 +2163,10 @@ xio_open_display (void)
 		   &thePort->wm_delete_window, 1);
 #endif
   
+#if defined(XlibSpecificationRelease) && (XlibSpecificationRelease >= 6)
+  GetXIC(theDisplay);
+#endif
+
   gcv.foreground = thePort->bg_color_pixel;
   gcv.background = thePort->bg_color_pixel;
   thePort->neutral_gc =
@@ -2158,7 +2275,7 @@ xio_open_display (void)
   }
   
   XSelectInput (thePort->dpy, thePort->window,
-		(ExposureMask | StructureNotifyMask | KeyPressMask
+		(ExposureMask | StructureNotifyMask | KeyPressMask | FocusChangeMask
 		 | ButtonPressMask));
   
   io_init_windows (geom_h, geom_w, 1, 2,
@@ -2272,8 +2389,6 @@ xio_flush (void)
   XFlush (theDisplay);
 }
 
-
-
 
 void
 xio_command_loop (int i)

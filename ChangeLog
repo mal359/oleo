@@ -1,7 +1,11 @@
-$Id: ChangeLog,v 1.109 1999/10/15 23:52:15 danny Exp $
+$Id: ChangeLog,v 1.110 1999/10/17 07:41:56 danny Exp $
+
+Sun 17 Oct 09:38:29 CEST 1999
+	* io-x11.c Some copy/pasted i18n code from the LessTif
+	  XmIm.c that I wrote ages ago. Works in LessTif, not
+	  yet in the Xlib version of oleo (yet). Sigh.
 
 Sat 16 Oct 01:08:54 1999, Danny
-********* io-x11.c i18n
 	* Printing.
 	* Call MotifSelectGlobal() with an initialized parameter.
 	* Make the documentation available on
