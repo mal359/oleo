@@ -73,18 +73,18 @@ cell (row, col, dowhat, p)
 
   static struct func cell_funs[] =
   {
-    {"row", TYP_INT},
-    {"column", TYP_INT},
-    {"width", TYP_INT},
-    {"lock", TYP_STR},
-    {"protection", TYP_STR},
-    {"justify", TYP_STR},
-    {"alignment", TYP_STR},
-    {"fmt", TYP_STR},
-    {"format", TYP_STR},
-    {"type", TYP_STR},
-    {"formula", TYP_STR},
-    {"value", 0},
+    {"row", TYP_INT},		/* 1 */
+    {"column", TYP_INT},	/* 2 */
+    {"width", TYP_INT},		/* 3 */
+    {"lock", TYP_STR},		/* 4 */
+    {"protection", TYP_STR},	/* 5 */
+    {"justify", TYP_STR},	/* 6 */
+    {"alignment", TYP_STR},	/* 7 */
+    {"fmt", TYP_STR},		/* 8 */
+    {"format", TYP_STR},	/* 9 */
+    {"type", TYP_STR},		/* 10 */
+    {"formula", TYP_STR},	/* 11 */
+    {"value", 0},		/* 12 */
     {0, 0}
   };
 
@@ -647,3 +647,8 @@ struct function cells_funs[] =
 
   {0, 0, "", 0, 0},
 };
+
+int init_cells_function_count(void) 
+{
+        return sizeof(cells_funs) / sizeof(struct function) - 1;
+}

@@ -8,11 +8,11 @@
 
 
 @menu
-* New "at" functions::            Adding new "at" Functions
+* New at functions::            Adding new at Functions
 @end menu
 
-@node New "at" functions,  , Extending Oleo, Extending Oleo
-@section Adding new "at" Functions
+@node New at functions,  , Extending Oleo, Extending Oleo
+@section Adding new at Functions
 
 It is easy to add new @@ functions.  Suppose that I want to add 
 a greatest common divisor function.  Here is a definition:
@@ -68,6 +68,13 @@ struct function int_funs[] =
 @};
 @end example
 
+Oleo also (as of release 1.99.6) requires a function in each file to figure
+out how many new user accessible functions it contains.
+Look in busi.c for a simple example (init_busi_function_count) which will
+probably work for your new functions as well.
+As you can see the function simply takes information from the above array
+and offers it to another Oleo module.
+
 Finally, we need some standard headers and defines.  These are probably
 not all necessary.
 
@@ -113,9 +120,8 @@ We declare the new class of functions:
 extern struct function int_funs[];
 @end example
 and instruct the compiler to read them by adding the class to
-the appropriate structure.  There are a few unfortunate hacks to clean up.
+the appropriate structure.
 @example
-int n_usr_funs = 5;
 static struct function *__usr_funs[] =
 @{
   date_funs,
@@ -124,21 +130,40 @@ static struct function *__usr_funs[] =
   cells_funs,
   int_funs,
 @};
-static int __usr_n_funs[] =	
-@{				
-  32, 18, 11, 10,1		
-@};				
+
+extern int init_int_function_count(void);
+
+static init_function_count init_function_counts[] = @{
+        &init_date_function_count,
+        &init_busi_function_count,
+        &init_string_function_count,
+        &init_cells_function_count,
+        &init_int_function_count
+        /* Add something here */
+@};
 
 @end example
 
-@item Makefile
+@item Makefile.am
 
-The file @file{my-new-functions.o} needs to be added to the list of
-object files.  One possibility is this:
+The file @file{my-new-functions.c} needs to be added to the list of
+source files. Editing the file src/Makefile.am and adding to the
+list of files named oleo_SOURCES will do :
+
 @example
-objs = my-new-functions.o \
- parse.tab.o byte-compile.o eval.o ref.o \
- ...
+oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
+ decompile.c sort.c regions.c utils.c lists.c\
+ io-term.c io-utils.c io-x11.c window.c io-edit.c\
+ line.c key.c format.c funcs.c \
+ hash.c ir.c io-curses.c font.c display.c init.c \
+ sylk.c oleofile.c sc.c list.c busi.c string.c cells.c \
+ cmd.c basic.c args.c \
+ stub.c input.c info.c help.c \
+ graph.c plot.c \
+ forminfo.c posixtm.y date.c xrdb.c \
+ $(GUI) $(XBSRC) $(MYSQL) \
+ print.c postscript.c pcl.c epson.c prtext.c \
+ my-new-functions.c
 @end example
 @end table
 

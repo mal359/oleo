@@ -541,26 +541,32 @@ do_compbal (p)
 
 struct function busi_funs[] =
 {
-  {C_FN2, X_A2, "RF", do_npv, "npv"},
-  {C_FN2, X_A2, "RF", do_irr, "irr"},
+  {C_FN2, X_A2, "RF", do_npv, "npv"},		/* 1 */
+  {C_FN2, X_A2, "RF", do_irr, "irr"},		/* 2 */
 
-  {C_FN3, X_A3, "FFF", do_pmt, "pmt"},
-  {C_FN3, X_A3, "FFF", do_pv, "pv"},
-  {C_FN3, X_A3, "FFF", do_fv, "fv"},
-  {C_FN3, X_A3, "FFF", do_rate, "rate"},
-  {C_FN3, X_A3, "FFF", do_term, "term"},
-  {C_FN3, X_A3, "FFF", do_cterm, "cterm"},
-  {C_FN3, X_A3, "FFF", do_sln, "sln"},
-  {C_FN3, X_A3, "FFF", do_anrate, "anrate"},
-  {C_FN3, X_A3, "FFF", do_anterm, "anterm"},
-  {C_FN3, X_A3, "FFF", do_compbal, "compbal"},
+  {C_FN3, X_A3, "FFF", do_pmt, "pmt"},		/* 3 */
+  {C_FN3, X_A3, "FFF", do_pv, "pv"},		/* 4 */
+  {C_FN3, X_A3, "FFF", do_fv, "fv"},		/* 5 */
+  {C_FN3, X_A3, "FFF", do_rate, "rate"},	/* 6 */
+  {C_FN3, X_A3, "FFF", do_term, "term"},	/* 7 */
+  {C_FN3, X_A3, "FFF", do_cterm, "cterm"},	/* 8 */
+  {C_FN3, X_A3, "FFF", do_sln, "sln"},		/* 9 */
+  {C_FN3, X_A3, "FFF", do_anrate, "anrate"},	/* 10 */
+  {C_FN3, X_A3, "FFF", do_anterm, "anterm"},	/* 11 */
+  {C_FN3, X_A3, "FFF", do_compbal, "compbal"},	/* 12 */
 
-  {C_FN4, X_A4, "FFFF", do_syd, "syd"},
-  {C_FN4, X_A4, "FFII", do_ddb, "ddb"},
-  {C_FN4, X_A4, "FFII", do_balance, "balance"},
-  {C_FN4, X_A4, "FFII", do_paidint, "paidint"},
-  {C_FN4, X_A4, "FFII", do_kint, "kint"},
-  {C_FN4, X_A4, "FFII", do_kprin, "kprin"},
+  {C_FN4, X_A4, "FFFF", do_syd, "syd"},		/* 13 */
+  {C_FN4, X_A4, "FFII", do_ddb, "ddb"},		/* 14 */
+  {C_FN4, X_A4, "FFII", do_balance, "balance"},	/* 15 */
+  {C_FN4, X_A4, "FFII", do_paidint, "paidint"},	/* 16 */
+  {C_FN4, X_A4, "FFII", do_kint, "kint"},	/* 17 */
+  {C_FN4, X_A4, "FFII", do_kprin, "kprin"},	/* 18 */
 
   {0, 0, "", 0, 0},
 };
+
+int init_busi_function_count(void) 
+{
+        return sizeof(busi_funs) / sizeof(struct function) - 1;
+}
+

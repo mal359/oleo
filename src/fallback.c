@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.15 1999/06/04 08:01:59 danny Exp $
+ *  $Id: fallback.c,v 1.16 1999/07/22 22:13:39 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -136,6 +136,17 @@ char *fallback[] = {
 	"*graphmenu.puprintpie.labelString:	Print Pie Chart",
 	"*graphmenu.puprintbar.labelString:	Print Bar Chart",
 	"*graphmenu.puprintxy.labelString:	Print XY Chart",
+/* Database */
+	"*dbcascade.labelString:		Database",
+	"*dbcascade.mnemonic:			D",
+	"*configuremysql.labelString:		Configure MySQL Access",
+	"*dbmenu*readmysql.labelString:		Read MySQL",
+	"*dbmenu*readxbase.labelString:		Read Xbase",
+	"*dbhostlabel.labelString:		DBMS Server Host",
+	"*dbnamelabel.labelString:		Database Name",
+/* Test */
+	"*testcascade.labelString:		Test",
+	"*testcascade.mnemonic:			T",
 /* Help */
 	"*helpcascade.labelString:	Help",
 	"*about.labelString:		About Oleo",

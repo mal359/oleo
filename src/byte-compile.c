@@ -52,6 +52,8 @@ extern struct function date_funs[];
 extern struct function busi_funs[];
 extern struct function string_funs[];
 extern struct function cells_funs[];
+extern struct function mysql_functions[];
+
 extern char *instr;
 extern int parse_error;
 extern struct node *parse_return;
@@ -201,21 +203,52 @@ struct function the_funs[] =
 
 };
 
-int n_usr_funs = 4;
+/*
+ * This is the place where you can add extra functions
+ */
 static struct function *__usr_funs[] =
 {
-  date_funs,
-  busi_funs,
-  string_funs,
-  cells_funs,
+	date_funs,
+	busi_funs,
+	string_funs,
+	cells_funs,
+	mysql_functions,
+	/* Add something here */
 };
-static int __usr_n_funs[] =	/* Dear hack, this is stupid. never do this. */
-{				/* Maintaining this is a big waste of time. */
-  32, 18, 11, 12		/* Grrr. */
-};				/* I mean it. */
+
+/*
+ * A small function in each module tells us how many functions
+ * it defines.
+ */
+extern int init_date_function_count(void);
+extern int init_busi_function_count(void);
+extern int init_string_function_count(void);
+extern int init_cells_function_count(void);
+extern int init_mysql_function_count(void);
+/* Add something here */
+
+typedef int (*init_function_count)(void);
+
+static init_function_count init_function_counts[] = {
+	&init_date_function_count,
+	&init_busi_function_count,
+	&init_string_function_count,
+	&init_cells_function_count,
+	&init_mysql_function_count
+	/* Add something here */
+};
+
+/* Determine how many groups of functions we have */
+int n_usr_funs = sizeof(init_function_counts) / sizeof(init_function_count);
+
+/*
+ * This is an array containing the number of functions in each group.
+ * It is allocated and initialised in init_mem() below.
+ * Previous versions of Oleo required manual maintenance of this.
+ */
+int *usr_n_funs = NULL;
 
 struct function **usr_funs = __usr_funs;
-int *usr_n_funs = __usr_n_funs;
 
 /* ... A whole huge empty space, then ... */
 struct function skip_funs[] =
@@ -229,7 +262,12 @@ struct function skip_funs[] =
 void
 init_mem ()
 {
-  int n;
+  int n, i;
+
+  /* Initialise counters */
+  usr_n_funs = (int *)calloc(n_usr_funs, sizeof(int));
+  for (i=0; i<n_usr_funs; i++)
+    usr_n_funs[i] = init_function_counts[i]();
 
   parse_hash = hash_new ();
   hash_insert (parse_hash, the_funs[F_IF].fn_str, &the_funs[F_IF]);

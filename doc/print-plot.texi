@@ -62,7 +62,7 @@ not set, and you want to print the region A1.C20 to the file
 If the mark had been set so that the region between mark and the current
 cell is A1.C20, then you only need type
 @example
-             @kbd{M-C-p a}  /tmp/myfile.tex @key{RET}
+             @kbd{M-C-p l}  /tmp/myfile.tex @key{RET}
 @end example
 
 @item M-C-p p p

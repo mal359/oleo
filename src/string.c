@@ -339,20 +339,24 @@ do_strstr (p)
 }
 
 struct function string_funs[] = {
-{ C_FN1,	X_A1,	"S",    do_len,		"len" },
-{ C_FN3,	X_A3,	"SSI",  do_strstr,	"find" },
+{ C_FN1,	X_A1,	"S",    do_len,		"len" },	/* 1 */
+{ C_FN3,	X_A3,	"SSI",  do_strstr,	"find" },	/* 2 */
 
-{ C_FN1,	X_A1,	"S",    do_up_str,	"strupr" },
-{ C_FN1,	X_A1,	"S",    do_dn_str,	"strlwr" },
-{ C_FN1,	X_A1,	"S",    do_cp_str,	"strcap" },
-{ C_FN1,	X_A1,	"S",    do_trim_str,	"trim" },
+{ C_FN1,	X_A1,	"S",    do_up_str,	"strupr" },	/* 3 */
+{ C_FN1,	X_A1,	"S",    do_dn_str,	"strlwr" },	/* 4 */
+{ C_FN1,	X_A1,	"S",    do_cp_str,	"strcap" },	/* 5 */
+{ C_FN1,	X_A1,	"S",    do_trim_str,	"trim" },	/* 6 */
 
-{ C_FN3,	X_A3,	"IIS",  do_substr,	"substr" },
-{ C_FN3,	X_A3,	"SII",  do_mid,		"mid" },
+{ C_FN3,	X_A3,	"IIS",  do_substr,	"substr" },	/* 7 */
+{ C_FN3,	X_A3,	"SII",  do_mid,		"mid" },	/* 8 */
 
-{ C_FN2,	X_A2,	"SI",   do_repeat,	"repeat" },
-{ C_FNN,	X_AN,	"EEEE", do_concat,	"concat" },
-{ C_FNN,	X_AN,	"SIIS", do_edit,	"edit" },
+{ C_FN2,	X_A2,	"SI",   do_repeat,	"repeat" },	/* 9 */
+{ C_FNN,	X_AN,	"EEEE", do_concat,	"concat" },	/* 10 */
+{ C_FNN,	X_AN,	"SIIS", do_edit,	"edit" },	/* 11 */
 { 0,		0,	{0},	0,		0 }
 };
 
+int init_string_function_count(void) 
+{
+        return sizeof(string_funs) / sizeof(struct function) - 1;
+}

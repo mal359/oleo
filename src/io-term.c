@@ -74,6 +74,11 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "panic.h"
 #endif
 
+/*
+ * The ultimate global variable
+ */
+struct OleoGlobal *Global = NULL;
+
 /* This variable is non-zero if the spreadsheet has been changed in any way */ 
 int modified = 0;
 

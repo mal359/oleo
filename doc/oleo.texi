@@ -6,9 +6,9 @@
 @defcodeindex cm
 @c %**end of header
 
-@set version 1.6.12
-@set update-date December 23 1998
-@set update-month December 1998
+@set version 1.99.6
+@set update-date July 21 1999
+@set update-month July 1999
 
 @clear smallbook
 
@@ -116,6 +116,7 @@ means complete, nor necessarily accurate for that matter.
 * Extending Oleo::
 * Reporting Bugs::
 * Motif::
+* Database Access::
 * Key Index::
 * Command Index::
 * Function Index::
@@ -138,6 +139,7 @@ means complete, nor necessarily accurate for that matter.
 @include interface.texi
 @include bugs.texi
 @include motif.texi
+@include dbms.texi
 
 @page
 @node   Key Index, Command Index, Top, Top

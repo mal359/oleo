@@ -1,10 +1,16 @@
-$Id: TODO,v 1.29 1999/07/10 07:38:13 danny Exp $
+$Id: TODO,v 1.30 1999/07/22 22:13:27 danny Exp $
 
 TODO's:
 
+* Sorting
+	(todo) implement an interface that'll allow us to call external
+		sorting and such
+	(todo) replace our own sorting function by the standard one using
+		the interface described above
+
 * Databases
 	(done) Simplistic interface to Xbase
-	(busy) Simplistic interface to MySQL
+	(done) Simplistic interface to MySQL
 	(todo) Design higher level interface to DBMS API's
 	(todo) Hook up Xbase and MySQL to higher level interface.
 

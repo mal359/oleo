@@ -1,4 +1,4 @@
-@node Motif, , Reporting Bugs, Top
+@node Motif, Database Access, Reporting Bugs, Top
 @chapter A Motif Graphical User Interface for Oleo
 
 @menu

@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.44 1999/07/10 07:38:19 danny Exp $
+ *  $Id: io-motif.c,v 1.45 1999/07/22 22:13:40 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.44 1999/07/10 07:38:19 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.45 1999/07/22 22:13:40 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -67,6 +67,10 @@ static char rcsid[] = "$Id: io-motif.c,v 1.44 1999/07/10 07:38:19 danny Exp $";
 #endif
 #include "oleo_plot.h"
 
+#ifdef	HAVE_LIBMYSQLCLIENT
+#include <mysql/mysql_version.h>
+#endif
+
 #include "global.h"
 #include "utils.h"
 #include "io-generic.h"
@@ -98,11 +102,12 @@ static char rcsid[] = "$Id: io-motif.c,v 1.44 1999/07/10 07:38:19 danny Exp $";
 XtAppContext app;
 Widget	toplevel, splash, SplashShell, plot;
 Widget	mw, mat = NULL, mb, filemenu, editmenu, stylemenu,
-	optionsmenu, helpmenu, graphmenu;
+	optionsmenu, helpmenu, graphmenu, dbmenu, testmenu;
 Widget	msgtext = NULL, statustf = NULL, formulatf = NULL;
 Widget	fsd = NULL;
 Widget	hd, html = NULL, gs = NULL;
 Widget	FormatD = NULL;
+Widget	MySQLDialog = NULL;
 Widget	PrintDialog = NULL;
 Widget	DefaultFileDialog, DefaultFileShell = NULL;
 Widget	ConfigureGraphNotebook;
@@ -3487,6 +3492,121 @@ void FormatsDialog(Widget w, XtPointer client, XtPointer call)
 
 /****************************************************************
  *								*
+ *		Database Interaction				*
+ *								*
+ ****************************************************************/
+void
+DoMySQLRead(Widget w, XtPointer client, XtPointer call)
+{
+}
+
+void
+DoXbaseRead(Widget w, XtPointer client, XtPointer call)
+{
+}
+
+void
+MySQLDialogOk(Widget w, XtPointer client, XtPointer call)
+{
+}
+
+void
+ConfigureMySQLDialogReset(Widget w)
+{
+}
+
+void
+CreateConfigureMySQLDialog(Widget parent)
+{
+	Widget	form, l, t;
+
+	form = XtVaCreateManagedWidget("form", xmFormWidgetClass,
+		parent,
+		NULL);
+	XtManageChild(form);
+
+	l = XtVaCreateManagedWidget("dbhostlabel", xmLabelGadgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_FORM,
+			XmNtopOffset,		10,
+			XmNleftAttachment,	XmATTACH_FORM,
+			XmNleftOffset,		10,
+			XmNrightAttachment,	XmATTACH_NONE,
+			XmNbottomAttachment,	XmATTACH_NONE,
+		NULL);
+
+	t = XtVaCreateManagedWidget("dbhosttf", xmTextFieldWidgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_FORM,
+			XmNtopOffset,		10,
+			XmNleftAttachment,	XmATTACH_WIDGET,
+			XmNleftOffset,		10,
+			XmNleftWidget,		l,
+			XmNrightAttachment,	XmATTACH_FORM,
+			XmNrightOffset,		10,
+			XmNbottomAttachment,	XmATTACH_NONE,
+		NULL);
+
+	l = XtVaCreateManagedWidget("dbnamelabel", xmLabelGadgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_WIDGET,
+			XmNtopOffset,		10,
+			XmNtopWidget,		t,
+			XmNleftAttachment,	XmATTACH_FORM,
+			XmNleftOffset,		10,
+			XmNrightAttachment,	XmATTACH_NONE,
+			XmNbottomAttachment,	XmATTACH_NONE,
+		NULL);
+
+	t = XtVaCreateManagedWidget("dbnametf", xmTextFieldWidgetClass,
+		form,
+			XmNtopAttachment,	XmATTACH_WIDGET,
+			XmNtopOffset,		10,
+			XmNtopWidget,		t,
+			XmNleftAttachment,	XmATTACH_WIDGET,
+			XmNleftOffset,		10,
+			XmNleftWidget,		l,
+			XmNrightAttachment,	XmATTACH_FORM,
+			XmNrightOffset,		10,
+			XmNbottomAttachment,	XmATTACH_NONE,
+		NULL);
+}
+
+void
+ConfigureMySQL(Widget w, XtPointer client, XtPointer call)
+{
+	Widget	ok, cancel, help, tf;
+	int	c = (int)client;
+
+	if (! MySQLDialog) {
+		MySQLDialog = XmCreateTemplateDialog(mw, "mySQLDialog",
+			NULL, 0);
+		CreateConfigureMySQLDialog(MySQLDialog);
+
+		ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass,
+			MySQLDialog,
+			NULL);
+		cancel = XtVaCreateManagedWidget("cancel",
+			xmPushButtonGadgetClass, MySQLDialog,
+			NULL);
+		help = XtVaCreateManagedWidget("help", xmPushButtonGadgetClass,
+			MySQLDialog,
+			NULL);
+
+		XtAddCallback(ok, XmNactivateCallback, MySQLDialogOk, NULL);
+		XtAddCallback(help, XmNactivateCallback, helpUsingCB,
+			(XtPointer)"#HelpMySQL");
+	}
+
+	ConfigureMySQLDialogReset(MySQLDialog);
+	XtManageChild(MySQLDialog);
+}
+
+
+
+
+/****************************************************************
+ *								*
  *		Build Motif GUI					*
  *								*
  ****************************************************************/
@@ -4015,6 +4135,51 @@ GscBuildMainWindow(Widget parent)
 		optionsmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, none, NULL);
+
+	/*
+	 * Database Access
+	 */
+	dbmenu = XmCreatePulldownMenu(mb, "dbmenu", NULL, 0);
+	XtManageChild(dbmenu);
+
+	w = XtVaCreateManagedWidget("dbcascade", xmCascadeButtonGadgetClass,
+		mb,
+			XmNsubMenuId,	dbmenu,
+		NULL);
+
+#ifdef	HAVE_LIBMYSQLCLIENT
+	w = XtVaCreateManagedWidget("configuremysql", xmPushButtonGadgetClass,
+		dbmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, ConfigureMySQL, NULL);
+
+	w = XtVaCreateManagedWidget("readmysql", xmPushButtonGadgetClass,
+		dbmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, DoMySQLRead, NULL);
+#endif
+
+#ifdef	HAVE_LIBXBASE
+	w = XtVaCreateManagedWidget("readxbase", xmPushButtonGadgetClass,
+		dbmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, DoXbaseRead, NULL);
+#endif
+
+	/*
+	 * Add test code here
+	 */
+#ifdef	HAVE_TEST
+	testmenu = XmCreatePulldownMenu(mb, "testmenu", NULL, 0);
+	XtManageChild(testmenu);
+
+	w = XtVaCreateManagedWidget("testcascade", xmCascadeButtonGadgetClass,
+		mb,
+			XmNsubMenuId,	testmenu,
+		NULL);
+
+
+#endif	/* HAVE_TEST */
 
 	/*
 	 *	Help Menu.
@@ -4676,7 +4841,7 @@ void versionCB(Widget w, XtPointer client, XtPointer call)
 	XmStringFree(xms1);
 	XmStringFree(xms2);
 
-#if	HAVE_XmHTML_H
+#ifdef	HAVE_XmHTML_H
 	xms1 = xms;
 	xms2 = XmStringCreateLtoR("\n  " XmHTMLVERSION_STRING, XmFONTLIST_DEFAULT_TAG);
 	xms = XmStringConcat(xms1, xms2);
@@ -4684,8 +4849,17 @@ void versionCB(Widget w, XtPointer client, XtPointer call)
 	XmStringFree(xms2);
 #endif
 
-#if	HAVE_SciPlot_H
+#ifdef	HAVE_SciPlot_H
 	sprintf(xbae, "\n  SciPlot %f", _SCIPLOT_WIDGET_VERSION);
+	xms1 = xms;
+	xms2 = XmStringCreateLtoR(xbae, XmFONTLIST_DEFAULT_TAG);
+	xms = XmStringConcat(xms1, xms2);
+	XmStringFree(xms1);
+	XmStringFree(xms2);
+#endif
+
+#ifdef	HAVE_LIBMYSQLCLIENT
+	sprintf(xbae, "\n  MySQL %s", MYSQL_SERVER_VERSION);
 	xms1 = xms;
 	xms2 = XmStringCreateLtoR(xbae, XmFONTLIST_DEFAULT_TAG);
 	xms = XmStringConcat(xms1, xms2);

@@ -1,4 +1,22 @@
-$Id: ChangeLog,v 1.97 1999/07/12 16:15:11 danny Exp $
+$Id: ChangeLog,v 1.98 1999/07/22 22:13:26 danny Exp $
+
+Fri 23 Jul 00:13:42 1999, Danny Backx
+	* src/mysql.c contains a simple attempt at getting
+	  SQL database data into the spreadsheet.
+	  We need to figure out a way to handle recompute on
+	  this - this should probably only happen when the user
+	  says so.
+	* Automated maintenance of the arrays containing
+	  functions in byte-compile.c - this was a manual process
+	  and the counts were wrong !
+	* Removed the double quotes from the node explaining at
+	  functions. Quotes apparently aren't allowed in a node name.
+	* Added a documentation file about database access.
+	  Not much content though.
+	* A start at a place to store global variables, in global.h .
+	  This should help making Oleo multi-document, multi-window
+	  and who knows what else.
+	* Fixup oleo_web.html
 
 Mon 12 Jul 18:02:51 1999, Danny Backx
 	* Release Oleo 1.99.5

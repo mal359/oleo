@@ -274,34 +274,39 @@ do_strftime (p)
 
 struct function date_funs[] =
 {
-  {C_FN3, X_A3, "III", do_hms_to_time, "hms_to_time"},
-  {C_FN4, X_A4, "IIII", do_dhms_to_time, "dhms_to_time"},
-  {C_FN1, X_A1, "I", do_time_to_d, "time_to_d"},
-  {C_FN1, X_A1, "I", do_time_to_h, "time_to_h"},
-  {C_FN1, X_A1, "I", do_time_to_m, "time_to_m"},
-  {C_FN1, X_A1, "I", do_time_to_s, "time_to_s"},
-  {C_FN3, X_A3, "III", do_ymd, "ymd"},
-  {C_FN4, X_A4, "IIII", do_ymd_dst, "ymd_dst"},
-  {C_FN1, X_A1, "I", do_local_year, "local_year"},
-  {C_FN1, X_A1, "I", do_local_month, "local_month"},
-  {C_FN1, X_A1, "I", do_local_date, "local_date"},
-  {C_FN1, X_A1, "I", do_local_hour, "local_hour"},
-  {C_FN1, X_A1, "I", do_local_min, "local_min"},
-  {C_FN1, X_A1, "I", do_local_sec, "local_sec"},
-  {C_FN1, X_A1, "I", do_local_isdst, "local_isdst"},
-  {C_FN1, X_A1, "I", do_local_yday, "local_yday"},
-  {C_FN1, X_A1, "I", do_local_wday, "local_wday"},
-  {C_FN1, X_A1, "I", do_gmt_year, "gmt_year"},
-  {C_FN1, X_A1, "I", do_gmt_month, "gmt_month"},
-  {C_FN1, X_A1, "I", do_gmt_date, "gmt_date"},
-  {C_FN1, X_A1, "I", do_gmt_hour, "gmt_hour"},
-  {C_FN1, X_A1, "I", do_gmt_min, "gmt_min"},
-  {C_FN1, X_A1, "I", do_gmt_sec, "gmt_sec"},
-  {C_FN1, X_A1, "I", do_gmt_isdst, "gmt_isdst"},
-  {C_FN1, X_A1, "I", do_gmt_yday, "gmt_yday"},
-  {C_FN1, X_A1, "I", do_gmt_wday, "gmt_wday"},
-  {C_FN1, X_A1, "S", do_get_date, "get_date"},
-  {C_FN1, X_A1, "S", do_posix_date, "posix_date"},
-  {C_FN2, X_A2, "SI", do_strftime, "strftime"},
+  {C_FN3, X_A3, "III", do_hms_to_time, "hms_to_time"},		/* 1 */
+  {C_FN4, X_A4, "IIII", do_dhms_to_time, "dhms_to_time"},	/* 2 */
+  {C_FN1, X_A1, "I", do_time_to_d, "time_to_d"},		/* 3 */
+  {C_FN1, X_A1, "I", do_time_to_h, "time_to_h"},		/* 4 */
+  {C_FN1, X_A1, "I", do_time_to_m, "time_to_m"},		/* 5 */
+  {C_FN1, X_A1, "I", do_time_to_s, "time_to_s"},		/* 6 */
+  {C_FN3, X_A3, "III", do_ymd, "ymd"},				/* 7 */
+  {C_FN4, X_A4, "IIII", do_ymd_dst, "ymd_dst"},			/* 8 */
+  {C_FN1, X_A1, "I", do_local_year, "local_year"},		/* 9 */
+  {C_FN1, X_A1, "I", do_local_month, "local_month"},		/* 10 */
+  {C_FN1, X_A1, "I", do_local_date, "local_date"},		/* 11 */
+  {C_FN1, X_A1, "I", do_local_hour, "local_hour"},		/* 12 */
+  {C_FN1, X_A1, "I", do_local_min, "local_min"},		/* 13 */
+  {C_FN1, X_A1, "I", do_local_sec, "local_sec"},		/* 14 */
+  {C_FN1, X_A1, "I", do_local_isdst, "local_isdst"},		/* 15 */
+  {C_FN1, X_A1, "I", do_local_yday, "local_yday"},		/* 16 */
+  {C_FN1, X_A1, "I", do_local_wday, "local_wday"},		/* 17 */
+  {C_FN1, X_A1, "I", do_gmt_year, "gmt_year"},			/* 18 */
+  {C_FN1, X_A1, "I", do_gmt_month, "gmt_month"},		/* 19 */
+  {C_FN1, X_A1, "I", do_gmt_date, "gmt_date"},			/* 20 */
+  {C_FN1, X_A1, "I", do_gmt_hour, "gmt_hour"},			/* 21 */
+  {C_FN1, X_A1, "I", do_gmt_min, "gmt_min"},			/* 22 */
+  {C_FN1, X_A1, "I", do_gmt_sec, "gmt_sec"},			/* 23 */
+  {C_FN1, X_A1, "I", do_gmt_isdst, "gmt_isdst"},		/* 24 */
+  {C_FN1, X_A1, "I", do_gmt_yday, "gmt_yday"},			/* 25 */
+  {C_FN1, X_A1, "I", do_gmt_wday, "gmt_wday"},			/* 26 */
+  {C_FN1, X_A1, "S", do_get_date, "get_date"},			/* 27 */
+  {C_FN1, X_A1, "S", do_posix_date, "posix_date"},		/* 28 */
+  {C_FN2, X_A2, "SI", do_strftime, "strftime"},			/* 29 */
   {0, 0, 0, 0}
 };
+
+int init_date_function_count(void)
+{
+	return sizeof(date_funs) / sizeof(struct function) - 1;
+}

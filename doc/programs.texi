@@ -92,7 +92,7 @@ Lines may be continued by preceeding the final newline with an
 odd number of `\\' characters.  One backslash and the newline will,
 be discarded.
 
-The commands in the next file preform some arithmetic operations on an
+The commands in the next file perform some arithmetic operations on an
 already loaded spreadsheet.  Note that the division is protected against
 division by zero.
 @example

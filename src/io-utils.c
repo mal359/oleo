@@ -1461,7 +1461,7 @@ read_file_generic(FILE *fp, int ismerge, char *format, char *name)
 			oleo_read_file(fp, ismerge);
 	}
 
-	recalculate();
+	recalculate(1);
 }
 
 void
