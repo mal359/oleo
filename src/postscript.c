@@ -1,5 +1,5 @@
 /*
- *  $Id: postscript.c,v 1.5 1999/05/12 19:48:25 danny Exp $
+ *  $Id: postscript.c,v 1.6 1999/07/10 07:38:22 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -28,7 +28,7 @@
  * There shouldn't be much spreadsheet functionality here...
  */
 
-static char rcsid[] = "$Id: postscript.c,v 1.5 1999/05/12 19:48:25 danny Exp $";
+static char rcsid[] = "$Id: postscript.c,v 1.6 1999/07/10 07:38:22 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -49,6 +49,24 @@ static char rcsid[] = "$Id: postscript.c,v 1.5 1999/05/12 19:48:25 danny Exp $";
  */
 extern float default_pswid, default_pshgt;
 
+void 
+put_ps_string (char *str, FILE *fp)
+{
+  fputc ('(', fp);
+  while (*str)
+    {
+      if (*str == ')')
+	fputs ("\\)", fp);
+      else if (*str == '(')
+	fputs ("\\(", fp);
+      else
+	fputc (*str, fp);
+      ++str;
+    }
+  fputc (')', fp);
+}
+
+#if 0
 static void 
 put_eps_header (struct display *dpy,
 		float scale, float wid, float hgt, FILE *fp)
@@ -71,23 +89,6 @@ put_eps_header (struct display *dpy,
     fprintf (fp, "%%%%CreationDate: %s\n", ctime (&the_record_of_the_time));
   }
   fputs ("%%EndComments\n", fp);
-}
-
-void 
-put_ps_string (char *str, FILE *fp)
-{
-  fputc ('(', fp);
-  while (*str)
-    {
-      if (*str == ')')
-	fputs ("\\)", fp);
-      else if (*str == '(')
-	fputs ("\\(", fp);
-      else
-	fputc (*str, fp);
-      ++str;
-    }
-  fputc (')', fp);
 }
 
 void 
@@ -515,6 +516,8 @@ psprint_region_cmd (struct rng *rng, FILE *fp)
   psprint_region (fp, rng, default_pswid, default_pshgt, 0);
 }
 
+#endif
+
 void PostScriptJobHeader(char *title, int npages, FILE *fp)
 {
 	fprintf(fp, "%%!PS-Adobe-3.0\n");
@@ -533,13 +536,25 @@ void PostScriptJobTrailer(int npages, FILE *fp)
 	fprintf(fp, "%%EOF\n");
 }
 
+/*
+ * These variables hold the position we're printing at
+ */
 static float	x, y;
+
+#define	INITIAL_X	10.0
+#define	INITIAL_Y	760.0
+/*
+ * 8 : too wide
+ * 6 : no margin between columns
+ * 7 : ??
+ */
+#define	MULTIPLY_WIDTH	7
 
 void PostScriptPageHeader(char *str, FILE *fp)
 {
 	fprintf(fp, "%%%%Page: %s\n", str);
-	x = 10.0;
-	y = 760.0;
+	x = INITIAL_X;
+	y = INITIAL_Y;
 }
 
 void PostScriptPageFooter(char *str, FILE *fp)
@@ -549,7 +564,7 @@ void PostScriptPageFooter(char *str, FILE *fp)
 
 void PostScriptField(char *str, int wid, int justify, int rightborder, FILE *fp)
 {
-	float	w = 8 * wid;
+	float	w = MULTIPLY_WIDTH * wid;
 
 	if (strlen(str)) {
 		fprintf(fp, "%3.1f %3.1f moveto ", x, y);
@@ -581,7 +596,7 @@ void PostScriptFont(char *family, char *slant, int size, FILE *fp)
 
 void PostScriptNewLine(int ht, FILE *fp)
 {
-	x = 10.0;
+	x = INITIAL_X;
 	y -= ht;
 }
 

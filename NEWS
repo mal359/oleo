@@ -74,7 +74,7 @@ three files from oleo's m4 directory (gettext.m4, lcmessage.m4, progtest.m4).
 We should probably remove them and the intl/ directory from GNU Oleo.
 
 If you want to build the Motif interface, you need :
-- Xbae widgets (http://xbae.syd.net.au)
+- Xbae widgets (http://www.xbae.syd.net.au)
 
 You probably better also have :
 - XmHTML widget if you want help (http://www.xs4all.nl/~ripley/XmHTML)

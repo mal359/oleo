@@ -1341,9 +1341,7 @@ read_file_and_run_hooks (FILE * fp, int ismerge, char * name)
 	char	*ext = NULL;
   if (!ismerge)
     {
-      if (current_filename)
-	free (current_filename);
-      current_filename = name ? ck_savestr (name) : 0;
+      FileSetCurrentFileName(name ? ck_savestr (name) : 0);
     }
 	ext = strrchr(name, '.');
 	if (! ext) {
@@ -1384,9 +1382,7 @@ toggle_load_hooks (int turn_on)
 void
 write_cmd (FILE *fp, char * name)
 {
-  if (current_filename)
-    free (current_filename);
-  current_filename = name ? ck_savestr (name) : 0;
+  FileSetCurrentFileName(name ? ck_savestr (name) : 0);
   (*write_file) (fp, 0);
   modified = 0;
 }

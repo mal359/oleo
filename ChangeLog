@@ -1,4 +1,12 @@
-$Id: ChangeLog,v 1.95 1999/06/20 07:27:39 danny Exp $
+$Id: ChangeLog,v 1.96 1999/07/10 07:38:11 danny Exp $
+
+Sat 10 Jul 09:40:13 1999, Danny Backx
+	* Work on PostScript printing.
+	* Further move a couple of global variables away.
+	* Add MySQL access file. As with printing, this and the
+	  xbase access functions probably require a higher level
+	  of interface inside of Oleo, with the xbase and MySQL
+	  stuff functioning as backends for that.
 
 Sun 20 Jun 09:29:24 1999, Danny Backx
 	* Fix a bug reading ranges. Some of the more exotic range

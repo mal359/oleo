@@ -1,11 +1,11 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.34 1999/06/04 08:01:57 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.35 1999/07/10 07:38:18 danny Exp $
 #
 localedir = $(prefix)/share/locale
 
 AUTOMAKE_OPTIONS = ../lib/ansi2knr dejagnu
 
-EXTRA_DIST=	xbase.cpp oleo_xb.h
+EXTRA_DIST=	xbase.cpp oleo_xb.h mysql.c
 
 bin_PROGRAMS = oleo
 
@@ -13,6 +13,12 @@ if UseMotif
 GUI = io-motif.c appres.c fallback.c oleo_icon.xpm
 else
 GUI =
+endif
+
+if HaveMySQL
+MYSQL = mysql.c
+else
+MYSQL =
 endif
 
 #
@@ -39,7 +45,8 @@ oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
  cmd.c basic.c args.c \
  stub.c input.c info.c help.c \
  graph.c plot.c \
- forminfo.c posixtm.y date.c xrdb.c $(GUI) $(XBSRC) \
+ forminfo.c posixtm.y date.c xrdb.c \
+ $(GUI) $(XBSRC) $(MYSQL) \
  print.c postscript.c pcl.c epson.c prtext.c
 
 if UseMotif

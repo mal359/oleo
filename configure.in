@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.61 1999/06/10 21:50:52 danny Exp $
+dnl $Id: configure.in,v 1.62 1999/07/10 07:38:13 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -246,6 +246,12 @@ dnl
 dnl GNU GSL (GNU Scientific Library)
 dnl
 AC_CHECK_LIB(gsl, gsl_error)
+
+dnl
+dnl MySQL client library ?
+dnl
+AC_CHECK_LIB(mysqlclient, mysql_connect)
+AM_CONDITIONAL(HaveMySQL, test x$ac_cv_lib_mysqlclient_mysql_connect = xyes)
 
 dnl
 dnl Checks for typedefs, structures, and compiler characteristics.

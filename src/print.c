@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.11 1999/06/20 07:27:43 danny Exp $
+ * $Id: print.c,v 1.12 1999/07/10 07:38:21 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -268,6 +268,7 @@ print_region_cmd (struct rng *print, FILE *fp)
 	int	print_width, print_height, totht, totwid,
 		ht, npages;
 	char	pg[32];
+	char	*title = NULL;
 
 	/* Figure out page width and height */
 	print_width = default_pswid;
@@ -290,8 +291,12 @@ print_region_cmd (struct rng *print, FILE *fp)
 	npages = ((print_height - 1 + totht) / print_height)
 		* ((print_width - 1 + totwid) / print_width);
 
+	/* Build title */
+	title = malloc(strlen(PACKAGE) + 20 + strlen(FileGetCurrentFileName()));
+	sprintf(title, "%s : '%s'", PACKAGE, FileGetCurrentFileName());
+
 	/* Start Printing */
-	CurrentPrintDriver->job_header("title (print_region_cmd)", npages, fp);
+	CurrentPrintDriver->job_header(title, npages, fp);
 	CurrentPrintDriver->paper_size(print_width, print_height, fp);
 
 	/* Set default font */

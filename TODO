@@ -1,6 +1,12 @@
-$Id: TODO,v 1.28 1999/06/20 07:27:40 danny Exp $
+$Id: TODO,v 1.29 1999/07/10 07:38:13 danny Exp $
 
 TODO's:
+
+* Databases
+	(done) Simplistic interface to Xbase
+	(busy) Simplistic interface to MySQL
+	(todo) Design higher level interface to DBMS API's
+	(todo) Hook up Xbase and MySQL to higher level interface.
 
 * Motif
 	(done) Handle interaction between formula editor and Xbae better.

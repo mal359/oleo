@@ -38,8 +38,6 @@ extern unsigned int alarm_active;	/* Whether or not the alarm matters. */
  */
 extern int topclear;
 
-extern char * current_filename;
-
 /* Has io_open_display been called? */
 extern int display_opened;
 

@@ -733,8 +733,8 @@ self_map_command (int c)
 void
 insert_current_filename (void)
 {
-  if (current_filename)
-    put_string (current_filename, strlen (current_filename));
+  if (FileGetCurrentFileName())
+    put_string(FileGetCurrentFileName(), strlen (FileGetCurrentFileName()));
 }
 
 

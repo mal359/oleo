@@ -1476,11 +1476,13 @@ fmt_get_format()
 
 static char	*current_file = NULL;
 
-void file_set_current(const char *s)
+void FileSetCurrentFileName(const char *s)
 {
 	if (current_file)
 		free(current_file);
-	current_file = strdup(s);
+	current_file = NULL;
+	if (s)
+		current_file = strdup(s);
 
 #if HAVE_MOTIF
 	if (using_motif)
@@ -1488,12 +1490,12 @@ void file_set_current(const char *s)
 #endif
 }
 
-char *file_get_current(void)
+char *FileGetCurrentFileName(void)
 {
 	return current_file;
 }
 
-void file_close_current(void)
+void FileCloseCurrentFile(void)
 {
 	if (current_file)
 		free(current_file);

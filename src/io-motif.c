@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.43 1999/06/10 21:50:58 danny Exp $
+ *  $Id: io-motif.c,v 1.44 1999/07/10 07:38:19 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.43 1999/06/10 21:50:58 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.44 1999/07/10 07:38:19 danny Exp $";
 
 #ifdef	HAVE_CONFIG_H
 #include "config.h"
@@ -1000,7 +1000,9 @@ void ConfigureGraphReset(Widget f)
 		return;
 	}
 
+#if XmVERSION > 1
 	XtVaSetValues(ConfigureGraphNotebook, XmNcurrentPageNumber, 1, NULL);
+#endif
 
 	r = graph_get_data(0);
 	s = range_name(&r);
@@ -2397,7 +2399,7 @@ void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 		return;
 	}
 
-	file_set_current(s);
+	FileSetCurrentFileName(s);
 
 	read_file_generic(fp, 0, fileformat, s);
 
@@ -2596,7 +2598,7 @@ void SaveAsCB(Widget w, XtPointer client, XtPointer call)
 void SaveCB(Widget w, XtPointer client, XtPointer call)
 {
 	char	*s;
-	if (s = file_get_current()) {
+	if (s = FileGetCurrentFileName()) {
 		ReallySave(s);
 		return;
 	}

@@ -95,8 +95,6 @@ unsigned int alarm_active = 1;
  */
 jmp_buf error_exception;
 
-char * current_filename = 0;
-
 /* These are the hooks used to do file-io. */
 void (*read_file) (FILE *, int) = oleo_read_file;
 void (*write_file) (FILE *, struct rng *) = oleo_write_file;
@@ -1030,7 +1028,7 @@ main (int argc, char **argv)
 	    read_file_and_run_hooks (fp, 0, argv[optind]);
 	  fclose (fp);
 	  command_line_file = 1;
-	  file_set_current(argv[optind]);
+	  FileSetCurrentFileName(argv[optind]);
     } else {
 	fprintf (stderr, _("Can't open %s: %s\n"), argv[optind], err_msg ());
 	io_info_msg(_("Can't open %s: %s\n"), argv[optind], err_msg ());
