@@ -1,5 +1,8 @@
 
-$Id: ChangeLog,v 1.158 2001/07/10 11:22:06 danny Exp $
+$Id: ChangeLog,v 1.159 2001/07/23 09:56:43 danny Exp $
+
+Mon Jul 23 11:58:19 CEST 2001, Danny Backx
+	* Link -lncurses when found.
 
 Tue Jul 10 13:15:36 CEST 2001, Danny Backx
 	* GSL 0.9 has -lgslcblas, not -lgslblas
