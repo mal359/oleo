@@ -19,10 +19,10 @@ xbae_includes=none
 xbae_libraries=none
 fi
 AC_ARG_WITH(Xbae-includes,
-[  --with-Xbae-includes=DIR    Motif include files are in DIR],
+[  --with-Xbae-includes=DIR     Xbae include files are in DIR],
 xbae_includes="$withval")
 AC_ARG_WITH(Xbae-libraries,
-[  --with-Xbae-libraries=DIR   Motif libraries are in DIR],
+[  --with-Xbae-libraries=DIR    Xbae libraries are in DIR],
 xbae_libraries="$withval")
 AC_MSG_CHECKING(for Xbae)
 #

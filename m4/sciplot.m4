@@ -10,7 +10,7 @@ AC_REQUIRE([AC_PATH_XTRA])
 sciplot_includes=
 sciplot_libraries=
 AC_ARG_WITH(SciPlot,
-[  --without-SciPlot         do not use SciPlot widgets])
+[  --without-SciPlot            do not use SciPlot widgets])
 dnl Treat --without-SciPlot like
 dnl --without-SciPlot-includes --without-SciPlot-libraries.
 if test "$with_SciPlot" = "no"
@@ -19,10 +19,10 @@ sciplot_includes=none
 sciplot_libraries=none
 fi
 AC_ARG_WITH(SciPlot-includes,
-[  --with-SciPlot-includes=DIR    Motif include files are in DIR],
+[  --with-SciPlot-includes=DIR  SciPlot include files are in DIR],
 sciplot_includes="$withval")
 AC_ARG_WITH(SciPlot-libraries,
-[  --with-SciPlot-libraries=DIR   Motif libraries are in DIR],
+[  --with-SciPlot-libraries=DIR SciPlot libraries are in DIR],
 sciplot_libraries="$withval")
 AC_MSG_CHECKING(for SciPlot)
 #

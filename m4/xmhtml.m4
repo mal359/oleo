@@ -10,7 +10,7 @@ AC_REQUIRE([AC_PATH_XTRA])
 xmhtml_includes=
 xmhtml_libraries=
 AC_ARG_WITH(XmHTML,
-[  --without-XmHTML         do not use XmHTML widgets])
+[  --without-XmHTML             do not use XmHTML widgets])
 dnl Treat --without-XmHTML like
 dnl --without-XmHTML-includes --without-XmHTML-libraries.
 if test "$with_XmHTML" = "no"
@@ -19,10 +19,10 @@ xmhtml_includes=none
 xmhtml_libraries=none
 fi
 AC_ARG_WITH(xmhtml-includes,
-[  --with-xmhtml-includes=DIR    Motif include files are in DIR],
+[  --with-xmhtml-includes=DIR   XmHTML include files are in DIR],
 xmhtml_includes="$withval")
 AC_ARG_WITH(xmhtml-libraries,
-[  --with-xmhtml-libraries=DIR   Motif libraries are in DIR],
+[  --with-xmhtml-libraries=DIR  XmHTML libraries are in DIR],
 xmhtml_libraries="$withval")
 AC_MSG_CHECKING(for XmHTML)
 #

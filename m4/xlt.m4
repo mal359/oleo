@@ -21,7 +21,7 @@ AC_REQUIRE([AC_FIND_MOTIF])
 xlt_includes=
 xlt_libraries=
 AC_ARG_WITH(xlt,
-[  --without-xlt         do not use Xlt widgets])
+[  --without-xlt                do not use Xlt widgets])
 dnl Treat --without-xlt like
 dnl --without-xlt-includes --without-xlt-libraries.
 if test "$with_xlt" = "no"
@@ -30,9 +30,9 @@ then
     xlt_libraries=no
 fi
 AC_ARG_WITH(xlt-includes,
-    [  --with-xlt-includes=DIR    Xlt include files are in DIR], xlt_includes="$withval")
+    [  --with-xlt-includes=DIR      Xlt include files are in DIR], xlt_includes="$withval")
 AC_ARG_WITH(xlt-libraries,
-    [  --with-xlt-libraries=DIR   Xlt libraries are in DIR], xlt_libraries="$withval")
+    [  --with-xlt-libraries=DIR     Xlt libraries are in DIR], xlt_libraries="$withval")
 if test "$xlt_includes" = "no" && test "$xlt_libraries" = "no"
 then
     have_xlt="no"
