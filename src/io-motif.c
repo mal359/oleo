@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.33 1999/03/16 22:57:24 danny Exp $
+ *  $Id: io-motif.c,v 1.34 1999/03/17 21:21:37 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.33 1999/03/16 22:57:24 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.34 1999/03/17 21:21:37 danny Exp $";
 
 #include "config.h"
 
@@ -55,7 +55,7 @@ static char rcsid[] = "$Id: io-motif.c,v 1.33 1999/03/16 22:57:24 danny Exp $";
 #endif
 #endif
 
-#ifdef	HAVE_XBASE_H
+#ifdef HAVE_LIBXBASE
 #include "oleo_xb.h"
 #endif
 
@@ -2100,7 +2100,7 @@ void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 
 	file_set_current(s);
 
-	read_file_generic(fp, 0, fileformat);
+	read_file_generic(fp, 0, fileformat, s);
 
 	if (fclose(fp) != 0) {
 		/* handle error */
@@ -3659,7 +3659,7 @@ GscBuildMainWindow(Widget parent)
 	w = XtVaCreateManagedWidget("loadxbase", xmPushButtonGadgetClass,
 		optionsmenu,
 		NULL);
-#ifdef	HAVE_XBASE_H
+#ifdef HAVE_LIBXBASE
 	XtAddCallback(w, XmNactivateCallback, ReadXbaseFile, NULL);
 #else
 	XtSetSensitive(w, False);

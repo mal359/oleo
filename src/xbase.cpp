@@ -1,9 +1,9 @@
 /*
- *  $Id: xbase.cpp,v 1.1 1998/10/24 21:56:19 danny Exp $
+ *  $Id: xbase.cpp,v 1.2 1999/03/17 21:21:39 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
- *  Copyright (C) 1998 by the Free Software Foundation, Inc.
+ *  Copyright (C) 1998-1999 by the Free Software Foundation, Inc.
  *  Written by Danny Backx <danny@gnu.org>.
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -23,10 +23,9 @@
 
 extern "C" {
 
-static char rcsid[] = "$Id: xbase.cpp,v 1.1 1998/10/24 21:56:19 danny Exp $";
+static char rcsid[] = "$Id: xbase.cpp,v 1.2 1999/03/17 21:21:39 danny Exp $";
 
 #include "config.h"
-#include <X11/Intrinsic.h>
 
 #ifdef	HAVE_LOCALE_H
 #include <locale.h>
@@ -38,27 +37,25 @@ static char rcsid[] = "$Id: xbase.cpp,v 1.1 1998/10/24 21:56:19 danny Exp $";
 #include "basic.h"
 #include "io-utils.h"
 #include "io-term.h"
-#include "io-motif.h"
 
 }
 
-#if defined(HAVE_XBASE_H) && defined(USE_XBASE)
+#if defined(HAVE_LIBXBASE)
 
 #include <stdio.h>
-#include "xbase.h"
+#include <xbase/xbase.h>
 
 void
-// ReadXbaseFile(Widget w, XtPointer client, XtPointer call)
-CppReadXbaseFile()
+CppReadXbaseFile(char *fn)
 {
-	char	*fn;
+//	char	*fn;
 	XBASE	x;
 	DBF	db(&x);
 	int	i, fc;
 	char	*r;
 
 //	fn = cell_value_string(curow, cucol, True);
-	fn = "/home/danny/LAND.DBF";
+//	fn = "/home/danny/LAND.DBF";
 
 	db.OpenDatabase(fn);
 	fc = db.FieldCount();
@@ -76,9 +73,9 @@ CppReadXbaseFile()
 }
 
 extern "C" {
-	void ReadXbaseFile(Widget w, XtPointer client, XtPointer call)
+	void ReadXbaseFile(char *name, int ismerge)
 	{
-		CppReadXbaseFile();
+		CppReadXbaseFile(name);
 	}
 }
 
@@ -104,4 +101,4 @@ main()
 	db.CloseDatabase();
 }
 #endif	/* TEST */
-#endif	/* HAVE_XBASE_H && USE_XBASE */
+#endif	/* HAVE_LIBXBASE */

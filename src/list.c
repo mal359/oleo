@@ -124,13 +124,15 @@ list_read_file (fp, ismerge)
 			new_value (row, col, &bptr[-1]);
 			eptr[1] = tchar;
 		}
-	      } else {
+	      } else if (eptr) {
 		bptr[-1] = '"';
 		eptr[0] = '"';
 		tchar = eptr[1];
 		eptr[1] = '\0';
 		new_value (row, col, &bptr[-1]);
 		eptr[1] = tchar;
+	      } else {
+		/* ??? FIX ME */
 	      }
 	    }
 	  else

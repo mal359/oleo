@@ -1338,35 +1338,21 @@ static char load_hooks_string[] = "load_hooks";
 void
 read_file_and_run_hooks (FILE * fp, int ismerge, char * name)
 {
+	char	*ext = NULL;
   if (!ismerge)
     {
       if (current_filename)
 	free (current_filename);
       current_filename = name ? ck_savestr (name) : 0;
     }
-#if 1
-  {
-	char	*ext = NULL;
 	ext = strrchr(name, '.');
-#if 1
 	if (! ext) {
-		read_file_generic(fp, ismerge, NULL);
+		read_file_generic(fp, ismerge, NULL, name);
 	} else {
 		ext++;
-		read_file_generic(fp, ismerge, ext);
+		read_file_generic(fp, ismerge, ext, name);
 	}
-#else
-	if (! ext) {
-		(*read_file)(fp, ismerge);
-	} else {
-		ext++;
-		read_file_generic(fp, ismerge, ext);
-	}
-#endif
-  }
-#else
-  (*read_file)(fp, ismerge);
-#endif
+
   if (run_load_hooks)
     {
       struct var * v;

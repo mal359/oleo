@@ -1366,25 +1366,32 @@ write_file_generic(FILE *fp, struct rng *rng, char *format)
 }
 
 int
-read_file_generic_2(FILE *fp, int ismerge, char *format)
+read_file_generic_2(FILE *fp, int ismerge, char *format, char *name)
 {
-	if (!stricmp ("oleo", format)) {
+	if (stricmp ("oleo", format) == 0) {
 		oleo_read_file(fp, ismerge);
-	} else if (!stricmp ("sylk", format)) {
+	} else if (stricmp ("sylk", format) == 0) {
 		sylk_a0 = 1;
 		sylk_read_file(fp, ismerge);
-	} else if (!stricmp ("sylk-noa0", format)) {
+	} else if (stricmp ("sylk-noa0", format) == 0) {
 		sylk_a0 = 0;
 		sylk_read_file(fp, ismerge);
-	} else if (!stricmp ("sc", format)) {
+	} else if (stricmp ("sc", format) == 0) {
 		sc_read_file(fp, ismerge);
-	} else if (!stricmp ("panic", format)) {
+	} else if (stricmp ("panic", format) == 0) {
 		panic_read_file(fp, ismerge);
-	} else if (!stricmp ("list", format)) {
+	} else if (stricmp ("list", format) == 0) {
 		list_read_file(fp, ismerge);
-	} else if (!stricmp("csv", format)) {
+	} else if (stricmp("csv", format) == 0) {
 		list_set_separator(',');
 		list_read_file(fp, ismerge);
+	} else if (stricmp("dbf", format) == 0) {
+#ifdef HAVE_LIBXBASE
+		ReadXbaseFile(name, ismerge);
+#else
+		io_error_msg ("Cannot read XBASE file (xbase not compiled into " PACKAGE ")");
+		return -1;
+#endif
 	} else {
 		return -1;
 	}
@@ -1392,11 +1399,11 @@ read_file_generic_2(FILE *fp, int ismerge, char *format)
 }
 
 void
-read_file_generic(FILE *fp, int ismerge, char *format)
+read_file_generic(FILE *fp, int ismerge, char *format, char *name)
 {
 	if (format == NULL) {
 		if (defaultformat)
-			(void) read_file_generic_2(fp, ismerge, defaultformat);
+			(void) read_file_generic_2(fp, ismerge, defaultformat, name);
 		else
 			oleo_read_file(fp, ismerge);
 
@@ -1405,8 +1412,8 @@ read_file_generic(FILE *fp, int ismerge, char *format)
 #if 0
 	fprintf(stderr, PACKAGE " read_file_generic : format %s\n", format);
 #endif
-	if (read_file_generic_2(fp, ismerge, format) != 0) {
-		if (defaultformat && read_file_generic_2(fp, ismerge, defaultformat) != 0)
+	if (read_file_generic_2(fp, ismerge, format, name) != 0) {
+		if (defaultformat && read_file_generic_2(fp, ismerge, defaultformat, name) != 0)
 			oleo_read_file(fp, ismerge);
 	}
 }

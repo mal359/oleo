@@ -1,5 +1,5 @@
 /*
- *  $Id: oleo_xb.h,v 1.1 1999/03/17 21:19:59 danny Exp $
+ *  $Id: oleo_xb.h,v 1.2 1999/03/17 21:21:39 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *

@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.28 1999/03/16 22:57:23 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.29 1999/03/17 21:21:36 danny Exp $
 #
 localedir = $(prefix)/share/locale
 
@@ -13,6 +13,12 @@ else
 GUI =
 endif
 
+if HaveXbase
+XBSRC=	xbase.cpp oleo_xb.h
+else
+XBSRC=
+endif
+
 oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
  decompile.c sort.c regions.c utils.c lists.c\
  io-term.c io-utils.c io-x11.c window.c io-edit.c\
@@ -22,7 +28,7 @@ oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
  cmd.c basic.c args.c \
  stub.c input.c info.c help.c \
  graph.c plot.c \
- forminfo.c posixtm.y date.c xrdb.c $(GUI)
+ forminfo.c posixtm.y date.c xrdb.c $(GUI) $(XBSRC)
 
 if UseMotif
 MYLD = @link_motif@ @link_xmhtml@ @link_xbae@ @link_sciplot@

@@ -43,7 +43,8 @@ Longer term or obsolete TODO's :
 
 * Import/Export Filters. (June 1/97 - JB)
  - Sylk may need fixing.
- - CSV would be nice (update DB 10/2/1999: LIST format can do this)
+ - CSV would be nice (DB 17/3/1999: LIST format can do this,
+	now also recognizes CSV file name suffix)
  - DBII or DBIII is useful.
  - Fixed width.
 

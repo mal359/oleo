@@ -1,4 +1,14 @@
 
+Wed 17 Mar 22:21:06 1999, Danny Backx
+	* Protect against crash when reading CSV file with list
+	  format using default (tab) separator.
+	* Add stuff for Xbase (again). Still crashes big time.
+	  You're advised not to use this.
+
+Wed 17 Mar 1999, Andreas Jaeger <aj@arthur.rhein-neckar.de>
+	* src/decompile.c (dbg_print_formula) remove strcpy declaration
+	  since it might be defined as a macro.
+
 Tue 16 Mar 23:56:50 1999, Danny Backx
 	* Add stuff to the top Makefile to automatically put the
 	  relevant files on the right *.gnu.org systems.
