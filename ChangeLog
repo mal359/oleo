@@ -1,4 +1,10 @@
 
+Fri 12 Mar 00:02:11 1999, Danny Backx
+	* Protect against NULL defaultformat (= a file format).
+	* Get oleo to understand reading files with .csv suffix.
+	  Now "oleo q110399.csv" works.
+	* Don't install stuff relative to exec_prefix, but to prefix.
+
 Wed 10 Mar 23:47:05 1999, Danny Backx
 	* Oleo 1.6.16
 	* Add an RPM spec file sent by Marc Zonzon.

@@ -1382,6 +1382,9 @@ read_file_generic_2(FILE *fp, int ismerge, char *format)
 		panic_read_file(fp, ismerge);
 	} else if (!stricmp ("list", format)) {
 		list_read_file(fp, ismerge);
+	} else if (!stricmp("csv", format)) {
+		list_set_separator(',');
+		list_read_file(fp, ismerge);
 	} else {
 		return -1;
 	}
@@ -1403,7 +1406,7 @@ read_file_generic(FILE *fp, int ismerge, char *format)
 	fprintf(stderr, PACKAGE " read_file_generic : format %s\n", format);
 #endif
 	if (read_file_generic_2(fp, ismerge, format) != 0) {
-		if (read_file_generic_2(fp, ismerge, defaultformat) != 0)
+		if (defaultformat && read_file_generic_2(fp, ismerge, defaultformat) != 0)
 			oleo_read_file(fp, ismerge);
 	}
 }
