@@ -1,5 +1,5 @@
 /*
- * $Id: io-term.c,v 1.47 2001/01/10 20:16:32 danny Exp $
+ * $Id: io-term.c,v 1.48 2001/02/04 00:01:26 pw Exp $
  *
  * Copyright © 1990, 1992, 1993, 1999, 2000 Free Software Foundation, Inc.
  * 
@@ -20,7 +20,7 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char *rcsid = "$Id: io-term.c,v 1.47 2001/01/10 20:16:32 danny Exp $";
+static char *rcsid = "$Id: io-term.c,v 1.48 2001/02/04 00:01:26 pw Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -235,7 +235,7 @@ do_set_option (char *ptr)
 			*((int *)Preferences[i].var) = Preferences[i].value;
 
 		if (Preferences[i].cont == 0)
-			return;
+			return 1;
 		break;
 	}
 
@@ -571,7 +571,7 @@ read_mp_options (char *str)
   while ((np = (char *)index (str, ';')))
     {
       *np = '\0';
-      do_set_option (str);
+      (void) do_set_option (str);
       *np++ = ';';
       str = np;
     }
@@ -978,6 +978,9 @@ main (int argc, char **argv)
   volatile int init_fpc = 0;
   int command_line_file = 0;	/* was there one? */
 
+#if 0
+  sleep(30);
+#endif
 #if 1	/* ENABLE_NLS */
   setlocale(LC_ALL, "");
   bindtextdomain(PACKAGE, LOCALEDIR);
