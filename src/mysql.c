@@ -1,5 +1,5 @@
 /*
- *  $Id: mysql.c,v 1.4 1999/08/31 08:45:16 danny Exp $
+ *  $Id: mysql.c,v 1.5 1999/09/06 21:33:06 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: mysql.c,v 1.4 1999/08/31 08:45:16 danny Exp $";
+static char rcsid[] = "$Id: mysql.c,v 1.5 1999/09/06 21:33:06 danny Exp $";
 
 #ifndef	TEST
 
@@ -84,14 +84,6 @@ struct function mysql_functions[] = {
 int init_mysql_function_count(void) 
 {
         return sizeof(mysql_functions) / sizeof(struct function) - 1;
-}
-
-void AllocateDatabaseGlobal(void)
-{
-	if (Global->DatabaseGlobal == NULL) {
-		Global->DatabaseGlobal = malloc(sizeof(struct DatabaseGlobalType));
-		memset(Global->DatabaseGlobal, 0, sizeof(struct DatabaseGlobalType));
-	}
 }
 
 /*
@@ -421,10 +413,15 @@ enum enum_field_types {
 }
 #endif	/* TEST */
 
+/*
+ * The functions below need to exist even if we don't have MySQL
+ */
+#ifndef	HAVE_LIBMYSQLCLIENT
+
+#include "eval.h"
+
 void DatabaseSetName(const char *name)
 {
-	AllocateDatabaseGlobal();
-
 	if (Global->DatabaseGlobal->name)
 		free(Global->DatabaseGlobal->name);
 	Global->DatabaseGlobal->name = strdup(name);
@@ -432,8 +429,6 @@ void DatabaseSetName(const char *name)
 
 void DatabaseSetHost(const char *host)
 {
-	AllocateDatabaseGlobal();
-
 	if (Global->DatabaseGlobal->host)
 		free(Global->DatabaseGlobal->host);
 	Global->DatabaseGlobal->host = strdup(host);
@@ -441,9 +436,29 @@ void DatabaseSetHost(const char *host)
 
 void DatabaseSetUser(const char *user)
 {
-	AllocateDatabaseGlobal();
-
 	if (Global->DatabaseGlobal->user)
 		free(Global->DatabaseGlobal->user);
 	Global->DatabaseGlobal->user = strdup(user);
 }
+
+void AllocateDatabaseGlobal(void)
+{
+	if (Global->DatabaseGlobal == NULL) {
+		Global->DatabaseGlobal = (struct DatabaseGlobalType *)
+			malloc(sizeof(struct DatabaseGlobalType));
+		memset(Global->DatabaseGlobal, 0, sizeof(struct DatabaseGlobalType));
+	}
+}
+
+/*
+ * Define Oleo functions
+ */
+struct function mysql_functions[] = {
+	{ 0, 0, "", 0, 0 }
+};
+
+int init_mysql_function_count(void) 
+{
+        return sizeof(mysql_functions) / sizeof(struct function) - 1;
+}
+#endif	/* HAVE_LIBMYSQLCLIENT */

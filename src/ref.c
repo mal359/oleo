@@ -165,7 +165,7 @@ quote_new_value(CELLREF row, CELLREF col, char *string)
 
 	l = strlen(string);
 
-	s = malloc(l+3);
+	s = (char *)malloc(l+3);
 	s[0] = '"';
 	s[1] = '\0';
 	strcat(s, string);

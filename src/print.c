@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1992, 1993, 1999 Free Software Foundation, Inc.
  *
- * $Id: print.c,v 1.14 1999/09/02 22:53:47 danny Exp $
+ * $Id: print.c,v 1.15 1999/09/06 21:33:07 danny Exp $
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -289,7 +289,8 @@ print_region_cmd (struct rng *print, FILE *fp)
 		* ((print_width - 1 + totwid) / print_width);
 
 	/* Build title */
-	title = malloc(strlen(PACKAGE) + 20 + strlen(FileGetCurrentFileName()));
+	title = (char *)malloc(strlen(PACKAGE) + 20 +
+		strlen(FileGetCurrentFileName()));
 	sprintf(title, "%s : '%s'", PACKAGE, FileGetCurrentFileName());
 
 	/* Start Printing */
@@ -329,6 +330,21 @@ print_region_cmd (struct rng *print, FILE *fp)
 		    if (!w)
 			continue;
 		    cp = find_cell (rr, cc);
+
+		    /* Font */
+		    if (cp && cp->cell_font && cp->cell_font->names) {
+#if 0
+			fprintf(stderr, "Font %s\n",
+				cp->cell_font->names->ps_name);
+#endif
+			Global->CurrentPrintDriver->font(
+				cp->cell_font->names->ps_name,
+				default_font_slant, default_font_size, fp);
+		    } else {
+			Global->CurrentPrintDriver->font(default_font_family,
+				default_font_slant, default_font_size, fp);
+		    }
+
 		if (Global->CurrentPrintDriver->printer_justifies()) {
 		    if (!cp || !GET_TYP (cp)) {
 			Global->CurrentPrintDriver->field("", w, 0, 1, fp);

@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.38 1999/08/30 01:39:20 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.39 1999/09/06 21:33:06 danny Exp $
 #
 localedir = $(prefix)/share/locale
 
@@ -15,11 +15,7 @@ else
 GUI =
 endif
 
-if HaveMySQL
 MYSQL = mysql.c oleosql.h
-else
-MYSQL =
-endif
 
 #
 # Xbase support

@@ -1,5 +1,5 @@
 /*
- *  $Id: postscript.c,v 1.7 1999/09/02 22:53:48 danny Exp $
+ *  $Id: postscript.c,v 1.8 1999/09/06 21:33:08 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -28,7 +28,7 @@
  * There shouldn't be much spreadsheet functionality here...
  */
 
-static char rcsid[] = "$Id: postscript.c,v 1.7 1999/09/02 22:53:48 danny Exp $";
+static char rcsid[] = "$Id: postscript.c,v 1.8 1999/09/06 21:33:08 danny Exp $";
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -74,6 +74,8 @@ void PostScriptJobHeader(char *title, int npages, FILE *fp)
 	fprintf(fp, "%%%%PageOrder: Ascend\n");
 	fprintf(fp, "%%%%Title: %s\n", title);
 	fprintf(fp, "%%%%EndComments\n%%%%BeginProlog\n");
+	fprintf(fp, "/FontName where { pop } { /FontName (Courier) def } ifelse\n");
+	fprintf(fp, "/FirstSize where { pop } { /FirstSize 10 def } ifelse\n");
 	fprintf(fp, "%%%%EndProlog\n");
 
 }
@@ -135,11 +137,13 @@ void PostScriptFont(char *family, char *slant, int size, FILE *fp)
 #if 0
 	fprintf(fp, "/FontName where { pop } { /FontName (Palatino-Italic) def } ifelse\n");
 	fprintf(fp, "/FirstSize where { pop } { /FirstSize 8 def } ifelse\n");
-#else
 	fprintf(fp, "/FontName where { pop } { /FontName (Courier) def } ifelse\n");
 	fprintf(fp, "/FirstSize where { pop } { /FirstSize 10 def } ifelse\n");
 #endif
+	fprintf(fp, "/%s findfont %d scalefont setfont\n", family, size);
+#if 0
 	fprintf(fp, "FontName findfont FirstSize scalefont setfont\n");
+#endif
 }
 
 void PostScriptNewLine(int ht, FILE *fp)
