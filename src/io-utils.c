@@ -1268,6 +1268,8 @@ write_file_generic(FILE *fp, struct rng *rng, char *format)
 	} else if (!stricmp ("list", format)) {
 		list_write_file(fp, rng);
 	} else {
+		/* Fall back to default */
+		oleo_write_file(fp, rng);
 #if 0
 		io_error_msg ("Unknown file format %s", ptr);
 #endif

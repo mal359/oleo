@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.13 1998/09/30 22:02:34 danny Exp $
+ *  $Id: io-motif.c,v 1.14 1998/10/01 22:21:16 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.13 1998/09/30 22:02:34 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.14 1998/10/01 22:21:16 danny Exp $";
 
 #include "config.h"
 
@@ -856,8 +856,20 @@ void FormulaCB(Widget w, XtPointer client, XtPointer call)
  *		File interaction				*
  *								*
  ****************************************************************/
-static char	fileformat[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+static char	fileformat[10] = { 'o', 'l', 'e', 'o', 0, 0, 0, 0, 0, 0 };
 static char	pattern[13];
+
+void MotifSetWindowName(char *s)
+{
+	char	*t;
+
+	t = XtMalloc(strlen(s) + 32);	/* enough */
+	sprintf(t, _("[Oleo: %s]"), s);
+	XtVaSetValues(toplevel, XmNtitle, t, NULL);
+	XtVaSetValues(toplevel, XmNiconName, t, NULL);
+
+	XtFree(t);
+}
 
 void FileFormatCB(Widget w, XtPointer client, XtPointer call)
 {
@@ -878,7 +890,7 @@ void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 	XmFileSelectionBoxCallbackStruct *cbp =
 		(XmFileSelectionBoxCallbackStruct *)call;
 	FILE	*fp;
-	char	*s, *t;
+	char	*s;
 
 	if (! XmStringGetLtoR(cbp->value, XmFONTLIST_DEFAULT_TAG, &s)) {
 		/* handle error */
@@ -915,17 +927,10 @@ void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 	curow = cucol = 1;
 	XbaeMatrixEditCell(mat, 0, 0);
 
-	/* Set window title */
-	t = XtMalloc(strlen(s) + 32);	/* enough */
-	sprintf(t, _("[Oleo: %s]"), s);
-	XtVaSetValues(toplevel, XmNtitle, t, NULL);
-	XtVaSetValues(toplevel, XmNiconName, t, NULL);
-
-	sprintf(t, _("Read file '%s'\n"), s);
-	MessageAppend(False, t);
+	MotifSetWindowName(s);
+	MessageAppend(False, _("Read file '%s'\n"), s);
 
 	XtFree(s);
-	XtFree(t);
 }
 
 void CreateFSD()
@@ -1008,12 +1013,17 @@ void ReallySaveCB(Widget w, XtPointer client, XtPointer call)
 
 	if (! XmStringGetLtoR(cbp->value, XmFONTLIST_DEFAULT_TAG, &s)) {
 		/* handle error */
+		MessageAppend(True,
+		    _("ReallySaveCB: couldn't figure out file to save into"));
 		return;
 	}
 
 	fp = fopen(s, "w");
 	if (fp == NULL) {
 		/* handle error */
+		MessageAppend(True,
+			_("ReallySaveCB: couldn't open file '%s' for write"),
+			s);
 		return;
 	}
 
@@ -1021,14 +1031,14 @@ void ReallySaveCB(Widget w, XtPointer client, XtPointer call)
 
 	if (fclose(fp) != 0) {
 		/* handle error */
+		MessageAppend(True, _("ReallySaveCB: file close failed"));
 		return;
 	}
 	modified = 0;
 
-	t = XtMalloc(strlen(s) + 32);
-	sprintf(t, _("Saved file '%s'\n"), s);
-	MessageAppend(False, t);
-	XtFree(t);
+	MessageAppend(False, _("Saved file '%s'\n"), s);
+	MotifSetWindowName(s);
+
 	XtFree(s);
 }
 

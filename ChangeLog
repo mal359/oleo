@@ -1,3 +1,10 @@
+Fri  2 Oct 00:09:06 1998 Danny Backx (danny@gnu.org)
+	* src/io-motif.c, io-utils.c: file save didn't work unless the user
+	  had manipulated the "file format" option menu. Fixed.
+	* Change window/icon title also when saving (so user always sees the
+	  file name last saved into).
+	* Added error handling in file save function.
+
 Wed 30 Sep 23:45:31 1998 Danny Backx (danny@gnu.org)
 	* src/io-motif.c : XmHTML doesn't need to be in a XmScrolledWindow.
 	* Formats changing now works.
@@ -5,6 +12,7 @@ Wed 30 Sep 23:45:31 1998 Danny Backx (danny@gnu.org)
 	  Unfortunately this triggers a bug in XmHTML 1.1.4. It needs to
 	  check whether the widget is realised in _XmHTMLClearArea.
 	  Reported to Koen D'Hondt <ripley@xs4all.nl>.
+	  XmHTML 1.1.5 fixes the problem.
 
 Wed 30 Sep 22:29:41 1998 Danny Backx (danny@gnu.org)
 	* Too many files and changes to keep track of, really.
