@@ -24,6 +24,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
 extern int using_x;
 extern int using_curses;
+extern int using_motif;
 extern jmp_buf error_exception;
 
 /* Cell size paramaters. */

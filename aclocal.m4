@@ -111,6 +111,29 @@ else
 fi
 AC_SUBST($1)])
 
+# Add --enable-maintainer-mode option to configure.
+# From Jim Meyering
+
+# serial 1
+
+AC_DEFUN(AM_MAINTAINER_MODE,
+[AC_MSG_CHECKING([whether to enable maintainer-specific portions of Makefiles])
+  dnl maintainer-mode is disabled by default
+  AC_ARG_ENABLE(maintainer-mode,
+[  --enable-maintainer-mode enable make rules and dependencies not useful
+                          (and sometimes confusing) to the casual installer],
+      USE_MAINTAINER_MODE=$enableval,
+      USE_MAINTAINER_MODE=no)
+  AC_MSG_RESULT($USE_MAINTAINER_MODE)
+  if test $USE_MAINTAINER_MODE = yes; then
+    MAINT=
+  else
+    MAINT='#M#'
+  fi
+  AC_SUBST(MAINT)dnl
+]
+)
+
 # Like AC_CONFIG_HEADER, but automatically create stamp file.
 
 AC_DEFUN(AM_CONFIG_HEADER,
@@ -423,6 +446,8 @@ if test "$motif_includes" != "" && test "$motif_includes" != "$x_includes" && te
 	link_motif="-L$motif_libraries -lXm"
 	include_motif="-I$motif_includes"
 	AC_DEFINE(HAVE_MOTIF)
+else
+	with_motif="no"
 fi
 #
 AC_SUBST(link_motif)
@@ -1545,25 +1570,3 @@ AC_DEFUN(AM_LC_MESSAGES,
     fi
   fi])
 
-# Add --enable-maintainer-mode option to configure.
-# From Jim Meyering
-
-# serial 1
-
-AC_DEFUN(AM_MAINTAINER_MODE,
-[AC_MSG_CHECKING([whether to enable maintainer-specific portions of Makefiles])
-  dnl maintainer-mode is disabled by default
-  AC_ARG_ENABLE(maintainer-mode,
-[  --enable-maintainer-mode enable make rules and dependencies not useful
-                          (and sometimes confusing) to the casual installer],
-      USE_MAINTAINER_MODE=$enableval,
-      USE_MAINTAINER_MODE=no)
-  AC_MSG_RESULT($USE_MAINTAINER_MODE)
-  if test $USE_MAINTAINER_MODE = yes; then
-    MAINT=
-  else
-    MAINT='#M#'
-  fi
-  AC_SUBST(MAINT)dnl
-]
-)

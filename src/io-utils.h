@@ -45,4 +45,8 @@ extern int words_member (char ** keys, int len, char * check);
 extern int prompt_len (char * prompt);
 extern int says_default (char * str);
 
+extern void file_set_current(const char *s);
+extern char *file_get_current(void);
+extern void file_close_current(void);
+
 #endif

@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.19 1998/12/24 00:24:34 danny Exp $
+ *  $Id: io-motif.c,v 1.20 1999/01/02 08:51:00 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.19 1998/12/24 00:24:34 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.20 1999/01/02 08:51:00 danny Exp $";
 
 #include "config.h"
 
@@ -1375,7 +1375,7 @@ void ResizeColumnCB(Widget w, XtPointer client, XtPointer call)
 static char	fileformat[10] = { 'o', 'l', 'e', 'o', 0, 0, 0, 0, 0, 0 };
 static char	pattern[13];
 
-void MotifSetWindowName(char *s)
+void MotifSetWindowName(const char *s)
 {
 	char	*t;
 
@@ -1395,10 +1395,6 @@ void FileFormatCB(Widget w, XtPointer client, XtPointer call)
 	strcpy(fileformat, f);
 	strcpy(pattern, "*.");
 	strcat(pattern, f);
-
-#if 1
-	fprintf(stderr, PACKAGE " : file format set to %s\n", f);
-#endif
 
 	xms = XmStringCreateSimple(pattern);
 	XtVaSetValues(fsd, XmNpattern, xms, NULL);
@@ -1421,6 +1417,9 @@ void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 		/* Handle unsaved changes */
 	}
 
+	/* From here it's irreversible */
+
+	ResetColumnWidths();
 	XbaeMatrixCancelEdit(mat, True);
 
 	fp = fopen(s, "r");
@@ -1429,6 +1428,8 @@ void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 		XtFree(s);
 		return;
 	}
+
+	file_set_current(s);
 
 	read_file_generic(fp, 0, fileformat);
 
@@ -1495,7 +1496,7 @@ void LoadCB(Widget w, XtPointer client, XtPointer call)
 	XtManageChild(fsd);
 }
 
-FILE *OleoOpenForWrite(char *s)
+FILE *OleoOpenForWrite(const char *s)
 {
 	FILE	*fp;
 	int	len;
@@ -1530,11 +1531,36 @@ FILE *OleoOpenForWrite(char *s)
 	return fp;
 }
 
+void ReallySave(const char *s)
+{
+	FILE	*fp;
+
+	fp = OleoOpenForWrite(s);
+	if (fp == NULL) {
+		/* handle error */
+		MessageAppend(True,
+			_("ReallySaveCB(%s): couldn't open file for writing"),
+			s);
+		return;
+	}
+
+	write_file_generic(fp, 0, fileformat);
+
+	if (fclose(fp) != 0) {
+		/* handle error */
+		MessageAppend(True, _("ReallySaveCB: file close failed"));
+		return;
+	}
+
+	modified = 0;
+	MessageAppend(False, _("Saved file '%s'\n"), s);
+	MotifSetWindowName(s);
+}
+
 void ReallySaveCB(Widget w, XtPointer client, XtPointer call)
 {
 	XmFileSelectionBoxCallbackStruct *cbp =
 		(XmFileSelectionBoxCallbackStruct *)call;
-	FILE	*fp;
 	char	*s, *t;
 
 	if (! XmStringGetLtoR(cbp->value, XmFONTLIST_DEFAULT_TAG, &s)) {
@@ -1544,19 +1570,7 @@ void ReallySaveCB(Widget w, XtPointer client, XtPointer call)
 		return;
 	}
 
-	fp = OleoOpenForWrite(s);
-	write_file_generic(fp, 0, fileformat);
-
-	if (fclose(fp) != 0) {
-		/* handle error */
-		MessageAppend(True, _("ReallySaveCB: file close failed"));
-		return;
-	}
-	modified = 0;
-
-	MessageAppend(False, _("Saved file '%s'\n"), s);
-	MotifSetWindowName(s);
-
+	ReallySave(s);
 	XtFree(s);
 }
 
@@ -1587,6 +1601,12 @@ void SaveAsCB(Widget w, XtPointer client, XtPointer call)
  */
 void SaveCB(Widget w, XtPointer client, XtPointer call)
 {
+	char	*s;
+	if (s = file_get_current()) {
+		ReallySave(s);
+		return;
+	}
+
 	SaveAsCB(w, client, call);
 }
 
@@ -1600,11 +1620,16 @@ static void
 anchorCB(Widget widget, XtPointer client, XtPointer call)
 {
         XmHTMLAnchorCallbackStruct *cbs = (XmHTMLAnchorCallbackStruct *) call;
+	char	*anchor;
 
-	fprintf(stderr, "AnchorCB\n");
+	fprintf(stderr, "AnchorCB(%s)\n", cbs->href);
 
         cbs->doit = True;
         cbs->visited = True;
+
+	anchor = strchr(cbs->href, '#');
+
+	XmHTMLAnchorScrollToName(html, anchor);
 }
 
 static void
@@ -1766,6 +1791,19 @@ char	**rowlabels = NULL, **columnlabels = NULL, **columnmaxlengths = NULL;
 short	*columnwidths = NULL;
 
 void
+MotifUpdateWidth(int col, int wid)
+{
+	if (! columnwidths)
+		ResetColumnWidths();
+	columnwidths[col - 1] = wid;
+
+	if (mat)
+		XtVaSetValues(mat,
+				XmNcolumnWidths,	columnwidths,
+			NULL);
+}
+
+void
 ResetColumnWidths(void)
 {
 	int	i;
@@ -1821,19 +1859,6 @@ ChangeRowColumnLabels(void)
 		}
 		columnmaxlengths[i] = "64000";		/* ??? */
 	}
-}
-
-void
-MotifUpdateWidth(int col, int wid)
-{
-	if (! columnwidths)
-		ResetColumnWidths();
-	columnwidths[col - 1] = wid;
-
-	if (mat)
-		XtVaSetValues(mat,
-				XmNcolumnWidths,	columnwidths,
-			NULL);
 }
 
 /****************************************************************
@@ -3455,18 +3480,21 @@ void quitCB(Widget w, XtPointer client, XtPointer call)
 	int		ac;
 
 	if (modified && !option_filter) {
+		XmString xms = XmStringCreateLtoR(
+			_("There are unsaved changes.\n"
+			  "Do you want to quit anyway ?"),
+			XmFONTLIST_DEFAULT_TAG);
+
 		ac = 0;
 		/* Application resource for message allow i18n */
-#if 0
-		XtSetArg(al[ac], XmNmessageString,
-			_("There are unsaved changes.\n"
-			  "Do you want to quit anyway ?")); ac++;
-#endif
+		XtSetArg(al[ac], XmNmessageString, xms); ac++;
+
 		md = XmCreateQuestionDialog(toplevel, "quitMB", al, ac);
 		XtAddCallback(md, XmNokCallback, ReallyQuit, NULL);
 		XtDestroyWidget(XmMessageBoxGetChild(md,
 			XmDIALOG_HELP_BUTTON));
 		XtManageChild(md);
+		XmStringFree(xms);
 		return;
 	}
 

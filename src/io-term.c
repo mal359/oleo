@@ -66,26 +66,10 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "gtk/gtk.h"
 #endif 
 
-#ifdef USE_DLD
-/* If we're using dynamic linking, we get the names of the
-   functions to call by prepending the basename of save_name onto
-   _read_file
-   _write_file
-   _set_options
-   _show_options
-   so, if the file is sylk.o , the functions are named
-   sylk_read_file
-   sylk_write_file
-   sylk_set_options
-   sylk_show_options
-*/
-char *io_name;
-#else
 #include "list.h"
 #include "sc.h"
 #include "sylk.h"
 #include "panic.h"
-#endif
 
 /* This variable is non-zero if the spreadsheet has been changed in any way */ 
 int modified = 0;
@@ -236,84 +220,6 @@ do_set_option (char *ptr)
     }
   if (set_opt && !strincmp ("file ", ptr, 5))
     {
-#ifdef USE_DLD
-      char *tmpstr;
-
-      ptr += 5;
-      tmpstr = ck_malloc (strlen (ptr) + 20);
-      if (io_name)
-	{
-	  sprintf (tmpstr, "%s.o", ptr);
-	  if (dld_unlink_by_file (tmpstr, 0))
-	    {
-	      io_error_msg ("Couldn't unlink old file format %s: %s", io_name, (dld_errno < 0 || dld_errno > dld_nerr) ? "Unknown error" : dld_errlst[dld_errno]);
-	      goto bad_file;
-	    }
-	  free (io_name);
-	}
-      if (!stricmp (ptr, "panic"))
-	{
-	  io_name = 0;
-	  read_file = panic_read_file;
-	  write_file = panic_write_file;
-	  set_file_opts = panic_set_options;
-	  show_file_opts = panic_show_options;
-	  free (tmpstr);
-	  return 0;
-	}
-      io_name = strdup (ptr);
-      sprintf (tmpstr, "%s.o", ptr);
-      if (dld_link (tmpstr))
-	{
-	  io_error_msg ("Couldn't link new file format %s: %s", io_name, (dld_errno < 0 || dld_errno > dld_nerr) ? "Unknown error" : dld_errlst[dld_errno]);
-	  goto bad_file;
-	}
-      if (dld_link ("libc.a"))
-	io_error_msg ("Couldn't link libc.a");
-      if (dld_link ("libm.a"))
-	io_error_msg ("Couldn't link libm.a");
-
-      sprintf (tmpstr, "%s_read_file", ptr);
-      read_file = dld_function_executable_p (tmpstr) ? dld_get_func (tmpstr) : 0;
-      sprintf (tmpstr, "%s_write_file", ptr);
-      write_file = dld_function_executable_p (tmpstr) ? dld_get_func (tmpstr) : 0;
-
-      sprintf (tmpstr, "%s_set_options", ptr);
-      set_file_opts = (int (*)()) (dld_function_executable_p (tmpstr) ? dld_get_func (tmpstr) : 0);
-      sprintf (tmpstr, "%s_show_options", ptr);
-      show_file_opts = dld_function_executable_p (tmpstr) ? dld_get_func (tmpstr) : 0;
-
-      if (!read_file
-	  || !write_file
-	  || !set_file_opts
-	  || !show_file_opts)
-	{
-	  char **missing;
-	  int n;
-
-	  missing = dld_list_undefined_sym ();
-	  io_text_start ();
-	  io_text_line ("Undefined symbols in file format %s:", ptr);
-	  io_text_line ("");
-	  for (n = 0; n < dld_undefined_sym_count; n++)
-	    io_text_line ("%s", missing[n]);
-	  io_text_line ("");
-	  io_text_finish ();
-	  free (missing);
-	  io_error_msg ("File format %s has undefined symbols: not loaded", ptr);
-	bad_file:
-	  sprintf (tmpstr, "%s.o", io_name);
-	  dld_unlink_by_file (io_name, 0);
-	  if (io_name)
-	    free (io_name);
-	  io_name = 0;
-	  read_file = panic_read_file;
-	  write_file = panic_write_file;
-	  set_file_opts = panic_set_options;
-	  show_file_opts = panic_show_options;
-	}
-      free (tmpstr);
-#else
       ptr += 5;
       if (!stricmp ("oleo", ptr))
 	{
@@ -366,77 +272,8 @@ do_set_option (char *ptr)
 	}
       else
 	io_error_msg ("Unknown file format %s", ptr);
-#endif
       return 0;
     }
-#ifdef USE_DLD
-  else if (!strincmp (ptr, "load ", 5))
-    {
-      char *tmpstr;
-      struct function *new_funs;
-      struct cmd_func *new_cmds;
-      struct keymap **new_maps;
-      void (*init_cmd) ();
-
-      ptr += 5;
-      tmpstr = ck_malloc (strlen (ptr) + 20);
-      sprintf (tmpstr, "%s.o", ptr);
-      if (dld_link (tmpstr))
-	{
-	  io_error_msg ("Couldn't link %s: %s", tmpstr, (dld_errno < 0 || dld_errno > dld_nerr) ? "Unknown error" : dld_errlst[dld_errno]);
-	  free (tmpstr);
-	  return 0;
-	}
-      if (dld_link ("libc.a"))
-	io_error_msg ("Couldn't link libc.a");
-      if (dld_link ("libm.a"))
-	io_error_msg ("Couldn't link libm.a");
-
-      if (dld_undefined_sym_count)
-	{
-	  char **missing;
-	  int n;
-
-	  missing = dld_list_undefined_sym ();
-	  io_text_start ();
-	  io_text_line ("Undefined symbols in file format %s:", ptr);
-	  io_text_line ("");
-	  for (n = 0; n < dld_undefined_sym_count; n++)
-	    io_text_line ("%s", missing[n]);
-	  io_text_line ("");
-	  io_text_finish ();
-	  free (missing);
-	  io_error_msg ("%d undefined symbols in %s", dld_undefined_sym_count, ptr);
-	  dld_unlink_by_file (tmpstr, 0);
-	  free (tmpstr);
-	  return 0;
-	}
-      sprintf (tmpstr, "%s_funs", ptr);
-      new_funs = (struct function *) dld_get_symbol (tmpstr);
-      if (new_funs)
-	add_usr_funs (new_funs);
-      sprintf (tmpstr, "%s_cmds", ptr);
-      new_cmds = (struct cmd_func *) dld_get_symbol (tmpstr);
-      if (new_cmds)
-	add_usr_cmds (new_cmds);
-      sprintf (tmpstr, "%s_maps", ptr);
-      new_maps = (struct keymap **) dld_get_symbol (tmpstr);
-      if (new_maps)
-	add_usr_maps (new_maps);
-      if (!new_funs && !new_cmds && !new_maps)
-	{
-	  io_error_msg ("Couldn't find anything to load in %s", ptr);
-	  sprintf (tmpstr, "%s.o", ptr);
-	  dld_unlink_by_file (tmpstr, 0);
-	}
-      sprintf (tmpstr, "%s_init", ptr);
-      init_cmd = dld_function_executable_p (tmpstr) ? dld_get_func (tmpstr) : 0;
-      if (init_cmd)
-	(*init_cmd) ();
-      free (tmpstr);
-      return 0;
-    }
-#endif
   if (set_window_option (set_opt, ptr) == 0)
     {
       if ((*set_file_opts) (set_opt, ptr))
@@ -846,21 +683,6 @@ add_usr_cmds (struct cmd_func *new_cmds)
   return num_funcs - 1;
 }
 
-#ifdef USE_DLD
-static int 
-add_usr_maps (struct keymap **new_maps)
-{
-  int n;
-
-  for (n = 1; new_maps[n]; n++)
-    ;
-  the_maps = ck_realloc (the_maps, (n + num_maps) * sizeof (struct keymap *));
-  bcopy (new_maps, &the_maps[num_maps], n * sizeof (struct keymap *));
-  num_maps += n;
-  return num_maps - n;
-}
-#endif /* USE_DLD */
-
 static void
 show_usage (void)
 {
@@ -1002,24 +824,6 @@ main (int argc, char **argv)
   init_cells ();
   init_fonts ();
   init_info ();
-
-#ifdef USE_DLD
-  if (!index (argv_name, '/'))
-    {
-      char *name;
-
-      name = dld_find_executable (argv_name);
-      num = dld_init (name);
-      free (name);
-    }
-  else
-    num = dld_init (argv_name);
-  if (num)
-    io_error_msg ("dld_init() failed: %s", (dld_errno < 0 || dld_errno > dld_nerr) ? "Unknown error" : dld_errlst[dld_errno]);
-  dld_search_path = ":/usr/local/lib/oleo:/lib:/usr/lib:/usr/local/lib";
-#endif
-
-
 
   /* Find the init files. 
    * This is done even if ignore_init_file is true because
@@ -1172,6 +976,7 @@ main (int argc, char **argv)
 	    read_file_and_run_hooks (fp, 0, argv[optind]);
 	  fclose (fp);
 	  command_line_file = 1;
+	  file_set_current(argv[optind]);
     } else
 	fprintf (stderr, "Can't open %s: %s", argv[optind], err_msg ());
 

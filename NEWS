@@ -1,3 +1,15 @@
+===== Oleo 1.6.13 =====
+
+Oleo 1.6.13 (dated 28 december 1998) has progressed in having a more and more
+usable Motif user interface.
+
+It's still largely unimplemented so those who need a good Motif programming
+exercise are invited to join.
+
+Please note that Xbae widgets can be found at
+  ftp://ftp.x.org/contrib/widgets/motif/Xbae-4.6.2.tar.gz
+Its home page seems to have vanished into some Cyber-grave. Pity.
+
 ===== Oleo 1.6.7 =====
 
 It's been a loooong time since the latest release of GNU Oleo : version

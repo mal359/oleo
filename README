@@ -52,7 +52,6 @@ that are required:
 * some version of curses (NCurses or Termcap/curses)
 * GNU Gettext 0.10.32 (currently included in oleo)
 * Motif or LessTif if you want the Motif GUI (incomplete)
-* Gtk+ if you want the Gnome GUI (very incomplete)
 * GNU texinfo (3.12) to build the documentation
 * texi2html to convert the documentation to html
 

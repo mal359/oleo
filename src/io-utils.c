@@ -1369,3 +1369,34 @@ fmt_fet_format()
 {
 }
 
+static char	*current_file = NULL;
+
+void file_set_current(const char *s)
+{
+	if (current_file)
+		free(current_file);
+	current_file = strdup(s);
+
+#if HAVE_MOTIF
+	if (using_motif)
+		MotifSetWindowName(current_file);
+#endif
+}
+
+char *file_get_current(void)
+{
+	return current_file;
+}
+
+void file_close_current(void)
+{
+	if (current_file)
+		free(current_file);
+	current_file = NULL;
+
+#if HAVE_MOTIF
+	if (using_motif)
+		MotifSetWindowName("");
+#endif
+}
+

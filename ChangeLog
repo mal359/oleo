@@ -1,3 +1,21 @@
+Wed Dec 30 21:31:49 1998, Danny Backx (danny@gnu.org)
+	* As the build problem appears to be fixed, I'm preparing for
+	  release 1.6.13.
+	* Removed a call to AC_LINK_FILES from configure.in.
+	  It was already performed in AM_GNU_GETTEXT, and it turned out to be
+	  the cause for the "hard link to a directory" problem that several
+	  people reported.
+	* src/plot.c, src/plot.h added for GNU PlotUtils support.
+	* Remove DLD functionality.
+	  Either we support this through a decent mechanism such as Corba
+	  or we don't support it at all.
+	* "fix" the TODO file.
+	* Don't compile the GTK stuff under any circumstance: it doesn't work.
+	* motif.m4 : do the right thing if there's no motif around.
+	* Make hyperlinks in the document work with XmHTML.
+	* Remove c++ compiler check from configure.in, it's not needed.
+	* Get Save to work differently from Save As.
+
 Thu Dec 24 01:19:42 1998, Danny Backx (danny@gnu.org)
 	* Getting ready for release 1.6.12.
 	* Add a --filter option which currently already reads a file from

@@ -1,15 +1,16 @@
-Short-term TODO's:
+TODO's:
 
-* Update AUTHORS list to show everyone in ChangeLog. (June 1/97 - JB)
+* Increase "X" friendliness.
+ - Make a LessTif/Motif interface
 
-* Ditto THANKS file. (15 Nov - JB)
+* Include texi2html in the oleo source, and enhance it so it can
+  process all the texinfo commands used in the documentation.
+  Currently @findex isn't supported, and @html is poorly supported.
 
-* Increase "X" friendliness. (June 1/97 - JB)
- - Resize NCurses terminal on SIGWINCH
- - Make arrow keys work on Alpha/i386.
- - Make a LessTif/Motif interface (DB).
+* Use GNU PlotUtils instead of GnuPlot.
+  In the process, make the plotting user interface more transparent.
 
-* Add Mouse support with Curses/GPM. (June 1/97 - JB)
+Longer term TODO's :
 
 * Import/Export Filters. (June 1/97 - JB)
  - Sylk may need fixing.
@@ -17,23 +18,8 @@ Short-term TODO's:
  - DBII or DBIII is useful.
  - Fixed width.
 
-* Tighter link with GNU Plotutils. (Nov 15/97 - JB)
-
-* Integrate GUILE for Macros (June 1/97 - RMS)
- - A VB modules on Guile is needed.
-
-* Gtk+ Toolkit Implementation (Nov 15/97 - JB)
-
-* GNU GetText (Nov 15/97 - Joel N. Webber II)
- - Implement new help system.
-
-* Update hash.c (Nov 15/97 - JB)
-
-* Fix sort routines (Nov 15/97 - Steve Fisk)
-
-* Modify ansi2knr to work with "..." functions  (Nov 29/97 - JB)
+* Fix sort routines
+	(Nov 15/97 - Steve Fisk)
 
 # Figure out why sort.c requires functions passed as args to a function
-(03-14/1998 - JB)
-
-* Make autoconf/automake stuff work : more portable build scripts. (DB)
+	(03-14/1998 - JB)

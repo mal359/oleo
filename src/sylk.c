@@ -36,7 +36,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #include "window.h"
 #include "info.h"
 #include "cmd.h"
-
+
 
 /* These functions read and write Microsoft Multiplan SYLK style files
  * as well as SYLK-NOA0 files.  SYLK-NOA0 is the same as SYLK except that

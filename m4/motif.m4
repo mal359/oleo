@@ -151,6 +151,8 @@ if test "$motif_includes" != "" && test "$motif_includes" != "$x_includes" && te
 	link_motif="-L$motif_libraries -lXm"
 	include_motif="-I$motif_includes"
 	AC_DEFINE(HAVE_MOTIF)
+else
+	with_motif="no"
 fi
 #
 AC_SUBST(link_motif)

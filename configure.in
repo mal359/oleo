@@ -1,12 +1,12 @@
 dnl
 dnl This is the configuration file for GNU oleo.
-dnl $Id: configure.in,v 1.32 1998/12/09 23:02:59 danny Exp $
+dnl $Id: configure.in,v 1.33 1999/01/02 08:50:53 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
 AC_INIT(src/init.c)
 
-AM_INIT_AUTOMAKE([oleo], [1.6.12])
+AM_INIT_AUTOMAKE([oleo], [1.6.13])
 GNU_PACKAGE="GNU $PACKAGE"
 AC_DEFINE_UNQUOTED(GNU_PACKAGE, "$GNU_PACKAGE")
 
@@ -28,7 +28,6 @@ AM_CYGWIN32
 dnl Checks for programs.
 AC_PROG_YACC
 AC_PROG_CC
-AC_PROG_CXX
 AM_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_RANLIB
@@ -47,6 +46,9 @@ AC_CHECK_LIB(ncurses, waddch, ,
 
 dnl This library is required on FreeBSD.
 AC_CHECK_LIB(mytinfo, tputs)
+
+dnl Check whether a recent version of GNU PlotUtils is around
+AC_CHECK_LIB(plot, openpl)
 
 dnl Check existence of a working math library
 AC_CHECK_LIB(m, sqrtf)
@@ -156,20 +158,24 @@ AM_GNU_GETTEXT
 dnl
 dnl Xbase
 dnl
-AC_ARG_WITH(xbase,
-[  --without-xbase		  Do not use Xbase, even if detected],
-[		case "${withval}" in
-		  y | ye | yes )	usexbase=yes ;;
-		  n | no )		usexbase=no ;;
-		  * )			usexbase=yes ;;
-		esac],
-[		usexbase=yes])
+dnl AC_ARG_WITH(xbase,
+dnl [  --without-xbase		  Do not use Xbase, even if detected],
+dnl [		case "${withval}" in
+dnl 		  y | ye | yes )	usexbase=yes ;;
+dnl 		  n | no )		usexbase=no ;;
+dnl 		  * )			usexbase=yes ;;
+dnl 		esac],
+dnl [		usexbase=yes])
+dnl 
+dnl if test $usexbase = yes; then
+dnl 	AC_DEFINE(USE_XBASE)
+dnl fi
 
-if test $usexbase = yes; then
-	AC_DEFINE(USE_XBASE)
-fi
-
-AC_LINK_FILES($nls_cv_header_libgt, $nls_cv_header_intl)
+dnl
+dnl This is already done by AM_WITH_NLS, which is called by AM_GNU_GETTEXT.
+dnl
+dnl AC_LINK_FILES($nls_cv_header_libgt, $nls_cv_header_intl)
+dnl
 
 AC_SUBST(LIBOBJS)
 
@@ -182,6 +188,4 @@ AC_SUBST(link_xmhtml)
 AC_SUBST(include_sciplot)
 AC_SUBST(link_sciplot)
 
-dnl AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile m4/Makefile po/Makefile])
-
-AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile m4/Makefile po/Makefile.in Xresources/Makefile], [sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])
+AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile intl/Makefile m4/Makefile po/Makefile.in Xresources/Makefile],[sed -e "/POTFILES =/r po/POTFILES" po/Makefile.in > po/Makefile])

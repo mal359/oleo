@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.21 1998/10/28 21:01:41 danny Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.22 1999/01/02 08:50:58 danny Exp $
 #
 localedir = $(prefix)/share/locale
 
@@ -10,7 +10,7 @@ bin_PROGRAMS = oleo
 if UseMotif
 GUI = io-motif.c appres.c
 else
-GUI = io-gtk.c
+GUI =
 endif
 
 oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
@@ -20,8 +20,9 @@ oleo_SOURCES = parse.y byte-compile.c eval.c ref.c \
  hash.c ir.c io-curses.c font.c display.c print.c init.c \
  sylk.c oleofile.c sc.c list.c busi.c string.c cells.c \
  cmd.c basic.c args.c \
- stub.c input.c info.c help.c graph.c forminfo.c \
- posixtm.y date.c xrdb.c $(GUI)
+ stub.c input.c info.c help.c \
+ graph.c plot.c \
+ forminfo.c posixtm.y date.c xrdb.c $(GUI)
 
 if UseMotif
 MYLD = @link_motif@ @link_xmhtml@ @link_xbae@ @link_sciplot@
@@ -34,9 +35,9 @@ gpl.h:	$(top_srcdir)/COPYING gpl.sed
 io-motif.o:	gpl.h fallback.h $(top_srcdir)/configure
 
 else
-MYLD = @GTK_LIBS@
-MYINC =
-MYCFL = @GTK_CFLAGS@
+# MYLD = @GTK_LIBS@
+# MYINC =
+# MYCFL = @GTK_CFLAGS@
 endif
 
 oleo_LDADD = ${MYLD} @INTLLIBS@ @GTK_LIBS@ ../lib/liboleo.a ${X_LIBS} -lXt -lX11
@@ -45,11 +46,16 @@ CFLAGS = @CFLAGS@ -DLOCALEDIR=\"$(localedir)\" ${MYCFL}
 
 noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
  defun.h defuns.h display.h errors.h eval.h font.h format.h forminfo.h \
- funcdef.h funcs.h global.h graph.h hash.h help.h info.h init.h \
- input.h io-abstract.h io-curses.h io-edit.h io-generic.h io-term.h \
- io-utils.h io-x11.h ir.h key.h line.h lists.h node.h oleofile.h \
- panic.h parse.h print.h proto.h ref.h regions.h sc.h stub.h stubs.h sylk.h \
- sysdef.h utils.h window.h list.h ir.h io-gtk.h sort.h \
+ funcdef.h funcs.h global.h hash.h help.h info.h init.h \
+ input.h \
+ io-abstract.h io-curses.h io-edit.h io-generic.h io-term.h \
+ io-utils.h io-x11.h \
+ ir.h key.h line.h lists.h node.h oleofile.h \
+ panic.h parse.h \
+ graph.h plot.h print.h \
+ proto.h ref.h regions.h \
+ sc.h stub.h stubs.h sylk.h \
+ sysdef.h utils.h window.h list.h ir.h sort.h \
  io-motif.h appres.h fallback.h
 
 EXTRA_DIST =	gpl.sed

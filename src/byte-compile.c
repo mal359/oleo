@@ -201,11 +201,6 @@ struct function the_funs[] =
 
 };
 
-#ifdef USE_DLD
-int n_usr_funs;
-struct function **usr_funs;
-int *usr_n_funs;
-#else
 int n_usr_funs = 4;
 static struct function *__usr_funs[] =
 {
@@ -221,7 +216,6 @@ static int __usr_n_funs[] =	/* Dear hack, this is stupid. never do this. */
 
 struct function **usr_funs = __usr_funs;
 int *usr_n_funs = __usr_n_funs;
-#endif
 
 /* ... A whole huge empty space, then ... */
 struct function skip_funs[] =
@@ -243,7 +237,7 @@ init_mem ()
   hash_insert (parse_hash, the_funs[OR].fn_str, &the_funs[OR]);
   for (n = F_PI; n < USR1; n++)
     hash_insert (parse_hash, the_funs[n].fn_str, &the_funs[n]);
-#ifndef USE_DLD
+
   for (n = 0; n < n_usr_funs; n++)
     {
       int nn;
@@ -259,31 +253,12 @@ init_mem ()
 	}
 #endif
     }
-#endif
+
   fn_stack = init_stack ();
   str_stack = init_stack ();
   obstack_begin (&tmp_mem, 400);
   tmp_mem_start = obstack_alloc (&tmp_mem, 0);
 }
-
-#ifdef USE_DLD
-void
-add_usr_funs (new_funs)
-     struct function *new_funs;
-{
-  int n;
-
-  n_usr_funs++;
-  usr_funs = usr_funs ? ck_realloc (usr_funs, n_usr_funs * sizeof (struct function *)) : ck_malloc (sizeof (struct function *));
-  usr_n_funs = usr_n_funs ? ck_realloc (usr_n_funs, n_usr_funs * sizeof (int)) : ck_malloc (sizeof (int));
-
-  usr_funs[n_usr_funs - 1] = new_funs;
-  for (n = 0; new_funs[n].fn_str; n++)
-    hash_insert (parse_hash, new_funs[n].fn_str, &new_funs[n]);
-  usr_n_funs[n_usr_funs - 1] = n;
-}
-
-#endif
 
 /* Stash away a backpatch for future editing. */
 static void

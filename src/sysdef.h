@@ -137,20 +137,4 @@ extern char *getenv ();
 #define volatile
 #endif
 
-#if defined(USE_DLD) && 0
-extern int dld_errno;
-extern int dld_nerr;
-extern char *dld_errlst[];
-extern dld_undefined_sym_count;
-extern char *dld_search_path;
-extern void (*dld_get_func())();
-extern int dld_unlink_by_file EXT2(char *,int);
-extern int dld_link EXT1(char *);
-extern int dld_function_executable_p EXT1(char *);
-extern int dld_init EXT1(char *);
-extern char *dld_find_executable EXT1(char *);
-extern char ** dld_list_undefined_sym EXT0();
-#endif
-
-
 #endif
