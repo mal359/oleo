@@ -1,5 +1,5 @@
 /*
- * $Id: busi.c,v 1.6 2000/08/10 21:02:49 danny Exp $
+ * $Id: busi.c,v 1.7 2001/02/03 23:58:27 pw Exp $
  *
  * Copyright © 1990, 1992, 1993, 2000 Free Software Foundation, Inc.
  * 
@@ -71,7 +71,7 @@ npv (rng, rate, putres)
   char *strptr;
 
   find_cells_in_range (rng);
-  for (i = 1, npv = 0.0; (cell_ptr = next_cell_in_range ()); i++)
+  for (i = 0, npv = 0.0; (cell_ptr = next_cell_in_range ()); i++)
     {
       switch (GET_TYP (cell_ptr))
 	{
@@ -140,7 +140,8 @@ do_npv (p)
       p->Value = tmp;
       p->type = TYP_ERR;
     }
-  p->type = TYP_FLT;
+  else
+    p->type = TYP_FLT;
 }
 
 static void
@@ -155,7 +156,8 @@ do_irr (p)
   int tmp;
 
   minr = maxr = 0;
-  mint = maxt = 0;
+  mint = maxt = .1;  /* avoid divide by 0 in npv */
+  i = 0;
   while (minr >= 0)
     {
       mint += 1;
@@ -166,7 +168,14 @@ do_irr (p)
 	  p->type = TYP_ERR;
 	  return;
 	}
+      if (++i == 40)
+        {
+	  p->Value = BAD_INPUT;
+	  p->type = TYP_ERR;
+	  return;
+	}
     }
+  i = 0;
   while (maxr <= 0)
     {
       maxt -= 1;
@@ -174,6 +183,12 @@ do_irr (p)
       if (tmp)
 	{
 	  p->Value = tmp;
+	  p->type = TYP_ERR;
+	  return;
+	}
+      if (++i == 40)
+        {
+	  p->Value = BAD_INPUT;
 	  p->type = TYP_ERR;
 	  return;
 	}
@@ -231,6 +246,111 @@ do_irr (p)
   p->type = TYP_FLT;
 }
 
+/*
+ * Financial management rate of return.  Many advanteges over simple
+ * IRR:  single-valued solution, accounts for re-investment and sources
+ * of extra outlays.
+ *
+ * Args: range, safe rate, reinvestment rate, reinvestment minimum
+ */
+static void
+do_fmrr(struct value *p)
+{
+    struct rng *rng = &p[0].Rng;
+    double safe_rate = p[1].Float;
+    double reinv_rate = p[2].Float;
+    double reinv_min = p[3].Float;
+    double *v;
+    int i, j, num;
+    CELL *cell;
+
+    /* count them */
+    find_cells_in_range(rng);
+    for (num=0; next_cell_in_range(); num++) ;
+    v = (double *) ck_malloc(num * sizeof(double));
+    /* now fill */
+    find_cells_in_range(rng);
+    for (num=0; (cell = next_cell_in_range()); num++) {
+      switch (GET_TYP(cell)) {
+        case 0:
+	  v[num] = 0.;
+	  break;
+	case TYP_FLT:
+	  v[num] = cell->cell_flt;
+	  break;
+	case TYP_INT:
+	  v[num] = (double) cell->cell_int;
+	  break;
+	case TYP_STR: {
+	  char *cp = cell->cell_str;
+	  v[num] = astof(&cp);
+	  if (!*cp)
+	    break;
+	  /* fall through */
+	}
+	default:
+	case TYP_BOL:
+	  p->type = TYP_ERR;
+	  p->Value = NON_NUMBER;
+	  goto out;
+	case TYP_ERR:
+	  p->type = TYP_ERR;
+	  p->Value = cell->cell_err;
+	  goto out;
+      }
+    }
+#if 0
+    /* debug */
+    fprintf(stderr, "init\n\r");
+    for (i=0; i<num; i++)
+	fprintf(stderr, "%d: %f\n\r", i, v[i]);
+#endif
+    /* pull back negative values to most recent positive at safe rate */
+    for (i=num-1; i>0; i--)
+	while (v[i] < 0.) {
+	    for (j=i-1; j>0; j--)
+		if (v[j] > 0.) {
+		    double amt = -v[i];
+		    if (amt > v[j])
+			amt = v[j];
+		    v[i] += amt;
+		    amt /= pow(1. + safe_rate, (double)(i-j));
+		    v[j] -= amt;
+		    break;
+		}
+	    if (j == 0) {  /* leftover falls into initial investment */
+		v[0] -= -v[i] / pow(1. + safe_rate, (double)i);
+		v[i] = 0.;
+	    }
+	}
+#if 0
+    /* debug */
+    fprintf(stderr, "bwd\n\r");
+    for (i=0; i<num; i++)
+	fprintf(stderr, "%d: %f\n\r", i, v[i]);
+#endif
+    /* push forward accumulations at reinvestment rate, as long as over min */
+    for (i=1; i<num-1; i++)
+	if (v[i]) {
+	    if (v[i] >= reinv_min) {
+		v[num-1] += v[i] * pow(1. + reinv_rate, (double)(num-1-i));
+		v[i] = 0.;
+	    } else
+		v[i+1] += v[i] * (1. + safe_rate);
+	}
+#if 0
+    /* debug */
+    fprintf(stderr, "fwd\n\r");
+    for (i=0; i<num; i++)
+	fprintf(stderr, "%d: %f\n\r", i, v[i]);
+#endif
+    /* now only v[0] and v[num-1] are nonzero, what is rate to connect them? */
+    p->type = TYP_FLT;
+    p->Float = pow(v[num-1] / -v[0], 1./(double)(num-1)) - 1.;
+  out:
+    ck_free(v);
+}
+
 static void
 do_fv (p)
      struct value *p;
@@ -239,7 +359,7 @@ do_fv (p)
   double interest = (p + 1)->Float;
   double term = (p + 2)->Float;
 
-  p->Float = payment * ((pow (1 + interest, term) - 1) / interest);
+  p->Float = payment * (pow(1 + interest, term) - 1) / interest;
 }
 
 static void
@@ -283,6 +403,12 @@ do_sln (p)
   double salvage = (p + 1)->Float;
   double life = (p + 2)->Float;
 
+  if (life < 1)
+    {
+      p->Value = OUT_OF_RANGE;
+      p->type = TYP_ERR;
+      return;
+    }
   p->Float = (cost - salvage) / life;
 }
 
@@ -297,7 +423,15 @@ do_syd (p)
   life = (p + 2)->Float;
   period = (p + 3)->Float;
 
-  if (period > life)		/* JF is this right? */
+  if (period < 1 || life < 1)
+    {
+      p->Value = OUT_OF_RANGE;
+      p->type = TYP_ERR;
+      return;
+    }
+  if (period > life)
+    p->Float = 0;
+  else if (period == life)
     p->Float = salvage;
   else
     p->Float = ((cost - salvage) * (life - period + 1)) / (life * ((life + 1) / 2));
@@ -569,6 +703,8 @@ struct function busi_funs[] =
   {C_FN4, X_A4, "FFII", do_paidint, "paidint"},	/* 16 */
   {C_FN4, X_A4, "FFII", do_kint, "kint"},	/* 17 */
   {C_FN4, X_A4, "FFII", do_kprin, "kprin"},	/* 18 */
+
+  {C_FN4, X_A4, "RFFF", do_fmrr, "fmrr"},       /* 19 */
 
   {0, 0, "", 0, 0},
 };
