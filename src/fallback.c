@@ -1,5 +1,5 @@
 /*
- *  $Id: fallback.c,v 1.12 1999/04/02 07:26:59 danny Exp $
+ *  $Id: fallback.c,v 1.13 1999/04/09 11:47:00 danny Exp $
  *
  *  This file is part of Oleo, a free spreadsheet.
  *
@@ -44,15 +44,15 @@ char *fallback[] = {
 	"*splash*fontList:		-b&h-lucidatypewriter-bold-r-normal-sans-24-*-*-*-*-*-iso8859-1=large,-b&h-lucida-medium-i-normal-sans-18-*-*-*-*-*-iso8859-1=small",
 	"*splash*background:		#AAAAAA",
 	"*splash*foreground:		red",
-//	"*messagesSW.height:		70",
+	"*messagesSW.height:		70",
 /* BaeMatrix */
 	"*bae.allowColumnResize:	True",
 	"*bae.columnLabelColor:		dark slate blue",
 	"*bae.rowLabelColor:		dark slate blue",
 	"*bae.translations:	#override\\n"
-		"<Btn1Down>:			SelectCell(start)\\n"
-		"<Btn1Down>:			SelectCell(end)\\n"	/* Needed ? */
-		"<Btn1Motion>:			SelectCell(move)\\n",
+//		"<Btn1Down>:			SelectCell(start)\\n"
+		"<Btn1Up>:			SelectCell(end)\\n"
+		"<Btn1Motion>:			SelectCell(move)",
 /* Menu System */
 /* File */
 	"*filecascade.labelString:	File",

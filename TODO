@@ -1,4 +1,4 @@
-$Id: TODO,v 1.23 1999/04/02 07:26:51 danny Exp $
+$Id: TODO,v 1.24 1999/04/09 11:46:30 danny Exp $
 
 TODO's:
 
@@ -58,7 +58,16 @@ TODO's:
   which we happen to be lacking in Oleo.
 
 * Import/Export Filters.
- - Sylk may need fixing.
+ - SYLK
+	(done) don't flunk out on reading Excel files
+	(todo) translate SYLK options into Oleo options
+	(todo) translate SYLK functions into Oleo functions (SUM -> sum)
+	(todo) interpret SYLK ranges right
+		SYLK says RC[-2]:RC[-1], Oleo says rc[-2:-1]
+	(todo) interpret boundaries
+	(todo) ...
+	(todo) make this list more complete
+
  - CSV would be nice (DB 17/3/1999: LIST format can do this,
 	now also recognizes CSV file name suffix)
  - DBII or DBIII is useful.

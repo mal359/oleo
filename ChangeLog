@@ -1,4 +1,25 @@
 
+Fri  9 Apr 13:43:59 1999, Danny Backx
+	* Release 1.99.2.
+	* (read_file_generic) For recalculation after reading a file.
+	  This gets examples/paine.slk read in correctly.
+	* Make Motif interface cope with default file format dialog.
+	* Inserted a couple of #if XmVERSION > 1 to ensure that Oleo
+	  at least compiles if we only have Motif 1.* or a non-2.0
+	  version of LessTif.
+	* SYLK file format seems to have noa0 as the default, not the
+	  other way around. The output of Excel 6 (yes I know) shows
+	  this. Change our default.
+	* File formats now find their format string (*.oleo) from a table.
+	  This table contains a pattern that can handle upper case and
+	  lower case to be able to read DBF as well as sylk and
+	  SLK suffixes.
+	* src/io-utils.c : handle *.slk as SYLK.
+	* m4/motif.m4 - handle absence of Motif better; Frank Bennett.
+	* doc/*.texi - patch from Art Haas replacing @html by @ifhtml.
+	* src/plot.c - apparently the set of macros to still work with
+	  older versions of GNU plotutils wasn't right.
+
 Fri  2 Apr 09:27:04 CEST 1999, Danny Backx
 	* Range selection reimplemented for Motif. Click on a range
 	  textfield in a dialog to indicate that this one will get the

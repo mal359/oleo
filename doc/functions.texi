@@ -23,9 +23,9 @@ the standard value types, some arguments may be cell ranges.
 @section Boolean Functions
 @cindex Boolean functions
 
-@html
+@ifhtml
 <A NAME="HelpBooleanFunctions">
-@end html
+@end ifhtml
 
   Boolean functions return either a @code{#TRUE} or @code{#FALSE} value.
 Most arguments (those labelled @var{bool}) are also boolean.  If these
@@ -68,9 +68,9 @@ converted to a number.  Thus, @code{isnum("12")} is @code{#TRUE}, while
 @cindex Math functions
 @cindex Functions, math
 
-@html
+@ifhtml
 <A NAME="HelpMathFunctions">
-@end html
+@end ifhtml
 
 @menu
 * General math functions::              log, sqrt, etc.
@@ -170,9 +170,9 @@ from 1 second to 10 seconds, type
 @node   Trigonometric functions, Statistical functions, General math functions, Math functions
 @subsection Trigonometric Functions
 
-@html
+@ifhtml
 <A NAME="HelpTrigonometricFunctions">
-@end html
+@end ifhtml
 
 @table @code
  @item pi()
@@ -238,9 +238,9 @@ and @var{y}; i.e., @w{@code{sqrt(@var{x}*@var{x} + @var{y}*@var{y})}}.
 @cindex Statistical functions
 @cindex Functions, statistical
 
-@html
+@ifhtml
 <A NAME="HelpStatisticalFunctions">
-@end html
+@end ifhtml
 
   These functions take a variable number of arguments, labeled
 @var{vr1}, @var{vr2}, etc.  Each of these values can be a
@@ -393,9 +393,9 @@ use @code{@@std(...)^2}.
 @cindex String functions
 @cindex Functions, string manipulation
 
-@html
+@ifhtml
 <A NAME="HelpStringFunctions">
-@end html
+@end ifhtml
 
   Strings indexes start with 1 for the first character.  Indices less
 than 1 or greater than the length of the corresponding string will
@@ -465,9 +465,9 @@ range, in which case the cell values in the range are concatenated.
 @cindex Cells, information about
 @cindex Functions, structural
 
-@html
+@ifhtml
 <A NAME="HelpStructuralFunctions">
-@end html
+@end ifhtml
 
   These functions return information about a cell or range of cells.
 Some of them are in the `cells' package; if Oleo is compiled with
@@ -531,9 +531,9 @@ careful about the indices in @code{a0} mode.  The cell in row 2, column
 @section Search Functions
 @cindex Searching a range of cells
 
-@html
+@ifhtml
 <A NAME="HelpSearchFunctions">
-@end html
+@end ifhtml
 
   These functions search for a value or string in a range of cells, and
 return the index of the first cell that matches.  Cells are numbered
@@ -607,9 +607,9 @@ than @var{num}, then returns the value in the cell that is
 @cindex Business functions
 @cindex Functions, business
 
-@html
+@ifhtml
 <A NAME="HelpBusinessFunctions">
-@end html
+@end ifhtml
 
 @table @code
  @item pmt(@var{p}, @var{r}, @var{t})
@@ -686,9 +686,9 @@ be sold for $@var{scrap} and lasts @var{life}, in period @var{per}.
 @cindex Time and date functions
 @cindex Functions, date and time
 
-@html
+@ifhtml
 <A NAME="HelpDateFunctions">
-@end html
+@end ifhtml
 
   Functions for manipulating date and time.  Arguments named @var{time}
 are times in seconds, either an arbitrary count or from a specific epoch

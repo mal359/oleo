@@ -81,34 +81,57 @@ sylk_read_file (fp, ismerge)
       if (lineno % 50 == 0)
 	io_info_msg ("Line %d", lineno);
 #endif
+
+      /* Remove newline */
       if ((ptr = (char *)index (cbuf, '\n')))
 	*ptr = '\0';
+
+      /* Also remove DOS style newline */
+      if ((ptr = (char *)index (cbuf, '\r')))
+	*ptr = '\0';
+
       ptr = cbuf;
-      switch (*ptr)
-	{
+
+/*
+ * The first character on each line
+ */
+      switch (*ptr) {
+	/* First character on the line */
 	case 'I':		/* ID field, ignored */
 	  if (ptr[1] != 'D' || ptr[2] != ';')
 	    goto bad_field;
+	  if (strcmp(ptr+4, "OLEO") != 0) {
+		if (strncmp(ptr+4, "WXL", 3) == 0)
+			io_info_msg("Reading SYLK file from Windows Excel\n");
+		else
+			io_info_msg("Reading SYLK file from '%s'\n", ptr+4);
+	  }
 	  break;
+
+	/* First character on the line */
 	case 'F':		/* Format field */
 	  vlen = 0;
 	  ptr++;
-	  while (*ptr)
-	    {
+	  while (*ptr) {
 	      if (*ptr != ';')
 		goto bad_field;
 	      ptr++;
-	      switch (*ptr++)
-		{
+
+	      /* Format field, second code
+	       * F;P0;DG0G8;M264
+	       *   ^
+	       */
+	      switch (*ptr++) {
 		  int clo, chi, cwid;
+		/* Format next field code */
 		case 'C':	/* Column from rows 1 to 255 */
 		  czcol = astol (&ptr);
 		  vlen = 2;
 		  break;
 
+		/* Format next field code */
 		case 'D':	/* Default format */
-		  switch (*ptr++)
-		    {
+		  switch (*ptr++) {
 		    case 'G':
 		      default_fmt = FMT_GEN;
 		      break;
@@ -151,8 +174,8 @@ sylk_read_file (fp, ismerge)
 		  else
 		    default_prc = astol (&ptr);
 
-		  switch (*ptr++)
-		    {
+		  /* Justification */
+		  switch (*ptr++) {
 		    case 'C':
 		      default_jst = JST_CNT;
 		      break;
@@ -163,13 +186,16 @@ sylk_read_file (fp, ismerge)
 		      default_jst = JST_RGT;
 		      break;
 		    case 'G':	/* General format not supported */
+			/* FIX ME this is also in Excel */
+		      break;
 		    default:
-		      io_error_msg ("Line %d: Alignment %c not supported", lineno, ptr[-1]);
+		      io_error_msg ("Line %d: Alignment %c not supported\n", lineno, ptr[-1]);
 		      break;
 		    }
 		  default_width = astol (&ptr);
 		  break;
 
+		/* Format next field code */
 		case 'F':
 		  switch (*ptr++)
 		    {
@@ -239,11 +265,14 @@ sylk_read_file (fp, ismerge)
 		    }
 		  vlen = 1;
 		  break;
+
+		/* Format next field code */
 		case 'R':	/* Row from cols 1 to 63 */
 		  czrow = astol (&ptr);
 		  vlen = 4;
 		  break;
 
+		/* Format next field code */
 		case 'W':	/* Width of clo to chi is cwid */
 		  clo = astol (&ptr);
 		  chi = astol (&ptr);
@@ -252,6 +281,7 @@ sylk_read_file (fp, ismerge)
 		    set_width (clo, cwid);
 		  break;
 
+		/* Format next field code */
 		case 'H':	/* JF: extension */
 		  clo = astol (&ptr);
 		  chi = astol (&ptr);
@@ -259,15 +289,31 @@ sylk_read_file (fp, ismerge)
 		  for (; clo <= chi; clo++)
 		    set_height (clo, cwid);
 		  break;
+
+		/* Format next field code */
 		case 'X':
 		  ccol = astol (&ptr);
 		  break;
+
+		/* Format next field code */
 		case 'Y':
 		  crow = astol (&ptr);
 		  break;
 
 		default:
 		  goto bad_field;
+
+		case 'P':	/* FIX ME Excel */
+			while (*ptr && *ptr != ';') ptr++;
+			break;
+
+		case 'M':	/* FIX ME Excel */
+			while (*ptr && *ptr != ';') ptr++;
+			break;
+
+		case 'S':	/* FIX ME Excel */
+			while (*ptr && *ptr != ';') ptr++;
+			break;
 		}
 	    }
 
@@ -311,15 +357,14 @@ sylk_read_file (fp, ismerge)
 
 	  break;
 
+	/* First character on the line */
 	case 'B':		/* Boundry field, ignored */
 	  ptr++;
-	  while (*ptr)
-	    {
+	  while (*ptr) {
 	      if (*ptr != ';')
 		goto bad_field;
 	      ptr++;
-	      switch (*ptr++)
-		{
+	      switch (*ptr++) {
 		case 'X':
 		  mx_col = astol (&ptr);
 		  if (mx_col > MAX_COL)
@@ -336,12 +381,16 @@ sylk_read_file (fp, ismerge)
 		      mx_row = MAX_ROW;
 		    }
 		  break;
+		case 'D':	/* FIX ME Excel */
+		  while (*ptr && *ptr != ';') ptr++;
+		  break;
 		default:
 		  goto bad_field;
 		}
 	    }
 	  break;
 
+	/* First character on the line */
 	case 'N':		/* A Name field */
 	  if (ptr[1] != 'N')
 	    goto bad_field;
@@ -379,6 +428,7 @@ sylk_read_file (fp, ismerge)
 	    io_error_msg ("Line %d: Couldn't set %.*s to %s: %s", lineno, vlen, vname, vval, ptr);
 	  break;
 
+	/* First character on the line */
 	case 'C':		/* A Cell entry */
 	  cprot = 0;
 	  cval = 0;
@@ -472,30 +522,51 @@ sylk_read_file (fp, ismerge)
 	    push_cell (crow, ccol);
 	  /* ... */
 	  break;
+
+	/* First character on the line */
 	case 'E':
 	  break;
+
+	/* First character on the line */
 	case 'W':
 	  io_read_window_config (ptr + 2);
 	  break;
+
+	/* First character on the line */
 	case 'U':
 	  /* JF extension:  read user-defined formats */
 	  read_mp_usr_fmt (ptr + 1);
 	  break;
-	  /* JF extension: read uset-settable options */
+
+	/* First character on the line */
 	case 'O':
+	  /* JF extension: read uset-settable options */
 	  a0 = next_a0;
+
+#if 0
+	/* FIX ME
+	   This is madness; options from SYLK should be translated into Oleo
+	   internals before passing them to general option processing.
+	 */
 	  read_mp_options (ptr + 2);
+#endif
 	  next_a0 = a0;
 	  a0 = sylk_a0;
 	  break;
+
+	/* First character on the line */
 	default:
 	bad_field:
 	  a0 = old_a0;
 	  if (!ismerge)
 	    clear_spreadsheet ();
 	  io_recenter_all_win ();
-	  io_error_msg ("Line %d: Unknown SYLK line \"%s\"", lineno, cbuf);
+	  io_error_msg ("Line %d: Unknown SYLK line \"%s\" (field %c)", lineno, cbuf, *ptr);
 	  return;
+
+	/* First character on the line */
+	case 'P':	/* FIX ME Excel */
+		break;
 	}
     }
   a0 = next_a0;

@@ -49,22 +49,25 @@ static int	ncolors = sizeof(colors) / sizeof(char *);
  * Cope with that.
  */
 #if !defined(HAVE_LIBPLOT_2_2)
-#define	pl_newpl(a,b,c,d)	new_pl(a,b,c,d)
-#define	pl_openpl()		openpl()
-#define	pl_selectpl(a)		selectpl(a)
-#define	pl_filltype(a)		filltype(a)
-#define	pl_joinmod(a)		joinmod(a)
-#define	pl_flinewidth(a)	flinewith(a)
-#define pl_pencolorname(a)	pencolorname(a)
-#define	pl_deletepl(a)		deletepl(a)
-#define	pl_fspace(a,b,c,d)	fspace(a,b,c,d)
-#define	pl_fmove(a,b)		fmove(a,b)
-#define	pl_fcont(a,b)		fcont(a,b)
-#define	pl_farc(a,b,c,d)	farc(a,b,c,d)
-#define	pl_endpath()		endpath()
-#define	pl_alabel(a,b,c)	alabel(a,b,c)
-#define	pl_box(a,b,c,d)		box(a,b,c,d)
-#define	pl_fmarker(a,b,c,d)	fmarker(a,b,c,d)
+#define pl_newpl		newpl
+#define pl_openpl		openpl
+#define pl_selectpl		selectpl
+#define pl_filltype		filltype
+#define pl_joinmod		joinmod
+#define pl_flinewidth		flinewidth
+#define pl_fline		fline
+#define pl_pencolorname		pencolorname
+#define pl_deletepl		deletepl
+#define pl_fspace		fspace
+#define pl_fmove		fmove
+#define pl_fcont		fcont
+#define pl_farc			farc
+#define pl_endpath		endpath
+#define pl_alabel		alabel
+#define pl_box			box
+#define pl_fbox			fbox
+#define pl_fmarker		fmarker
+#define	pl_fillcolorname	fillcolorname
 #endif
 
 /*

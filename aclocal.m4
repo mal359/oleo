@@ -261,7 +261,7 @@ dnl
 dnl The link_x variable should be fit to put on the application's
 dnl link line in the Makefile.
 dnl
-dnl Oleo CVS $Id: aclocal.m4,v 1.41 1999/04/02 07:26:51 danny Exp $
+dnl Oleo CVS $Id: aclocal.m4,v 1.42 1999/04/09 11:46:31 danny Exp $
 dnl
 AC_DEFUN(AC_LINK_X,
 [if test "$with_x" = "yes"; then
@@ -285,7 +285,7 @@ dnl
 dnl The link_motif and include_motif variables should be fit to put on
 dnl your application's link line in your Makefile.
 dnl
-dnl Oleo CVS $Id: aclocal.m4,v 1.41 1999/04/02 07:26:51 danny Exp $
+dnl Oleo CVS $Id: aclocal.m4,v 1.42 1999/04/09 11:46:31 danny Exp $
 dnl
 AC_DEFUN(AC_FIND_MOTIF,
 [
@@ -427,25 +427,27 @@ fi
 #
 # Provide an easier way to link
 #
-if test "$motif_includes" != "none" ; then
-	with_motif="yes"
-elif test "$motif_libraries" != "none"; then
-	with_motif="yes"
-elif test "$motif_includes" != ""; then
-	with_motif="yes"
-elif test "$motif_libraries" != ""; then
-	with_motif="yes"
+if test "$motif_includes" = "none" -o "$motif_libraries" = "none"; then
+        with_motif="no"
+else
+        with_motif="yes"
 fi
 
-#
 if test "$with_motif" != "no"; then
-	link_motif="-L$motif_libraries -lXm"
-	MOTIF_LIBS="-L$motif_libraries -lXm"
-	include_motif="-I$motif_includes"
-	MOTIF_CFLAGS="-I$motif_includes"
+        if test "$motif_libraries" = ""; then
+                link_motif="-lXm"
+                MOTIF_LIBS="-lXm"
+        else
+                link_motif="-L$motif_libraries -lXm"
+                MOTIF_LIBS="-L$motif_libraries -lXm"
+        fi
+        if test "$motif_includes" != ""; then
+                include_motif="-I$motif_includes"
+                MOTIF_CFLAGS="-I$motif_includes"
+        fi
 	AC_DEFINE(HAVE_MOTIF)
 else
-	with_motif="no"
+        with_motif="no"
 fi
 #
 AC_SUBST(link_motif)

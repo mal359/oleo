@@ -1,9 +1,9 @@
 @node Style, Multiple Windows, Making changes, Top
 @chapter Style
 
-@html
+@ifhtml
 <A NAME="HelpFormats">
-@end html
+@end ifhtml
 
 It is often important to change how the value of a cell is displayed.
 It is possible to change the height and width of a cell, the font used

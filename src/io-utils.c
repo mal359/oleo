@@ -1370,8 +1370,8 @@ read_file_generic_2(FILE *fp, int ismerge, char *format, char *name)
 {
 	if (stricmp ("oleo", format) == 0) {
 		oleo_read_file(fp, ismerge);
-	} else if (stricmp ("sylk", format) == 0) {
-		sylk_a0 = 1;
+	} else if (stricmp ("sylk", format) == 0 || stricmp ("slk", format) == 0) {
+		sylk_a0 = 0;	/* FIX ME */
 		sylk_read_file(fp, ismerge);
 	} else if (stricmp ("sylk-noa0", format) == 0) {
 		sylk_a0 = 0;
@@ -1398,20 +1398,42 @@ read_file_generic_2(FILE *fp, int ismerge, char *format, char *name)
 	return 0;
 }
 
-static char *file_formats[] = {
-	"oleo", "sylk", "sc", "list", "csv", "dbf", "panic",
-	"sylk-noa0",
-	NULL
+static struct file_formats_s {
+	char	*name;
+	char	*format;
+} file_formats[] = {
+	{ "oleo",	"oleo" },
+	{ "sylk",	"[sS]*[lL][kK]" },
+	{ "sc",		"sc" },
+	{ "list",	"list" },
+	{ "csv",	"[cC][sS][vV]" },
+	{ "dbf",	"[dD][bB][fF]" },
+	{ "panic",	"panic" },
+	{ "sylk-noa0",	"sylk" },
+	{ NULL,	NULL }
 };
 
 char *
 file_get_format(int i)
 {
-	int	m = sizeof(file_formats) / sizeof(char *) - 1;
+	int	m = sizeof(file_formats) / sizeof(struct file_formats_s) - 1;
 
 	if (i > m || i <= 0)
 		return NULL;
-	return file_formats[i-1];
+
+	return file_formats[i-1].name;
+}
+
+char *
+file_get_pattern(char *fmt)
+{
+	int	i, m = sizeof(file_formats) / sizeof(struct file_formats_s) - 1;
+
+	for (i=0; i<m; i++) {
+		if (strcmp(fmt, file_formats[i].name) == 0)
+			return file_formats[i].format;
+	}
+	return NULL;
 }
 
 void
@@ -1432,6 +1454,8 @@ read_file_generic(FILE *fp, int ismerge, char *format, char *name)
 		if (defaultformat && read_file_generic_2(fp, ismerge, defaultformat, name) != 0)
 			oleo_read_file(fp, ismerge);
 	}
+
+	recalculate();
 }
 
 void

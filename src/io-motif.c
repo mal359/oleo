@@ -1,5 +1,5 @@
 /*
- *  $Id: io-motif.c,v 1.38 1999/04/02 07:27:00 danny Exp $
+ *  $Id: io-motif.c,v 1.39 1999/04/09 11:47:01 danny Exp $
  *
  *  This file is part of Oleo, the GNU spreadsheet.
  *
@@ -21,7 +21,7 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-static char rcsid[] = "$Id: io-motif.c,v 1.38 1999/04/02 07:27:00 danny Exp $";
+static char rcsid[] = "$Id: io-motif.c,v 1.39 1999/04/09 11:47:01 danny Exp $";
 
 #include "config.h"
 
@@ -282,6 +282,7 @@ void SelectCellCB(Widget w, XtPointer client, XtPointer call)
 	XbaeMatrixSelectCellCallbackStruct *cbp =
 		(XbaeMatrixSelectCellCallbackStruct *)call;
 	static Boolean **selectedcells = NULL;
+	static Boolean	newcall = True;
 	int		i, j;
 
 #if 0
@@ -310,28 +311,53 @@ void SelectCellCB(Widget w, XtPointer client, XtPointer call)
 		selection_range.hr = cbp->row + 1;
 		selection_range.hc = cbp->column + 1;
 
+		newcall = True;
+
 		if (ActiveRangeSelectionWidget &&
 				XmIsTextField(ActiveRangeSelectionWidget)) {
 			s = range_name(&selection_range);
 			XmTextFieldSetString(ActiveRangeSelectionWidget, s);
 		}
 	} else if (cbp->num_params >= 1 && strcmp(cbp->params[0], "move") == 0) {
-		/* Motion : change selected area */
+		/*
+		 * Need to figure out which call is the first in a selection.
+		 */
 
-		selection_range.hr = cbp->row + 1;
-		selection_range.hc = cbp->column + 1;
+		if (newcall) {
+#if 0
+			fprintf(stderr, "SelectCellCB(move): first call\n");
+#endif
+			/* First call, take the position from the currently selected cell */
+			selection_range.lr = curow;
+			selection_range.lc = cucol;
 
-		for (i=selection_range.lr-1; i<=cbp->row; i++)
-		    for (j=selection_range.lc-1; j<=cbp->column; j++)
-			selectedcells[i][j] = True;
+			for (i=0; i<AppRes.rows; i++)
+			    for (j=0; j<=AppRes.columns; j++)
+				selectedcells[i][j] = False;
 
-		XtVaSetValues(mat, XmNselectedCells, selectedcells, NULL);
+			XtVaSetValues(mat, XmNselectedCells, selectedcells, NULL);
+		} else {
+#if 0
+			fprintf(stderr, "SelectCellCB(move): another call\n");
+#endif
+			/* Motion : change selected area */
+			selection_range.hr = cbp->row + 1;
+			selection_range.hc = cbp->column + 1;
 
-		if (ActiveRangeSelectionWidget &&
-				XmIsTextField(ActiveRangeSelectionWidget)) {
-			s = range_name(&selection_range);
-			XmTextFieldSetString(ActiveRangeSelectionWidget, s);
+			for (i=selection_range.lr-1; i<=cbp->row; i++)
+			    for (j=selection_range.lc-1; j<=cbp->column; j++)
+				selectedcells[i][j] = True;
+
+			XtVaSetValues(mat, XmNselectedCells, selectedcells, NULL);
+
+			if (ActiveRangeSelectionWidget &&
+					XmIsTextField(ActiveRangeSelectionWidget)) {
+				s = range_name(&selection_range);
+				XmTextFieldSetString(ActiveRangeSelectionWidget, s);
+			}
 		}
+
+		newcall = False;
 	} 
 }
 
@@ -601,6 +627,7 @@ void PrintOptionsCB(Widget w, XtPointer client, XtPointer call)
 		options = XmCreateTemplateDialog(mw, "configureGraph",
 			NULL, 0);
 
+#if XmVERSION > 1
 		nb = XmCreateNotebook(options,
 			"printOptionsNotebook",
 			NULL, 0);
@@ -655,7 +682,7 @@ void PrintOptionsCB(Widget w, XtPointer client, XtPointer call)
 				nb,
 				XmNnotebookChildType, XmMAJOR_TAB,
 			NULL);
-
+#endif
 
 		/* Buttons */
 		ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass,
@@ -1012,6 +1039,7 @@ void ConfigureGraph(Widget w, XtPointer client, XtPointer call)
 		configureGraph = XmCreateTemplateDialog(mw, "configureGraph",
 			NULL, 0);
 
+#if XmVERSION > 1
 		ConfigureGraphNotebook = XmCreateNotebook(configureGraph,
 			"configureGraphNotebook",
 			NULL, 0);
@@ -1052,6 +1080,7 @@ void ConfigureGraph(Widget w, XtPointer client, XtPointer call)
 			ConfigureGraphNotebook,
 				XmNnotebookChildType, XmMAJOR_TAB,
 			NULL);
+#endif
 
 		/* Buttons */
 		ok = XtVaCreateManagedWidget("ok", xmPushButtonGadgetClass,
@@ -1896,6 +1925,7 @@ void SetDefaultFileCB(Widget w, XtPointer client, XtPointer call)
 	Widget	tf, f;
 
 	f = XtParent(w);
+
 	/* Set default file format */
 
 	/* Set separator in List file format */
@@ -2283,12 +2313,17 @@ void MotifSetWindowName(const char *s)
 
 void FileFormatCB(Widget w, XtPointer client, XtPointer call)
 {
-	char		*f = (char *)client;
+	char		*f = (char *)client, *p;
 	XmString	xms;
 
+	p = file_get_pattern(f);
+	if (p == NULL)
+		p = f;
+
 	strcpy(fileformat, f);
+
 	strcpy(pattern, "*.");
-	strcat(pattern, f);
+	strcat(pattern, p);
 
 	xms = XmStringCreateSimple(pattern);
 	XtVaSetValues(fsd, XmNpattern, xms, NULL);
@@ -2351,6 +2386,30 @@ void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 	XtFree(s);
 }
 
+void DefaultFileResetCB(Widget w, XtPointer client, XtPointer call)
+{
+	Widget		menu, x;
+	char		format[32], *f, *p;
+	XmString	xms;
+
+	f = file_get_default_format();
+
+	strcpy(format, "*.");
+	strcat(format, f ? f : "oleo");
+
+	x = XtNameToWidget(fsd, format);
+	menu = XtNameToWidget(fsd, "*optionCB");
+	XtVaSetValues(menu, XmNmenuHistory, x, NULL);
+
+	p = file_get_pattern(f ? f : "oleo");
+	strcpy(format, "*.");
+	strcat(format, p);
+
+	xms = XmStringCreateSimple(format);
+	XtVaSetValues(fsd, XmNpattern, xms, NULL);
+	XmStringFree(xms);
+}
+
 void CreateFSD()
 {
 	Arg		al[10];
@@ -2371,6 +2430,8 @@ void CreateFSD()
 
 	/* Option menu */
 	menu = CreateFileFormatOption(fsd, FileFormatCB);
+
+	XtAddCallback(XtParent(fsd), XmNpopupCallback, DefaultFileResetCB, (XtPointer)menu);
 }
 
 void LoadCB(Widget w, XtPointer client, XtPointer call)
@@ -3598,6 +3659,7 @@ GscBuildMainWindow(Widget parent)
 		free(early_msg_text);
 		early_msg_text = NULL;
 
+		XmTextShowPosition(msgtext, XmTextGetLastPosition(msgtext));
 		XBell(XtDisplay(msgtext), 30);
 	}
 

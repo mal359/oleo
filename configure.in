@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.55 1999/04/02 07:26:52 danny Exp $
+dnl $Id: configure.in,v 1.56 1999/04/09 11:46:33 danny Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -57,8 +57,8 @@ dnl
 dnl Dirty trick
 dnl
 if test -d /usr/local ; then
-	CFLAGS="$CFLAGS -I/usr/local/include"
-	LIBS="$LIBS -L/usr/local/lib"
+	CFLAGS="-I/usr/local/include $CFLAGS "
+	LIBS="-L/usr/local/lib $LIBS "
 fi
 
 dnl
