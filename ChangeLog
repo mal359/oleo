@@ -1,5 +1,12 @@
+2005-08-03  gettextize  <bug-gnu-gettext@gnu.org>
 
-$Id: ChangeLog,v 1.164 2003/01/18 17:25:59 pw Exp $
+	* Makefile.am (EXTRA_DIST): Add config.rpath.
+	* configure.in (AC_OUTPUT): Add po/Makefile.in.
+	(AC_OUTPUT): Remove command that created po/Makefile.
+	(AC_LINK_FILES): Remove invocation.
+
+
+$Id: ChangeLog,v 1.165 2005/08/03 19:04:54 danny Exp $
 
 Sat Jan 18 12:19:35 EST 2003  Pete Wyckoff  <pw@osc.edu>
 	* src/posixtm.y: Hide more yy* declarations for an old yacc.  Add

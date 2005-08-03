@@ -1,5 +1,5 @@
 #
-# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.58 2001/05/12 16:32:47 pw Exp $
+# $Header: /home/matt/cvs/oleo/oleo/src/Makefile.am,v 1.59 2005/08/03 19:04:54 danny Exp $
 #
 # CPPFLAGS = -Wall
 
@@ -12,7 +12,7 @@ CLEANFILES = parse.c parse.h posixtm.c posixtm.h
 DISTCLEANFILES = tags
 MAINTAINERCLEANFILES = Makefile.in
 
-YFLAGS = -d
+AM_YFLAGS = -d
 
 bin_PROGRAMS = oleo
 
@@ -38,7 +38,7 @@ MYSQL = mysql.c oleosql.h mysql.h
 #
 if HaveXbase
 XBSRC=		xbase.cpp oleo_xb.h
-CXXFLAGS=	$(CFLAGS)
+AM_CXXFLAGS=	$(CFLAGS)
 oleo_LINK=	$(CXXLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
 else
 XBSRC=
@@ -84,9 +84,10 @@ MYINC=
 MYCFL=	${X_CFLAGS}
 endif
 
-oleo_LDADD = ${X_PRE_LIBS} ${MYLD} @INTLLIBS@ ../lib/liboleo.a ../intl/libintl.a ${X_LIBS}
+oleo_LDADD = ${X_PRE_LIBS} ${MYLD} @LIBINTL@ ../lib/liboleo.a ${X_LIBS}
+
 INCLUDES = -I.. -I$(srcdir) -I$(top_srcdir)/lib -I../intl ${MYINC}
-CFLAGS = @CFLAGS@ -DLOCALEDIR=\"$(localedir)\" ${MYCFL} \
+AM_CFLAGS = @CFLAGS@ -DLOCALEDIR=\"$(localedir)\" ${MYCFL} \
 	-DBUILD_PREFIX='"'${BUILD_PREFIX}'"'
 
 noinst_HEADERS = args.h basic.h byte-compile.h cell.h cmd.h decompile.h \
