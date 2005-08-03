@@ -6,7 +6,6 @@ dnl
 dnl Adapted from a macro by Andreas Zeller.
 dnl
 dnl The variables provided are :
-dnl	have_xlt		(e.g. yes)
 dnl	link_xlt		(e.g. -L/usr/lesstif/lib -lXm)
 dnl	include_xlt		(e.g. -I/usr/lesstif/lib)
 dnl	xlt_libraries		(e.g. /usr/lesstif/lib)
@@ -15,13 +14,14 @@ dnl
 dnl The link_xlt and include_xlt variables should be fit to put on
 dnl your application's link line in your Makefile.
 dnl
-AC_DEFUN(AC_FIND_XLT,
+AC_DEFUN([AC_FIND_XLT],
 [
 AC_REQUIRE([AC_FIND_MOTIF])
+AC_REQUIRE([AC_FIND_XPM])
 xlt_includes=
 xlt_libraries=
 AC_ARG_WITH(xlt,
-[  --without-xlt                do not use Xlt widgets])
+[  --without-xlt         do not use Xlt widgets])
 dnl Treat --without-xlt like
 dnl --without-xlt-includes --without-xlt-libraries.
 if test "$with_xlt" = "no"
@@ -30,12 +30,12 @@ then
     xlt_libraries=no
 fi
 AC_ARG_WITH(xlt-includes,
-    [  --with-xlt-includes=DIR      Xlt include files are in DIR], xlt_includes="$withval")
+    [  --with-xlt-includes=DIR    Xlt include files are in DIR], xlt_includes="$withval")
 AC_ARG_WITH(xlt-libraries,
-    [  --with-xlt-libraries=DIR     Xlt libraries are in DIR], xlt_libraries="$withval")
+    [  --with-xlt-libraries=DIR   Xlt libraries are in DIR], xlt_libraries="$withval")
 if test "$xlt_includes" = "no" && test "$xlt_libraries" = "no"
 then
-    have_xlt="no"
+    with_xlt="no"
 fi
 
 AC_MSG_CHECKING([for Xlt])
@@ -52,14 +52,13 @@ then
 	ac_xlt_save_CFLAGS="$CFLAGS"
 	ac_xlt_save_CPPFLAGS="$CPPFLAGS"
 	#
-	CFLAGS="$MOTIF_CFLAGS $X_CFLAGS $CFLAGS"
-	CPPFLAGS="$MOTIF_CFLAGS $X_CFLAGS $CPPFLAGS"
+	CFLAGS="$MOTIF_CFLAGS $X_CFLAGS $XPM_CFLAGS $CFLAGS"
+	CPPFLAGS="$MOTIF_CFLAGS $X_CFLAGS $XPM_CFLAGS $CPPFLAGS"
 	#
 	AC_TRY_COMPILE([#include <Xlt/Xlt.h>],[int a;],
 	[
 	# Xlt/Xlt.h is in the standard search path.
 	ac_cv_xlt_includes=
-	have_xlt="yes"
 	],
 	[
 	# Xlt/Xlt.h is not in the standard search path.
@@ -67,18 +66,17 @@ then
 	#
 	# Other directories are just guesses.
 	for dir in "$x_includes" "${prefix}/include" /usr/include /usr/local/include \
-		   /usr/include/Motif2.0 /usr/include/Motif1.2 /usr/include/Motif1.1 \
-		   /usr/include/X11R6 /usr/include/X11R5 /usr/include/X11R4 \
+		    /usr/include/Motif2.1 /usr/include/Motif2.0 /usr/include/Motif1.2 \
+		   /usr/include/X11R6 /usr/include/X11R5 \
 		   /usr/dt/include /usr/openwin/include \
 		   /usr/dt/*/include /opt/*/include /usr/include/Xlt* \
 		   "${prefix}"/*/include /usr/*/include /usr/local/*/include \
 		   "${prefix}"/include/* /usr/include/* /usr/local/include/* \
-		/usr/lesstif*/include /usr/motif*/include
+		   "${HOME}"/include
 	do
 	    if test -f "$dir/Xlt/Xlt.h"
 	    then
 		ac_cv_xlt_includes="$dir"
-		have_xlt="yes"
 		break
 	    fi
 	done
@@ -93,17 +91,14 @@ then
     if test -z "$xlt_includes"
     then
 	xlt_includes_result="default path"
-	have_xlt="yes"
 	XLT_CFLAGS=""
     else
 	if test "$xlt_includes" = "no"
 	then
 	    xlt_includes_result="told not to use them"
-	    have_xlt="yes"
 	    XLT_CFLAGS=""
 	else
 	    xlt_includes_result="$xlt_includes"
-	    have_xlt="yes"
 	    XLT_CFLAGS="-I$xlt_includes"
 	fi
     fi
@@ -119,9 +114,9 @@ then
 	ac_xlt_save_CFLAGS="$CFLAGS"
 	ac_xlt_save_CPPFLAGS="$CPPFLAGS"
 	#
-	LIBS="-lXlt -lXpm -lm $MOTIF_LIBS $X_LIBS $X_PRELIBS -lXt -lX11 $X_EXTRA_LIBS $LIBS"
-	CFLAGS="$XLT_CFLAGS $MOTIF_CFLAGS $X_CFLAGS $CFLAGS"
-	CPPFLAGS="$XLT_CFLAGS $MOTIF_CFLAGS $X_CFLAGS $CPPFLAGS"
+	LIBS="-lXlt -lm $MOTIF_LIBS $X_LIBS $X_PRE_LIBS -lXt $XPM_LIBS -lX11 $X_EXTRA_LIBS $LIBS"
+	CFLAGS="$XLT_CFLAGS $MOTIF_CFLAGS $X_CFLAGS $XPM_CFLAGS $CFLAGS"
+	CPPFLAGS="$XLT_CFLAGS $MOTIF_CFLAGS $X_CFLAGS $XPM_CFLAGS $CPPFLAGS"
 	#
 	AC_TRY_LINK([#include <Xlt/Xlt.h>],[Widget w; XltRedirectStdErr(w);],
 	[
@@ -135,13 +130,15 @@ then
 	# Other directories are just guesses.
 	for dir in "$x_libraries" "${prefix}/lib" /usr/lib /usr/local/lib \
 		   /usr/lib/Xlt2.0 /usr/lib/Xlt1.2 /usr/lib/Xlt1.1 \
-		   /usr/lib/X11R6 /usr/lib/X11R5 /usr/lib/X11R4 /usr/lib/X11 \
+		   /usr/lib/X11R6 /usr/lib/X11R5 /usr/lib/X11 \
 		   /usr/dt/lib /usr/openwin/lib \
 		   /usr/dt/*/lib /opt/*/lib /usr/lib/Xlt* \
 		   /usr/lesstif*/lib /usr/lib/Lesstif* \
 		   "${prefix}"/*/lib /usr/*/lib /usr/local/*/lib \
-		   "${prefix}"/lib/* /usr/lib/* /usr/local/lib/*; do
-	    for ext in "sl" "so" "a"; do
+		   "${prefix}"/lib/* /usr/lib/* /usr/local/lib/* \
+		   "${HOME}"/lib
+	do
+	    for ext in "sl" "so" "a" "lib" ; do
 		if test -d "$dir" && test -f "$dir/libXlt.$ext"; then
 		    ac_cv_xlt_libraries="$dir"
 		    break 2
@@ -160,7 +157,7 @@ then
     if test -z "$xlt_libraries"
     then
 	xlt_libraries_result="default path"
-	XLT_LIBS="-lXlt -lXpm -lm"
+	XLT_LIBS="-lXlt"
     else
 	if test "$xlt_libraries" = "no"
 	then
@@ -168,7 +165,7 @@ then
 	    XLT_LIBS=""
 	else
 	    xlt_libraries_result="$xlt_libraries"
-	    XLT_LIBS="-L$xlt_libraries -lXlt -lXpm -lm"
+	    XLT_LIBS="-L$xlt_libraries -lXlt"
 	fi
     fi
 #
@@ -178,15 +175,20 @@ then
     ac_xlt_save_CFLAGS="$CFLAGS"
     ac_xlt_save_CPPFLAGS="$CPPFLAGS"
     #
-    LIBS="$XLT_LIBS $MOTIF_LIBS $X_LIBS $X_PRELIBS -lXt -lX11 $X_EXTRA_LIBS $LIBS"
-    CFLAGS="$XLT_CFLAGS $MOTIF_CFLAGS $X_CFLAGS $CFLAGS"
-    CPPFLAGS="$XLT_CFLAGS $MOTIF_CFLAGS $X_CFLAGS $CPPFLAGS"
+    LIBS="$XLT_LIBS -lm $MOTIF_LIBS $X_LIBS $X_PRE_LIBS -lXt $XPM_LIBS -lX11 $X_EXTRA_LIBS $LIBS"
+    CFLAGS="$XLT_CFLAGS $MOTIF_CFLAGS $X_CFLAGS $XPM_CFLAGS $CFLAGS"
+    CPPFLAGS="$XLT_CFLAGS $MOTIF_CFLAGS $X_CFLAGS $XPM_CFLAGS $CPPFLAGS"
 
     AC_TRY_LINK([#include <Xlt/Xlt.h>],[Widget w; XltRedirectStdErr(w);],
 	[
 	#
 	# link passed
 	#
+	# Just to be sure there is something here...
+	#
+	true
+	#
+	AC_DEFINE(HAVE_XLT, 1, Define if the Xlt library is available)
 	],
 	[
 	#
@@ -194,7 +196,7 @@ then
 	#
 	xlt_libraries_result="test link failed"
 	xlt_includes_result="test link failed"
-	have_xlt="no"
+	with_xlt="no"
 	XLT_CFLAGS=""
 	XLT_LIBS=""
 	]) dnl AC_TRY_LINK
@@ -207,10 +209,6 @@ else
     xlt_includes_result="told not to use them"
     XLT_CFLAGS=""
     XLT_LIBS=""
-fi
-
-if test "$have_xlt" = "yes"; then
-  AC_DEFINE(HAVE_XLT)
 fi
 AC_MSG_RESULT([libraries $xlt_libraries_result, headers $xlt_includes_result])
 AC_SUBST(XLT_CFLAGS)
