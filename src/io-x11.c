@@ -1,9 +1,9 @@
 #undef	I18N_VERBOSE
 #define	X_I18N
 /*
- * $Id: io-x11.c,v 1.32 2004/08/18 14:40:58 danny Exp $
+ * $Id: io-x11.c,v 1.33 2005/08/03 09:04:38 danny Exp $
  *
- *	Copyright © 1992, 1993, 1999, 2000, 2001 Free Software Foundation, Inc.
+ *	Copyright © 1992, 1993, 1999, 2000, 2001, 2004, 2005 Free Software Foundation, Inc.
  * 	
  * 	This program is free software; you can redistribute it and/or modify
  * 	it under the terms of the GNU General Public License as published by
@@ -34,7 +34,6 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <sys/param.h>
-#define NeedFunctionPrototypes 0
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
