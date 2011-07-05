@@ -17,7 +17,7 @@ dnl
 AC_DEFUN([AC_FIND_XLT],
 [
 AC_REQUIRE([AC_FIND_MOTIF])
-AC_REQUIRE([AC_FIND_XPM])
+dnl AC_REQUIRE([AC_FIND_XPM])
 xlt_includes=
 xlt_libraries=
 AC_ARG_WITH(xlt,
