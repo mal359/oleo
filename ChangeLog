@@ -1,8 +1,9 @@
-$Id: ChangeLog,v 1.167 2011/07/05 05:54:36 delqn Exp $
+$Id: ChangeLog,v 1.168 2011/07/05 06:09:54 delqn Exp $
 
 Mon Jul  4 19:00:00 PST 2011  Delyan Raychev <delqn@gnu.org>
+	* Release oleo 1.99.17
 	* config.rpath: Added the file
-	* configure.in: disabling gettext until it's properly implemented
+	* configure.in: disabling gettext until it's properly implemented; update ver
 
 2005-08-03  gettextize  <bug-gnu-gettext@gnu.org>
 
