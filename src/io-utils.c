@@ -1,5 +1,5 @@
 /*
- * $Id: io-utils.c,v 1.42 2001/06/26 00:36:35 pw Exp $
+ * $Id: io-utils.c,v 1.43 2011/07/05 00:16:13 delqn Exp $
  *
  * Copyright © 1990, 1992, 1993, 2000, 2001 Free Software Foundation, Inc.
  *
@@ -71,7 +71,7 @@ char numb_oflo[] = "########################################";
 
 double __plinf;
 double __neinf;
-double __nan;
+double oleo__nan;
 
 char nname[] = "#NOT_A_NUMBER";
 char iname[] = "#INFINITY";
@@ -125,7 +125,7 @@ init_infinity (void)
   __neinf = divide (-1., 0.);
   (void) signal (SIGFPE, ignore_sig);
 #endif
-  __nan = __plinf + __neinf;
+  oleo__nan = __plinf + __neinf;
 }
 
 

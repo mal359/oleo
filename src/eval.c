@@ -1,5 +1,5 @@
 /*
- * $Header: /home/matt/cvs/oleo/oleo/src/eval.c,v 1.13 2001/05/13 07:50:53 danny Exp $
+ * $Header: /home/matt/cvs/oleo/oleo/src/eval.c,v 1.14 2011/07/05 00:16:13 delqn Exp $
  *
  * Copyright © 1990, 1992, 1993, 2001 Free Software Foundation, Inc.
  *
@@ -564,7 +564,7 @@ eval_expression (expr)
 	case CONST_NINF:
 	case CONST_NAN:
 	  p->type = TYP_FLT;
-	  p->Float = (byte == CONST_INF) ? __plinf : ((byte == CONST_NINF) ? __neinf : __nan);
+	  p->Float = (byte == CONST_INF) ? __plinf : ((byte == CONST_NINF) ? __neinf : oleo__nan);
 	  break;
 
 	case VAR:

@@ -46,7 +46,7 @@ If you wish to abort a command, type @kbd{C-g}
 * Getting Help::                Getting help
 * Saving and reading::          Saving and reading Spreadsheets
 * Command Line Options::        Command Line Options
-* .oleorc file::                The initialization file
+* ~/.oleorc file::              The initialization file
 * Expressions::                 Types of expressions
 @end menu
 
@@ -109,7 +109,7 @@ bottom of the screen, type
 M-x set-option @key{RET} input -1
 @end example
 
-This can be made the default.  (@pxref{.oleorc file})
+This can be made the default.  (@pxref{~/.oleorc file})
 
 @node Status Line , Work Area, Minibuffer, The Screen
 @unnumberedsubsec The status line
@@ -637,7 +637,7 @@ hooks are on by default.
 @end table
 
 
-@node Command Line Options, .oleorc file, Saving and reading, Basics
+@node Command Line Options, ~/.oleorc file, Saving and reading, Basics
 @section Command Line Options
 @comment  node-name,  next,  previous,  up
 @cindex Command Line Options
@@ -682,8 +682,8 @@ set separator for 'list' file type to a space
 @end table
 
 
-@node .oleorc file, Expressions, Command Line Options, Basics
-@section The @file{.oleorc} file
+@node ~/.oleorc file, Expressions, Command Line Options, Basics
+@section The @file{~/.oleorc} file
 @cindex .oleorc
 @comment  node-name,  next,  previous,  up
 
