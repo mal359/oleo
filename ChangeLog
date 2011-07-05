@@ -1,15 +1,15 @@
+$Id: ChangeLog,v 1.167 2011/07/05 05:54:36 delqn Exp $
+
+Mon Jul  4 19:00:00 PST 2011  Delyan Raychev <delqn@gnu.org>
+	* config.rpath: Added the file
+	* configure.in: disabling gettext until it's properly implemented
+
 2005-08-03  gettextize  <bug-gnu-gettext@gnu.org>
 
 	* Makefile.am (EXTRA_DIST): Add config.rpath.
 	* configure.in (AC_OUTPUT): Add po/Makefile.in.
 	(AC_OUTPUT): Remove command that created po/Makefile.
 	(AC_LINK_FILES): Remove invocation.
-
-
-$Id: ChangeLog,v 1.166 2011/07/05 02:01:20 delqn Exp $
-
-Mon Jul  4 19:00:00 PST 2011  Delyan Raychev <delqn@gnu.org>
-	* config.rpath: Added the file
 
 Sat Jan 18 12:19:35 EST 2003  Pete Wyckoff  <pw@osc.edu>
 	* src/posixtm.y: Hide more yy* declarations for an old yacc.  Add
