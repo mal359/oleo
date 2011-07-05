@@ -6,7 +6,10 @@
 	(AC_LINK_FILES): Remove invocation.
 
 
-$Id: ChangeLog,v 1.165 2005/08/03 19:04:54 danny Exp $
+$Id: ChangeLog,v 1.166 2011/07/05 02:01:20 delqn Exp $
+
+Mon Jul  4 19:00:00 PST 2011  Delyan Raychev <delqn@gnu.org>
+	* config.rpath: Added the file
 
 Sat Jan 18 12:19:35 EST 2003  Pete Wyckoff  <pw@osc.edu>
 	* src/posixtm.y: Hide more yy* declarations for an old yacc.  Add
