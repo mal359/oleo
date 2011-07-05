@@ -1,7 +1,7 @@
 dnl
 dnl This is the configuration file for GNU oleo.
 dnl
-dnl $Id: configure.in,v 1.94 2005/08/03 19:04:54 danny Exp $
+dnl $Id: configure.in,v 1.95 2011/07/05 05:45:05 delqn Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
@@ -337,7 +337,7 @@ fi
 
 dnl See if we're GNU Gettext friendly
 dnl
-AM_GNU_GETTEXT([external])
+dnl AM_GNU_GETTEXT([external])
 
 dnl
 dnl This used to cause all kinds of problems in an earlier revision
@@ -371,4 +371,6 @@ AC_SUBST(link_xmhtml)
 AC_SUBST(include_sciplot)
 AC_SUBST(link_sciplot)
 
-AC_OUTPUT([Makefile oleobug doc/Makefile doc/texi2html lib/Makefile src/Makefile m4/Makefile po/Makefile.in Xresources/Makefile examples/Makefile oleo.spec afm/Makefile ],[])
+dnl po/Makefile.in 
+AC_OUTPUT([Makefile oleobug doc/Makefile doc/texi2html lib/Makefile src/Makefile m4/Makefile Xresources/Makefile examples/Makefile oleo.spec afm/Makefile ],[]) 
+
