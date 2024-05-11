@@ -12,9 +12,6 @@
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-# ifdef FORCE_ALLOCA_H
-#  include <alloca.h>
-# endif
 #endif
 
 /* Since the code of getdate.y is not included in the Emacs executable
@@ -29,12 +26,10 @@
 
 #include <stdio.h>
 #include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 
-#if defined (STDC_HEADERS) || (!defined (isascii) && !defined (HAVE_ISASCII))
 # define IN_CTYPE_DOMAIN(c) 1
-#else
-# define IN_CTYPE_DOMAIN(c) isascii(c)
-#endif
 
 #define ISSPACE(c) (IN_CTYPE_DOMAIN (c) && isspace (c))
 #define ISALPHA(c) (IN_CTYPE_DOMAIN (c) && isalpha (c))
@@ -53,16 +48,11 @@
 
 #include "get_date.h"
 
-#if defined (STDC_HEADERS) || defined (USG)
-# include <string.h>
-#endif
-
 /* Some old versions of bison generate parsers that use bcopy.
    That loses on systems that don't provide the function, so we have
    to redefine it here.  */
-#if !defined (HAVE_BCOPY) && defined (HAVE_MEMCPY) && !defined (bcopy)
-# define bcopy(from, to, len) memcpy ((to), (from), (len))
-#endif
+/* bcopy, like ska, isn't cool anymore. MAL 2024 */
+#define bcopy(from, to, len) memcpy ((to), (from), (len))
 
 extern struct tm	*gmtime ();
 extern struct tm	*localtime ();
