@@ -25,41 +25,16 @@
 # include <config.h>
 #endif
 
-#ifdef _LIBC
-# define HAVE_LIMITS_H 1
-# define HAVE_LOCALTIME_R 1
-# define STDC_HEADERS 1
-#endif
-
-/* Assume that leap seconds are possible, unless told otherwise.
-   If the host has a `zic' command with a `-L leapsecondfilename' option,
-   then it supports leap seconds; otherwise it probably doesn't.  */
-#ifndef LEAP_SECONDS_POSSIBLE
-# define LEAP_SECONDS_POSSIBLE 1
-#endif
-
 #include <sys/types.h>		/* Some systems define `time_t' here.  */
 #include <time.h>
-
-#if HAVE_LIMITS_H
-# include <limits.h>
-#endif
-
-#if DEBUG
-# include <stdio.h>
-# if STDC_HEADERS
-#  include <stdlib.h>
-# endif
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
 /* Make it work even if the system's libc has its own mktime routine.  */
-# define mktime my_mktime
-#endif /* DEBUG */
+#define mktime my_mktime
 
 #ifndef __P
-# if defined (__GNUC__) || (defined (__STDC__) && __STDC__)
-#  define __P(args) args
-# else
-#  define __P(args) ()
-# endif  /* GCC.  */
+#define __P(args) args
 #endif  /* Not __P.  */
 
 #ifndef CHAR_BIT
@@ -108,25 +83,8 @@ time_t __mktime_internal __P ((struct tm *,
 			       time_t *));
 
 
-#ifdef _LIBC
-# define localtime_r __localtime_r
-#else
-# if ! HAVE_LOCALTIME_R && ! defined localtime_r
-/* Approximate localtime_r as best we can in its absence.  */
-#  define localtime_r my_mktime_localtime_r
-static struct tm *localtime_r __P ((const time_t *, struct tm *));
-static struct tm *
-localtime_r (t, tp)
-     const time_t *t;
-     struct tm *tp;
-{
-  struct tm *l = localtime (t);
-  if (! l)
-    return 0;
-  *tp = *l;
-  return tp;
-}
-# endif /* ! HAVE_LOCALTIME_R && ! defined (localtime_r) */
+#ifdef __GLIBC__
+#define localtime_r __localtime_r
 #endif /* ! _LIBC */
 
 
@@ -168,7 +126,7 @@ time_t
 mktime (tp)
      struct tm *tp;
 {
-#ifdef _LIBC
+#ifdef __GLIBC__
   /* POSIX.1 8.1.1 requires that whenever mktime() is called, the
      time zone names contained in the external variable `tzname' shall
      be set as if the tzset() function had been called.  */
@@ -225,7 +183,6 @@ __mktime_internal (tp, convert, offset)
 	       [mon_remainder + 12 * negative_mon_remainder])
 	      + mday - 1);
 
-#if LEAP_SECONDS_POSSIBLE
   /* Handle out-of-range seconds specially,
      since ydhms_tm_diff assumes every minute has 60 seconds.  */
   int sec_requested = sec;
@@ -233,7 +190,6 @@ __mktime_internal (tp, convert, offset)
     sec = 0;
   if (59 < sec)
     sec = 59;
-#endif
 
   /* Invert CONVERT by probing.  First assume the same offset as last time.
      Then repeatedly use the error to improve the guess.  */
@@ -277,7 +233,6 @@ __mktime_internal (tp, convert, offset)
 
   *offset = t - t0;
 
-#if LEAP_SECONDS_POSSIBLE
   if (sec_requested != tm.tm_sec)
     {
       /* Adjust time to reflect the tm_sec requested, not the normalized value.
@@ -285,7 +240,6 @@ __mktime_internal (tp, convert, offset)
       t += sec_requested - sec + (sec == 0 && tm.tm_sec == 60);
       (*convert) (&t, &tm);
     }
-#endif
 
   if (TIME_T_MAX / INT_MAX / 366 / 24 / 60 / 60 < 3)
     {

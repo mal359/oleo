@@ -5,16 +5,18 @@ dnl $Id: configure.in,v 1.96 2011/07/05 06:08:43 delqn Exp $
 dnl
 dnl Process this file with autoconf to produce a configure script.
 dnl
-AC_INIT(src/init.c)
+dnl Actually, it's configure.ac now. MAL 2024
 
 dnl
-dnl Need to be processed with Autoconf >= 2.13
+dnl Need to be processed with Autoconf >= 2.13 ...sike! MAL 2024
 dnl
-AC_PREREQ(2.13)
+dnlAC_PREREQ(2.13)
 
-AM_INIT_AUTOMAKE([oleo], [1.99.17])
+AC_INIT([oleo],[1.99.17])
+AM_INIT_AUTOMAKE
+AM_MAINTAINER_MODE([enable])
 GNU_PACKAGE="GNU $PACKAGE"
-AC_DEFINE_UNQUOTED(GNU_PACKAGE, "$GNU_PACKAGE")
+AC_DEFINE([GNU_PACKAGE], ["$GNU_PACKAGE"], [GNU Oleo])
 
 dnl
 dnl Use of this macro will keep unexpected things from happening if
@@ -31,16 +33,22 @@ dnl This is supposedly obsolete.
 dnl ALL_LINGUAS="en nl fr"
 
 dnl AC_ARG_PROGRAM
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 
 dnl
 dnl Find a C compiler, detect strange systems.
 dnl The order is important here.
 dnl
 AC_PROG_CC
-AC_AIX
-AC_ISC_POSIX
-AC_CYGWIN
+AC_USE_SYSTEM_EXTENSIONS
+AC_SEARCH_LIBS([strerror],[cposix])
+
+AC_CANONICAL_HOST
+case $host_os in
+  *cygwin* ) CYGWIN=yes;;
+	 * ) CYGWIN=no;;
+esac
+
 AC_EXEEXT
 
 dnl
@@ -100,12 +108,12 @@ AC_CHECK_LIB(ncurses, waddch, LIBS="$LIBS -lncurses",
 AC_CHECK_HEADERS(ncurses.h, break, ac_cv_lib_ncurses_waddch="no")
 
 dnl Check for sys_errlist[] and sys_nerr, check for declaration
+AC_DEFINE([HAVE_SYS_ERRLIST], [], [Define if `sys_errlist' and `sys_nerr' are declared. Normally in <errno.h>.])
+
 AC_MSG_CHECKING([for sys_errlist and sys_nerr])
 AC_CACHE_VAL(oleo_cv_sys_errlist,
-[AC_TRY_LINK([#include <errno.h>
-#include <stdio.h>],
-[  char *msg = sys_errlist[sys_nerr - 1];],
-      oleo_cv_sys_errlist=yes, oleo_cv_sys_errlist=no)])dnl
+[AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <errno.h>
+#include <stdio.h>]], [[  char *msg = sys_errlist[sys_nerr - 1];]])],[oleo_cv_sys_errlist=yes],[oleo_cv_sys_errlist=no])])dnl
       AC_MSG_RESULT($oleo_cv_sys_errlist)
       if test $oleo_cv_sys_errlist = yes; then
       AC_DEFINE(HAVE_SYS_ERRLIST)
@@ -165,7 +173,7 @@ if test "$no_x" = ""; then
     dnl
     dnl If libXp is around, use it.
     dnl
-    LT_HAVE_LIBXP
+    AC_FIND_LIBXP
     if test "$lt_cv_libxp" = "yes";
     then
 	LIBS="$LIBS -lXp -lXext"
@@ -192,7 +200,7 @@ if test "$no_x" = ""; then
 	if test "x$XLT_LIBS" != "x"; then
 	    CFLAGS="$XLT_CFLAGS $MOTIF_CFLAGS $X_CFLAGS $CFLAGS"
 	    LIBS="$XLT_LIBS $MOTIF_LIBS $X_LIBS $X_PRE_LIBS -lXt -lX11 -lXext $X_EXTRA_LIBS $LIBS"
-	    AC_DEFINE(HAVE_SciPlot_H)
+	    AC_DEFINE([HAVE_SciPlot_H], [], [SciPlot])
 	else
 	    ICE_FIND_SciPlot
 	    CFLAGS="$MOTIF_CFLAGS $X_CFLAGS $CFLAGS"
@@ -223,14 +231,14 @@ dnl	This needs to be done after the X and Motif tests, because
 dnl	the libplot from GNU plotutils sometimes requires linking the
 dnl	X and Motif libraries
 dnl
-AC_CHECK_LIB(plot, pl_openpl_r,
-	AC_DEFINE(HAVE_LIBPLOT)
-	LIBS="$LIBS -lplot")
+AC_CHECK_LIB([plot], [pl_openpl_r], [
+    AC_DEFINE([HAVE_LIBPLOT], [1], [GNU libplot])
+    LIBS="$LIBS -lplot"
+])
 
-AC_CHECK_LIB(sciplot, sp_begin_plot)
-if test x$ac_cv_lib_sciplot_sp_begin_plot = xyes; then
-	AC_DEFINE(HAVE_LIBSCIPLOT)
-fi
+AC_CHECK_LIB([sciplot], [sp_begin_plot], [
+    AC_DEFINE([HAVE_LIBSCIPLOT], [1], [SciPlot])
+])
 
 dnl Checks for Guile
 dnl AC_CHECK_LIB(guile, scm_boot_guile)
@@ -258,21 +266,46 @@ dnl
 dnl Checks for header files.
 dnl
 AC_HEADER_DIRENT
-AC_HEADER_STDC
+AC_CHECK_MEMBERS([struct dirent.d_ino], [D_INO_IN_DIRENT=1], [D_INO_IN_DIRENT=0], [#include <dirent.h>])
+AC_DEFINE_UNQUOTED([D_INO_IN_DIRENT], [$D_INO_IN_DIRENT], [Define if there is a member named d_ino in the struct describing directory headers.])
+# Autoupdate added the next two lines to ensure that your configure
+# script's behavior did not change.  They are probably safe to remove.
+AC_CHECK_INCLUDES_DEFAULT
+AC_PROG_EGREP
+
 AC_CHECK_HEADERS(fcntl.h limits.h malloc.h strings.h sys/time.h unistd.h)
-AC_CHECK_HEADERS(locale.h time.h math.h libintl.h)
+AC_CHECK_HEADERS(time.h math.h libintl.h utime.h)
+AC_CHECK_HEADERS(afs/afs.h)
+
+AC_CHECK_HEADER([locale.h], [AC_CHECK_DECLS([LC_MESSAGES], [], [], [#include <locale.h>])])
+if test "$ac_cv_have_decl_LC_MESSAGES" = "yes"; then
+  HAVE_LC_MESSAGES=1
+else
+  HAVE_LC_MESSAGES=0
+fi
+AC_DEFINE_UNQUOTED([HAVE_LC_MESSAGES], [$HAVE_LC_MESSAGES], [Define if your locale.h file contains LC_MESSAGES.])
 
 dnl
 dnl
 AC_CHECK_FUNC(XltCreateFontChooser, AC_DEFINE(HAVE_XLT_FONTCHOOSER))
 
+AC_CHECK_DECLS([TIOCGWINSZ], [], [], [#include <sys/ioctl.h>])
+if test "$ac_cv_have_decl_TIOCGWINSZ" = "yes"; then
+  GWINSZ_IN_SYS_IOCTL=1
+else
+  GWINSZ_IN_SYS_IOCTL=0
+fi
+AC_DEFINE_UNQUOTED([GWINSZ_IN_SYS_IOCTL], [$GWINSZ_IN_SYS_IOCTL], [Define if your system defines TIOCGWINSZ in sys/ioctl.h.])
+
 dnl
 dnl GNU GSL (GNU Scientific Library)
 dnl
 AC_CHECK_LIB(gsl, gsl_error,
-	LIBS="$LIBS -lgsl -lgslcblas"
-	AC_DEFINE(HAVE_GSL),,
-	-lgslcblas)
+    [LIBS="$LIBS -lgsl -lgslcblas"
+    AC_DEFINE([HAVE_GSL], [1], [GNU Scientific Library (GSL)])],
+    [],
+    [-lgslcblas])
+
 
 dnl
 dnl MySQL client library ?
@@ -286,22 +319,80 @@ dnl
 AC_C_CONST
 AC_C_INLINE
 AC_TYPE_SIZE_T
-AC_HEADER_TIME
+AC_CHECK_HEADERS_ONCE([sys/time.h])
+# Obsolete code to be removed.
+if test $ac_cv_header_sys_time_h = yes; then
+  AC_DEFINE([TIME_WITH_SYS_TIME],[1],[Define to 1 if you can safely include both <sys/time.h>
+	     and <time.h>.  This macro is obsolete.])
+fi
+# End of obsolete code.
+
 AC_STRUCT_TM
 AC_STRUCT_TIMEZONE
+
+AC_CHECK_MEMBERS([struct stat.st_dm_mode], [HAVE_ST_DM_MODE=1], [HAVE_ST_DM_MODE=0])
+AC_DEFINE_UNQUOTED([HAVE_ST_DM_MODE], [$HAVE_ST_DM_MODE], [Define if your struct stat has st_dm_mode.])
 
 dnl
 dnl Checks for library functions.
 dnl
 AC_FUNC_ALLOCA
-AC_TYPE_SIGNAL
+AC_CACHE_CHECK([return type of signal handlers],[ac_cv_type_signal],[AC_COMPILE_IFELSE(
+[AC_LANG_PROGRAM([#include <sys/types.h>
+#include <signal.h>
+],
+		 [return *(signal (0, 0)) (0) == 1;])],
+		   [ac_cv_type_signal=int],
+		   [ac_cv_type_signal=void])])
+AC_DEFINE_UNQUOTED([RETSIGTYPE],[$ac_cv_type_signal],[Define as the return type of signal handlers
+		    ('int' or 'void').])
+
 AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS(ftime gethostname gettimeofday mktime select strdup strstr)
-AC_CHECK_FUNCS(putenv strcasecmp strerror getcwd rename)
+AC_CHECK_FUNCS(putenv strcasecmp strerror getcwd rename regcomp)
 AC_CHECK_FUNCS(stpcpy)
+AC_CHECK_FUNCS(getgroups strftime fnmatch catgets gettext obstack)
 AC_FUNC_MKTIME
-dnl AM_FUNC_OBSTACK
+
+AC_CHECK_TYPE(ino_t)
+
+dnl
+dnl Filesystem routines
+dnl
+AC_CHECK_FUNCS(fread getfsstat getmnt getmntent getmntent_r getmntinfo)
+AC_CHECK_FUNCS(listmntent mntctl)
+AC_CHECK_HEADERS(sys/fstyp.h sys/mntctl.h)
+if test "$ac_cv_func_getfsstat" = "yes"; then
+    MOUNTED_METHOD=MOUNTED_GETFSSTAT
+elif test "$ac_cv_func_getmnt" = "yes"; then
+    MOUNTED_METHOD=MOUNTED_GETMNT
+elif test "$ac_cv_func_getmntent" = "yes"; then
+    MOUNTED_METHOD=MOUNTED_GETMNTENT1
+elif test "$ac_cv_func_getmntent_r" = "yes"; then
+    MOUNTED_METHOD=MOUNTED_GETMNTENT2
+elif test "$ac_cv_func_getmntinfo" = "yes"; then
+    MOUNTED_METHOD=MOUNTED_GETMNTINFO
+elif test "$ac_cv_func_listmntent" = "yes"; then
+    MOUNTED_METHOD=MOUNTED_LISTMNTENT
+elif test "$ac_cv_func_mntctl" = "yes" && test "$ac_cv_header_sys_mntctl_h" = "yes"; then
+    MOUNTED_METHOD=MOUNTED_VMOUNT
+elif test "$ac_cv_header_sys_fstyp_h" = "yes"; then
+    MOUNTED_METHOD=MOUNTED_FREAD_FSTYP
+else
+    MOUNTED_METHOD=MOUNTED_FREAD
+fi
+AC_DEFINE_UNQUOTED([MOUNTED_METHOD], ["$MOUNTED_METHOD"], [Define one of the following to indicate how a program can obtain a list of mounted filesystems.])
+
+AC_CHECK_FUNCS([statfs statvfs])
+AC_CHECK_DECLS([struct statfs.f_flags])
+AC_CHECK_DECLS([struct statfs.f_bsize])
+AC_CHECK_DECLS([struct statfs.f_fsize])
+AC_CHECK_DECLS([struct fs_data])
+AC_CHECK_FUNCS([statfs], [], [], [#include <sys/param.h>])
+AC_CHECK_FUNCS([statvfs], [], [], [#include <sys/statvfs.h>])
+AC_CHECK_DEFINE([STATFS_TRUNCATES_BLOCK_COUNTS], [], [], [#include <sys/param.h>])
+
 
 dnl
 dnl CUPS is the Common UNIX Printing System
@@ -322,7 +413,7 @@ dnl End Xbase support lines
 dnl
 if test "$CXX" != "no"; then
   AC_LANG_SAVE
-  AC_LANG_CPLUSPLUS
+  AC_LANG([C++])
   AC_CHECK_LIB(xbase, main)
   if test x$ac_cv_lib_xbase_main = xno; then
     AC_CHECK_LIB(xdb, main)
@@ -336,7 +427,6 @@ else
 fi
 
 dnl See if we're GNU Gettext friendly
-dnl
 dnl AM_GNU_GETTEXT([external])
 
 dnl
@@ -372,5 +462,6 @@ AC_SUBST(include_sciplot)
 AC_SUBST(link_sciplot)
 
 dnl po/Makefile.in 
-AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile m4/Makefile Xresources/Makefile examples/Makefile oleo.spec afm/Makefile ],[]) 
+AC_CONFIG_FILES([Makefile oleobug doc/Makefile lib/Makefile src/Makefile m4/Makefile Xresources/Makefile examples/Makefile oleo.spec afm/Makefile ])
+AC_OUTPUT 
 

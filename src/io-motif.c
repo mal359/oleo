@@ -2181,7 +2181,7 @@ Widget MotifCreatePrintDialog(Widget s)
 
 #ifdef	HAVE_LIBCUPS
 	printers = NULL;
-	nprinters = cupsGetPrinters(&printers);
+	nprinters = cupsEnumDests(CUPS_DEST_FLAGS_NONE, NULL, 0, &printers);
 
 	for (i=0; i < nprinters; i++) {
 		Widget	b;
