@@ -62,6 +62,7 @@ $Id: TODO,v 1.37 2000/07/25 12:56:32 danny Exp $
 	(busy) improve appearance of PostScript prints
 	(done) fix precision handling in prints
 	(done) Make Iso Latin 1 be user definable in PostScript.
+	(todo) Fix zoom.
 
 * Get our stuff together for an upcoming 2.0 release of Oleo.
 
@@ -82,10 +83,12 @@ $Id: TODO,v 1.37 2000/07/25 12:56:32 danny Exp $
 		-> (io-motif.c ReallyPrintCB)
 	(done) allow selecting what format to print (not only PostScript ?)
 	(done) make selecting cells and ranges more user friendly
+	(todo) Use new SciPlot routines.
 
 * Include texi2html in the oleo source, and enhance it so it can
   process all the texinfo commands used in the documentation.
   Currently @findex isn't supported, and @html is poorly supported.
+  (Actually, don't do this. MAL 2024.)
 
 * Use GNU PlotUtils instead of GnuPlot.
   This is being worked on : simple bar, pie, and XY charts are available.
