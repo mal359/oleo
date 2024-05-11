@@ -21,8 +21,7 @@ if HavePerl
 #htmldir=	$(prefix)/share/oleo
 html_DATA=	oleo.html
 
-oleo.html:	$(srcdir)/oleo.texi ${TEXIS} $(top_builddir)/doc/texi2html
-		@HAVE_PERL@ $(top_builddir)/doc/texi2html $(srcdir)/oleo.texi
+oleo.html:	$(srcdir)/oleo.texi ${TEXIS} texi2html $(srcdir)/oleo.texi
 endif
 
 DISTCLEANFILES = $(html_DATA)
