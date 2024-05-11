@@ -20,6 +20,7 @@ LIBS="$X_LIBS -lXp -lXext -lXt $X_PRE_LIBS -lX11 $X_EXTRA_LIBS $LIBS"
 CFLAGS="$X_CFLAGS $CFLAGS"
 CPPFLAGS="$X_CFLAGS $CPPFLAGS"
 AC_TRY_LINK([
+#include <stdlib.h>
 #include <X11/Intrinsic.h>
 #include <X11/extensions/Print.h>
 ],[
