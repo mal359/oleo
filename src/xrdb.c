@@ -56,10 +56,9 @@
 
 /* This should be included before the X include files; otherwise, we get
    warnings about redefining NULL under BSD 4.3.  */
-#if 0
 #include <X11/Intrinsic.h>
-#endif
 #include <sys/param.h>
+#include <X11/Xfuncproto.h>
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>

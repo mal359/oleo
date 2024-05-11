@@ -35,7 +35,7 @@
 char *fallback[] = {
 /* Global */
 	"*oleo.title:			Oleo",
-	"*oleo.geometry:			800x600",
+	"*oleo.geometry:		800x600",
 	"*Oleo.geometry:		800x600",
 	"*tearOffModel:			XmTEAR_OFF_ENABLED",
 #if 0							/* FIX ME */
@@ -84,8 +84,10 @@ char *fallback[] = {
 	"*cut.sensitive:		no",
 	"*paste.labelString:		Paste",
 	"*paste.sensitive:		no",
-	"*insert.labelString:		Insert",
-	"*delete.labelString:		Delete",
+	"*insertr.labelString:		Insert Row",
+	"*deleter.labelString:		Delete Row",
+	"*insertc.labelString:		Insert Column",
+	"*deletec.labelString:		Delete Column",
 	"*move.labelString:		Move",
 	"*sort.labelString:		Sort",
 	"*sort.sensitive:		no",

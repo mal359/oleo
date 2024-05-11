@@ -65,6 +65,7 @@ extern struct function string_funs[];
 extern struct function cells_funs[];
 extern struct function mysql_functions[];
 extern struct function gsl_functions[];
+extern struct function transc_funs[];
 
 extern char *instr;
 extern int parse_error;
@@ -225,6 +226,7 @@ static struct function *__usr_funs[] =
 	cells_funs,
 	mysql_functions,
 	gsl_functions,
+	transc_funs,
 	/* Add something here */
 };
 
@@ -238,6 +240,8 @@ extern int init_string_function_count(void);
 extern int init_cells_function_count(void);
 extern int init_mysql_function_count(void);
 extern int init_gsl_function_count(void);
+extern int init_transc_function_count(void);
+
 /* Add something here */
 
 typedef int (*init_function_count)(void);
@@ -248,7 +252,8 @@ static init_function_count init_function_counts[] = {
 	&init_string_function_count,
 	&init_cells_function_count,
 	&init_mysql_function_count,
-	&init_gsl_function_count
+	&init_gsl_function_count,
+	&init_transc_function_count,
 	/* Add something here */
 };
 

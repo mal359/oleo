@@ -15,9 +15,11 @@ $Id: TODO,v 1.37 2000/07/25 12:56:32 danny Exp $
 
 * Graphs
 	(TODO) documentation !!
+	(todo) Numerical values on the y-axis in bar charts (could be borrowed from XY chart) 
 	(done) connect the plot.c functionality (GNU Plotutils) to graph.c
 	(todo) make sure all the variables can get saved
 	(todo) make sure all flags can be controlled through GUI
+	(todo) Let the user choosed between stacked/non-stacked bar charts. 
 	(done) put Plotutils graph in Motif XmScrolledWindow
 
 * Sorting
@@ -29,12 +31,14 @@ $Id: TODO,v 1.37 2000/07/25 12:56:32 danny Exp $
 * Databases
 	(done) Simplistic interface to Xbase
 	(done) Simplistic interface to MySQL
+	(todo) Simplistic interface to sqlite3 
 	(todo) Design higher level interface to DBMS API's
 	(todo) Hook up Xbase and MySQL to higher level interface.
 
 * Motif
 	(done) Handle interaction between formula editor and Xbae better.
 	(todo) User preferences (color, font, ..)
+	(todo) Add Insert Column/Delete Column function. Maybe ask how many. 
 	(done) Where does the beep come from ? (enter 1.123 in a cell)
 		Column MaxLengths weren't set (correctly), therefore an XbaeMatrix
 		column would get the width assigned to it and apply that to the
@@ -106,7 +110,23 @@ $Id: TODO,v 1.37 2000/07/25 12:56:32 danny Exp $
 	(todo) integrate it
   The GSL is a collection of routines for numerical analysis,
   which we happen to be lacking in Oleo.
-
+        EO: This does not look like a good idea. First, some
+	functions of the standard C library can be included in Oleo
+	[erf, gamma, hyperbolic direct and inverse functions (done),
+	Bessel functions (done)]. Second, there are other
+	numerical libraries such as CERNLIB, SLATEC, CEPHES (the first
+	two in Fortran, the last one in C) that could provide more
+	reliable code than GSL. Cernlib is callable from C with cfortran.h.
+	The difficulty would be amending the old configure
+	script to detect it. For some functions, formulas
+	in Abramowitz and Stegun or other math litterature can be used
+	in case no math library is installed.
+	
+* Statistical functions
+  	(todo) add the skewness and kurtosis to the statistical functions.
+	(todo) Cumulative distribution functions for Student's t-distribution,
+	       chi-square, Snedecor's F distribution....
+	       
 * Import/Export Filters.
  - SYLK
 	(done) don't flunk out on reading Excel files
@@ -119,9 +139,17 @@ $Id: TODO,v 1.37 2000/07/25 12:56:32 danny Exp $
 	(todo) interpret fill patterns
 	(todo) ...
 	(todo) make this list more complete
+ - LaTeX/LyX 
+       (todo) Add an export to LaTeX table format
+ - HTML
+       (todo) Add an export to HTML table format
+ - RTF
+       (todo) Add an export to RTF table format (as used by Ted). 
 
  - CSV would be nice (DB 17/3/1999: LIST format can do this,
 	now also recognizes CSV file name suffix)
+	(done) using LIST format
+	
  - DBII or DBIII is useful.
 	(db 19/3/1999: XBASE library can do this. Somewhat implemented.)
  - Fixed width.

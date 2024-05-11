@@ -42,13 +42,13 @@ CFLAGS="$X_CFLAGS $CFLAGS"
 CPPFLAGS="$X_CFLAGS $CPPFLAGS"
 LDFLAGS="$X_LIBS $LDFLAGS"
 #
-AC_TRY_COMPILE([#include <SciPlot/SciPlot.h>],[int a;],
+AC_TRY_COMPILE([#include <SciPlot.h>],[int a;],
 [
-# SciPlot/SciPlot.h is in the standard search path.
+# SciPlot.h is in the standard search path.
 ice_cv_sciplot_includes=
 ],
 [
-# SciPlot/SciPlot.h is not in the standard search path.
+# SciPlot.h is not in the standard search path.
 # Locate it and put its directory in `sciplot_includes'
 #
 # /usr/include/Motif* are used on HP-UX (Motif).
@@ -56,17 +56,16 @@ ice_cv_sciplot_includes=
 # /usr/dt is used on Solaris (Motif).
 # /usr/openwin is used on Solaris (X and Athena).
 # Other directories are just guesses.
+# On Ubuntu 18.04 LTS SciPlot.h is in the /usr/include/ directory 
 ice_cv_sciplot_includes="none"
 for dir in "$x_includes" "${prefix}/include" /usr/include /usr/local/include \
            /usr/include/Motif2.0 /usr/include/Motif1.2 /usr/include/Motif1.1 \
            /usr/include/X11R6 /usr/include/X11R5 /usr/include/X11R4 \
            /usr/dt/include /usr/openwin/include \
            /usr/dt/*/include /opt/*/include /usr/include/Motif* \
-	   /home/SciPlot/include /usr/SciPlot/include /opt/SciPlot/include \
-	   /home/SciPlot*/include /usr/SciPlot*/include /opt/SciPlot*/include \
            "${prefix}"/*/include /usr/*/include /usr/local/*/include \
            "${prefix}"/include/* /usr/include/* /usr/local/include/*; do
-if test -f "$dir/SciPlot/SciPlot.h"; then
+if test -f "$dir/SciPlot.h"; then
 ice_cv_sciplot_includes="$dir"
 break
 fi
@@ -91,13 +90,14 @@ ice_sciplot_save_LIBS="$LIBS"
 ice_sciplot_save_CFLAGS="$CFLAGS"
 ice_sciplot_save_CPPFLAGS="$CPPFLAGS"
 ice_sciplot_save_LDFLAGS="$LDFLAGS"
-#
-LIBS="$X_PRE_LIBS -lSciPlot -lXm -lXt -lX11 $X_EXTRA_LIBS $LIBS"
+# On Ubuntu 18.04 LTS the library is libsciplot.a 
+# The "new" SciPlot changed some functions up. MAL
+LIBS="$X_PRE_LIBS -lsciplot -lXm -lXt -lX11 $X_EXTRA_LIBS $LIBS"
 CFLAGS="$X_CFLAGS $CFLAGS"
 CPPFLAGS="$X_CFLAGS $CPPFLAGS"
 LDFLAGS="$X_LIBS $LDFLAGS"
 #
-AC_TRY_LINK([#include <SciPlot/SciPlot.h>],[SciPlotQuickUpdate();],
+AC_TRY_LINK([#include <SciPlot.h>],[SciPlotQuickUpdate();],
 [
 # libXm.a is in the standard search path.
 ice_cv_sciplot_libraries=
@@ -123,7 +123,7 @@ for dir in "$x_libraries" "${prefix}/lib" /usr/lib /usr/local/lib \
 	   /home/SciPlot*/lib /usr/SciPlot*/lib /opt/SciPlot*/lib \
            "${prefix}"/*/lib /usr/*/lib /usr/local/*/lib \
            "${prefix}"/lib/* /usr/lib/* /usr/local/lib/*; do
-if test -d "$dir" && test "`ls $dir/libSciPlot.* 2> /dev/null`" != ""; then
+if test -d "$dir" && test "`ls $dir/libsciplot.* 2> /dev/null`" != ""; then
 ice_cv_sciplot_libraries="$dir"
 break
 fi
@@ -143,7 +143,7 @@ fi
 # Provide an easier way to link
 #
 if test "$sciplot_includes" != "" && test "$sciplot_includes" != "$x_includes" && test "$sciplot_includes" != "none"; then
-	link_sciplot="-L$sciplot_libraries -lSciPlot"
+	link_sciplot="-L$sciplot_libraries -lsciplot"
 	include_sciplot="-I$sciplot_includes"
 	AC_DEFINE(HAVE_SciPlot_H)
 fi

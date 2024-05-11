@@ -71,7 +71,6 @@ char numb_oflo[] = "########################################";
 
 double __plinf;
 double __neinf;
-double oleo__nan;
 
 char nname[] = "#NOT_A_NUMBER";
 char iname[] = "#INFINITY";
@@ -125,7 +124,6 @@ init_infinity (void)
   __neinf = divide (-1., 0.);
   (void) signal (SIGFPE, ignore_sig);
 #endif
-  oleo__nan = __plinf + __neinf;
 }
 
 
@@ -1354,6 +1352,11 @@ write_file_generic_2(FILE *fp, struct rng *rng, char *format)
 		sc_write_file(fp, rng);
 	} else if (!stricmp ("list", format)) {
 		list_write_file(fp, rng);
+	} else if (!stricmp("csv", format)) {
+	  list_set_separator(',');
+	  list_write_file(fp,rng); 
+	} else if (!stricmp("dbf", format)) {
+	  fprintf(stderr,"DBF format demands XBASE.\n");
 	} else {
 		return -1;
 	}
@@ -1372,9 +1375,9 @@ write_file_generic(FILE *fp, struct rng *rng, char *format)
 
 		return;
 	}
-#if 0
+	#if 0 
 	fprintf(stderr, PACKAGE " write_file_generic : format %s\n", format);
-#endif
+	#endif 
 	if (write_file_generic_2(fp, rng, format) != 0) {
 		if (write_file_generic_2(fp, rng, defaultformat) != 0)
 			oleo_write_file(fp, rng);

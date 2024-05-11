@@ -277,8 +277,8 @@ AC_CHECK_LIB(gsl, gsl_error,
 dnl
 dnl MySQL client library ?
 dnl
-AC_CHECK_LIB(mysqlclient, mysql_connect)
-AM_CONDITIONAL(HaveMySQL, test x$ac_cv_lib_mysqlclient_mysql_connect = xyes)
+AC_CHECK_LIB(mysqlclient, mysql_real_connect)
+AM_CONDITIONAL(HaveMySQL, test x$ac_cv_lib_mysqlclient_mysql_real_connect = xyes)
 
 dnl
 dnl Checks for typedefs, structures, and compiler characteristics.
@@ -372,5 +372,5 @@ AC_SUBST(include_sciplot)
 AC_SUBST(link_sciplot)
 
 dnl po/Makefile.in 
-AC_OUTPUT([Makefile oleobug doc/Makefile doc/texi2html lib/Makefile src/Makefile m4/Makefile Xresources/Makefile examples/Makefile oleo.spec afm/Makefile ],[]) 
+AC_OUTPUT([Makefile oleobug doc/Makefile lib/Makefile src/Makefile m4/Makefile Xresources/Makefile examples/Makefile oleo.spec afm/Makefile ],[]) 
 

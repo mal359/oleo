@@ -35,6 +35,7 @@ static char *rcsid = "$Id: io-term.c,v 1.61 2011/07/05 00:16:13 delqn Exp $";
 #include <locale.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <funcs.h> 
 
 #include "global.h"
 

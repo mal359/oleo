@@ -1059,6 +1059,8 @@ oleo_write_file (fp, rng)
   }
 
   /* Axis range : GrxlVALUE , l = 0 for low, 1 for high */
+  /* EO: we use the C locale so that we don't create a locale dependent file that is unreadable by oleo is the comma is used as decimal separator */  
+  setlocale(LC_NUMERIC,"C"); 
   for (i=0; i< 2; i++) {
 	double	d;
 	d = graph_get_axis_lo(i);
@@ -1068,7 +1070,9 @@ oleo_write_file (fp, rng)
 	if (! isnan(d))
 		fprintf(fp, "Gr%c1%f\n", '0' + i, d);
   }
-
+  /* EO: Now, we are done */ 
+  setlocale(LC_NUMERIC,"");
+  
   /* Automatic axis setting : Gax0 or Gax1 */
   fprintf(fp, "Ga0%c\n", graph_get_axis_auto(0) ? '1' : '0');	/* X axis */
   fprintf(fp, "Ga1%c\n", graph_get_axis_auto(1) ? '1' : '0');	/* Y axis */

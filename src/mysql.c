@@ -36,12 +36,14 @@ static char rcsid[] = "$Id: mysql.c,v 1.10 2000/07/22 06:13:16 danny Exp $";
 #include "cmd.h"
 #include "io-term.h"
 #include "mysql.h"
+#include "ref.h"
+#include "basic.h"
 
 #ifdef	HAVE_LIBMYSQLCLIENT
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <mysql/mysql.h>
+#include <mariadb/mysql.h>
 
 /*
  * Define some MySQL access functions for Oleo
@@ -117,8 +119,13 @@ do_mysql_query(struct value *p)
 		io_error_msg("Database Access requires db name and user name");
 		return;
 	}
-
-	if (mysql_connect(&db, Global->DatabaseGlobal->host, Global->DatabaseGlobal->user, "")
+	if (mysql_init(&db)==NULL) {
+	  io_error_msg("MySQL: Memory Full");
+	  return;
+	}
+	/* mysql_options(&db,MYSQL_READ_DEFAULT_GROUP,"oleo"); */  
+	/* see doc. for my_sql_real_connect. We set password, unix_socket to NULL and port to 0 so that they can be overridden by the call to mysql_options. */  
+	if (mysql_real_connect(&db, Global->DatabaseGlobal->host, Global->DatabaseGlobal->user, NULL,NULL,0,NULL,0)
 			== NULL) {
 		io_error_msg("MySQL error '%s'\n", mysql_error(&db));
 		return;		/* FIX ME */
@@ -235,8 +242,12 @@ MySQLRead(void)
 
 	char *sql = "select * from koers";
 	int in_row = curow, in_col = cucol;
-
-	if (mysql_connect(&db, "localhost", "danny", "") == NULL) {
+	if (!mysql_init(&db)) {
+	  fprintf(stderr,"Memory Full\n");
+	    return;
+	} 
+	/* same as above with the user set to bofh. */
+	if (mysql_real_connect(&db, NULL, NULL,"",NULL,0,NULL,0) == NULL) {
 		fprintf(stderr, "MySQL error '%s'\n", mysql_error(&db));
 		return;
 	}

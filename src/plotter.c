@@ -358,8 +358,7 @@ print_tick_label (char *labelbuf, const Axis *axis, const Transform *transform, 
 		free(s);		/* FIX ME */
 		break;
 	case SP_TICK_DEFAULT:
-	default:
-		sp_default_tick_label(labelbuf, axis, transform, val);
+	  default  : sp_default_tick_label(labelbuf, axis, transform, val);
 	}
 }
 
@@ -1772,7 +1771,7 @@ draw_frame_of_graph (Multigrapher *multigrapher, int draw_canvas)
   /* 7.  DRAW THE ABSCISSA LABEL */
 
       if ((multigrapher->grid_spec != NO_AXES)
-      && multigrapher->x_axis.label != NULL && multigrapher->x_axis.label != '\0')
+	  && multigrapher->x_axis.label != NULL && *(multigrapher->x_axis.label) != '\0')
     {
       double x_axis_font_size;
       double xloc;
@@ -3045,16 +3044,19 @@ sp_bar_end_graph(Multigrapher *mg)
 {
 	int		i, num, r, nsets, *dsvalid, n;
 	double		x, y, y1, y2, ymin, ymax, *ys;
-
-	int		stacked = 1;				/* FIX ME only stacked for now */
+	double          ylmax; 
+	char            ymord[20]; 
+	CELL            *cp;
+	struct rng      rngx;
+	int		stacked = 0;				/* FIX ME only non-stacked for now */
 
 	/* How many items ? */
 	nsets = mg->datasetnum;
 	dsvalid = (int *)calloc(nsets, sizeof(int));
-
-/*	fprintf(stderr, "sp_bar_end_graph() : %d datasets, overall %d points\n",
+# if 0
+	fprintf(stderr, "sp_bar_end_graph() : %d datasets, overall %d points\n",
 		mg->datasetnum, mg->npoints);
-*/
+#endif 
 
 	for (r = 0; r < nsets; r++)
 		dsvalid[r] = 0;
@@ -3068,18 +3070,21 @@ sp_bar_end_graph(Multigrapher *mg)
 			num = dsvalid[r];
 
 	ys = (double *)calloc(nsets * num, sizeof(double));
-#define	Y_VALUE(a,b)	ys[nsets * a + b]
-
+#define	Y_VALUE(a,b)	ys[num * a + b]
+	/* a=set index, 0<=b<=num-1, y value of b-th element in a-th set*/ 
 	for (r = 0; r < nsets; r++)
 		dsvalid[r] = 0;
 	for (i = 0; i < mg->npoints; i++) {
 		r = mg->data[i].dataset;
 		n = dsvalid[r];
-		if (mg->data[i].y <= 0.0)
+		/* Negative values will not be shown in stacked bar charts, but they will be in non-stacked case */ 
+		if (mg->data[i].y <= 0.0 && stacked)
 			Y_VALUE(r,n) = 0.0;
 		else
 			Y_VALUE(r,n) = mg->data[i].y;
-/*		fprintf(stderr, "Data[%d,%d] = %f\n", r, n, mg->data[i].y);	*/
+#if 0		
+		fprintf(stderr, "Data[%d,%d] = %f\n", r, n, mg->data[i].y);
+#endif
 		dsvalid[r]++;
 	}
 
@@ -3122,49 +3127,79 @@ sp_bar_end_graph(Multigrapher *mg)
 	 * Go over points in the "wrong" order : first we take all the first
 	 * points of all datasets, then the second points of all datasets, ..
 	 */
-	for (i=0; i<num; i++) {
-		for (r = 0; r < nsets; r++) {
-			pl_fillcolorname_r(mg->plotter, colors[r % NO_OF_COLORS]);
-			x = TO_X(i);
-			if (ymax) {
-				if (r == 0) {
-					/* The first point in this set */
-					pl_fbox_r(mg->plotter,
-						TO_X(i), 0.0,
-						TO_X(i + 0.6), Y_VALUE(r,i) / ymax * PLOT_SIZE);
-				} else {
-					/* Not the first point in this set */
-					int ii;
-					double	s = 0.0;
-
-					for (ii=0; ii<r; ii++)
-						s += Y_VALUE(ii,i);
-						
-					pl_fbox_r(mg->plotter,
-						TO_X(i), s / ymax * PLOT_SIZE,
-						TO_X(i + 0.6), (s + Y_VALUE(r,i)) / ymax * PLOT_SIZE);
-				}
-			}
+	if (stacked) {
+	  for (i=0; i<num; i++) {
+	    for (r = 0; r < nsets; r++) {
+	      pl_fillcolorname_r(mg->plotter, colorstyle[r % NO_OF_LINEMODES]);
+	      x = TO_X(i);
+	      if (ymax) {
+		if (r == 0) {
+		  /* The first point in this set */
+		  pl_fbox_r(mg->plotter,
+			    TO_X(i), 0.0,
+			    TO_X(i + 0.6), Y_VALUE(r,i) / ymax * PLOT_SIZE);
+		} else {
+		  /* Not the first point in this set */
+		  int ii;
+		  double	s = 0.0;
+		  
+		  for (ii=0; ii<r; ii++)
+		    s += Y_VALUE(ii,i);
+		  
+		  pl_fbox_r(mg->plotter,
+			    TO_X(i), s / ymax * PLOT_SIZE,
+			    TO_X(i + 0.6), (s + Y_VALUE(r,i)) / ymax * PLOT_SIZE);
 		}
+	      }
+	    }
+	  }
+	} else {
+	  /* Non stacked bar chart. ymax>0 is assumed, this will need to be corrected */
+	  for (i=0; i<num; i++) {
+	    for (r = 0; r < nsets; r++) {
+	      pl_fillcolorname_r(mg->plotter, colorstyle[r % NO_OF_LINEMODES]);
+	      x = TO_X(i);
+	      if (ymax-ymin) {
+		if (ymin>0) {
+		  pl_fbox_r(mg->plotter,
+			    TO_X(i+0.6*r/nsets), 0.0,
+			    TO_X(i + 0.6*(r+1)/nsets), (Y_VALUE(r,i)) / ymax * PLOT_SIZE);
+		} else if (ymax>0) { 
+		  /* Bottom of the plot is ymin, so we shift everything */ 
+		  pl_fbox_r(mg->plotter,
+			    TO_X(i+0.6*r/nsets), -ymin/(ymax-ymin)*PLOT_SIZE,
+			    TO_X(i + 0.6*(r+1)/nsets), (Y_VALUE(r,i)-ymin) / (ymax-ymin) * PLOT_SIZE);
+		} else {
+		  /* Both ymax and ymin <0, we so we plot from the top */
+		  pl_fbox_r(mg->plotter,
+			    TO_X(i+0.6*r/nsets),PLOT_SIZE,
+			    TO_X(i + 0.6*(r+1)/nsets), (Y_VALUE(r,i)-ymin)/fabs(ymin)*PLOT_SIZE); 
+		} 
+	      }
+	    }
+	  }
 	}
-
-#if 0
-	/* General Title */
+#if 1
+	/* General Title at the top and in the middle*/
 	if (mg->title) {
-		pl_fmove_r(mg->plotter, 5.0, -0.75);
-		pl_alabel_r(mg->plotter, 1, 1, mg->title);
+		pl_fmove_r(mg->plotter, .5*PLOT_SIZE, 1.05*PLOT_SIZE);
+		pl_alabel_r(mg->plotter, 'c', 'b', mg->title);
 	}
 #endif
 
 	/* X Axis Labels */
-#if 0
+#if 1
+	rngx = graph_get_data(0);
+	make_cells_in_range(&rngx);
 	i = 1;
+
 	while ((cp = next_cell_in_range())) {
-		x = TO_X(i);
+		x = TO_X(i-0.7);
 		if (GET_TYP(cp) == TYP_STR)
 			if (cp->cell_str) {
-				pl_fmove_r(mg->plotter, x, -0.3);
-				pl_alabel_r(mg->plotter, 1, 1, cp->cell_str);
+			  /* The legend is centered on the middle of the bar */ 
+				pl_fmove_r(mg->plotter, x, -0.05*PLOT_SIZE);
+				pl_alabel_r(mg->plotter, 'c', 'c', cp->cell_str);
 			}
 		else
 			/* ??? */ ;
@@ -3173,15 +3208,44 @@ sp_bar_end_graph(Multigrapher *mg)
 	}
 #endif
 
-#if 0
+	/* We also have to do the Y-axis label */
+	if (!stacked) {
+	  if (ymin>0) {
+	    pl_fmove_r(mg->plotter,-0.02*PLOT_SIZE,0.);
+	    pl_alabel_r(mg->plotter,'r','c',"0\0");
+	  } else if (ymax>0) {
+	    pl_fline_r(mg->plotter, 0., -ymin/(ymax-ymin)*PLOT_SIZE, PLOT_SIZE, -ymin/(ymax-ymin)*PLOT_SIZE);
+	    pl_fmove_r(mg->plotter,-0.02*PLOT_SIZE,-ymin/(ymax-ymin)*PLOT_SIZE);
+	    pl_alabel_r(mg->plotter,'r','c',"0\0");
+	  } else {
+	    pl_fmove_r(mg->plotter,-0.02*PLOT_SIZE,PLOT_SIZE);
+	    pl_alabel_r(mg->plotter,'r','c',"0\0");
+	  }  
+	}
+	
+	if (ymax>0) {
+	ylmax=pow(10.,floor(log10(ymax)))*floor(ymax/pow(10.,floor(log10(ymax))));
+	sprintf(ymord,"%.3g",ylmax); 
+	pl_fmove_r(mg->plotter,-0.02*PLOT_SIZE,(ylmax-ymin)/(ymax-ymin)*PLOT_SIZE);
+	pl_alabel_r(mg->plotter,'r','c',ymord);
+	} else {
+	  /* everything is negative, so -ymin will be used to define the scale */ 
+	  ylmax=pow(10.,floor(log10(-ymin))*floor(-ymin/pow(10.,floor(log10(-ymin)))));
+	  sprintf(ymord,"%.4g",-ylmax);
+	  pl_fmove_r(mg->plotter,-0.02*PLOT_SIZE,(-ylmax-ymin)/fabs(ymin)*PLOT_SIZE);
+	pl_alabel_r(mg->plotter,'r','c',ymord);
+	}
+	
+#if 1
 	/* Data titles */
 	if (mg->x_axis.label) {
-		pl_fmove_r(mg->plotter, 10.0, -0.75);
-		pl_alabel_r(mg->plotter, 1, 1, mg->x_axis.label);
+		pl_fmove_r(mg->plotter, .5*PLOT_SIZE, -0.1*PLOT_SIZE);
+		pl_alabel_r(mg->plotter, 'c', 'b', mg->x_axis.label);
 	}
+	/* It would be nicer to use textangle to rotate the label by 90 degs */ 
 	if (mg->y_axis.label) {
-		pl_fmove_r(mg->plotter, 0.0, 10.5);
-		pl_alabel_r(mg->plotter, 1, 1, mg->y_axis.label);
+		pl_fmove_r(mg->plotter, 0.0, PLOT_SIZE);
+		pl_alabel_r(mg->plotter, 'l', 'b', mg->y_axis.label);
 	}
 #endif
 

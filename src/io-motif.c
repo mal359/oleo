@@ -61,7 +61,7 @@ static char rcsid[] = "$Id: io-motif.c,v 1.70 2005/08/03 19:04:54 danny Exp $";
 #endif
 #else
 #ifdef	HAVE_SciPlot_H
-#include <SciPlot/SciPlot.h>
+#include <SciPlot.h>
 #endif
 #endif
 
@@ -78,8 +78,14 @@ static char rcsid[] = "$Id: io-motif.c,v 1.70 2005/08/03 19:04:54 danny Exp $";
 #endif
 #include "oleo_plot.h"
 
+/* We use MariaDB in 2024. MAL */
 #ifdef	HAVE_LIBMYSQLCLIENT
-#include <mysql/mysql_version.h>
+# if defined __linux__ || defined __FreeBSD__ || defined __OpenBSD__ || \
+	defined __NetBSD__ || defined __DragonFly__
+# include <mariadb/mariadb_version.h>
+# else
+# include <mysql/mysql_version.h>
+# endif
 #endif
 #include "oleosql.h"
 
@@ -1050,7 +1056,7 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 #ifdef	FREE_TF_STRING
 	XtFree(s);
 #endif
-
+	/* Data 4 */ 
 	p = s = XmTextFieldGetString(cw->c);
 	if (strlen(s)) {
 		if ((r = parse_cell_or_range(&p, &rngx)) == 0)
@@ -1067,7 +1073,13 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 		XtFree(s);
 #endif
 	}
-
+	/* Title for data 4 ? */
+       	s = XmTextFieldGetString(cw->te);
+	graph_set_data_title(4, s);
+#ifdef	FREE_TF_STRING
+	XtFree(s);
+	#endif
+	
 	p = s = XmTextFieldGetString(cw->d);
 	if (strlen(s)) {
 		if ((r = parse_cell_or_range(&p, &rngx)) == 0)
@@ -1466,7 +1478,7 @@ void PuPrint(Widget w, XtPointer client, XtPointer call)
 }
 
 #ifdef	HAVE_LIBPLOT
-static void TickTypeCB(Widget w, XtPointer client, XtPointer call)
+void TickTypeCB(Widget w, XtPointer client, XtPointer call)
 {
 	int	n = (int)client;
 	int	axis = n / 256;
@@ -1499,19 +1511,19 @@ static void TickTypeCB(Widget w, XtPointer client, XtPointer call)
 #endif
 		XmTextFieldSetEditable(tw, True);
 		break;
-	default:
+		/* default  : GCC Wrongly assumes this is a label */  
 #if 0
 		fprintf(stderr, "Huh ? TickTypeCB(axis %d type %d) -> sensitive \n", axis, val);
 #endif
-	}
+		/*	}*/ 
 #if 0
 	fprintf(stderr, "SP_TICK_DEFAULT %d\n", SP_TICK_DEFAULT);
 	fprintf(stderr, "SP_TICK_NONE %d\n", SP_TICK_NONE);
 	fprintf(stderr, "SP_TICK_PRINTF %d\n", SP_TICK_PRINTF);
 	fprintf(stderr, "SP_TICK_STRFTIME %d\n", SP_TICK_STRFTIME);
 #endif
+	};
 }
-
 /*
  * A piece of dialog for configuring XY chars
  *	Needs to be managed by the caller.
@@ -2824,12 +2836,13 @@ void FileFormatCB(Widget w, XtPointer client, XtPointer call)
 	p = file_get_pattern(f);
 	if (p == NULL)
 		p = f;
-
+	/*	fprintf(stderr,"In FileFormatCB p=%s f=%s\n",p,f); */  
 	strcpy(Global->MotifGlobal->fileformat, f);
 
 	strcpy(Global->MotifGlobal->pattern, "*.");
+	/* EO: When you add another output format, check in io-motif.h that the length of pattern for extension +2 does not exceed the dimension of char *pattern[...]. Uncomment the fprintf to check that the pattern is set right. */  	
 	strcat(Global->MotifGlobal->pattern, p);
-
+	/*	fprintf(stderr,"In FileFormatCB p=%s f=%s\n",p,f); */  
 	xms = XmStringCreateSimple(Global->MotifGlobal->pattern);
 	XtVaSetValues(fsd, XmNpattern, xms, NULL);
 	XmStringFree(xms);
@@ -3513,26 +3526,50 @@ void UndoCB(Widget w, XtPointer client, XtPointer call)
 	none(w, client, call);
 }
 
-void EditInsertCB(Widget w, XtPointer client, XtPointer call)
+void EditInsertRowCB(Widget w, XtPointer client, XtPointer call)
 {
 	MotifSelectGlobal(w);
 
 	/* FIX ME */
-		/* Need to figure out whether to insert row or column */
 		/* Need to figure out how many rows/columns to treat */
-	insert_row(1);
+	        /* A dialog with a default of 1 in a XmTextField could be used */ 
+	/* This is only inserting one row at the current cursor position */ 
+	  insert_row(1);
+		/* Also need to clear the current cell */
+	MotifUpdateDisplay();
+}
+void EditInsertColCB(Widget w, XtPointer client, XtPointer call)
+{
+	MotifSelectGlobal(w);
+
+	/* FIX ME */
+		/* Need to figure out how many rows/columns to treat */
+	        /* A dialog with a default of 1 in a XmTextField could be used */ 
+	/* This is only inserting one column at the current cursor position */ 
+	  insert_col(1);
 		/* Also need to clear the current cell */
 	MotifUpdateDisplay();
 }
 
-void EditDeleteCB(Widget w, XtPointer client, XtPointer call)
+void EditDeleteRowCB(Widget w, XtPointer client, XtPointer call)
 {
 	MotifSelectGlobal(w);
 
 	/* FIX ME */
-		/* Need to figure out whether to delete row or column */
 		/* Need to figure out how many rows/columns to treat */
-	delete_row(1);
+	/* This deletes 1 row at current cursor position */ 
+	 delete_row(1);
+		/* Also need to clear the current cell */
+	MotifUpdateDisplay();
+}
+void EditDeleteColCB(Widget w, XtPointer client, XtPointer call)
+{
+	MotifSelectGlobal(w);
+
+	/* FIX ME */
+		/* Need to figure out how many rows/columns to treat */
+	/* This deletes 1 column at current cursor position */ 
+	 delete_col(1);
 		/* Also need to clear the current cell */
 	MotifUpdateDisplay();
 }
@@ -5009,16 +5046,22 @@ GscBuildMainWindow(Widget parent)
 	XtVaCreateManagedWidget("sep3", xmSeparatorGadgetClass, editmenu,
 		NULL);
 
-	w = XtVaCreateManagedWidget("insert", xmPushButtonGadgetClass,
+	w = XtVaCreateManagedWidget("insertr", xmPushButtonGadgetClass,
 		editmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, EditInsertCB, NULL);
-
-	w = XtVaCreateManagedWidget("delete", xmPushButtonGadgetClass,
+	XtAddCallback(w, XmNactivateCallback, EditInsertRowCB, NULL);
+	w = XtVaCreateManagedWidget("insertc", xmPushButtonGadgetClass,
 		editmenu,
 		NULL);
-	XtAddCallback(w, XmNactivateCallback, EditDeleteCB, NULL);
-
+	XtAddCallback(w, XmNactivateCallback, EditInsertColCB, NULL);
+	w = XtVaCreateManagedWidget("deleter", xmPushButtonGadgetClass,
+		editmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, EditDeleteRowCB, NULL);
+	w = XtVaCreateManagedWidget("deletec", xmPushButtonGadgetClass,
+		editmenu,
+		NULL);
+	XtAddCallback(w, XmNactivateCallback, EditDeleteColCB, NULL);
 	XtVaCreateManagedWidget("sep4", xmSeparatorGadgetClass, editmenu,
 		NULL);
 
@@ -5415,7 +5458,7 @@ GscBuildMainWindow(Widget parent)
 	return mw;
 }
 
-static void
+void
 xio_redraw_input_cursor (int on)
 {
 #ifdef	VERBOSE
@@ -5423,7 +5466,7 @@ xio_redraw_input_cursor (int on)
 #endif
 }
 
-static void
+void
 xio_cellize_cursor (void)
 {
 #ifdef	VERBOSE
@@ -5432,7 +5475,7 @@ xio_cellize_cursor (void)
 	xio_redraw_input_cursor (0);
 }
 
-static void
+void
 xio_inputize_cursor (void)
 {
 #ifdef	VERBOSE
@@ -5442,7 +5485,7 @@ xio_inputize_cursor (void)
 }
 
 /* This redraws the input area without recomputing anything. */
-static void
+void
 xio_redraw_input (void)
 {
 #ifdef	VERBOSE
@@ -5450,7 +5493,7 @@ xio_redraw_input (void)
 #endif
 }
 
-static void
+void
 xio_fix_input (void)
 {
 #ifdef	VERBOSE
@@ -5458,7 +5501,7 @@ xio_fix_input (void)
 #endif
 }
 
-static void
+void
 xio_move_cursor (void)
 {
 #ifdef	VERBOSE
@@ -5466,7 +5509,7 @@ xio_move_cursor (void)
 #endif
 }
 
-static void
+void
 xio_erase (int len)
 {
 #ifdef	VERBOSE
@@ -5474,7 +5517,7 @@ xio_erase (int len)
 #endif
 }
 
-static void
+void
 xio_insert (int len)
 {
 #ifdef	VERBOSE
@@ -5482,7 +5525,7 @@ xio_insert (int len)
 #endif
 }
 
-static void
+void
 xio_over (char * str, int len)
 {
 #ifdef	VERBOSE
@@ -5490,17 +5533,17 @@ xio_over (char * str, int len)
 #endif
 }
 
-static void
+void
 xio_scan_for_input (int blockp)
 {
 }
 
-static int
+int
 xio_input_avail (void)
 {
 }
 
-static void
+void
 xio_wait_for_input (void)
 {
 #ifdef	VERBOSE
@@ -5508,7 +5551,7 @@ xio_wait_for_input (void)
 #endif
 }
 
-static int
+int
 xio_read_kbd (char *buffer, int size)
 {
 	int amt_read = size < Global->MotifGlobal->chars_buffered ? size : Global->MotifGlobal->chars_buffered;
@@ -5523,7 +5566,7 @@ xio_read_kbd (char *buffer, int size)
 	return amt_read;
 }
 
-static void
+void
 xio_nodelay (int delayp)
 {
 #ifdef	VERBOSE
@@ -5531,7 +5574,7 @@ xio_nodelay (int delayp)
 #endif
 }
 
-static int
+int
 xio_getch (void)
 {
 #ifdef	VERBOSE
@@ -5540,7 +5583,7 @@ xio_getch (void)
 	return 0;
 }
 
-static void
+void
 xio_clear_input_before (void)
 {
 #ifdef	VERBOSE
@@ -5548,7 +5591,7 @@ xio_clear_input_before (void)
 #endif
 }
 
-static void
+void
 xio_clear_input_after (void)
 {
 #ifdef	VERBOSE
@@ -5556,7 +5599,7 @@ xio_clear_input_after (void)
 #endif
 }
 
-static void
+void
 UpdateStatus(void)
 {
 	CELL	*cp;
@@ -5601,7 +5644,7 @@ UpdateStatus(void)
  * Copy the spreadsheet values into Xbae
  * Then do an event loop until there are no more input events.
  */
-static void
+void
 xio_update_status (void)
 {
 	XEvent	ev;
@@ -5623,7 +5666,7 @@ xio_update_status (void)
 #endif
 }
 
-static int
+int
 xio_get_chr (char *prompt)
 {
 #ifdef	VERBOSE
@@ -5634,7 +5677,7 @@ xio_get_chr (char *prompt)
 	return io_getch ();
 }
 
-static void
+void
 xio_pr_cell_win (struct window *win, CELLREF r, CELLREF c, CELL *cp)
 {
 #ifdef	VERBOSEx
@@ -5642,7 +5685,7 @@ xio_pr_cell_win (struct window *win, CELLREF r, CELLREF c, CELL *cp)
 #endif
 }
 
-static void
+void
 xio_repaint_win (struct window *win)
 {
 #ifdef	VERBOSEx
@@ -5651,7 +5694,7 @@ xio_repaint_win (struct window *win)
 }
 
 
-static void
+void
 xio_repaint (void)
 {
 #ifdef	VERBOSEx
@@ -5660,7 +5703,7 @@ xio_repaint (void)
 }
 
 
-static void
+void
 xio_hide_cell_cursor (void)
 {
 #ifdef	VERBOSEx
@@ -5668,7 +5711,7 @@ xio_hide_cell_cursor (void)
 #endif
 }
 
-static void
+void
 xio_display_cell_cursor (void)
 {
 #ifdef	VERBOSEx
@@ -5678,7 +5721,7 @@ xio_display_cell_cursor (void)
 
 /* Refresh the existing image. */
 
-static void
+void
 xio_redisp (void)
 {
 #ifdef	VERBOSE
@@ -5699,7 +5742,7 @@ xio_close_display(int e)
 	toplevel = NULL;
 }
 
-static void
+void
 xio_flush (void)
 {
 #if 0
@@ -5708,7 +5751,7 @@ xio_flush (void)
 }
 
 
-static void
+void
 xio_bell (void)
 {
 #if 0
@@ -6125,7 +6168,7 @@ void motif_main_loop(void)
 /*
  *
  */
-static void
+void
 MotifSelectGlobal(Widget w)
 {
 	Widget	p;

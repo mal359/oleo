@@ -208,7 +208,7 @@ extern char mname[];
 extern char nname[];
 
 extern VOIDSTAR parse_hash;
-extern double __plinf, __neinf, oleo__nan;
+extern double __plinf, __neinf;
 
 /* These have two uses.  During parsing, these contain the 
  * base address of all relative references.  During evaluation,

@@ -11,7 +11,7 @@ TEXIS=		basics.texi bugs.texi cell-refs.texi entering-data.texi \
 		programs.texi ranlib.texi style.texi texinfo.tex windows.texi \
 		motif.texi dbms.texi
 
-EXTRA_DIST=	$(TEXIS) oleo_web.html texi2html oleo1.png
+EXTRA_DIST=	$(TEXIS) oleo_web.html oleo1.png
 noinst_DATA =	oleo_web.html $(TEXIS)
 
 oleo.info:	oleo.texi $(TEXIS)
