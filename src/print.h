@@ -25,7 +25,7 @@ extern void put_ps_string (char *str, FILE *fp);
 extern void psprint_region (FILE * fp, struct rng * rng, float wid, float hgt, char * font);
 extern void set_page_size_cmd (char * whole_str);
 extern void print_region_cmd (struct rng *rng, FILE *fp);
-extern void print_zoom_cmd(float factor);
+/*extern void print_zoom_cmd(float factor);*/
 
 extern int PrintGetNumPageSizes(void);
 extern char * PrintGetPageName(int index);

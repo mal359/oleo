@@ -109,6 +109,7 @@ static char rcsid[] = "$Id: io-motif.c,v 1.70 2005/08/03 19:04:54 danny Exp $";
 #include "print.h"
 #include "mdi.h"
 #include "userpref.h"
+#include "list.h"
 
 #include "io-motif.h"		/* To get warnings when inconsistent */
 

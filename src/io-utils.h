@@ -60,5 +60,8 @@ extern void OleoSetEncoding(char *);
 extern void OleoUserPrefEncoding(char *);
 extern char *OleoGetEncoding(void);
 
+/* MAL 2024 */
+extern void save_preferences();
+
 #define	OLEO_DEFAULT_ENCODING	"ISOLatin1"
 #endif

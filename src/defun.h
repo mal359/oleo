@@ -1572,6 +1572,8 @@ DEFUN ("psprint-region",
 "Print the contents of REGION (in PostScript) to FILE.",
 #endif
 
+/* Broken, lol. MAL 2024 *
+
 DEFUN ("print-zoom",
        FDprint_zoom, FAprint_zoom, print_zoom_cmd)
 #ifdef FUNC_ARG_STRINGS
@@ -1579,7 +1581,7 @@ DEFUN ("print-zoom",
 #endif
 #ifdef DOC_STRINGS
 "Apply zoom factor when printing, where 100.0 is non-zoomed.",
-#endif
+#endif*/
 
 
 /* Control of X11 GUI Display */

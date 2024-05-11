@@ -19,7 +19,7 @@ oleo.info:	oleo.texi $(TEXIS)
 if HavePerl
 
 #htmldir=	$(prefix)/share/oleo
-html_DATA=	oleo.html
+html_DATA=	oleo.html/*
 
 oleo.html:	$(srcdir)/oleo.texi ${TEXIS} texi2html $(srcdir)/oleo.texi
 endif

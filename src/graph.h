@@ -98,4 +98,7 @@ char *graph_get_axis_tickformat(int axis);
 
 typedef void (*plotter) (void);
 
+/* MAL 2024 */
+extern char *char_to_q_char (char *str);
+
 #endif  /* GRAPHH */
