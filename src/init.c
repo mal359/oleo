@@ -658,8 +658,8 @@ static char *init_cmds[] =
   "bind-key psprint-commands set-default-ps-font F",
   "bind-key psprint-commands psprint-region p",
   "bind-key psprint-commands psprint-region P",
-  "bind-key psprint-commands print-zoom z",
-  "bind-key psprint-commands print-zoom Z",
+ /* "bind-key psprint-commands print-zoom z",
+  "bind-key psprint-commands print-zoom Z",*/
   "",
   "",
   "# Other init commands:",
