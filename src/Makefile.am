@@ -61,7 +61,7 @@ oleo_SOURCES = parse.y lex.c byte-compile.c eval.c ref.c \
  ${SCIPLOT_SRC}
 
 if UseMotif
-MYLD = @link_motif@ @link_xmhtml@ @XBAE_LIBS@ @link_sciplot@ @XLT_LIBS@
+MYLD  = @link_motif@ @link_xmhtml@ @XBAE_LIBS@ @link_sciplot@ @XLT_LIBS@
 MYINC = @include_motif@ @XBAE_CFLAGS@ @include_xmhtml@ @include_sciplot@ @XLT_CFLAGS@
 MYCFL = ${X_CFLAGS}
 
@@ -79,14 +79,14 @@ else
 #
 # Allow non-Motif X version to get compiled.
 #
-MYLD=	${X_LIBS}
+MYLD=	${X_LIBS} -lXt -lX11
 MYINC=
 MYCFL=	${X_CFLAGS}
 endif
 
-oleo_LDADD = ${X_PRE_LIBS} ${MYLD} ../lib/liboleo.a ${X_LIBS} #@LIBINTL@ 
+oleo_LDADD = ${X_PRE_LIBS} ${MYLD} ../lib/liboleo.a ${X_LIBS} -lXt -lX11 #@LIBINTL@ 
 
-AM_CPPFLAGS = -I.. -I$(srcdir) -I$(top_srcdir)/lib -I../intl ${MYINC}
+AM_CPPFLAGS = -I.. -I../lib -I$(srcdir) ${MYINC}
 AM_CFLAGS = @CFLAGS@ -DLOCALEDIR=\"$(localedir)\" ${MYCFL} \
 	-DBUILD_PREFIX='"'${BUILD_PREFIX}'"'
 

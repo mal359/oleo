@@ -15,8 +15,8 @@ dnlAC_PREREQ(2.13)
 AC_INIT([oleo],[1.99.17])
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE([enable])
-GNU_PACKAGE="GNU $PACKAGE"
-AC_DEFINE([GNU_PACKAGE], ["$GNU_PACKAGE"], [GNU Oleo])
+GNU_PACKAGE="GNU Oleo"
+AC_DEFINE([GNU_PACKAGE], ["GNU Oleo"], [GNU Oleo])
 
 dnl
 dnl Use of this macro will keep unexpected things from happening if
