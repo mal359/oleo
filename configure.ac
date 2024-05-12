@@ -72,11 +72,11 @@ AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_RANLIB
 
-AC_CHECK_PROG(HAVE_TEXI2HTML, texi2html, yes)
-AM_CONDITIONAL(HaveTexi2Html, test x$HAVE_TEXI2HTML = xyes)
+AC_CHECK_PROG(HAVE_MAKEINFO, makeinfo, yes)
+AM_CONDITIONAL(HaveMakeinfo, test x$HAVE_MAKEINFO = xyes)
 
 dnl
-dnl Get perl's location for texi2html
+dnl Get perl's location
 dnl
 AC_PATH_PROG(HAVE_PERL, perl)
 AC_SUBST(HAVE_PERL)

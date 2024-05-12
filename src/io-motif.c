@@ -156,12 +156,10 @@ void ConfigurePieReset(void);
  * This is used in two places.
  */
 #define	CopyRightString							\
-	_(								\
 	"\nGNU Oleo is free software, you are welcome to\n"		\
 	"distribute copies of it. See the file COPYING for the\n"	\
 	"conditions.\n\n"						\
 	"GNU Oleo comes with ABSOLUTELY NO WARRANTY."			\
-	)
 
 /*
  * Conditionally (only when the user wants it) print debugging info
@@ -729,7 +727,7 @@ void PrintOptionsCB(Widget w, XtPointer client, XtPointer call)
 		menu = XmCreatePulldownMenu(rc, "optionMenu", NULL, 0);
 		ac = 0;
 		XtSetArg(al[ac], XmNsubMenuId, menu); ac++;
-		xms = XmStringCreateSimple(_("Fit Print Area"));
+		xms = XmStringCreateSimple("Fit Print Area");
 		XtSetArg(al[ac], XmNlabelString, xms); ac++;
 		cb = XmCreateOptionMenu(rc, "optionCB", al, ac);
 		XtManageChild(cb);
@@ -798,7 +796,7 @@ void ConversionError(char *s, char *t)
 	char *r = XtMalloc(strlen(s) + strlen(t) + 100);
 
 	sprintf(r,
-		_("Conversion error: cannot convert '%s' to a %s\n"),
+		"Conversion error: cannot convert '%s' to a %s\n",
 		s, t);
 	MessageAppend(True, r);
 	XtFree(r);
@@ -953,7 +951,7 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 	XtVaGetValues(f, XmNuserData, &cw, NULL);
 
 	if (cw == NULL) {
-		MessageAppend(True, _("Cannot find XmNuserData\n"));
+		MessageAppend(True, "Cannot find XmNuserData\n");
 		XtUnmanageChild(configureGraph);
 		Global->return_from_error = 0;
 		return;
@@ -992,7 +990,7 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 	p = s = XmTextFieldGetString(cw->x);
 	if (strlen(s)) {
 		if ((r = parse_cell_or_range(&p, &rngx)) == 0)
-			ConversionError(s, _("range"));
+			ConversionError(s, "range");
 		else if (r & RANGE) {
 			graph_set_data(0, &rngx);
 		} else {
@@ -1015,7 +1013,7 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 	p = s = XmTextFieldGetString(cw->a);
 	if (strlen(s)) {
 		if ((r = parse_cell_or_range(&p, &rngx)) == 0)
-			ConversionError(s, _("range"));
+			ConversionError(s, "range");
 		else if (r & RANGE) {
 			graph_set_data(1, &rngx);
 		} else {
@@ -1038,7 +1036,7 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 	p = s = XmTextFieldGetString(cw->b);
 	if (strlen(s)) {
 		if ((r = parse_cell_or_range(&p, &rngx)) == 0)
-			ConversionError(s, _("range"));
+			ConversionError(s, "range");
 		else if (r & RANGE) {
 			graph_set_data(2, &rngx);
 		} else {
@@ -1060,7 +1058,7 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 	p = s = XmTextFieldGetString(cw->c);
 	if (strlen(s)) {
 		if ((r = parse_cell_or_range(&p, &rngx)) == 0)
-			ConversionError(s, _("range"));
+			ConversionError(s, "range");
 		else if (r & RANGE) {
 			graph_set_data(3, &rngx);
 		} else {
@@ -1083,7 +1081,7 @@ void ConfigureGraphOk(Widget w, XtPointer client, XtPointer call)
 	p = s = XmTextFieldGetString(cw->d);
 	if (strlen(s)) {
 		if ((r = parse_cell_or_range(&p, &rngx)) == 0)
-			ConversionError(s, _("range"));
+			ConversionError(s, "range");
 		else if (r & RANGE) {
 			graph_set_data(4, &rngx);
 		} else {
@@ -1124,7 +1122,7 @@ void ConfigureGraphReset(Widget f)
 	XtVaGetValues(f, XmNuserData, &cw, NULL);
 
 	if (cw == NULL) {
-		MessageAppend(True, _("Cannot find XmNuserData\n"));
+		MessageAppend(True, "Cannot find XmNuserData\n");
 		return;
 	}
 
@@ -1342,7 +1340,7 @@ void PuShowChart(Widget w, XtPointer client, XtPointer call)
 		return;
 	}
 
-	PuX(XtDisplayOfObject(w), window);
+	/*PuX(XtDisplayOfObject(w), window); What does this even do? MAL2024  */
 	PlotInit();
 
 	cancel = XtVaCreateManagedWidget("dismiss", xmPushButtonGadgetClass, dlg, NULL);
@@ -1404,7 +1402,7 @@ Widget CreatePlotterOption(Widget parent, XtCallbackProc f)
 	menu = XmCreatePulldownMenu(parent, "optionMenu", NULL, 0);
 	ac = 0;
 	XtSetArg(al[ac], XmNsubMenuId, menu); ac++;
-	xms = XmStringCreateSimple(_("Plotter Type"));
+	xms = XmStringCreateSimple("Plotter Type");
 	XtSetArg(al[ac], XmNlabelString, xms); ac++;
 	cb = XmCreateOptionMenu(parent, "optionCB", al, ac);
 	XtManageChild(cb);
@@ -1449,7 +1447,7 @@ void PuPrintDialog(Widget w, XtPointer client, XtPointer call)
 
 	ac = 0;
 	XtSetArg(al[ac], XmNautoUnmanage, True); ac++;
-	xms = XmStringCreateSimple(_("*.oleo"));
+	xms = XmStringCreateSimple("*.oleo");
 	XtSetArg(al[ac], XmNpattern, xms); ac++;
 
 	pufsd = XmCreateFileSelectionDialog(toplevel, "puselectfile",
@@ -1661,7 +1659,7 @@ Widget ConfigureXYChart(Widget parent)
 	Global->MotifGlobal->xticklblmenu = XmCreatePulldownMenu(form, "xticklblmenu", NULL, 0);
 	ac=0;
 	XtSetArg(al[ac], XmNsubMenuId, Global->MotifGlobal->xticklblmenu); ac++;
-	xms = XmStringCreateSimple(_("X Axis Tick Label Type"));
+	xms = XmStringCreateSimple("X Axis Tick Label Type");
 	XtSetArg(al[ac], XmNlabelString, xms); ac++;
 	XtSetArg(al[ac], XmNtopAttachment, XmATTACH_WIDGET); ac++;
 	XtSetArg(al[ac], XmNtopWidget, lineToOffscreen); ac++;
@@ -1716,7 +1714,7 @@ Widget ConfigureXYChart(Widget parent)
 	Global->MotifGlobal->yticklblmenu = XmCreatePulldownMenu(form, "yticklblmenu", NULL, 0);
 	ac=0;
 	XtSetArg(al[ac], XmNsubMenuId, Global->MotifGlobal->yticklblmenu); ac++;
-	xms = XmStringCreateSimple(_("Y Axis Tick Label Type"));
+	xms = XmStringCreateSimple("Y Axis Tick Label Type");
 	XtSetArg(al[ac], XmNlabelString, xms); ac++;
 	XtSetArg(al[ac], XmNtopAttachment, XmATTACH_WIDGET); ac++;
 	XtSetArg(al[ac], XmNtopWidget, Global->MotifGlobal->xtickfmt); ac++;
@@ -1962,13 +1960,13 @@ void ReallyPrintCB(Widget w, XtPointer client, XtPointer call)
 			return;
 		}
 	} else {
-		MessageAppend(True, _("Internal error: can't find what to print to\n"));
+		MessageAppend(True, "Internal error: can't find what to print to\n");
 		return;
 	}
 
 	p = s = XmTextFieldGetString(PrintWidgets.rangeTF);
 	if ((r = parse_cell_or_range(&p, &rng)) == 0) {
-		ConversionError(s, _("range"));
+		ConversionError(s, "range");
 
 		/* FIX ME Which range is the complete spreadsheet ? */
 		rng.lr = 1;
@@ -2056,7 +2054,7 @@ void PrintBrowseFileCB(Widget w, XtPointer client, XtPointer call)
 		Arg		al[5];
 		int		ac = 0;
 
-		xms = XmStringCreateSimple(_("*.out"));
+		xms = XmStringCreateSimple("*.out");
 		XtSetArg(al[ac], XmNpattern, xms); ac++;
 		XtSetArg(al[ac], XmNautoUnmanage, True); ac++;
 
@@ -2095,7 +2093,6 @@ Widget MotifCreatePrintDialog(Widget s)
 	Arg		al[5];
 	XmString	xms;
 	int		defaultprint = 0;
-	char		**printers;
 
 	MotifSelectGlobal(s);
 
@@ -2115,8 +2112,8 @@ Widget MotifCreatePrintDialog(Widget s)
 	{
 		defaultprint = 1;
 
-		MessageAppend(True, _("Value of defaultPrintTo resource is invalid, "
-			"should be one of %s, %s, or %s\n"),
+		MessageAppend(True, "Value of defaultPrintTo resource is invalid, "
+			"should be one of %s, %s, or %s\n",
 			"printer", "file", "program");
 
 	}
@@ -2170,7 +2167,7 @@ Widget MotifCreatePrintDialog(Widget s)
 	cupsmenu = XmCreatePulldownMenu(radio, "cupsMenu", NULL, 0);
 	ac=0;
 	XtSetArg(al[ac], XmNsubMenuId, cupsmenu); ac++;
-	xms = XmStringCreateSimple(_("Select Printer"));
+	xms = XmStringCreateSimple("Select Printer");
 	XtSetArg(al[ac], XmNlabelString, xms); ac++;
 	cupsOption = XmCreateOptionMenu(radio, "printerOption", al, ac);
 	XtManageChild(cupsOption);
@@ -2180,8 +2177,8 @@ Widget MotifCreatePrintDialog(Widget s)
 	XmStringFree(xms);
 
 #ifdef	HAVE_LIBCUPS
-	printers = NULL;
-	nprinters = cupsEnumDests(CUPS_DEST_FLAGS_NONE, NULL, 0, &printers);
+	char **printers = NULL;
+	nprinters = cupsGetPrinters(&printers);
 
 	for (i=0; i < nprinters; i++) {
 		Widget	b;
@@ -2256,7 +2253,7 @@ Widget MotifCreatePrintDialog(Widget s)
 	menu = XmCreatePulldownMenu(form2, "optionMenu", NULL, 0);
 	ac = 0;
 	XtSetArg(al[ac], XmNsubMenuId, menu); ac++;
-	xms = XmStringCreateSimple(_("Paper Format"));
+	xms = XmStringCreateSimple("Paper Format");
 	XtSetArg(al[ac], XmNlabelString, xms); ac++;
 	cb1 = cb = XmCreateOptionMenu(form2, "optionCB", al, ac);
 	XtManageChild(cb);
@@ -2281,7 +2278,7 @@ Widget MotifCreatePrintDialog(Widget s)
 	menu = XmCreatePulldownMenu(form2, "optionMenu", NULL, 0);
 	ac = 0;
 	XtSetArg(al[ac], XmNsubMenuId, menu); ac++;
-	xms = XmStringCreateSimple(_("Printer Language"));
+	xms = XmStringCreateSimple("Printer Language");
 	XtSetArg(al[ac], XmNlabelString, xms); ac++;
 	XtSetArg(al[ac], XmNleftAttachment, XmATTACH_WIDGET); ac++;
 	XtSetArg(al[ac], XmNleftWidget, cb1); ac++;
@@ -2457,7 +2454,7 @@ Widget CreateFileFormatOption(Widget parent, XtCallbackProc f)
 	menu = XmCreatePulldownMenu(parent, "optionMenu", NULL, 0);
 	ac = 0;
 	XtSetArg(al[ac], XmNsubMenuId, menu); ac++;
-	xms = XmStringCreateSimple(_("File Format"));
+	xms = XmStringCreateSimple("File Format");
 	XtSetArg(al[ac], XmNlabelString, xms); ac++;
 	cb = XmCreateOptionMenu(parent, "optionCB", al, ac);
 	XtManageChild(cb);
@@ -2819,7 +2816,7 @@ void MotifSetWindowName(const char *s)
 	char	*t;
 
 	t = XtMalloc(strlen(s) + 32);	/* enough */
-	sprintf(t, _("[Oleo: %s]"), s);
+	sprintf(t, "[Oleo: %s]", s);
 	XtVaSetValues(toplevel, XmNtitle, t, NULL);
 	XtVaSetValues(toplevel, XmNiconName, t, NULL);
 
@@ -2901,7 +2898,7 @@ void ReallyLoadCB(Widget w, XtPointer client, XtPointer call)
 	XbaeMatrixEditCell(mat, 0, 0);
 
 	MotifSetWindowName(s);
-	MessageAppend(False, _("Read file '%s'\n"), s);
+	MessageAppend(False, "Read file '%s'\n", s);
 
 	XtFree(s);
 }
@@ -2941,7 +2938,7 @@ void CreateFSD()
 
 	ac = 0;
 	XtSetArg(al[ac], XmNautoUnmanage, True); ac++;
-	xms = XmStringCreateSimple(_("*.oleo"));
+	xms = XmStringCreateSimple("*.oleo");
 	XtSetArg(al[ac], XmNpattern, xms); ac++;
 
 	fsd = XmCreateFileSelectionDialog(toplevel, "selectfile",
@@ -2968,7 +2965,7 @@ void PopupLoad(void)
 	XtAddCallback(fsd, XmNokCallback, ReallyLoadCB, NULL);
 
 	ac = 0;
-	XtSetArg(al[ac], XmNtitle, _("Choose a file to load")); ac++;
+	XtSetArg(al[ac], XmNtitle, "Choose a file to load"); ac++;
 	XtSetValues(fsd, al, ac);
 	XtManageChild(fsd);
 }
@@ -3074,8 +3071,8 @@ void CloseCB(Widget w, XtPointer client, XtPointer call)
 
 	if (Global->modified && !option_filter) {
 		XmString xms = XmStringCreateLtoR(
-			_("There are unsaved changes.\n"
-			  "Do you want to quit anyway ?"),
+			"There are unsaved changes.\n"
+			"Do you want to quit anyway ?",
 			XmFONTLIST_DEFAULT_TAG);
 
 		ac = 0;
@@ -3110,7 +3107,7 @@ FILE *OleoOpenForWrite(const char *s)
 		unlink(fn);
 		if (rename(s, fn) < 0) {
 			MessageAppend(True,
-				_("OleoOpenForWrite: can't move %s to %s"),
+				"OleoOpenForWrite: can't move %s to %s",
 				s, fn);
 			free(fn);
 			return NULL;
@@ -3122,7 +3119,7 @@ FILE *OleoOpenForWrite(const char *s)
 	if (fp == NULL) {
 		/* handle error */
 		MessageAppend(True,
-			_("OleoOpenForWrite: couldn't open file '%s' for write"),
+			"OleoOpenForWrite: couldn't open file '%s' for write",
 			s);
 		return NULL;
 	}
@@ -3138,7 +3135,7 @@ void ReallySave(const char *s)
 	if (fp == NULL) {
 		/* handle error */
 		MessageAppend(True,
-			_("ReallySaveCB(%s): couldn't open file for writing"),
+			"ReallySaveCB(%s): couldn't open file for writing",
 			s);
 		return;
 	}
@@ -3147,12 +3144,12 @@ void ReallySave(const char *s)
 
 	if (fclose(fp) != 0) {
 		/* handle error */
-		MessageAppend(True, _("ReallySaveCB: file close failed"));
+		MessageAppend(True, "ReallySaveCB: file close failed");
 		return;
 	}
 
 	Global->modified = 0;
-	MessageAppend(False, _("Saved file '%s'\n"), s);
+	MessageAppend(False, "Saved file '%s'\n", s);
 	MotifSetWindowName(s);
 }
 
@@ -3167,7 +3164,7 @@ void ReallySaveCB(Widget w, XtPointer client, XtPointer call)
 	if (! XmStringGetLtoR(cbp->value, XmFONTLIST_DEFAULT_TAG, &s)) {
 		/* handle error */
 		MessageAppend(True,
-		    _("ReallySaveCB: couldn't figure out file to save into"));
+		    "ReallySaveCB: couldn't figure out file to save into");
 		return;
 	}
 
@@ -3193,7 +3190,7 @@ void SaveAsCB(Widget w, XtPointer client, XtPointer call)
 	XtAddCallback(fsd, XmNokCallback, ReallySaveCB, NULL);
 
 	ac = 0;
-	XtSetArg(al[ac], XmNtitle, _("Choose a file to save in")); ac++;
+	XtSetArg(al[ac], XmNtitle, "Choose a file to save in"); ac++;
 	XtSetValues(fsd, al, ac);
 	XtManageChild(fsd);
 }
@@ -3326,9 +3323,9 @@ HelpLoadFile(char *fn, char *anchor)
 
 	if (fn == NULL) {
 		XmHTMLTextSetString(Html,
-			_("<html><body>"
-			  "Can't find the requested help file\n"
-			  "</body></html>"));
+			"<html><body>"
+			"Can't find the requested help file\n"
+			"</body></html>");
 		return;
 	}
 
@@ -3361,17 +3358,17 @@ HelpLoadFile(char *fn, char *anchor)
 		XmHTMLTextSetString(Html, buffer);
 	} else {
 		XmHTMLTextSetString(Html,
-			_("<html><body>"
-			  "Can't find the requested help file\n"
-			  "</body></html>"));
+			"<html><body>"
+			"Can't find the requested help file\n"
+			"</body></html>");
                 return;
 	}
 	XtFree(buffer);
 
 	if (anchor)
-		MessageAppend(False, _("Help requested on '%s'"), anchor);
+		MessageAppend(False, "Help requested on '%s'", anchor);
 	else
-		MessageAppend(False, _("Help requested on using Oleo"));
+		MessageAppend(False, "Help requested on using Oleo");
 
 	if (anchor)
 		XmHTMLAnchorScrollToName(Html, anchor);
@@ -3633,8 +3630,8 @@ void CreateCopyDialog(char *t, void (*cb)(Widget, XtPointer, XtPointer))
 
 	if (copyDialog == NULL) {
 		ac = 0;
-		ok = XmStringCreateSimple(_("OK"));
-		cancel = XmStringCreateSimple(_("Cancel"));
+		ok = XmStringCreateSimple("OK");
+		cancel = XmStringCreateSimple("Cancel");
 		XtSetArg(al[ac], XmNokLabelString, ok); ac++;
 		XtSetArg(al[ac], XmNcancelLabelString, cancel); ac++;
 		XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
@@ -3685,7 +3682,7 @@ void ReallyCopyRegionCB(Widget w, XtPointer client, XtPointer call)
 
 	p = f;
 	if ((r = parse_cell_or_range(&p, &from)) == 0)
-		ConversionError(f, _("range"));
+		ConversionError(f, "range");
 	else if ((r & RANGE) == 0) {
 		/* It's a cell address, not a range */
 		from.hr = from.lr;
@@ -3694,7 +3691,7 @@ void ReallyCopyRegionCB(Widget w, XtPointer client, XtPointer call)
 
 	p = t;
 	if ((r = parse_cell_or_range(&p, &to)) == 0)
-		ConversionError(t, _("range"));
+		ConversionError(t, "range");
 	else if ((r & RANGE) == 0) {
 		/* It's a cell address, not a range */
 		to.hr = to.lr;
@@ -3732,7 +3729,7 @@ void ReallyMoveCB(Widget w, XtPointer client, XtPointer call)
 
 	p = f;
 	if ((r = parse_cell_or_range(&p, &from)) == 0)
-		ConversionError(f, _("range"));
+		ConversionError(f, "range");
 	else if ((r & RANGE) == 0) {
 		/* It's a cell address, not a range */
 		from.hr = from.lr;
@@ -3741,7 +3738,7 @@ void ReallyMoveCB(Widget w, XtPointer client, XtPointer call)
 
 	p = t;
 	if ((r = parse_cell_or_range(&p, &to)) == 0)
-		ConversionError(t, _("range"));
+		ConversionError(t, "range");
 	else if ((r & RANGE) == 0) {
 		/* It's a cell address, not a range */
 		to.hr = to.lr;
@@ -3776,7 +3773,7 @@ void ReallyCopyValuesCB(Widget w, XtPointer client, XtPointer call)
 
 	p = f;
 	if ((r = parse_cell_or_range(&p, &from)) == 0)
-		ConversionError(f, _("range"));
+		ConversionError(f, "range");
 	else if ((r & RANGE) == 0) {
 		/* It's a cell address, not a range */
 		from.hr = from.lr;
@@ -3785,7 +3782,7 @@ void ReallyCopyValuesCB(Widget w, XtPointer client, XtPointer call)
 
 	p = t;
 	if ((r = parse_cell_or_range(&p, &to)) == 0)
-		ConversionError(t, _("range"));
+		ConversionError(t, "range");
 	else if ((r & RANGE) == 0) {
 		/* It's a cell address, not a range */
 		to.hr = to.lr;
@@ -3807,7 +3804,7 @@ void CopyRegionCB(Widget w, XtPointer client, XtPointer call)
 {
 	MotifSelectGlobal(w);
 
-	CreateCopyDialog(_("Copy a region"), ReallyCopyRegionCB);
+	CreateCopyDialog("Copy a region", ReallyCopyRegionCB);
 	XtManageChild(copyDialog);
 }
 
@@ -3815,7 +3812,7 @@ void CopyValuesCB(Widget w, XtPointer client, XtPointer call)
 {
 	MotifSelectGlobal(w);
 
-	CreateCopyDialog(_("Copy Values"), ReallyCopyValuesCB);
+	CreateCopyDialog("Copy Values", ReallyCopyValuesCB);
 	XtManageChild(copyDialog);
 }
 
@@ -3823,7 +3820,7 @@ void MoveCB(Widget w, XtPointer client, XtPointer call)
 {
 	MotifSelectGlobal(w);
 
-	CreateCopyDialog(_("Move"), ReallyMoveCB);
+	CreateCopyDialog("Move", ReallyMoveCB);
 	XtManageChild(copyDialog);
 }
 
@@ -3936,24 +3933,24 @@ void CreateFormatsDialog(Widget p)
 		NULL);
 	RegisterRangeSelector(tf);
 
-	xms = XmStringCreateSimple(_("Formats :"));
+	xms = XmStringCreateSimple("Formats :");
 
-	x0 = XmStringCreateSimple(_("Default"));	/* FMT_DEF */
-	x1 = XmStringCreateSimple(_("Hidden"));		/* FMT_HID */
-	x2 = XmStringCreateSimple(_("Graph"));		/* FMT_GPH */
-	x3 = XmStringCreateSimple(_("General"));	/* FMT_GEN */
-	x4 = XmStringCreateSimple(_("Dollar"));		/* FMT_DOL */
-	x5 = XmStringCreateSimple(_("Comma"));		/* FMT_CMA */
-	x6 = XmStringCreateSimple(_("Percent"));	/* FMT_PCT */
-	x7 = XmStringCreateSimple(_("Integer"));
-	x8 = XmStringCreateSimple(_("Decimal"));
-	x9 = XmStringCreateSimple(_("Fixed"));
-	x10 = XmStringCreateSimple(_("Exponent"));
-	x11 = XmStringCreateSimple(_("Date"));		/* FMT_DATE */
-	x12 = XmStringCreateSimple(_("User-1"));
-	x13 = XmStringCreateSimple(_("User-2"));
-	x14 = XmStringCreateSimple(_("User-3"));
-	x15 = XmStringCreateSimple(_("User-4"));
+	x0 = XmStringCreateSimple("Default");		/* FMT_DEF */
+	x1 = XmStringCreateSimple("Hidden");		/* FMT_HID */
+	x2 = XmStringCreateSimple("Graph");		/* FMT_GPH */
+	x3 = XmStringCreateSimple("General");		/* FMT_GEN */
+	x4 = XmStringCreateSimple("Dollar");		/* FMT_DOL */
+	x5 = XmStringCreateSimple("Comma");		/* FMT_CMA */
+	x6 = XmStringCreateSimple("Percent");		/* FMT_PCT */
+	x7 = XmStringCreateSimple("Integer");
+	x8 = XmStringCreateSimple("Decimal");
+	x9 = XmStringCreateSimple("Fixed");
+	x10 = XmStringCreateSimple("Exponent");
+	x11 = XmStringCreateSimple("Date");		/* FMT_DATE */
+	x12 = XmStringCreateSimple("User-1");
+	x13 = XmStringCreateSimple("User-2");
+	x14 = XmStringCreateSimple("User-3");
+	x15 = XmStringCreateSimple("User-4");
 
 	w = XmVaCreateSimpleOptionMenu(f, "formatsOption",
 		xms, /* mnemonic ? */0, /* initial selection */ 0,
@@ -4027,7 +4024,7 @@ void CreateFormatsDialog(Widget p)
 	menu = XmCreatePulldownMenu(f, "optionMenu", NULL, 0);
 	ac = 0;
 	XtSetArg(al[ac], XmNsubMenuId, menu); ac++;
-	xms = XmStringCreateSimple(_("Date Format"));
+	xms = XmStringCreateSimple("Date Format");
 	XtSetArg(al[ac], XmNlabelString, xms); ac++;
 	cb = XmCreateOptionMenu(f, "optionCB", al, ac);
 	XtVaSetValues(cb,
@@ -4101,7 +4098,7 @@ void FormatsDialogOk(Widget w, XtPointer client, XtPointer call)
 	} else {
 	    if (p) {
 		if ((r = parse_cell_or_range(&p, &rng)) == 0)
-			ConversionError(s, _("range"));
+			ConversionError(s, "range");
 		else if (r & RANGE) {
 			MessageAppend(False, "FormatRegion %s\n",
 				range_name(&rng));
@@ -4829,7 +4826,7 @@ GscBuildSplash(Widget parent)
 void Traverse()
 {
 	if (! XmProcessTraversal(mat, XmTRAVERSE_CURRENT)) {
-		fprintf(stderr, _("XmProcessTraversal failed\n"));
+		fprintf(stderr, "XmProcessTraversal failed\n");
 	}
 }
 
@@ -5950,7 +5947,7 @@ void motif_build_gui(void)
 	}
 
 	if (! XmProcessTraversal(mat, XmTRAVERSE_CURRENT)) {
-		fprintf(stderr, _("XmProcessTraversal failed\n"));
+		fprintf(stderr, "XmProcessTraversal failed\n");
 	}
 
 	if (Global->MotifGlobal->needrecalculate) {
@@ -5977,8 +5974,8 @@ void QuitCB(Widget w, XtPointer client, XtPointer call)
 
 	if (Global->modified && !option_filter) {
 		XmString xms = XmStringCreateLtoR(
-			_("There are unsaved changes.\n"
-			  "Do you want to quit anyway ?"),
+			"There are unsaved changes.\n"
+			"Do you want to quit anyway ?",
 			XmFONTLIST_DEFAULT_TAG);
 
 		ac = 0;

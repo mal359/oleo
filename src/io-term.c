@@ -36,6 +36,7 @@ static char *rcsid = "$Id: io-term.c,v 1.61 2011/07/05 00:16:13 delqn Exp $";
 #include <stdlib.h>
 #include <errno.h>
 #include <funcs.h> 
+#include <libintl.h>
 
 #include "global.h"
 
@@ -846,12 +847,12 @@ static void
 show_usage (void)
 {
 
-  printf(_("This is %s %s\n\n"), PACKAGE, VERSION);
+  printf(("This is %s %s\n\n"), PACKAGE, VERSION);
 
-  printf(_("\
+  printf(("\
 Usage: %s [OPTION]... [FILE]...\n\
 "), PACKAGE);
-  printf(_("\
+  printf(("\
 \n\
   -h, --help               display this help and exit\n\
   -V, --version            output version information and exit\n\
@@ -1069,13 +1070,13 @@ main (int argc, char **argv)
 	  {
 	  case 'v':
 	  case 'V':
-	    printf(_("%s %s\n"), GNU_PACKAGE, VERSION);
-            printf(_("Copyright (c) 1992-2000 Free Software Foundation, Inc.\n"));
-            printf(_("%s comes with ABSOLUTELY NO WARRANTY.\n"), GNU_PACKAGE);
-            printf(_("You may redistribute copies of %s\n"), PACKAGE);
-            printf(_("under the terms of the GNU General Public License.\n"));
-            printf(_("For more information about these matters, "));
-            printf(_("see the files named COPYING.\n"));
+	    printf(("%s %s\n"), GNU_PACKAGE, VERSION);
+            printf(("Copyright (c) 1992-2000 Free Software Foundation, Inc.\n"));
+            printf(("%s comes with ABSOLUTELY NO WARRANTY.\n"), GNU_PACKAGE);
+            printf(("You may redistribute copies of %s\n"), PACKAGE);
+            printf(("under the terms of the GNU General Public License.\n"));
+            printf(("For more information about these matters, "));
+            printf(("see the files named COPYING.\n"));
 	    exit (0);
 	    break;
 	  case 'b':
@@ -1250,7 +1251,7 @@ main (int argc, char **argv)
 
   if (setjmp (Global->error_exception))
   {
-	fprintf (stderr, _("Error in the builtin init scripts (a bug!).\n"));
+	fprintf (stderr, ("Error in the builtin init scripts (a bug!).\n"));
 	io_close_display(69);
 	exit (69);
   }
@@ -1270,9 +1271,9 @@ main (int argc, char **argv)
       {
 	if (setjmp (Global->error_exception))
 	  {
-	    fprintf (stderr, _("   error occured in init file %s near line %d."),
+	    fprintf (stderr, ("   error occured in init file %s near line %d."),
 		     init_file_names [x], Global->sneaky_linec);
-	    io_info_msg(_("   error occured in init file %s near line %d."),
+	    io_info_msg(("   error occured in init file %s near line %d."),
 		     init_file_names [x], Global->sneaky_linec);
 	  }
 	else
@@ -1285,9 +1286,9 @@ main (int argc, char **argv)
 
   if (option_filter) {
     if (setjmp(Global->error_exception)) {
-	fprintf (stderr, _("   error occured in stdin near line %d."),
+	fprintf (stderr, ("   error occured in stdin near line %d."),
 	  Global->sneaky_linec);
-	io_info_msg(_("   error occured in stdin near line %d."),
+	io_info_msg(("   error occured in stdin near line %d."),
 	  Global->sneaky_linec);
     } else
 	read_file_and_run_hooks(stdin, 0, "stdin");
@@ -1297,16 +1298,16 @@ main (int argc, char **argv)
 
     if ((fp = fopen (argv[optind], "r"))) {
 	  if (setjmp (Global->error_exception)) {
-	    fprintf (stderr, _(", error occured reading '%s'\n"), argv[optind]);
-	    io_info_msg(_(", error occured reading '%s'\n"), argv[optind]);
+	    fprintf (stderr, (", error occured reading '%s'\n"), argv[optind]);
+	    io_info_msg((", error occured reading '%s'\n"), argv[optind]);
 	  } else
 	    read_file_and_run_hooks (fp, 0, argv[optind]);
 	  fclose (fp);
 	  command_line_file = 1;
 	  FileSetCurrentFileName(argv[optind]);
     } else {
-	fprintf (stderr, _("Can't open %s: %s\n"), argv[optind], err_msg ());
-	io_info_msg(_("Can't open %s: %s\n"), argv[optind], err_msg ());
+	fprintf (stderr, ("Can't open %s: %s\n"), argv[optind], err_msg ());
+	io_info_msg(("Can't open %s: %s\n"), argv[optind], err_msg ());
     }
 
     optind++;
