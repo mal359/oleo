@@ -144,77 +144,49 @@ AC_PATH_XTRA
 
 dnl There are cases where motif may be installed on a system, but X may not
 dnl be (Default on hppa1.1-hp-hpux10.20) therefor this this must all be wrapped
-if test "$no_x" = ""; then 
-    dnl
-    dnl Motif (LessTif)
-    dnl
+if test "$no_x" = ""; then
+    dnl Check for Motif
     AC_ARG_WITH(motif,
-	[  --without-motif              do not use Motif, even if detected],
-	[		case "${withval}" in
-	    y | ye | yes )	usemotif=yes ;;
-	    n | no )		usemotif=no ;;
-	    * )			usemotif=yes ;;
-	    esac],
-	[		with_motif=yes])
+        [  --without-motif              do not use Motif, even if detected],
+        [   case "${withval}" in
+            y | ye | yes ) usemotif=yes ;;
+            n | no )       usemotif=no ;;
+            * )            usemotif=yes ;;
+            esac],
+        [   with_motif=yes])
 
-    dnl
-    dnl If you ask not to have Xbae then you can't have Motif either.
-    dnl And the other way around.
-    dnl
-    dnl To make sure people know about this, we'll be harsh and abort.
-    dnl
+    if test "$with_motif" = "yes"; then
+        AC_FIND_XBAE
+        if test "$with_xbae" = "no" ; then
+            AC_MSG_ERROR([Cannot build Motif interface without Xbae])
+            with_motif=no
+        fi
+
+        ICE_FIND_XmHTML
+        AC_FIND_XLT
+
+        if test "x$XLT_LIBS" != "x"; then
+            AC_DEFINE([HAVE_SciPlot_H], [], [SciPlot])
+        else
+            ICE_FIND_SciPlot
+        fi
+
+        AC_CHECK_LIB(Xpm, main)
+    else
+        AC_DEFINE([HAVE_MOTIF], [], [Define if you have Motif])
+        AC_DEFINE([HAVE_XmHTML_H], [], [Define if you have XmHTML_H])
+        AC_DEFINE([HAVE_XBAE], [], [Define if you have Xbae])
+        AC_DEFINE([HAVE_XLT], [], [Define if you have Xlt])
+        AC_DEFINE([HAVE_XLT_FONTCHOOSER], [], [Define if you have Xlt font chooser])
+        AC_DEFINE([HAVE_XPM], [], [Define if you have Xpm])
+        AC_DEFINE([HAVE_LIB_XP], [], [Define if you have libXp])
+    fi
+
     if test "$with_Xbae" = "no" -a "$with_motif" = "yes" ; then
-	AC_MSG_ERROR(Cannot build Motif/LessTif interface without Xbae)
+        AC_MSG_ERROR([Cannot build Motif interface without Xbae])
     fi
     if test "$with_Xbae" = "yes" -a "$with_motif" = "no" ; then
-	AC_MSG_ERROR(Cannot use Xbae without Motif/LessTif)
-    fi
- 
-    dnl
-    dnl If libXp is around, use it.
-    dnl
-    AC_FIND_LIBXP
-    if test "$lt_cv_libxp" = "yes";
-    then
-	LIBS="$LIBS -lXp -lXext"
-    fi
-
-    dnl
-    dnl Checks for Motif
-    dnl These should not happen if --without-motif has been used.
-    dnl
-    if test "$with_motif" = "yes"; then
-	AC_FIND_MOTIF
-    fi
-    if test "$with_motif" = "yes"; then
-	AC_FIND_XBAE
-	if test "$with_xbae" = "no" ; then
-	    AC_MSG_ERROR(
-	      [Xbae not found; you must install it or use "--without-motif"])
-	    with_motif=no
-	fi
-    fi
-    if test "$with_motif" = "yes"; then
-	ICE_FIND_XmHTML
-	AC_FIND_XLT
-	if test "x$XLT_LIBS" != "x"; then
-	    CFLAGS="$XLT_CFLAGS $MOTIF_CFLAGS $X_CFLAGS $CFLAGS"
-	    LIBS="$XLT_LIBS $MOTIF_LIBS $X_LIBS $X_PRE_LIBS -lXt -lX11 -lXext $X_EXTRA_LIBS $LIBS"
-	    AC_DEFINE([HAVE_SciPlot_H], [], [SciPlot])
-	else
-	    ICE_FIND_SciPlot
-	    CFLAGS="$MOTIF_CFLAGS $X_CFLAGS $CFLAGS"
-	    LIBS="$MOTIF_LIBS $X_LIBS $X_PRE_LIBS -lXt -lX11 $X_EXTRA_LIBS $LIBS"
-	fi
-	AC_CHECK_LIB(Xpm, main)
-    fi
-    if test "$with_motif" = "no"; then
-	dnl
-	dnl Add link to X11
-	dnl	This is only for the non-motif case.
-	dnl
-	with_x=yes
-	AC_LINK_X
+        AC_MSG_ERROR([Cannot use Xbae without Motif])
     fi
 fi dnl "$no_x" = "yes"
 
