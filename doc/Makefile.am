@@ -16,13 +16,12 @@ noinst_DATA =	oleo_web.html $(TEXIS)
 
 oleo.info:	oleo.texi $(TEXIS)
 
-if HavePerl
-
 #htmldir=	$(prefix)/share/oleo
-html_DATA=	oleo.html/*
+html_DATA=	oleo.html
 
-oleo.html:	$(srcdir)/oleo.texi ${TEXIS} texi2html $(srcdir)/oleo.texi
-endif
+oleo.html:	$(srcdir)/oleo.texi ${TEXIS} 
+		makeinfo --html --no-split $(srcdir)/oleo.texi
+
 
 DISTCLEANFILES = $(html_DATA)
 MAINTAINERCLEANFILES = Makefile.in
