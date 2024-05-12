@@ -15,7 +15,7 @@ liboleo_a_LIBADD = @LIBOBJS@
 
 noinst_HEADERS = getopt.h get_date.h obstack.h
 
-INCLUDES = -I.. -I$(srcdir) -I../intl
+AM_CPPFLAGS = -I.. -I$(srcdir) -I../intl
 
 CLEANFILES = getdate.c
 MAINTAINERCLEANFILES = Makefile.in

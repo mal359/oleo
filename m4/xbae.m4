@@ -4,7 +4,7 @@ dnl AC_FIND_XBAE
 dnl
 dnl Adapted from a macro by Andreas Zeller.
 dnl
-AC_DEFUN(AC_FIND_XBAE,
+AC_DEFUN([AC_FIND_XBAE],
 [
 AC_REQUIRE([AC_PATH_XTRA])
 xbae_includes=

@@ -16,7 +16,7 @@ dnl your application's link line in your Makefile.
 dnl
 dnl Oleo CVS $Id: motif.m4,v 1.12 2001/05/05 02:11:15 pw Exp $
 dnl
-AC_DEFUN(AC_FIND_MOTIF,
+AC_DEFUN([AC_FIND_MOTIF],
 [
 
 AC_REQUIRE([AC_PATH_XTRA])

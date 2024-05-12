@@ -4,7 +4,7 @@ dnl ICE_FIND_SciPlot
 dnl
 dnl Adapted from a macro by Andreas Zeller.
 dnl
-AC_DEFUN(ICE_FIND_SciPlot,
+AC_DEFUN([ICE_FIND_SciPlot],
 [
 AC_REQUIRE([AC_PATH_XTRA])
 sciplot_includes=

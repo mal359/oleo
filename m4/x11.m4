@@ -13,7 +13,7 @@ dnl link line in the Makefile.
 dnl
 dnl Oleo CVS $Id: x11.m4,v 1.2 1999/02/23 21:24:40 danny Exp $
 dnl
-AC_DEFUN(AC_LINK_X,
+AC_DEFUN([AC_LINK_X],
 [if test "$with_x" = "yes"; then
   X_LIBS="${X_LIBS} -lXt -lX11"
 fi])

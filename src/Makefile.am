@@ -86,7 +86,7 @@ endif
 
 oleo_LDADD = ${X_PRE_LIBS} ${MYLD} ../lib/liboleo.a ${X_LIBS} #@LIBINTL@ 
 
-INCLUDES = -I.. -I$(srcdir) -I$(top_srcdir)/lib -I../intl ${MYINC}
+AM_CPPFLAGS = -I.. -I$(srcdir) -I$(top_srcdir)/lib -I../intl ${MYINC}
 AM_CFLAGS = @CFLAGS@ -DLOCALEDIR=\"$(localedir)\" ${MYCFL} \
 	-DBUILD_PREFIX='"'${BUILD_PREFIX}'"'
 
