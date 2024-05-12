@@ -126,7 +126,6 @@ Oleo.geometry:			800x600
 *helpcascade.labelString:	Hulp
 *helpcascade.mnemonic:		H
 *about.labelString:		Over Oleo
-*version.labelString:		Versie
 *using.labelString:		Hoe Oleo gebruiken
 *math.labelString:		Wiskundige functies
 *trig.labelString:		Goniometrische functies
@@ -150,7 +149,7 @@ Oleo.geometry:			800x600
 !
 ! Help Dialog
 !
-*versionD*Help*labelString:	GPL
+*aboutD*Help*labelString:	GPL
 !
 ! Configuration Dialogs
 !

@@ -71,7 +71,6 @@ Oleo.geometry:			800x600
 # Help
 *helpcascade.labelString:	Help
 *about.labelString:		About Oleo
-*version.labelString:		Version
 *using.labelString:		Using Oleo
 *math.labelString:		Math Functions
 *trig.labelString:		Trigonometric Functions
@@ -91,7 +90,7 @@ Oleo.geometry:			800x600
 *bae.columnLabelColor:		dark slate blue
 *bae.rowLabelColor:		dark slate blue
 # Help Dialog
-*versionD*Help*labelString:	GPL
+*aboutD*Help*labelString:	GPL
 # Configuration Dialogs
 *configureGraph_popup*.title:			Configure the Graph
 *configureGraphFrame*cap1.labelString:		X Axis

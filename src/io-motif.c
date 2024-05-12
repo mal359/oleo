@@ -3395,13 +3395,6 @@ void helpAboutCB(Widget w, XtPointer client, XtPointer call)
 	/* FIX ME */	versionCB(w, client, call);
 }
 
-void helpVersionCB(Widget w, XtPointer client, XtPointer call)
-{
-	MotifSelectGlobal(w);
-
-	/* FIX ME */	versionCB(w, client, call);
-}
-
 void
 MotifUpdateWidth(int col, int wid)
 {
@@ -5378,11 +5371,6 @@ GscBuildMainWindow(Widget parent)
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, helpAboutCB, NULL);
 
-	w = XtVaCreateManagedWidget("version", xmPushButtonGadgetClass,
-		helpmenu,
-		NULL);
-	XtAddCallback(w, XmNactivateCallback, helpVersionCB, NULL);
-
 	w = XtVaCreateManagedWidget("using", xmPushButtonGadgetClass, helpmenu,
 		NULL);
 	XtAddCallback(w, XmNactivateCallback, helpUsingCB, NULL);
@@ -6008,7 +5996,7 @@ void gplCB(Widget w, XtPointer client, XtPointer call)
 
 	ac = 0;
 	XtSetArg(al[ac], XmNautoUnmanage, False); ac++;
-	x = XmCreateTemplateDialog(toplevel, "versionD", al, ac);
+	x = XmCreateTemplateDialog(toplevel, "aboutD", al, ac);
 
 	ac = 0;
 	XtSetArg(al[ac], XmNeditable, False); ac++;
@@ -6138,7 +6126,7 @@ void versionCB(Widget w, XtPointer client, XtPointer call)
 
 	ac = 0;
 	XtSetArg(al[0], XmNmessageString, xms); ac++;
-	x = XmCreateMessageDialog(toplevel, "versionD", al, ac);
+	x = XmCreateMessageDialog(toplevel, "aboutD", al, ac);
 
 	XtAddCallback(x, XmNhelpCallback, gplCB, NULL);
 

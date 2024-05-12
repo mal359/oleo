@@ -101,7 +101,6 @@ dbuserlabel.labelString:	       Nom utilisateur
 ! Help
 *helpcascade.labelString:	Aide
 *about.labelString:		A propos d Oleo
-*version.labelString:		Version
 *using.labelString:		Utilisation d Oleo
 *math.labelString:		Fonctions Mathematiques
 *trig.labelString:		Fonctions Trigonometriques
@@ -121,7 +120,7 @@ dbuserlabel.labelString:	       Nom utilisateur
 *bae.columnLabelColor:		dark slate blue
 *bae.rowLabelColor:		dark slate blue
 ! Help Dialog
-*versionD*Help*labelString:	GPL
+*aboutD*Help*labelString:	GPL
 ! Configuration Dialogs
 *configureGraph_popup*.title:			Configurer le Graphe
 *configureGraphFrame*cap1.labelString:		Abcisse

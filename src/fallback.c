@@ -170,7 +170,6 @@ char *fallback[] = {
 /* Help */
 	"*helpcascade.labelString:	Help",
 	"*about.labelString:		About Oleo",
-	"*version.labelString:		Version",
 	"*using.labelString:		Using Oleo",
 	"*math.labelString:		Math Functions",
 	"*trig.labelString:		Trigonometric Functions",
@@ -187,7 +186,7 @@ char *fallback[] = {
 	"*helpmenu.option.labelString:	Options",
 /* Dialog titles */
 	"*selectfile_popup.title:	Select a file to load or save",
-	"*versionD_popup.title:		Oleo Version Dialog",
+	"*aboutD_popup.title:		About Oleo",
 	"*helpShell.title:		Oleo Help Window",
 	"*UserPreferences_popup.title:	Oleo User Preferences",
 /* User Preferences */
@@ -203,7 +202,7 @@ char *fallback[] = {
 	"*fontlabel.alignment:			alignment_beginning",
 	"*encodingLabel.alignment:		alignment_beginning",
 /* Help Dialog */
-	"*versionD*Help*labelString:	GPL",
+	"*aboutD*Help*labelString:		GPL",
 /* Configuration Dialogs */
 	"*configureGraph_popup*.title:			Configure the Graph",
 	"*configureGraph*xlog.labelString:		Logarithmic Axes",
