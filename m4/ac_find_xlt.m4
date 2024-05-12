@@ -55,12 +55,10 @@ then
 	CFLAGS="$MOTIF_CFLAGS $X_CFLAGS $XPM_CFLAGS $CFLAGS"
 	CPPFLAGS="$MOTIF_CFLAGS $X_CFLAGS $XPM_CFLAGS $CPPFLAGS"
 	#
-	AC_TRY_COMPILE([#include <Xlt/Xlt.h>],[int a;],
-	[
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <Xlt/Xlt.h>]], [[int a;]])],[
 	# Xlt/Xlt.h is in the standard search path.
 	ac_cv_xlt_includes=
-	],
-	[
+	],[
 	# Xlt/Xlt.h is not in the standard search path.
 	# Locate it and put its directory in `xlt_includes'
 	#
@@ -118,12 +116,10 @@ then
 	CFLAGS="$XLT_CFLAGS $MOTIF_CFLAGS $X_CFLAGS $XPM_CFLAGS $CFLAGS"
 	CPPFLAGS="$XLT_CFLAGS $MOTIF_CFLAGS $X_CFLAGS $XPM_CFLAGS $CPPFLAGS"
 	#
-	AC_TRY_LINK([#include <Xlt/Xlt.h>],[Widget w; XltRedirectStdErr(w);],
-	[
+	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <Xlt/Xlt.h>]], [[Widget w; XltRedirectStdErr(w);]])],[
 	# libXlt.a is in the standard search path.
 	ac_cv_xlt_libraries=
-	],
-	[
+	],[
 	# libXlt.a is not in the standard search path.
 	# Locate it and put its directory in `xlt_libraries'
 	#
@@ -179,8 +175,7 @@ then
     CFLAGS="$XLT_CFLAGS $MOTIF_CFLAGS $X_CFLAGS $XPM_CFLAGS $CFLAGS"
     CPPFLAGS="$XLT_CFLAGS $MOTIF_CFLAGS $X_CFLAGS $XPM_CFLAGS $CPPFLAGS"
 
-    AC_TRY_LINK([#include <Xlt/Xlt.h>],[Widget w; XltRedirectStdErr(w);],
-	[
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <Xlt/Xlt.h>]], [[Widget w; XltRedirectStdErr(w);]])],[
 	#
 	# link passed
 	#
@@ -189,8 +184,7 @@ then
 	true
 	#
 	AC_DEFINE(HAVE_XLT, 1, Define if the Xlt library is available)
-	],
-	[
+	],[
 	#
 	# link failed
 	#
@@ -199,7 +193,7 @@ then
 	with_xlt="no"
 	XLT_CFLAGS=""
 	XLT_LIBS=""
-	]) dnl AC_TRY_LINK
+	]) dnl AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[],[])
 
     LIBS="$ac_xlt_save_LIBS"
     CFLAGS="$ac_xlt_save_CFLAGS"

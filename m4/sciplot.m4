@@ -42,12 +42,10 @@ CFLAGS="$X_CFLAGS $CFLAGS"
 CPPFLAGS="$X_CFLAGS $CPPFLAGS"
 LDFLAGS="$X_LIBS $LDFLAGS"
 #
-AC_TRY_COMPILE([#include <SciPlot.h>],[int a;],
-[
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <SciPlot.h>]], [[int a;]])],[
 # SciPlot.h is in the standard search path.
 ice_cv_sciplot_includes=
-],
-[
+],[
 # SciPlot.h is not in the standard search path.
 # Locate it and put its directory in `sciplot_includes'
 #
@@ -97,12 +95,10 @@ CFLAGS="$X_CFLAGS $CFLAGS"
 CPPFLAGS="$X_CFLAGS $CPPFLAGS"
 LDFLAGS="$X_LIBS $LDFLAGS"
 #
-AC_TRY_LINK([#include <SciPlot.h>],[SciPlotQuickUpdate();],
-[
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <SciPlot.h>]], [[SciPlotQuickUpdate();]])],[
 # libXm.a is in the standard search path.
 ice_cv_sciplot_libraries=
-],
-[
+],[
 # libXm.a is not in the standard search path.
 # Locate it and put its directory in `sciplot_libraries'
 #

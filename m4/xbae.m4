@@ -42,12 +42,10 @@ CFLAGS="$X_CFLAGS $CFLAGS"
 CPPFLAGS="$X_CFLAGS $CPPFLAGS"
 LDFLAGS="$X_LIBS $LDFLAGS"
 #
-AC_TRY_COMPILE([#include <Xbae/Matrix.h>],[int a;],
-[
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <Xbae/Matrix.h>]], [[int a;]])],[
 # Xbae/Matrix.h is in the standard search path.
 ice_cv_xbae_includes=
-],
-[
+],[
 # Xbae/Matrix.h is not in the standard search path.
 # Locate it and put its directory in `xbae_includes'
 #
@@ -97,12 +95,10 @@ CFLAGS="$X_CFLAGS $CFLAGS"
 CPPFLAGS="$X_CFLAGS $CPPFLAGS"
 LDFLAGS="$X_LIBS $LDFLAGS"
 #
-AC_TRY_LINK([#include <Xbae/Matrix.h>],[Widget w; XbaeMatrixRefresh(w);],
-[
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <Xbae/Matrix.h>]], [[Widget w; XbaeMatrixRefresh(w);]])],[
 # libXm.a is in the standard search path.
 ice_cv_xbae_libraries=
-],
-[
+],[
 # libXm.a is not in the standard search path.
 # Locate it and put its directory in `xbae_libraries'
 #
