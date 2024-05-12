@@ -120,6 +120,9 @@ void sp_next_dataset(Multigrapher *mg);
 
 void sp_setcolor(Multigrapher *mg, char *color);
 
+/* MAL 2024 */
+extern void sp_set_axis_ticktype_date(Multigrapher *mg, int axis, double round_to, double incr, char *format_string);
+void sp_plot_symbol(Multigrapher *mg, int symbol);
 /*
  * Legend
  */
