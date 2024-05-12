@@ -451,6 +451,7 @@ x_get_string_resource (rdb, class, name)
 
 #ifdef TESTRM
 #include <stdio.h>
+#include <errno.h>
 #include "arg-list.h"
 
 static void
@@ -458,7 +459,6 @@ fatal (msg, prog, x1, x2, x3, x4, x5)
     char *msg, *prog;
     int x1, x2, x3, x4, x5;
 {
-    extern int errno;
 
     if (errno)
       perror (prog);
