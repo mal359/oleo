@@ -10,12 +10,12 @@ ACLOCAL_AMFLAGS = -I m4
 
 D=	`date +%G%m%d.%H%M%S`
 
-SUBDIRS = doc lib src m4 Xresources examples afm #po
+SUBDIRS = doc src m4 Xresources examples afm #po
 
 # Remove this file here (it is created via configure), not from within intl.
 # DISTCLEANFILES = intl/libintl.h
 
-EXTRA_DIST = config.rpath  oleobug.in FAQ oleo.spec.in oleo.spec
+EXTRA_DIST = config.rpath oleobug.in FAQ oleo.spec.in oleo.spec
 
 #
 # Use this only for real end-user-ready releases of Oleo

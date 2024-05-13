@@ -36,6 +36,8 @@
 #include "eval.h"
 #include "errors.h"
 
+#include <time.h>
+
 struct value
   {
     int type;
@@ -48,13 +50,6 @@ struct value
 #define Value	x.c_i
 #define Rng	x.c_r
 
-
-
-struct timeb;
-extern time_t get_date (char *, struct timeb *);
-extern time_t posixtime (char *);
-
-
 
 /* These functions simply provide convenient syntax for expressing intervals 
  * of time.
@@ -96,7 +91,7 @@ dt_time_to_s (long t)
   return t % 60;
 }
 
-
+
 
 /* These relate time values to calendar dates using localtime, gmtime, 
  * strftime, mktime, etc.
@@ -126,7 +121,7 @@ dt_ymd (long y, long mo, long d)
 }
 
 
-
+
 
 #define TM_ACCESS(FN,FIELD,TMFN)			\
 static long						\
@@ -163,7 +158,7 @@ TM_ACCESS_GMT (dt_gmt_isdst, tm_isdst)
 TM_ACCESS_GMT (dt_gmt_yday, tm_yday)
 TM_ACCESS_GMT (dt_gmt_wday, tm_wday)
 
-
+
 
 static char *
 dt_strftime (char * format, long clk)
@@ -185,21 +180,33 @@ dt_strftime (char * format, long clk)
   return buf;
 }
 
-
 
-static long
+
+static time_t
 dt_get_date (char * date)
 {
-  return get_date (date, NULL);
+  struct tm tm;
+  memset(&tm, 0, sizeof(struct tm));
+  
+  strptime(date, "%Y-%m-%d", &tm);
+  
+  return (mktime(&tm));
+
 }
 
-static long
+
+
+static time_t
 dt_posix_date (char * date)
 {
-  return posixtime (date);
+  struct tm time_struct;
+  memset(&time_struct, 0, sizeof(struct tm));
+  strptime(date, "%m%d%H%M%Y%S", &time_struct);
+
+  return mktime(&time_struct);
 }
 
-
+
 
 static void
 l_l (fn, p)
@@ -234,7 +241,7 @@ l_s (fn, p)
   p[0].type = TYP_INT;
 }
 
-
+
 
 #define CALLER(FN,CALL,VIA) static void FN (p) struct value * p; { VIA(CALL,p); }
 
@@ -267,7 +274,7 @@ CALLER(do_gmt_wday, dt_gmt_wday, l_l)
 CALLER(do_get_date, dt_get_date, l_s)
 CALLER(do_posix_date, dt_posix_date, l_s)
 
-
+
 
 void
 do_strftime (p)
@@ -277,7 +284,7 @@ do_strftime (p)
 }
 
 
-
+
 
 struct function date_funs[] =
 {

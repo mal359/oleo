@@ -434,6 +434,6 @@ AC_SUBST(include_sciplot)
 AC_SUBST(link_sciplot)
 
 dnl po/Makefile.in 
-AC_CONFIG_FILES([Makefile oleobug doc/Makefile lib/Makefile src/Makefile m4/Makefile Xresources/Makefile examples/Makefile oleo.spec afm/Makefile ])
+AC_CONFIG_FILES([Makefile oleobug doc/Makefile src/Makefile m4/Makefile Xresources/Makefile examples/Makefile oleo.spec afm/Makefile ])
 AC_OUTPUT 
 

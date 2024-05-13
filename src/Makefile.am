@@ -84,9 +84,9 @@ MYINC=
 MYCFL=	${X_CFLAGS}
 endif
 
-oleo_LDADD = ${X_PRE_LIBS} ${MYLD} ../lib/liboleo.a ${X_LIBS} -lXt -lX11 #@LIBINTL@ 
+oleo_LDADD = ${X_PRE_LIBS} ${MYLD} ${X_LIBS} -lXt -lX11 #@LIBINTL@ 
 
-AM_CPPFLAGS = -I.. -I../lib -I$(srcdir) ${MYINC}
+AM_CPPFLAGS = -I.. -I$(srcdir) ${MYINC}
 AM_CFLAGS = @CFLAGS@ -DLOCALEDIR=\"$(localedir)\" ${MYCFL} \
 	-DBUILD_PREFIX='"'${BUILD_PREFIX}'"'
 
